@@ -18,6 +18,8 @@ Pre-installed software:
   allows you to build, view, manipulate and query pattern models.
 - python-ucto, python-frog, python-timbl (for Python 3)
 
+Some third-party NLP software is also installed out of the box.
+
 Installation & Usage
 ======================
 
@@ -25,8 +27,8 @@ Installation & Usage
 2. Obtain Virtual Box from https://www.virtualbox.org/ or your package manager.
 
 On most Linux distributions, steps one and two may be combined with a simple command:
- Ubuntu: ``sudo apt-get install virtualbox vagrant``
- Arch: ``sudo pacman -Syu virtualbox vagrant``
+* Ubuntu: ``sudo apt-get install virtualbox vagrant``
+* Arch: ``sudo pacman -Syu virtualbox vagrant``
 
 3. Clone this repository and navigate to the directory in the terminal
 4. Power up the VM: ``vagrant up`` (this will download and install everything

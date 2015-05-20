@@ -7,9 +7,11 @@ error () {
 }
 
 #will run as root
-PKGS="pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libbz2-dev zlib1g-dev libtar-dev libboost-all-dev python-dev cython python3 python-pip python3-pip cython python3-requests python-lxml python3-lxml python3-pycurl python-virtualenv"
+PKGS="pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libbz2-dev zlib1g-dev libtar-dev libboost-all-dev python-dev cython python3 python-pip python3-pip cython python3-requests python-lxml python3-lxml python3-pycurl python-virtualenv python-numpy python3-numpy python-scipy python3-scipy python-matplotlib python3-matplotlib python-pandas python3-pandas python-requests python3-requests python-nltk"
 apt-get update
 apt-get install $PKGS 
+
+cp /vagrant/motd /etc/motd
 
 cd /usr/src/
 
@@ -73,7 +75,7 @@ cd timbl
 . bootstrap.sh || error "frogdata bootstrap failed"
 ./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var || error "frog configure failed"
 make || error "frogdata make failed"
-make install || error "frog make install failed"
+make install || error "frogdata make install failed"
 
 echo "Installing frog">&2
 git clone https://github.com/proycon/frog
@@ -91,4 +93,3 @@ pip install pynlpl FoLiA-tools || error "error installing python 2 packages"
 echo "Installing Python 3 packages">&2
 pip3 install pynlpl FoLiA-tools colibri-core python3-timbl python-ucto || "error installing python 3 packages"
 
-cp /vagrant/motd /etc/motd
