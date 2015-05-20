@@ -91,5 +91,5 @@ echo "Installing Python 2 packages">&2
 pip install pynlpl FoLiA-tools clam 
 
 echo "Installing Python 3 packages">&2
-pip3 install pynlpl FoLiA-tools colibri-core python3-timbl python-ucto foliadocserve 
+pip3 install pynlpl FoLiA-tools colibricore python3-timbl python-ucto foliadocserve 
 
