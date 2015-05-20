@@ -21,16 +21,17 @@ Pre-installed software:
 Installation & Usage
 ======================
 
-1) Obtain Vagrant from https://www.vagrantup.com/downloads.html or your package manager
-2) Obtain Virtual Box from https://www.virtualbox.org/ or your package manager
+1. Obtain Vagrant from https://www.vagrantup.com/downloads.html or your package manager.
+2. Obtain Virtual Box from https://www.virtualbox.org/ or your package manager.
 
 On most Linux distributions, steps one and two may be combined with a simple command:
- Ubuntu: sudo apt-get install virtualbox vagrant
- Arch: sudo pacman -Syu virtualbox vagrant
+ Ubuntu: ``sudo apt-get install virtualbox vagrant``
+ Arch: ``sudo pacman -Syu virtualbox vagrant``
 
-3) Clone this repository and navigate to the directory in the terminal
-4) Set up the VM: ``vagrant up``
-5) SSH into your VM: ``vagrant ssh``
+3. Clone this repository and navigate to the directory in the terminal
+4. Power up the VM: ``vagrant up`` (this will download and install everything
+the first time)
+5. SSH into your VM: ``vagrant ssh``
 
 
 
