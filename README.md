@@ -37,6 +37,9 @@ the first time)
 5. SSH into your VM: ``vagrant ssh``
 
 
+You may want to adapt Vagrantfile to change the number of CPUs and Memory
+available to the VM (2 CPUs and 3GB RAM by default).
+
 
 
 
