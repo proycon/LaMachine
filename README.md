@@ -1,10 +1,11 @@
-Language Machines VM
-=====================
+Language Machines Machine
+==========================
 
-A virtual machine based on Ubuntu Linux 14.04 (64-bit only) with the latest
-development versions of NLP software developed by the Language Machines
-research group,  CLST (Radboud University Nijmegen), as well as TiCC (Tilburg
-University).
+This is a virtual machine based on Ubuntu Linux 14.04 (64-bit only)
+with the latest development versions of NLP software developed by the Language
+Machines research group,  CLST (Radboud University Nijmegen), as well as TiCC
+(Tilburg University). It can also serve as a docker.io application rather than
+a VM.
 
 Pre-installed software:
 - *Timbl* - Tilburg Memory Based Learner
@@ -22,8 +23,8 @@ Pre-installed software:
 
 Some third-party NLP software is also installed out of the box.
 
-Installation & Usage
-======================
+Installation & Usage as Virtual Machine
+=========================================
 
 1. Obtain Vagrant from https://www.vagrantup.com/downloads.html or your package manager.
 2. Obtain Virtual Box from https://www.virtualbox.org/ or your package manager.
@@ -41,8 +42,10 @@ You may want to adapt Vagrantfile to change the number of CPUs and Memory
 available to the VM (2 CPUs and 3GB RAM by default).
 
 
+Installation & Usage with Docker
+=========================================
 
-
+(TODO)
 
 
 
