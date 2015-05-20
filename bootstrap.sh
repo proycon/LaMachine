@@ -85,11 +85,22 @@ cd timbl
 make || error "frog make failed"
 make install || error "frog make install failed"
 
+
+echo "Installing python-timbl">&2
+git clone https://github.com/proycon/python-timbl
+cd python-timbl
+python setup.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
+python3 setup3.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
+
 cd ..
 
 echo "Installing Python 2 packages">&2
 pip install pynlpl FoLiA-tools clam 
 
 echo "Installing Python 3 packages">&2
-pip3 install pynlpl FoLiA-tools colibricore python3-timbl python-ucto foliadocserve 
+pip3 install pynlpl FoLiA-tools python-ucto foliadocserve 
+pip3 install --root / colibricore
+
+
+
 
