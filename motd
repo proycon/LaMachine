@@ -1,0 +1,10 @@
+Language Machines VM
+    http://cls.ru.nl/languagemachines
+----------------------------------------
+
+Available software: timbl, mbt, frog, ucto
+                    folia-tools (foliavalidator, foliaquery, etc)
+                    pynlpl python-ucto python-timbl
+
+Shared directory with host machine: /vagrant
+
