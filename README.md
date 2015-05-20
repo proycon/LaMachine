@@ -6,17 +6,18 @@ NLP software developed by the Language Machines research group,  CLST (Radboud U
 Nijmegen), as well as TiCC (Tilburg University).
 
 Pre-installed software:
-- Timbl - Tilburg Memory Based Learner
-- Ucto - Tokenizer
-- Frog - Frog is an integration of memory-based natural language processing (NLP) modules developed for Dutch.
-- FoLiA-tools - Command line tools for working with the FoLiA format
-- PyNLPl - Python Natural Language Processing Library
-- Colibri Core - Colibri core is an NLP tool as well as a C++ and Python library for working
+- *Timbl* - Tilburg Memory Based Learner
+- *Ucto* - Tokenizer
+- *Frog* - Frog is an integration of memory-based natural language processing (NLP) modules developed for Dutch.
+- *FoLiA-tools* - Command line tools for working with the FoLiA format
+- *PyNLPl* - Python Natural Language Processing Library (Python 2 & 3)
+- *Colibri Core* - Colibri core is an NLP tool as well as a C++ and Python library for working
   with basic linguistic constructions such as n-grams and skipgrams (i.e patterns
   with one or more gaps, either of fixed or dynamic size) in a quick and
   memory-efficient way. At the core is the tool colibri-patternmodeller which
   allows you to build, view, manipulate and query pattern models.
-- python-ucto, python-frog, python-timbl (for Python 3)
+- *Python bindings* - python-ucto, python-frog, python-timbl (for Python 3)
+- *CLAM* - Quickly build RESTful webservices (Python 2)
 
 Some third-party NLP software is also installed out of the box.
 

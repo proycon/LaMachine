@@ -88,8 +88,8 @@ make install || error "frog make install failed"
 cd ..
 
 echo "Installing Python 2 packages">&2
-pip install pynlpl FoLiA-tools || error "error installing python 2 packages"
+pip install pynlpl FoLiA-tools clam 
 
 echo "Installing Python 3 packages">&2
-pip3 install pynlpl FoLiA-tools colibri-core python3-timbl python-ucto || "error installing python 3 packages"
+pip3 install pynlpl FoLiA-tools colibri-core python3-timbl python-ucto foliadocserve 
 
