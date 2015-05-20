@@ -1,9 +1,10 @@
 Language Machines VM
 =====================
 
-A virtual machine based on Ubuntu Linux 14.04 (64-bit only) with bleeding-edge versions of
-NLP software developed by the Language Machines research group,  CLST (Radboud University
-Nijmegen), as well as TiCC (Tilburg University).
+A virtual machine based on Ubuntu Linux 14.04 (64-bit only) with the latest
+development versions of NLP software developed by the Language Machines
+research group,  CLST (Radboud University Nijmegen), as well as TiCC (Tilburg
+University).
 
 Pre-installed software:
 - *Timbl* - Tilburg Memory Based Learner
@@ -34,7 +35,7 @@ On most Linux distributions, steps one and two may be combined with a simple com
 4. Power up the VM: ``vagrant up`` (this will download and install everything
 the first time)
 5. SSH into your VM: ``vagrant ssh``
-6. When done, power down the VM witt: ``vagrant halt`` (and you can delete it entirely with ``vagrant destroy``)
+6. When done, power down the VM with: ``vagrant halt`` (and you can delete it entirely with ``vagrant destroy``)
 
 You may want to adapt Vagrantfile to change the number of CPUs and Memory
 available to the VM (2 CPUs and 3GB RAM by default).
