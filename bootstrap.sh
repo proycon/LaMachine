@@ -16,7 +16,7 @@ cp /vagrant/motd /etc/motd
 
 cd /usr/src/
 
-AUTOPROJECTS = "ticcutils libfolia ucto timbl timblserver mbt frogdata frog"
+AUTOPROJECTS="ticcutils libfolia ucto timbl timblserver mbt frogdata frog"
 
 for project in $AUTOPROJECTS; do
     echo "Installing $project">&2

@@ -1,12 +1,12 @@
 #!/bin/bash
 
-echo "(This script should be run as root within the virtual machine)">&2
+echo "UPDATING LAMACHINE -- (This script should be run as root within the virtual machine)">&2
 
 apt-get update && apt-get upgrade
 
 cd /usr/src
 
-AUTOPROJECTS = "ticcutils libfolia ucto timbl timblserver mbt"
+AUTOPROJECTS="ticcutils libfolia ucto timbl timblserver mbt"
 
 for project in $AUTOPROJECTS; do
     echo "Upgrading $project">&2
