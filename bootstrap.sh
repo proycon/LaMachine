@@ -1,9 +1,8 @@
 #!/bin/bash
 
 error () {
-    echo "An error occured during installation!" >&2
+    echo "A error occured during installation!!" >&2
     echo $1 >&2
-    exit 2
 }
 
 #will run as root
@@ -15,78 +14,24 @@ cp /vagrant/motd /etc/motd
 
 cd /usr/src/
 
-echo "Installing ticcutils">&2
-git clone https://github.com/proycon/ticcutils
-cd ticcutils
-. bootstrap.sh || error "ticcutils bootstrap failed"
-./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var|| error "ticcutils configure failed"
-make || error "ticcutils make failed"
-make install || error "ticcutils make install failed"
-cd ..
+AUTOPROJECTS = "ticcutils libfolia ucto timbl timblserver mbt frogdata frog"
 
-echo "Installing libfolia">&2
-git clone https://github.com/proycon/libfolia
-cd libfolia
-. bootstrap.sh || error "libfolia bootstrap failed"
-./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var|| error "libfolia configure failed"
-make || error "libfolia make failed"
-make install || error "libfolia make install failed"
-cd ..
+for project in $AUTOPROJECTS; do
+    echo "Installing $project">&2
+    git clone https://github.com/proycon/$project
+    cd ticcutils
+    . bootstrap.sh || error "$project bootstrap failed"
+    ./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var|| error "$project configure failed"
+    make || error "$project make failed"
+    make install || error "$project make install failed"
+    cd ..
+done
 
-echo "Installing ucto">&2
-git clone https://github.com/proycon/ucto
-cd ucto
-. bootstrap.sh || error "ucto bootstrap failed"
-./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var|| error "ucto configure failed"
-make || error "ucto make failed"
-make install || error "ucto make install failed"
-cd ..
+echo "Installing Python 2 packages">&2
+pip install pynlpl FoLiA-tools clam 
 
-echo "Installing timbl">&2
-git clone https://github.com/proycon/timbl
-cd timbl
-. bootstrap.sh || error "timbl bootstrap failed"
-./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var|| error "timbl configure failed"
-make || error "timbl make failed"
-make install || error "timbl make install failed"
-cd ..
-
-echo "Installing timblserver">&2
-git clone https://github.com/proycon/timblserver
-cd timblserver
-. bootstrap.sh || error "timblserver bootstrap failed"
-./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var|| error "timblserver configure failed"
-make || error "timblserver make failed"
-make install || error "timblserver make install failed"
-cd ..
-
-echo "Installing mbt">&2
-git clone https://github.com/proycon/mbt
-cd mbt
-. bootstrap.sh || error "mbt bootstrap failed"
-./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var|| error "mbt configure failed"
-make || error "mbt make failed"
-make install || error "mbt make install failed"
-cd ..
-
-echo "Installing frogdata">&2
-git clone https://github.com/proycon/frogdata
-cd frogdata
-. bootstrap.sh || error "frogdata bootstrap failed"
-./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var || error "frog configure failed"
-make || error "frogdata make failed"
-make install || error "frogdata make install failed"
-cd ..
-
-echo "Installing frog">&2
-git clone https://github.com/proycon/frog
-cd frog
-. bootstrap.sh || error "frog bootstrap failed"
-./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var|| error "frog configure failed"
-make || error "frog make failed"
-make install || error "frog make install failed"
-cd ..
-
+echo "Installing Python 3 packages">&2
+pip3 install pynlpl FoLiA-tools python-ucto foliadocserve 
 
 echo "Installing python-timbl">&2
 git clone https://github.com/proycon/python-timbl
@@ -95,13 +40,14 @@ python setup2.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
 python3 setup3.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
 cd ..
 
-echo "Installing Python 2 packages">&2
-pip install pynlpl FoLiA-tools clam 
+echo "Installing python-frog">&2
+git clone https://github.com/proycon/python-frog
+cd python-frog
+python3 setup.py install
+cd ..
 
-echo "Installing Python 3 packages">&2
-pip3 install pynlpl FoLiA-tools python-ucto foliadocserve 
+echo "Installing colibri-core">&2
 pip3 install --root / colibricore
-
 
 echo "All done!">&2
 
