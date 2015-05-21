@@ -76,6 +76,7 @@ cd frogdata
 ./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var || error "frog configure failed"
 make || error "frogdata make failed"
 make install || error "frogdata make install failed"
+cd ..
 
 echo "Installing frog">&2
 git clone https://github.com/proycon/frog
@@ -84,6 +85,7 @@ cd frog
 ./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var|| error "frog configure failed"
 make || error "frog make failed"
 make install || error "frog make install failed"
+cd ..
 
 
 echo "Installing python-timbl">&2
@@ -91,7 +93,6 @@ git clone https://github.com/proycon/python-timbl
 cd python-timbl
 python setup2.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
 python3 setup3.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
-
 cd ..
 
 echo "Installing Python 2 packages">&2
