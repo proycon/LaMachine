@@ -12,7 +12,9 @@ PKGS="pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev li
 apt-get update
 apt-get -y install $PKGS 
 
-cp /vagrant/motd /etc/motd
+if [ -d /vagrant ]; then
+    cp /vagrant/motd /etc/motd
+fi
 
 cd /usr/src/
 
