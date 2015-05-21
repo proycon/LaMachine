@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "BOOTSTRAPPING LAMACHINE -- (This script is run automatically when first starting the virtual machine)">&2
+
 error () {
     echo "A error occured during installation!!" >&2
     echo $1 >&2
