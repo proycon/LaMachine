@@ -53,7 +53,7 @@ cd ..
 
 echo "Installing timblserver">&2
 git clone https://github.com/proycon/timblserver
-cd timbl
+cd timblserver
 . bootstrap.sh || error "timblserver bootstrap failed"
 ./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var|| error "timblserver configure failed"
 make || error "timblserver make failed"
@@ -62,7 +62,7 @@ cd ..
 
 echo "Installing mbt">&2
 git clone https://github.com/proycon/mbt
-cd timbl
+cd mbt
 . bootstrap.sh || error "mbt bootstrap failed"
 ./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var|| error "mbt configure failed"
 make || error "mbt make failed"
@@ -71,7 +71,7 @@ cd ..
 
 echo "Installing frogdata">&2
 git clone https://github.com/proycon/frogdata
-cd timbl
+cd frogdata
 . bootstrap.sh || error "frogdata bootstrap failed"
 ./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var || error "frog configure failed"
 make || error "frogdata make failed"
@@ -79,7 +79,7 @@ make install || error "frogdata make install failed"
 
 echo "Installing frog">&2
 git clone https://github.com/proycon/frog
-cd timbl
+cd frog
 . bootstrap.sh || error "frog bootstrap failed"
 ./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var|| error "frog configure failed"
 make || error "frog make failed"
