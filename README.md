@@ -32,7 +32,7 @@ Installation & Usage as Virtual Machine
 On most Linux distributions, steps one and two may be combined with a simple command such as
 ``sudo apt-get install virtualbox vagrant`` on Ubuntu, or ``sudo pacman -Syu virtualbox vagrant`` on Arch Linux.
 
-3. Clone this repository and navigate to the directory in the terminal
+3. Clone this repository and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine`` 
 4. Power up the VM: ``vagrant up`` (this will download and install everything
 the first time)
 5. SSH into your VM: ``vagrant ssh``
