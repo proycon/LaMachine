@@ -45,7 +45,9 @@ available to the VM (2 CPUs and 3GB RAM by default).
 Installation & Usage with Docker
 =========================================
 
-(TODO)
+1. Obtain Docker from http://www.docker.com or your package manager (``sudo apt-get install docker`` on Ubuntu).
+2. ``docker pull proycon/lamachine``
+3. Start an interactive prompt: ``docker run  -t -i proycon/lamachine /bin/bash`` or run stuff: ``docker run proycon/lamachine <program>``  (use ``run -i`` if the program has an interactive mode; set up a mounted volume to pass file from host OS to docker, see: https://docs.docker.com/userguide/dockervolumes/)
 
 
 
