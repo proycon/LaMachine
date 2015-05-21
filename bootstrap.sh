@@ -23,7 +23,7 @@ AUTOPROJECTS="ticcutils libfolia ucto timbl timblserver mbt frogdata frog"
 for project in $AUTOPROJECTS; do
     echo "Installing $project">&2
     git clone https://github.com/proycon/$project
-    cd ticcutils
+    cd $project
     . bootstrap.sh || error "$project bootstrap failed"
     ./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var|| error "$project configure failed"
     make || error "$project make failed"
