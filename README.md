@@ -1,5 +1,5 @@
-Language Machines Machine
-==========================
+LaMachine
+===========
 
 This is a virtual machine based on Ubuntu Linux 14.04 (64-bit only)
 with the latest development versions of NLP software developed by the Language
