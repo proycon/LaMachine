@@ -13,7 +13,7 @@ if [ ! -z "$CONDA_DEFAULT_ENV" ]; then
 elif [ -z "$VIRTUAL_ENV" ]; then
     echo "This should be run within a virtualenv! None detected! Make and activate one first:" >&2
     echo "$ virtualenv lamachine" >&2
-    echo "$ . /lamachine/bin/activate" >&2
+    echo "$ . lamachine/bin/activate" >&2
     echo "(lamachine)$ $0" >&2
     exit 2 
 fi
@@ -246,6 +246,9 @@ if [ -f /usr/bin/python2.7 ]; then
 else
     echo "Skipping installation of Frog because Python 2.7 was not found in /usr/bin/python2.7 (needed for the parser)">&2
 fi
+
+echo "Installing Python dependencies from the Python Package Index">&2
+pip install -U cython ipython numpy scipy matplotlib lxml 
 
 echo "Installing Python packages from the Python Package Index">&2
 pip install -U pynlpl FoLiA-tools python-ucto foliadocserve 
