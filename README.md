@@ -25,7 +25,7 @@ Pre-installed software:
 - *CLAM* - Quickly build RESTful webservices (Python 2)
 
 In the VM, some third-party NLP software is also installed out of the box. Both
-the VM image as well as the docker image are based on Ubuntu Linux 14.04.
+the VM image as well as the docker image are based on Arch Linux.
 
 Installation & Usage as Virtual Machine (for Linux, BSD, MacOS X, Windows)
 =========================================================================
@@ -84,7 +84,7 @@ If you have no need for a VM or a self-contained environment, and you have prope
 administrative access to the system, then install our software using the proper
 package manager, provided we have packages available.
 
-* Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon
+* Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon , these packages are used as the basis of LaMachine
 * Debian/Ubuntu Linux (packages are currently out of date) -- https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl
 * Mac OS X (homebrew), missing some sofware (most notably Frog, Colibri Core, and Python bindings)
 * CentOS/Fedora (packages are outdated completely)
