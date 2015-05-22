@@ -25,6 +25,8 @@ pacman -Syu --noconfirm --needed base-devel || fatalerror "Unable to install glo
 PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs python2 cython cython2 python python2 python-pip python2-pip python-requests python-lxml python2-lxml python-pycurl python-virtualenv python-numpy python2-numpy python-scipy python2-scipy python-matplotlib python2-matplotlib python-pandas python2-pandas python-nltk wget"
 pacman --noconfirm --needed -Syu $PKGS ||  fatalerror "Unable to install global dependencies"
 
+umask u=rwx,g=rwx,o=r
+
 sed -i s/lecture=once/lecture=never/ /etc/sudoers
 echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
 
