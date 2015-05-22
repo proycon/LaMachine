@@ -1,11 +1,14 @@
 LaMachine
 ===========
 
-This is a virtual machine based on Ubuntu Linux 14.04 (64-bit only)
-with the latest development versions of NLP software developed by the Language
-Machines research group,  CLST (Radboud University Nijmegen), as well as TiCC
-(Tilburg University). It can also serve as a docker.io application rather than
-a VM.
+This is a virtual machine or installer for the latest development versions of
+NLP software developed by the Language Machines research group,  CLST (Radboud
+University Nijmegen), as well as TiCC (Tilburg University). 
+
+LaMachine can be used in several forms:
+ * As a Virtual Machine - Easiest, allows you to run our software on any host OS. 
+ * As a docker application
+ * As a compilation/installation script in a virtual environment 
 
 Pre-installed software:
 - *Timbl* - Tilburg Memory Based Learner
@@ -21,7 +24,8 @@ Pre-installed software:
 - *Python bindings* - python-ucto, python-frog, python-timbl (for Python 3)
 - *CLAM* - Quickly build RESTful webservices (Python 2)
 
-Some third-party NLP software is also installed out of the box.
+In the VM, some third-party NLP software is also installed out of the box. Both
+the VM image as well as the docker image are based on Ubuntu Linux 14.04.
 
 Installation & Usage as Virtual Machine (for Linux, BSD, MacOS X, Windows)
 =========================================================================
