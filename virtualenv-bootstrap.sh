@@ -18,10 +18,19 @@ elif [ -z "$VIRTUAL_ENV" ]; then
     exit 2 
 fi
 
-error () {
+fatalerror () {
+    echo "================ FATAL ERROR ==============" >&2
     echo "A error occured during installation!!" >&2
     echo $1 >&2
+    echo "===========================================" >&2
     exit 2
+}
+
+error () {
+    echo "================= ERROR ===================" >&2
+    echo $1 >&2
+    echo "===========================================" >&2
+    sleep 3
 }
 
 
@@ -172,11 +181,11 @@ if [ "$CONDA" == "1" ]; then
     echo -e $activate_conda > $VIRTUAL_ENV/activate.d/lamachine.sh
     chmod a+x $VIRTUAL_ENV/activate.d/lamachine.sh
     VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
-    sed -i "s/%VIRTUAL_ENV%/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/activate.d/lamachine.sh || error "Error modifying environment"
+    sed -i "s/%VIRTUAL_ENV%/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/activate.d/lamachine.sh || fatalerror "Error modifying environment"
 else
     echo -e $activate > $VIRTUAL_ENV/bin/activate  
     VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
-    sed -i "s/%VIRTUAL_ENV%/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/bin/activate || error "Error modifying environment"
+    sed -i "s/%VIRTUAL_ENV%/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/bin/activate || fatalerror "Error modifying environment"
 fi
 cp $0 $VIRTUAL_ENV/bin/lamachine-update.sh
 
@@ -211,21 +220,25 @@ esac
 
 
 
-AUTOPROJECTS="ticcutils libfolia ucto timbl timblserver mbt frogdata"
+PROJECTS="ticcutils libfolia ucto timbl timblserver mbt frogdata"
 
-for project in $AUTOPROJECTS; do
+for project in $PROJECTS; do
     echo "Installing $project">&2
     if [ ! -d $project ]; then
         git clone https://github.com/proycon/$project
         cd $project
     else
         cd $project
-        git pull
+        if [ -d .svn ]; then
+            svn update #a cheat for versions with Tilburg's SVN as primary source rather than github
+        else
+            git pull
+        fi
     fi
-    . bootstrap.sh || error "$project bootstrap failed"
-    ./configure --prefix=$VIRTUAL_ENV  || error "$project configure failed"
-    make || error "$project make failed"
-    make install || error "$project make install failed"
+    . bootstrap.sh || fatalerror "$project bootstrap failed"
+    ./configure --prefix=$VIRTUAL_ENV  || fatalerror "$project configure failed"
+    make || fatalerror "$project make failed"
+    make install || fatalerror "$project make install failed"
     cd ..
 done
 
@@ -236,22 +249,41 @@ if [ -f /usr/bin/python2.7 ]; then
         cd frog
     else
         cd frog
-        git pull
+        if [ -d .svn ]; then
+            svn update
+        else
+            git pull
+        fi
     fi
-    . bootstrap.sh || error "frog bootstrap failed"
-    ./configure --prefix=$VIRTUAL_ENV --with-python=/usr/bin/python2.7 || error "frog configure failed"
-    make || error "frog make failed"
-    make install || error "frog make install failed"
+    . bootstrap.sh || fatalerror "frog bootstrap failed"
+    ./configure --prefix=$VIRTUAL_ENV --with-python=/usr/bin/python2.7 || fatalerror "frog configure failed"
+    make || fatalerror "frog make failed"
+    make install || fatalerror "frog make install failed"
     cd ..
 else
     echo "Skipping installation of Frog because Python 2.7 was not found in /usr/bin/python2.7 (needed for the parser)">&2
 fi
 
 echo "Installing Python dependencies from the Python Package Index">&2
-pip install -U cython ipython numpy scipy matplotlib lxml 
+pip install -U cython ipython numpy scipy matplotlib lxml django
+
+
+PYTHONPROJECTS="pynlpl folia python-ucto foliadocserve flat"
 
 echo "Installing Python packages from the Python Package Index">&2
-pip install -U pynlpl FoLiA-tools python-ucto foliadocserve 
+for project in $PYTHONPROJECTS; do
+    echo "Installing $project">&2
+    if [ ! -d $project ]; then
+        git clone https://github.com/proycon/$project
+        cd $project
+    else
+        cd $project
+        git pull
+    fi
+    python setup.py install --prefix=$VIRTUAL_ENV || fatalerror "setup.py install $project failed"
+done
+
+
 
 echo "Installing python-timbl">&2
 if [ ! -d python-timbl ]; then
