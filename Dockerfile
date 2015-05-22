@@ -1,7 +1,6 @@
-FROM ubuntu:14.04
+FROM nfnty/arch-devel:latest
 USER root
 MAINTAINER Maarten van Gompel <proycon@anaproy.nl>
-RUN apt-get update && apt-get -y install git-core
 WORKDIR /usr/src/
 RUN git clone https://github.com/proycon/LaMachine
 WORKDIR /usr/src/LaMachine

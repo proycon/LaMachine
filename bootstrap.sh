@@ -1,16 +1,32 @@
 #!/bin/bash
 
-echo "BOOTSTRAPPING LAMACHINE -- (This script is run automatically when first starting the virtual machine)">&2
+echo "[LaMachine] BOOTSTRAPPING -- (This script is run automatically when first starting the virtual machine"
 
-error () {
+fatalerror () {
+    echo "================ FATAL ERROR ==============" >&2
     echo "A error occured during installation!!" >&2
     echo $1 >&2
+    echo "===========================================" >&2
+    exit 2
 }
 
+error () {
+    echo "================= ERROR ===================" >&2
+    echo $1 >&2
+    echo "===========================================" >&2
+    sleep 3
+}
+
+echo "--------------------------------------------------------"
+echo "[LaMachine] Installing global dependencies"
+echo "--------------------------------------------------------"
 #will run as root
-PKGS="pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libbz2-dev zlib1g-dev libtar-dev libboost-all-dev python-dev cython python3 python-pip python3-pip cython cython3 python3-requests python-lxml python3-lxml python3-pycurl python-virtualenv python-numpy python3-numpy python-scipy python3-scipy python-matplotlib python3-matplotlib python-pandas python3-pandas python-requests python3-requests python-nltk"
-apt-get update
-apt-get -y install $PKGS 
+pacman -Syu --noconfirm --needed base-devel || fatalerror "Unable to install global dependencies"
+PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs python2 cython cython2 python python2 python-pip python2-pip python-requests python-lxml python2-lxml python-pycurl python-virtualenv python-numpy python2-numpy python-scipy python2-scipy python-matplotlib python2-matplotlib python-pandas python2-pandas python-nltk wget"
+pacman --noconfirm --needed -Syu $PKGS ||  fatalerror "Unable to install global dependencies"
+
+sed -i s/lecture=once/lecture=never/ /etc/sudoers
+echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 if [ -d /vagrant ]; then
     cp /vagrant/motd /etc/motd
@@ -18,40 +34,63 @@ fi
 
 cd /usr/src/
 
-AUTOPROJECTS="ticcutils libfolia ucto timbl timblserver mbt frogdata frog"
+useradd build || fatalerror "Unable to create user"
 
-for project in $AUTOPROJECTS; do
-    echo "Installing $project">&2
-    git clone https://github.com/proycon/$project
-    cd $project
-    . bootstrap.sh || error "$project bootstrap failed"
-    ./configure --prefix=/usr/ --sysconfdir=/etc --localstatedir=/var|| error "$project configure failed"
-    make || error "$project make failed"
-    make install || error "$project make install failed"
+chgrp build /usr/src
+chmod g+ws /usr/src
+
+PACKAGES="ticcutils-git libfolia-git ucto-git timbl-git timblserver-git mbt-git frogdata-git frog-git"
+
+for package in $PACKAGES; do
+    project="${package%-git}"
+    if [ ! -d $package ]; then
+        echo "--------------------------------------------------------"
+        echo "[LaMachine] Obtaining package $package ..."
+        echo "--------------------------------------------------------"
+        URL="https://aur.archlinux.org/packages/${package:0:2}/${package}/${package}.tar.gz"
+        sudo -u build wget $URL
+        sudo -u build tar -xvzf ${package}.tar.gz
+        rm ${package}.tar.gz
+    fi 
+    cd $package
+    echo "--------------------------------------------------------"
+    echo "[LaMachine] Installing $project ..."
+    echo "--------------------------------------------------------"
+    sudo -u build makepkg -s  --noconfirm --needed --noprogressbar
+    pacman -U --noconfirm --needed ${project}*.pkg.tar.xz || error "Installation of ${project} failed !!"
     cd ..
 done
 
-echo "Installing Python 2 packages">&2
-pip install pynlpl FoLiA-tools clam 
+echo "--------------------------------------------------------"
+echo "[LaMachine] Installing Python 2 packages"
+echo "--------------------------------------------------------"
+pip2 install pynlpl FoLiA-tools clam || error "Installation of one or more Python 2 packages failed !!"
 
-echo "Installing Python 3 packages">&2
-pip3 install pynlpl FoLiA-tools python-ucto foliadocserve 
+echo "--------------------------------------------------------"
+echo "[LaMachine] Installing Python 3 packages"
+echo "--------------------------------------------------------"
+pip install pynlpl FoLiA-tools python-ucto foliadocserve || error "Installation of one or more Python 3 packages failed !!"
 
-echo "Installing python-timbl">&2
-git clone https://github.com/proycon/python-timbl
-cd python-timbl
-python setup2.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
-python3 setup3.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
-cd ..
 
-echo "Installing python-frog">&2
+echo "--------------------------------------------------------"
+echo "[LaMachine] Installing python-timbl"
+echo "--------------------------------------------------------"
+pip2 install python-timbl || error "Installation of python2-timbl failed !!"
+pip install python3-timbl || error "Installation of python3-timbl failed !!"
+
+echo "--------------------------------------------------------"
+echo "[LaMachine] Installing python-frog"
+echo "--------------------------------------------------------"
 git clone https://github.com/proycon/python-frog
 cd python-frog
-python3 setup.py install
+python setup.py install || error "Installation of python-frog failed !!"
 cd ..
 
-echo "Installing colibri-core">&2
-pip3 install --root / colibricore
+echo "--------------------------------------------------------"
+echo "[LaMachine] Installing colibri-core"
+echo "--------------------------------------------------------"
+pip install --root / colibricore || error "Installation of colibri-core failed !!"
 
-echo "All done!">&2
-
+echo "--------------------------------------------------------"
+echo "[LaMachine] All done!  "
+echo " .. Issue $ vagrant ssh to connect to your VM!"
