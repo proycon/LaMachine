@@ -7,7 +7,7 @@ if [ ! -z "$CONDA_DEFAULT_ENV" ]; then
     echo "Running in Anaconda environment..." >&2
     if [ ! -d conda-meta ]; then
         echo "Make sure your current working directory is in the root of the anaconda environment ($CONDA_DEFAULT_ENV)" >&2
-        return 2
+        exit 2
     fi
     CONDA=1
 elif [ -z "$VIRTUAL_ENV" ]; then
@@ -15,13 +15,13 @@ elif [ -z "$VIRTUAL_ENV" ]; then
     echo "$ virtualenv lamachine" >&2
     echo "$ . /lamachine/bin/activate" >&2
     echo "(lamachine)$ $0" >&2
-    return 2 
+    exit 2 
 fi
 
 error () {
     echo "A error occured during installation!!" >&2
     echo $1 >&2
-    return 2
+    exit 2
 }
 
 
@@ -141,14 +141,39 @@ if [ -n "$BASH" -o -n "$ZSH_VERSION" ] ; then
     hash -r 2>/dev/null
 fi'
 
+activate_conda='
+VIRTUAL_ENV="%VIRTUAL_ENV%"
+
+_OLD_VIRTUAL_LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
+case ":$LD_LIBRARY_PATH:" in
+      *":$VIRTUAL_ENV/lib:"*) :;; # already there
+      *) export LD_LIBRARY_PATH="$VIRTUAL_ENV/lib:$LD_LIBRARY_PATH";; 
+esac
+
+_OLD_VIRTUAL_LD_RUN_PATH="$LD_RUN_PATH"
+case ":$LD_RUN_PATH:" in
+      *":$VIRTUAL_ENV/lib:"*) :;; # already there
+      *) export LD_RUN_PATH="$VIRTUAL_ENV/lib:$LD_RUN_PATH";; 
+esac
+
+export _OLD_VIRTUAL_CPATH="$CPATH"
+case ":$CPATH:" in
+      *":$VIRTUAL_ENV/include:"*) :;; # already there
+      *) export CPATH="$VIRTUAL_ENV/include:$CPATH";; 
+esac'
+
+echo "Modifying environment">&2
 if [ "$CONDA" == "1" ]; then
     VIRTUAL_ENV=`pwd`
     mkdir $VIRTUAL_ENV/activate.d/
-    echo $activate_conda > $VIRTUAL_ENV/activate.d/lamachine.sh
+    echo -e $activate_conda > $VIRTUAL_ENV/activate.d/lamachine.sh
     chmod a+x $VIRTUAL_ENV/activate.d/lamachine.sh
+    VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
+    sed -i "s/%VIRTUAL_ENV%/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/activate.d/lamachine.sh || error "Error modifying environment"
 else
-    echo $activate > $VIRTUAL_ENV/bin/activate  
-    sed -i "s/%VIRTUAL_ENV%/$VIRTUAL_ENV/g" $VIRTUAL_ENV/bin/activate
+    echo -e $activate > $VIRTUAL_ENV/bin/activate  
+    VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
+    sed -i "s/%VIRTUAL_ENV%/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/bin/activate || error "Error modifying environment"
 fi
 cp $0 $VIRTUAL_ENV/bin/lamachine-update.sh
 
