@@ -31,6 +31,8 @@ activate='
 # EDITED by LaMachine
 
 deactivate () {
+    unset PYTHONPATH
+
     unset pydoc
 
     # reset old environment variables
@@ -82,6 +84,7 @@ deactivate () {
 
 # unset irrelevant variables
 deactivate nondestructive
+
 
 VIRTUAL_ENV="%VIRTUAL_ENV%"
 export VIRTUAL_ENV
@@ -208,7 +211,7 @@ esac
 
 
 
-AUTOPROJECTS="ticcutils libfolia ucto timbl timblserver mbt frogdata frog"
+AUTOPROJECTS="ticcutils libfolia ucto timbl timblserver mbt frogdata"
 
 for project in $AUTOPROJECTS; do
     echo "Installing $project">&2
@@ -220,12 +223,29 @@ for project in $AUTOPROJECTS; do
         git pull
     fi
     . bootstrap.sh || error "$project bootstrap failed"
-    ./configure --prefix=$VIRTUAL_ENV || error "$project configure failed"
+    ./configure --prefix=$VIRTUAL_ENV  || error "$project configure failed"
     make || error "$project make failed"
     make install || error "$project make install failed"
     cd ..
 done
 
+if [ -f /usr/bin/python2.7 ]; then
+    echo "Installing frog">&2
+    if [ ! -d frog ]; then
+        git clone https://github.com/proycon/frog
+        cd frog
+    else
+        cd frog
+        git pull
+    fi
+    . bootstrap.sh || error "frog bootstrap failed"
+    ./configure --prefix=$VIRTUAL_ENV --with-python=/usr/bin/python2.7 || error "frog configure failed"
+    make || error "frog make failed"
+    make install || error "frog make install failed"
+    cd ..
+else
+    echo "Skipping installation of Frog because Python 2.7 was not found in /usr/bin/python2.7 (needed for the parser)">&2
+fi
 
 echo "Installing Python packages from the Python Package Index">&2
 pip install -U pynlpl FoLiA-tools python-ucto foliadocserve 
@@ -245,16 +265,18 @@ else
 fi
 cd ..
 
-echo "Installing python-frog">&2
-if [ ! -d python-frog ]; then
-    git clone https://github.com/proycon/python-frog
-    cd python-frog
-else
-    cd python-frog
-    git pull
+if [ -f /usr/bin/python2.7 ]; then
+    echo "Installing python-frog">&2
+    if [ ! -d python-frog ]; then
+        git clone https://github.com/proycon/python-frog
+        cd python-frog
+    else
+        cd python-frog
+        git pull
+    fi
+    python setup.py install
+    cd ..
 fi
-python setup.py install
-cd ..
 
 echo "Installing colibri-core">&2
 if [ ! -d colibri-core ]; then
