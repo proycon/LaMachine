@@ -2,7 +2,7 @@ LaMachine
 ===========
 
 This is a virtual machine or installer for the latest development versions of
-NLP software developed by the Language Machines research group,  CLST (Radboud
+NLP software developed by the Language Machines research group and CLST (Radboud
 University Nijmegen), as well as TiCC (Tilburg University). 
 
 LaMachine can be used in several forms:
