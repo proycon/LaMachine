@@ -223,7 +223,10 @@ esac
 PROJECTS="ticcutils libfolia ucto timbl timblserver mbt frogdata"
 
 for project in $PROJECTS; do
-    echo "Installing/updating $project">&2
+    echo 
+    echo "--------------------------------------------------------"
+    echo "Installing/updating $project"
+    echo "--------------------------------------------------------"
     if [ ! -d $project ]; then
         git clone https://github.com/proycon/$project || fatalerror "Unable to clone git repo for $project"
         cd $project
@@ -244,7 +247,10 @@ for project in $PROJECTS; do
 done
 
 if [ -f /usr/bin/python2.7 ]; then
-    echo "Installing frog">&2
+    echo 
+    echo "--------------------------------------------------------"
+    echo "Installing frog"
+    echo "--------------------------------------------------------"
     if [ ! -d frog ]; then
         git clone https://github.com/proycon/frog
         cd frog
@@ -265,28 +271,40 @@ else
     echo "Skipping installation of Frog because Python 2.7 was not found in /usr/bin/python2.7 (needed for the parser)">&2
 fi
 
-echo "Installing Python dependencies from the Python Package Index">&2
+echo 
+echo "--------------------------------------------------------"
+echo "Installing Python dependencies from the Python Package Index"
+echo "--------------------------------------------------------"
 pip install -U cython ipython numpy scipy matplotlib lxml django
 
 
 PYTHONPROJECTS="pynlpl folia python-ucto foliadocserve flat"
 
-echo "Installing Python packages from the Python Package Index">&2
+echo 
+echo "--------------------------------------------------------"
+echo "Installing Python packages from the Python Package Index"
+echo "--------------------------------------------------------"
 for project in $PYTHONPROJECTS; do
+    echo 
+    echo "--------------------------------------------------------"
     echo "Installing $project">&2
+    echo "--------------------------------------------------------"
     if [ ! -d $project ]; then
         git clone https://github.com/proycon/$project
         cd $project
     else
         cd $project
         git pull
+        rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
     fi
     python setup.py install --prefix=$VIRTUAL_ENV || fatalerror "setup.py install $project failed"
 done
 
 
 
-echo "Installing python-timbl">&2
+echo "--------------------------------------------------------"
+echo "Installing python-timbl"
+echo "--------------------------------------------------------"
 if [ ! -d python-timbl ]; then
     git clone https://github.com/proycon/python-timbl
     cd python-timbl
@@ -302,28 +320,34 @@ fi
 cd ..
 
 if [ -f /usr/bin/python2.7 ]; then
-    echo "Installing python-frog">&2
+    echo "--------------------------------------------------------"
+    echo "Installing python-frog"
+    echo "--------------------------------------------------------"
     if [ ! -d python-frog ]; then
         git clone https://github.com/proycon/python-frog
         cd python-frog
     else
         cd python-frog
         git pull
+        rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
     fi
     python setup.py install
     cd ..
 fi
 
+echo "--------------------------------------------------------"
 echo "Installing colibri-core">&2
+echo "--------------------------------------------------------"
 if [ ! -d colibri-core ]; then
     git clone https://github.com/proycon/colibri-core
     cd colibri-core
 else
     cd colibri-core 
     git pull
-    rm colibricore_wrapper.cpp #forcing recompilation
+    rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
 fi
 python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV
 cd ..
 
+echo "--------------------------------------------------------"
 echo "All done!">&2
