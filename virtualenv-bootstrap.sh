@@ -223,16 +223,15 @@ esac
 PROJECTS="ticcutils libfolia ucto timbl timblserver mbt frogdata"
 
 for project in $PROJECTS; do
-    echo "Installing $project">&2
+    echo "Installing/updating $project">&2
     if [ ! -d $project ]; then
-        git clone https://github.com/proycon/$project
-        cd $project
+        git clone https://github.com/proycon/$project || fatalerror "Unable to clone git repo for $project"
     else
-        cd $project
+        pwd
         if [ -d .svn ]; then
-            svn update #a cheat for versions with Tilburg's SVN as primary source rather than github
+            svn update || fatalerror "Unable to svn update $project" #a cheat for versions with Tilburg's SVN as primary source rather than github
         else
-            git pull
+            git pull || fatalerror "Unable to git pull $project"
         fi
     fi
     . bootstrap.sh || fatalerror "$project bootstrap failed"
