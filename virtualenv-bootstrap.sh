@@ -226,7 +226,9 @@ for project in $PROJECTS; do
     echo "Installing/updating $project">&2
     if [ ! -d $project ]; then
         git clone https://github.com/proycon/$project || fatalerror "Unable to clone git repo for $project"
+        cd $project
     else
+        cd $project
         pwd
         if [ -d .svn ]; then
             svn update || fatalerror "Unable to svn update $project" #a cheat for versions with Tilburg's SVN as primary source rather than github
@@ -234,7 +236,7 @@ for project in $PROJECTS; do
             git pull || fatalerror "Unable to git pull $project"
         fi
     fi
-    . bootstrap.sh || fatalerror "$project bootstrap failed"
+    bash bootstrap.sh || fatalerror "$project bootstrap failed"
     ./configure --prefix=$VIRTUAL_ENV  || fatalerror "$project configure failed"
     make || fatalerror "$project make failed"
     make install || fatalerror "$project make install failed"
@@ -254,7 +256,7 @@ if [ -f /usr/bin/python2.7 ]; then
             git pull
         fi
     fi
-    . bootstrap.sh || fatalerror "frog bootstrap failed"
+    bash bootstrap.sh || fatalerror "frog bootstrap failed"
     ./configure --prefix=$VIRTUAL_ENV --with-python=/usr/bin/python2.7 || fatalerror "frog configure failed"
     make || fatalerror "frog make failed"
     make install || fatalerror "frog make install failed"
