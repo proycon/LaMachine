@@ -41,6 +41,20 @@ useradd build || fatalerror "Unable to create user"
 chgrp build /usr/src
 chmod g+ws /usr/src
 
+
+echo "--------------------------------------------------------"
+echo "Updating LaMachine itself"
+echo "--------------------------------------------------------"
+if [ ! -d LaMachine ]; then
+    git clone https://github.com/proycon/LaMachine || fatalerror "Unable to clone git repo for LaMachine"
+    cd LaMachine
+else
+    cd LaMachine
+    git pull
+fi
+cp bootstrap.sh /usr/bin/lamachine-update.sh
+cd ..
+
 PACKAGES="ticcutils-git libfolia-git ucto-git timbl-git timblserver-git mbt-git frogdata-git frog-git"
 
 for package in $PACKAGES; do

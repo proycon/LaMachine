@@ -57,10 +57,11 @@ if [ "$1" != "noadmin" ]; then
         sleep 5
     fi
     if [ ! -z "$INSTALL" ]; then
+        echo
         echo "-------------------------------"
         echo "Updating global dependencies "
-        echo " (this step, and only this step, may require root access, skip it with CTRL-C if you don't have it and ask your system administrator to install the mentioned dependencies instead)"
         echo "-------------------------------"
+        echo " (this step, and only this step, may require root access, skip it with CTRL-C if you don't have it and ask your system administrator to install the mentioned dependencies instead)"
         echo "Command: $INSTALL"
         $INSTALL
     fi
@@ -84,6 +85,7 @@ if [ -z "$VIRTUAL_ENV" ]; then
             sudo pip3 install virtualenv || fatalerror "Unable to install virtualenv :( .. Giving up, ask your system administrator to install the necessary dependencies first or try the LaMachine VM instead"
         fi
     fi
+    echo
     echo "-----------------------------------------"
     echo "Creating virtual environment"
     echo "-----------------------------------------"
@@ -94,6 +96,7 @@ else
 fi
 
 if [ "$OS" == "mac" ]; then
+    echo
     echo "-------------------------------------"
     echo "Copying ICU to virtual environment"
     echo "-------------------------------------"
@@ -162,7 +165,7 @@ deactivate () {
 deactivate nondestructive
 
 
-VIRTUAL_ENV="%VIRTUAL_ENV%"
+VIRTUAL_ENV="_VIRTUAL_ENV_"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
@@ -221,7 +224,7 @@ if [ -n "$BASH" -o -n "$ZSH_VERSION" ] ; then
 fi'
 
 activate_conda='
-VIRTUAL_ENV="%VIRTUAL_ENV%"
+VIRTUAL_ENV="_VIRTUAL_ENV_"
 
 _OLD_VIRTUAL_LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
 case ":$LD_LIBRARY_PATH:" in
@@ -241,25 +244,42 @@ case ":$CPATH:" in
       *) export CPATH="$VIRTUAL_ENV/include:$CPATH";; 
 esac'
 
-echo "Modifying environment">&2
+echo
+echo "--------------------------------------------------------"
+echo "Modifying environment"
+echo "--------------------------------------------------------"
 if [ "$CONDA" == "1" ]; then
     VIRTUAL_ENV=`pwd`
     mkdir $VIRTUAL_ENV/activate.d/
-    echo -e $activate_conda > $VIRTUAL_ENV/activate.d/lamachine.sh
+    printf "$activate_conda" > $VIRTUAL_ENV/activate.d/lamachine.sh
     chmod a+x $VIRTUAL_ENV/activate.d/lamachine.sh
     VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
-    sed -i -e "s/%VIRTUAL_ENV%/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/activate.d/lamachine.sh || fatalerror "Error modifying environment"
+    sed -i -e "s/_VIRTUAL_ENV_/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/activate.d/lamachine.sh || fatalerror "Error modifying environment"
 else
-    echo -e $activate > $VIRTUAL_ENV/bin/activate  
+    printf "$activate" > $VIRTUAL_ENV/bin/activate  
     VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
-    sed -i -e "s/%VIRTUAL_ENV%/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/bin/activate || fatalerror "Error modifying environment"
+    sed -i -e "s/_VIRTUAL_ENV_/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/bin/activate || fatalerror "Error modifying environment"
 fi
-cp $0 $VIRTUAL_ENV/bin/lamachine-update.sh
 
 if [ ! -d $VIRTUAL_ENV/src ]; then
     mkdir $VIRTUAL_ENV/src
 fi
 cd $VIRTUAL_ENV/src
+
+echo
+echo "--------------------------------------------------------"
+echo "Updating LaMachine itself"
+echo "--------------------------------------------------------"
+if [ ! -d LaMachine ]; then
+    git clone https://github.com/proycon/LaMachine || fatalerror "Unable to clone git repo for LaMachine"
+    cd LaMachine
+else
+    cd LaMachine
+    git pull
+fi
+cp virtualenv-bootstrap.sh $VIRTUAL_ENV/bin/lamachine-update.sh
+cd ..
+
 
 if [ -z "$_OLD_VIRTUAL_LD_LIBRARY_PATH" ] ; then
     export _OLD_VIRTUAL_LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
@@ -373,6 +393,7 @@ for project in $PYTHONPROJECTS; do
     cd ..
 done
 
+echo
 echo "--------------------------------------------------------"
 echo "Installing python-ucto"
 echo "--------------------------------------------------------"
@@ -388,6 +409,7 @@ python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include --library-dirs=$VI
 cd ..
 
 
+echo
 echo "--------------------------------------------------------"
 echo "Installing python-timbl"
 echo "--------------------------------------------------------"
@@ -406,6 +428,7 @@ fi
 cd ..
 
 if [ -f /usr/bin/python2.7 ]; then
+    echo
     echo "--------------------------------------------------------"
     echo "Installing python-frog"
     echo "--------------------------------------------------------"
@@ -421,6 +444,7 @@ if [ -f /usr/bin/python2.7 ]; then
     cd ..
 fi
 
+echo
 echo "--------------------------------------------------------"
 echo "Installing colibri-core"
 echo "--------------------------------------------------------"
@@ -437,3 +461,4 @@ cd ..
 
 echo "--------------------------------------------------------"
 echo "All done!">&2
+echo "  From now on, activate your virtual environment as follows: . $VIRTUAL_ENV/bin/activate">&2

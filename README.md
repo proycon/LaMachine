@@ -73,6 +73,13 @@ pulled from git and compiled for you.
 
 Note that you will always have to activate your virtual environment with ``.
 lamachine/bin/activate`` if you open a new terminal
+
+
+Updating
+===========
+
+Once you have a LaMachine running, in any form, just run ``lamachine-update.sh`` to update
+everything again.
  
 Alternatives
 ====================
