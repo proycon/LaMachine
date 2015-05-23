@@ -4,7 +4,7 @@ echo "=== VIRTUALENV LAMACHINE BOOTSTRAP ===">&2
 
 fatalerror () {
     echo "================ FATAL ERROR ==============" >&2
-    echo "A error occured during installation!!" >&2
+    echo "An error occured during installation!!" >&2
     echo $1 >&2
     echo "===========================================" >&2
     exit 2
