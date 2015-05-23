@@ -74,6 +74,13 @@ pulled from git and compiled for you.
 Note that you will always have to activate your virtual environment with ``.
 lamachine/bin/activate`` if you open a new terminal
 
+Tested to work on:
+* Ubuntu 14.04 LTS - Trusty Tahr
+* Ubuntu 12.04 LTS - Precise Pangolin
+* Fedora Core 21
+* Arch Linux
+* Mac OS X Yosemite
+
 
 Updating
 ===========
