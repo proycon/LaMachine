@@ -55,7 +55,7 @@ fi
 cp bootstrap.sh /usr/bin/lamachine-update.sh
 cd ..
 
-PACKAGES="ticcutils-git libfolia-git ucto-git timbl-git timblserver-git mbt-git frogdata-git frog-git"
+PACKAGES="ticcutils-git libfolia-git ucto-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git"
 
 for package in $PACKAGES; do
     project="${package%-git}"

@@ -307,7 +307,7 @@ esac
 
 
 
-PROJECTS="ticcutils libfolia ucto timbl timblserver mbt frogdata"
+PROJECTS="ticcutils libfolia ucto timbl timblserver mbt wopr frogdata"
 
 for project in $PROJECTS; do
     echo 
