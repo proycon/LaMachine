@@ -29,12 +29,15 @@ CONDA=0
 ARCH=`which pacman`
 DEBIAN=`which apt-get`
 MAC=`which brew`
+REDHAT=`which yum`
 if [ -f "$ARCH" ]; then
     OS='arch'
 elif [ -f "$DEBIAN" ]; then
     OS='debian' #ubuntu too
 elif [ -f "$MAC" ]; then
     OS='mac'
+elif [ -f "$REDHAT" ]; then
+    OS='redhat'
 else
     OS=""
 fi
@@ -46,6 +49,8 @@ if [ "$1" != "noadmin" ]; then
         INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs python2 cython cython2 python python2 python-pip python2-pip python-requests python-lxml python2-lxml python-pycurl python-virtualenv python-numpy python2-numpy python-scipy python2-scipy python-matplotlib python2-matplotlib python-pandas python2-pandas python-nltk ipython ipython-notebook wget"
     elif [ "$OS" == "debian" ]; then
         INSTALL="sudo apt-get install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libbz2-dev zlib1g-dev libtar-dev libboost-all-dev python-dev cython python3 python-pip python3-pip cython cython3 python3-requests python-lxml python3-lxml python3-pycurl python-virtualenv python-numpy python3-numpy python-scipy python3-scipy python-matplotlib python3-matplotlib python-pandas python3-pandas python-requests python3-requests" 
+    elif [ "$OS" == "redhat" ]; then
+        INSTALL="sudo yum pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc xml2 xml2-devel libtar libtar-devel boost boost-devel python python-devel python3 python-lxml python3-lxml Cython zlib zlib-devel python-numpy python3-numpy scipy python3-scipy python-matplotlib python3-matplotlib python3-virtualenv python-pip python3-pip bzip2 bzip2-devel"
     elif [ "$OS" == "mac" ]; then
         INSTALL="brew install python3 autoconf automake libtool autoconf-archive boost xml2 icu4c"
     else
@@ -100,7 +105,7 @@ if [ "$OS" == "mac" ]; then
     echo "-------------------------------------"
     echo "Copying ICU to virtual environment"
     echo "-------------------------------------"
-    cp -R /usr/local/opt/icu4c/* $VIRTUAL_ENV/
+    cp -R /usr/local/opt/icu4c/* $VIRTUAL_ENV/ 2> /dev/null
 fi
 
 
