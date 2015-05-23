@@ -71,6 +71,13 @@ if [ "$1" != "noadmin" ]; then
         $INSTALL
     fi
 
+    if [ "$OS" == "redhat" ]; then
+        if [ ! -f /usr/bin/virtualenv ]; then
+            echo "Linking /usr/bin/virtualenv to version-specific virtualenv, this is done globally on the host system!!! (requires root)"
+            sudo ln -s /usr/bin/virtualenv* /usr/bin/virtualenv
+        fi
+    fi
+
 fi
 
 
