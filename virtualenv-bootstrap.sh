@@ -278,11 +278,11 @@ echo "--------------------------------------------------------"
 pip install -U cython ipython numpy scipy matplotlib lxml django
 
 
-PYTHONPROJECTS="pynlpl folia python-ucto foliadocserve flat"
+PYTHONPROJECTS="pynlpl folia foliadocserve flat"
 
 echo 
 echo "--------------------------------------------------------"
-echo "Installing Python packages from the Python Package Index"
+echo "Installing Python packages"
 echo "--------------------------------------------------------"
 for project in $PYTHONPROJECTS; do
     echo 
@@ -295,11 +295,24 @@ for project in $PYTHONPROJECTS; do
     else
         cd $project
         git pull
-        rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
     fi
     python setup.py install --prefix=$VIRTUAL_ENV || fatalerror "setup.py install $project failed"
+    cd ..
 done
 
+echo "--------------------------------------------------------"
+echo "Installing python-ucto"
+echo "--------------------------------------------------------"
+if [ ! -d python-ucto ]; then
+    git clone https://github.com/proycon/python-ucto
+    cd python-ucto
+else
+    cd python-ucto 
+    git pull
+    rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
+fi
+python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV
+cd ..
 
 
 echo "--------------------------------------------------------"
@@ -336,7 +349,7 @@ if [ -f /usr/bin/python2.7 ]; then
 fi
 
 echo "--------------------------------------------------------"
-echo "Installing colibri-core">&2
+echo "Installing colibri-core"
 echo "--------------------------------------------------------"
 if [ ! -d colibri-core ]; then
     git clone https://github.com/proycon/colibri-core
