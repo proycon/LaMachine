@@ -47,7 +47,7 @@ available to the VM (2 CPUs and 3GB RAM by default).
 
 
 Installation & Usage with Docker (for Linux only)
-===============================================
+===================================================
 
 1. Obtain Docker from http://www.docker.com or your package manager (``sudo apt-get install docker`` on Ubuntu).
 2. Pull the LaMachine image: ``docker pull proycon/lamachine``
@@ -58,9 +58,12 @@ There is no need to clone this git repository at all for this method.
 Installation & Usage locally (for Linux/BSD/Mac OS X)
 =======================================================
 
-LaMachine can also be used on a Linux system without root access (provided a
-set of prerequisites is available on the system). This is done through an
-extension for Python VirtualEnv, as we provide a lot of Python bindings anyhow.
+LaMachine can also be used on a Linux/BSD/Mac OS X system without root access
+(provided a set of prerequisites is available on the system). This is done
+through an extension for Python VirtualEnv, as we provide a lot of Python
+bindings anyhow. This offers a local environment (ideal for development!) that
+binds against the software globally available on your system. All sources are
+pulled from git and compiled for you.
 
 1. Clone this repository and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine``  (or download it manually from github)
 2. In a terminal, navigate to the directory where you want to create the
