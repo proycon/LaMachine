@@ -35,7 +35,7 @@ elif [ -f "$DEBIAN" ]; then
     OS='debian' #ubuntu too
 elif [ -f "$MAC" ]; then
     OS='mac'
-else:
+else
     OS=""
 fi
 
