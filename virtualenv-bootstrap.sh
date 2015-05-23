@@ -2,22 +2,6 @@
 
 echo "=== VIRTUALENV LAMACHINE BOOTSTRAP ===">&2
 
-CONDA=0
-if [ ! -z "$CONDA_DEFAULT_ENV" ]; then
-    echo "Running in Anaconda environment..." >&2
-    if [ ! -d conda-meta ]; then
-        echo "Make sure your current working directory is in the root of the anaconda environment ($CONDA_DEFAULT_ENV)" >&2
-        exit 2
-    fi
-    CONDA=1
-elif [ -z "$VIRTUAL_ENV" ]; then
-    echo "This should be run within a virtualenv! None detected! Make and activate one first:" >&2
-    echo "$ virtualenv lamachine" >&2
-    echo "$ . lamachine/bin/activate" >&2
-    echo "(lamachine)$ $0" >&2
-    exit 2 
-fi
-
 fatalerror () {
     echo "================ FATAL ERROR ==============" >&2
     echo "A error occured during installation!!" >&2
@@ -32,6 +16,89 @@ error () {
     echo "===========================================" >&2
     sleep 3
 }
+
+CONDA=0
+#if [ ! -z "$CONDA_DEFAULT_ENV" ]; then
+#    echo "Running in Anaconda environment... THIS IS UNTESTED!" >&2
+#    if [ ! -d conda-meta ]; then
+#        echo "Make sure your current working directory is in the root of the anaconda environment ($CONDA_DEFAULT_ENV)" >&2
+#        exit 2
+#    fi
+#    CONDA=1
+
+ARCH=`which pacman`
+DEBIAN=`which apt-get`
+MAC=`which brew`
+if [ -f "$ARCH" ]; then
+    OS='arch'
+elif [ -f "$DEBIAN" ]; then
+    OS='debian' #ubuntu too
+elif [ -f "$MAC" ]; then
+    OS='mac'
+else:
+    OS=""
+fi
+
+if [ "$1" != "noadmin" ]; then
+    echo "Detecting package manager..."
+    INSTALL=""
+    if [ "$OS" == "arch" ]; then
+        INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs python2 cython cython2 python python2 python-pip python2-pip python-requests python-lxml python2-lxml python-pycurl python-virtualenv python-numpy python2-numpy python-scipy python2-scipy python-matplotlib python2-matplotlib python-pandas python2-pandas python-nltk ipython ipython-notebook wget"
+    elif [ "$OS" == "debian" ]; then
+        INSTALL="sudo apt-get install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libbz2-dev zlib1g-dev libtar-dev libboost-all-dev python-dev cython python3 python-pip python3-pip cython cython3 python3-requests python-lxml python3-lxml python3-pycurl python-virtualenv python-numpy python3-numpy python-scipy python3-scipy python-matplotlib python3-matplotlib python-pandas python3-pandas python-requests python3-requests" 
+    elif [ "$OS" == "mac" ]; then
+        INSTALL="brew install python3 autoconf automake libtool autoconf-archive boost xml2 icu4c"
+    else
+        error "No suitable package manage detected! Unable to verify and install the necessary global dependencies"
+        if [ -d "/Users" ]; then
+            echo "HINT: It seems you are on Mac OS X? Please install homebrew first from http://brew.sh"
+        fi
+        echo " (will attempt to continue anyway but it will most probably fail)"
+        sleep 5
+    fi
+    if [ ! -z "$INSTALL" ]; then
+        echo "-------------------------------"
+        echo "Updating global dependencies "
+        echo " (this step, and only this step, may require root access, skip it with CTRL-C if you don't have it and ask your system administrator to install the mentioned dependencies instead)"
+        echo "-------------------------------"
+        echo "Command: $INSTALL"
+        sudo $INSTALL
+    fi
+
+fi
+
+
+
+if [ -z "$VIRTUAL_ENV" ]; then
+    VENV=`which virtualenv`
+    if [ ! -f "$VENV" ]; then
+        error "virtualenv not found"
+        PIP3=`which pip3`
+        if [ ! -f "$PIP3" ]; then
+            fatalerror "pip3 not found"
+        fi
+        echo "Attempting to install virtualenv"
+        pip3 install virtualenv
+        if [ "$?" != "0" ]; then
+            echo "Retrying as root:"
+            sudo pip3 install virtualenv || fatalerror "Unable to install virtualenv :( .. Giving up, ask your system administrator to install the necessary dependencies first or try the LaMachine VM instead"
+        fi
+    fi
+    echo "-----------------------------------------"
+    echo "Creating virtual environment"
+    echo "-----------------------------------------"
+    virtualenv --python=python3 lamachine || fatalerror "Unable to create virtual environment"
+    . lamachine/bin/activate || fatalerror "Unable to activate virtual environment"
+else
+    echo "Existing virtual environment detected... good.."
+fi
+
+if [ "$OS" == "mac" ]; then
+    echo "-------------------------------------"
+    echo "Copying ICU to virtual environment"
+    echo "-------------------------------------"
+    cp -R /usr/local/opt/icu4c/* $VIRTUAL_ENV/
+fi
 
 
 activate='
@@ -181,11 +248,11 @@ if [ "$CONDA" == "1" ]; then
     echo -e $activate_conda > $VIRTUAL_ENV/activate.d/lamachine.sh
     chmod a+x $VIRTUAL_ENV/activate.d/lamachine.sh
     VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
-    sed -i "s/%VIRTUAL_ENV%/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/activate.d/lamachine.sh || fatalerror "Error modifying environment"
+    sed -i -e "s/%VIRTUAL_ENV%/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/activate.d/lamachine.sh || fatalerror "Error modifying environment"
 else
     echo -e $activate > $VIRTUAL_ENV/bin/activate  
     VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
-    sed -i "s/%VIRTUAL_ENV%/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/bin/activate || fatalerror "Error modifying environment"
+    sed -i -e "s/%VIRTUAL_ENV%/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/bin/activate || fatalerror "Error modifying environment"
 fi
 cp $0 $VIRTUAL_ENV/bin/lamachine-update.sh
 
@@ -240,7 +307,13 @@ for project in $PROJECTS; do
         fi
     fi
     bash bootstrap.sh || fatalerror "$project bootstrap failed"
-    ./configure --prefix=$VIRTUAL_ENV  || fatalerror "$project configure failed"
+    EXTRA=""
+    if [ "$OS" == "mac" ]; then
+        if [ "$PROJECT" == "libfolia" ] || [ $PROJECT == "ucto" ]; then
+            EXTRA="--with-icu=/usr/local/opt/icu4c"
+        fi
+    fi
+    ./configure --prefix=$VIRTUAL_ENV $EXTRA || fatalerror "$project configure failed"
     make || fatalerror "$project make failed"
     make install || fatalerror "$project make install failed"
     cd ..
