@@ -62,7 +62,7 @@ if [ "$1" != "noadmin" ]; then
         echo " (this step, and only this step, may require root access, skip it with CTRL-C if you don't have it and ask your system administrator to install the mentioned dependencies instead)"
         echo "-------------------------------"
         echo "Command: $INSTALL"
-        sudo $INSTALL
+        $INSTALL
     fi
 
 fi

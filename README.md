@@ -55,27 +55,21 @@ Installation & Usage with Docker (for Linux only)
 
 There is no need to clone this git repository at all for this method.
 
-Installation & Usage locally (for Linux/BSD only)
-==============================================
+Installation & Usage locally (for Linux/BSD/Mac OS X)
+=======================================================
 
 LaMachine can also be used on a Linux system without root access (provided a
 set of prerequisites is available on the system). This is done through an
 extension for Python VirtualEnv, as we provide a lot of Python bindings anyhow.
 
-1. Ensure prerequisites are available on the system. Ask your system
-   administrator to install the following packages (Ubuntu, package names may
-   differ on other distributions): git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libbz2-dev zlib1g-dev libtar-dev libboost-all-dev python-dev python3 python3-pip cython3 python3-lxml python3-pycurl python-virtualenv python3-numpy python3-scipy python3-requests"
-2. Clone this repository and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine`` 
-3. Create a virtualenv for Python 3: ``virtualenv --python=python3 lamachine``
-4. Activate the virtualenv: ``. lamachine/bin/activate``  (repeat this step whenever you want to access the environment in the future)
-5. Bootstrap the virtual environment: ``../virtualenv-bootstrap.sh``
+1. Clone this repository and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine``  (or download it manually from github)
+2. In a terminal, navigate to the directory where you want to create the
+   virtual environment, or alternatively pre-create and activate one with ``virtualenv --python=python3
+   lamachine && . lamachine/bin/activate``
+3. Bootstrap the virtual environment by calling: ``/path/to/LaMachine/virtualenv-bootstrap.sh``
 
-Alternatively, Anaconda is supported too (but untested as of yet), replace
-steps three and four with the proper equivalents using ``conda``, ensure you are in the
-target environment's directory prior to executing
-``virtualenv-bootstrap.sh``. 
-
-This may even work on Mac OS X with a bit of tweaking (not tested yet).
+Note that you will always have to activate your virtual environment with ``.
+lamachine/bin/activate`` if you open a new terminal
  
 Alternatives
 ====================
