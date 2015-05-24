@@ -6,23 +6,26 @@ NLP software developed by the Language Machines research group and CLST (Radboud
 University Nijmegen), as well as TiCC (Tilburg University). 
 
 LaMachine can be used in several forms:
- * As a Virtual Machine - Easiest, allows you to run our software on any host OS. 
- * As a docker application
- * As a compilation/installation script in a virtual environment 
+ * As a **Virtual Machine** - Easiest, allows you to run our software on any host OS. 
+ * As a **Docker application**
+ * As a compilation/installation script in a **virtual environment**
 
 Pre-installed software:
-- *Timbl* - Tilburg Memory Based Learner
-- *Ucto* - Tokenizer
-- *Frog* - Frog is an integration of memory-based natural language processing (NLP) modules developed for Dutch.
-- *FoLiA-tools* - Command line tools for working with the FoLiA format
-- *PyNLPl* - Python Natural Language Processing Library (Python 2 & 3)
-- *Colibri Core* - Colibri core is an NLP tool as well as a C++ and Python library for working
+- [Timbl](http://ilk.uvt.nl/timbl) - Tilburg Memory Based Learner
+- [Ucto](http://ilk.uvt.nl/ucto) - Tokenizer
+- [Frog](http://ilk.uvt.nl/frog) - Frog is an integration of memory-based natural language processing (NLP) modules developed for Dutch.
+- [Mbt](http://ilk.uvt.nl/mbt) - Memory-based Tagger
+- [Wopr](http://ilk.uvt.nl/wopr) - Memory-based Word Predictor
+- [FoLiA-tools](http://proycon.github.io/folia) - Command line tools for working with the FoLiA format
+- [PyNLPl](https://pypi.python.org/pypi/PyNLPl) - Python Natural Language Processing Library (Python 2 & 3)
+- [Colibri Core](http://proycon.github.io/colibri-core/) - Colibri core is an NLP tool as well as a C++ and Python library for working
   with basic linguistic constructions such as n-grams and skipgrams (i.e patterns
   with one or more gaps, either of fixed or dynamic size) in a quick and
   memory-efficient way. At the core is the tool colibri-patternmodeller which
   allows you to build, view, manipulate and query pattern models.
-- *Python bindings* - python-ucto, python-frog, python-timbl (for Python 3)
-- *CLAM* - Quickly build RESTful webservices (Python 2)
+- *C++ libraries* - [ticcutils](http://ilk.uvt.nl/ticcutils), [libfolia](http://proycon.github.io/folia)
+- *Python bindings* - [python-ucto](https://github.com/proycon/python-ucto), [python-frog](https://github.com/proycon/python-frog), [python-timbl](https://github.com/proycon/python-timbl) 
+- [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices 
 
 In the VM, some third-party NLP software is also installed out of the box. Both
 the VM image as well as the docker image are based on Arch Linux.
@@ -30,15 +33,14 @@ the VM image as well as the docker image are based on Arch Linux.
 Installation & Usage as Virtual Machine (for Linux, BSD, MacOS X, Windows)
 =========================================================================
 
-1. Obtain Vagrant from https://www.vagrantup.com/downloads.html or your package manager.
-2. Obtain Virtual Box from https://www.virtualbox.org/ or your package manager.
+1. Obtain **Vagrant** from https://www.vagrantup.com/downloads.html or your package manager.
+2. Obtain **VirtualBox** from https://www.virtualbox.org/ or your package manager.
 
 On most Linux distributions, steps one and two may be combined with a simple command such as
 ``sudo apt-get install virtualbox vagrant`` on Ubuntu, or ``sudo pacman -Syu virtualbox vagrant`` on Arch Linux.
 
 3. Clone this repository and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine`` 
-4. Power up the VM: ``vagrant up`` (this will download and install everything
-the first time)
+4. Power up the VM: ``vagrant up`` (this will download and install everything the first time)
 5. SSH into your VM: ``vagrant ssh``
 6. When done, power down the VM with: ``vagrant halt`` (and you can delete it entirely with ``vagrant destroy``)
 
@@ -49,7 +51,7 @@ available to the VM (2 CPUs and 3GB RAM by default).
 Installation & Usage with Docker (for Linux only)
 ===================================================
 
-1. Obtain Docker from http://www.docker.com or your package manager (``sudo apt-get install docker`` on Ubuntu).
+1. Obtain **Docker** from http://www.docker.com or your package manager (``sudo apt-get install docker`` on Ubuntu).
 2. Pull the LaMachine image: ``docker pull proycon/lamachine``
 3. Start an interactive prompt to LaMachine: ``docker run  -t -i proycon/lamachine /bin/bash``, or run stuff: ``docker run proycon/lamachine <program>``  (use ``run -i`` if the program has an interactive mode; set up a mounted volume to pass file from host OS to docker, see: https://docs.docker.com/userguide/dockervolumes/)
 
@@ -60,8 +62,8 @@ Installation & Usage locally (for Linux/BSD/Mac OS X)
 
 LaMachine can also be used on a Linux/BSD/Mac OS X system without root access
 (provided a set of prerequisites is available on the system). This is done
-through an extension for Python VirtualEnv, as we provide a lot of Python
-bindings anyhow. This offers a local environment (ideal for development!) that
+through an extension for Python VirtualEnv (using Python 3), as we provide a lot of Python
+bindings anyhow. This offers a local environment, ideal for development, that
 binds against the software globally available on your system. All sources are
 pulled from git and compiled for you.
 
@@ -72,14 +74,15 @@ pulled from git and compiled for you.
 3. Bootstrap the virtual environment by calling: ``/path/to/LaMachine/virtualenv-bootstrap.sh``
 
 Note that you will always have to activate your virtual environment with ``.
-lamachine/bin/activate`` if you open a new terminal
+lamachine/bin/activate`` (don't forget the dot!) if you open a new terminal. This requires you use bash
+or zsh.
 
 Tested to work on:
+* Arch Linux
+* Fedora Core 21
+* Mac OS X Yosemite
 * Ubuntu 14.04 LTS - Trusty Tahr
 * Ubuntu 12.04 LTS - Precise Pangolin
-* Fedora Core 21
-* Arch Linux
-* Mac OS X Yosemite
 
 
 Updating
