@@ -35,7 +35,7 @@ Installation & Usage as Virtual Machine (for Linux, BSD, MacOS X, Windows)
 
 1. Obtain **Vagrant** from https://www.vagrantup.com/downloads.html or your package manager.
 2. Obtain **VirtualBox** from https://www.virtualbox.org/ or your package manager.
-3. Clone this repository and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine`` 
+3. Clone this repository and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine``  (or [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) manually from github)
 4. Power up the VM: ``vagrant up`` (this will download and install everything the first time)
 5. SSH into your VM: ``vagrant ssh``
 6. When done, power down the VM with: ``vagrant halt`` (and you can delete it entirely with ``vagrant destroy``)
@@ -66,7 +66,7 @@ bindings anyhow. This offers a local environment, ideal for development, that
 binds against the software globally available on your system. All sources are
 pulled from git and compiled for you.
 
-1. Clone this repository and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine``  (or download it manually from github)
+1. Clone this repository and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine``  (or [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) manually from github)
 2. In a terminal, navigate to the directory where you want to create the
    virtual environment, or alternatively pre-create and activate one with ``virtualenv --python=python3
    lamachine && . lamachine/bin/activate``
