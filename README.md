@@ -35,10 +35,6 @@ Installation & Usage as Virtual Machine (for Linux, BSD, MacOS X, Windows)
 
 1. Obtain **Vagrant** from https://www.vagrantup.com/downloads.html or your package manager.
 2. Obtain **VirtualBox** from https://www.virtualbox.org/ or your package manager.
-
-On most Linux distributions, steps one and two may be combined with a simple command such as
-``sudo apt-get install virtualbox vagrant`` on Ubuntu, or ``sudo pacman -Syu virtualbox vagrant`` on Arch Linux.
-
 3. Clone this repository and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine`` 
 4. Power up the VM: ``vagrant up`` (this will download and install everything the first time)
 5. SSH into your VM: ``vagrant ssh``
@@ -46,6 +42,9 @@ On most Linux distributions, steps one and two may be combined with a simple com
 
 You may want to adapt Vagrantfile to change the number of CPUs and Memory
 available to the VM (2 CPUs and 3GB RAM by default).
+
+On most Linux distributions, steps one and two may be combined with a simple command such as
+``sudo apt-get install virtualbox vagrant`` on Ubuntu, or ``sudo pacman -Syu virtualbox vagrant`` on Arch Linux.
 
 
 Installation & Usage with Docker (for Linux only)
