@@ -324,7 +324,11 @@ esac
 
 
 
-PROJECTS="ticcutils libfolia foliatools ucto timbl timblserver mbt wopr frogdata"
+if [ "$OS" == "mac" ]; then
+    PROJECTS="ticcutils libfolia ucto timbl timblserver mbt wopr frogdata" #no foliatools on mac yet
+else
+    PROJECTS="ticcutils libfolia foliatools ucto timbl timblserver mbt wopr frogdata"
+fi
 
 for project in $PROJECTS; do
     echo 
