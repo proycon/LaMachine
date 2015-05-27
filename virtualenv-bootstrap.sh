@@ -49,15 +49,15 @@ if [ "$1" != "noadmin" ]; then
     echo "Detecting package manager..."
     INSTALL=""
     if [ "$OS" == "arch" ]; then
-        INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs python2 cython cython2 python python2 python-pip python2-pip python-requests python-lxml python2-lxml python-pycurl python-virtualenv python-numpy python2-numpy python-scipy python2-scipy python-matplotlib python2-matplotlib python-pandas python2-pandas python-nltk ipython ipython-notebook wget curl"
+        INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs python2 cython cython2 python python2 python-pip python2-pip python-requests python-lxml python2-lxml python-pycurl python-virtualenv python-numpy python2-numpy python-scipy python2-scipy python-matplotlib python2-matplotlib python-pandas python2-pandas python-nltk ipython ipython-notebook wget curl libexttextcat"
     elif [ "$OS" == "debian" ]; then
-        INSTALL="sudo apt-get install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libbz2-dev zlib1g-dev libtar-dev libboost-all-dev python-dev cython python3 python3-dev python-pip python3-pip cython cython3 python3-requests python-lxml python3-lxml python3-pycurl python-virtualenv python-numpy python3-numpy python-scipy python3-scipy python-matplotlib python3-matplotlib python-pandas python3-pandas python-requests python3-requests libcurl4-gnutls-dev libcurl4-gnutls wget" 
+        INSTALL="sudo apt-get install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libbz2-dev zlib1g-dev libtar-dev libboost-all-dev python-dev cython python3 python3-dev python-pip python3-pip cython cython3 python3-requests python-lxml python3-lxml python3-pycurl python-virtualenv python-numpy python3-numpy python-scipy python3-scipy python-matplotlib python3-matplotlib python-pandas python3-pandas python-requests python3-requests libcurl4-gnutls-dev libcurl4-gnutls wget libexttextcat-dev" 
     elif [ "$OS" == "redhat" ]; then
-        INSTALL="sudo yum install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libtar libtar-devel boost boost-devel python python-devel python3 python3-devel python-lxml python3-lxml Cython zlib zlib-devel python-numpy python3-numpy scipy python3-scipy python-matplotlib python3-matplotlib python3-virtualenv python-pip python3-pip bzip2 bzip2-devel libcurl libcurl-devel wget"
+        INSTALL="sudo yum install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libtar libtar-devel boost boost-devel python python-devel python3 python3-devel python-lxml python3-lxml Cython zlib zlib-devel python-numpy python3-numpy scipy python3-scipy python-matplotlib python3-matplotlib python3-virtualenv python-pip python3-pip bzip2 bzip2-devel libcurl libcurl-devel wget libexttextcat libexttextcat-devel"
     elif [ "$OS" == "freebsd" ]; then
         INSTALL="sudo pkg install git gcc libtool autoconf automake autoconf-archive gmake libxml2 icu libtar boost-all lzlib python2 python3 cython bzip2 py27-virtualenv curl wget"
     elif [ "$OS" == "mac" ]; then
-        INSTALL="brew install python3 autoconf automake libtool autoconf-archive boost xml2 icu4c"
+        INSTALL="brew install python3 autoconf automake libtool autoconf-archive boost xml2 icu4c libtextcat"
     else
         error "No suitable package manage detected! Unable to verify and install the necessary global dependencies"
         if [ -d "/Users" ]; then
@@ -324,7 +324,7 @@ esac
 
 
 
-PROJECTS="ticcutils libfolia ucto timbl timblserver mbt wopr frogdata"
+PROJECTS="ticcutils libfolia foliatools ucto timbl timblserver mbt wopr frogdata"
 
 for project in $PROJECTS; do
     echo 
