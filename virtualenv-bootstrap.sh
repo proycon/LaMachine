@@ -386,10 +386,10 @@ else
 fi
 
 echo 
-echo "--------------------------------------------------------"
+echo "--------------------------------------------------------------"
 echo "Installing Python dependencies from the Python Package Index"
-echo "--------------------------------------------------------"
-pip install -U cython ipython numpy scipy matplotlib lxml django
+echo "--------------------------------------------------------------"
+pip install -U cython ipython numpy scipy matplotlib gensim scikit-learn lxml django
 
 
 PYTHONPROJECTS="pynlpl folia foliadocserve flat"

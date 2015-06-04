@@ -22,7 +22,7 @@ echo "[LaMachine] Installing global dependencies"
 echo "--------------------------------------------------------"
 #will run as root
 pacman -Syu --noconfirm --needed base-devel || fatalerror "Unable to install global dependencies"
-PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs python2 cython cython2 python python2 python-pip python2-pip python-requests python-lxml python2-lxml python-pycurl python-virtualenv python-numpy python2-numpy python-scipy python2-scipy python-matplotlib python2-matplotlib python-pandas python2-pandas python-nltk ipython ipython-notebook wget curl libexttextcat"
+PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs python2 cython cython2 python python2 python-pip python2-pip python-requests python-lxml python2-lxml python-pycurl python-virtualenv python-numpy python2-numpy python-scipy python2-scipy python-matplotlib python2-matplotlib python-pandas python2-pandas python-nltk python-scikit-learn ipython ipython-notebook wget curl libexttextcat"
 pacman --noconfirm --needed -Syu $PKGS ||  fatalerror "Unable to install global dependencies"
 
 umask u=rwx,g=rwx,o=r
@@ -55,7 +55,7 @@ fi
 cp bootstrap.sh /usr/bin/lamachine-update.sh
 cd ..
 
-PACKAGES="ticcutils-git libfolia-git foliatools-git ucto-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git"
+PACKAGES="ticcutils-git libfolia-git foliatools-git ucto-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git python-gensim"
 
 for package in $PACKAGES; do
     project="${package%-git}"
