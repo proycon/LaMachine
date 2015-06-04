@@ -61,10 +61,10 @@ Installation & Usage locally (for Linux/BSD/Mac OS X)
 
 LaMachine can also be used on a Linux/BSD/Mac OS X system without root access
 (provided a set of prerequisites is available on the system). This is done
-through an extension for Python VirtualEnv (using Python 3), as we provide a lot of Python
-bindings anyhow. This offers a local environment, ideal for development, that
-binds against the software globally available on your system. All sources are
-pulled from git and compiled for you.
+through an extension for Python VirtualEnv (using Python 3.3 or later), as we
+provide a lot of Python bindings anyhow. This offers a local environment, ideal
+for development, that binds against the software globally available on your
+system. All sources are pulled from git and compiled for you.
 
 1. Clone this repository and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine``  (or [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) manually from github)
 2. In a terminal, navigate to the directory where you want to create the

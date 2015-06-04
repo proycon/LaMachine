@@ -389,7 +389,7 @@ echo
 echo "--------------------------------------------------------------"
 echo "Installing Python dependencies from the Python Package Index"
 echo "--------------------------------------------------------------"
-pip install -U cython ipython numpy scipy matplotlib gensim scikit-learn lxml django
+pip install -U cython ipython numpy scipy matplotlib seaborn gensim scikit-learn lxml django pycurl pycrypto pandas
 
 
 PYTHONPROJECTS="pynlpl folia foliadocserve flat"
