@@ -82,7 +82,7 @@ Tested to work on:
 * Mac OS X Yosemite
 * Ubuntu 14.04 LTS - Trusty Tahr
 * Ubuntu 12.04 LTS - Precise Pangolin
-
+* Ubuntu 15.04 - Vivid Vervet
 
 Updating
 ===========
