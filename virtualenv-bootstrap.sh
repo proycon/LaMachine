@@ -291,11 +291,22 @@ echo "--------------------------------------------------------"
 if [ ! -d LaMachine ]; then
     git clone https://github.com/proycon/LaMachine || fatalerror "Unable to clone git repo for LaMachine"
     cd LaMachine
+    cp virtualenv-bootstrap.sh $VIRTUAL_ENV/bin/lamachine-update.sh
 else
     cd LaMachine
+    OLDSUM=`sum virtualenv-bootstrap.sh`
     git pull
+    NEWSUM=`sum virtualenv-bootstrap.sh`
+    cp virtualenv-bootstrap.sh $VIRTUAL_ENV/bin/lamachine-update.sh
+    if [ "$OLDSUM" != "$NEWSUM" ]; then
+        echo "----------------------------------------------------------------"
+        echo "LaMachine has been updated with a newer version, restarting..."
+        echo "----------------------------------------------------------------"
+        sleep 3
+        ./virtualenv-bootstrap.sh 
+        exit $?
+    fi
 fi
-cp virtualenv-bootstrap.sh $VIRTUAL_ENV/bin/lamachine-update.sh
 cd ..
 
 
