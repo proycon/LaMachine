@@ -26,11 +26,11 @@ CONDA=0
 #    fi
 #    CONDA=1
 
-ARCH=`which pacman`
-DEBIAN=`which apt-get`
-MAC=`which brew`
-REDHAT=`which yum`
-FREEBSD=`which pkg`
+ARCH=`which pacman 2> /dev/null`
+DEBIAN=`which apt-get 2> /dev/null`
+MAC=`which brew 2> /dev/null`
+REDHAT=`which yum 2> /dev/null`
+FREEBSD=`which pkg 2> /dev/null`
 if [ -f "$ARCH" ]; then
     OS='arch'
 elif [ -f "$DEBIAN" ]; then
