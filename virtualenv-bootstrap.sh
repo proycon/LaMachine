@@ -71,9 +71,10 @@ if [ "$1" != "noadmin" ]; then
         echo "-------------------------------"
         echo "Updating global dependencies "
         echo "-------------------------------"
-        echo " (this step, and only this step, may require root access, skip it with CTRL-C if you don't have it and ask your system administrator to install the mentioned dependencies instead)"
+        echo " (this step, and only this step, may require root access, skip it with CTRL-C if you don't have it)"
         echo "Command: $INSTALL"
-        $INSTALL
+        $INSTALL || error "Global dependencies could not be updated, possibly due to you not having root-access. In which case you may need to ask your system administrator to install the above-mentioned dependencies. Installation will continue as normal, but if a later error occurs, then a missing global dependency is likely the cause."
+        sleep 3
     fi
 
     if [ "$OS" == "redhat" ]; then
