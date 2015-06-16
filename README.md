@@ -80,9 +80,9 @@ Tested to work on:
 * Arch Linux
 * Fedora Core 21
 * Mac OS X Yosemite
+* Ubuntu 15.04 - Vivid Vervet
 * Ubuntu 14.04 LTS - Trusty Tahr
 * Ubuntu 12.04 LTS - Precise Pangolin
-* Ubuntu 15.04 - Vivid Vervet
 
 Updating
 ===========
