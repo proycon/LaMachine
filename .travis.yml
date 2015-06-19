@@ -4,6 +4,8 @@ python:
     - 3.3
     - 3.4
 sudo: required
+before-install:
+    - sudo apt-get update
 install: 
     - bash virtualenv-bootstrap.sh
 script:
