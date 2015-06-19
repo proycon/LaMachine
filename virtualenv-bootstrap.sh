@@ -49,11 +49,11 @@ if [ "$1" != "noadmin" ]; then
     echo "Detecting package manager..."
     INSTALL=""
     if [ "$OS" == "arch" ]; then
-        INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive icu xml2 libxslt zlib libtar boost boost-libs python2 cython cython2 python python2 python-pip python2-pip python-requests python-lxml python2-lxml python-pycurl python-virtualenv python-numpy python2-numpy python-scipy python2-scipy python-matplotlib python2-matplotlib python-pandas python2-pandas python-nltk ipython ipython-notebook wget gnutls curl libexttextcat"
+        INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive icu xml2 libxslt zlib libtar boost boost-libs python2 python python-pip python-virtualenv wget gnutls curl libexttextcat"
     elif [ "$OS" == "debian" ]; then
-        INSTALL="sudo apt-get install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libboost-all-dev python-dev cython python3 python3-dev python-pip python3-pip cython cython3 python3-requests python-lxml python3-lxml python3-pycurl python-virtualenv python-numpy python3-numpy python-scipy python3-scipy python-matplotlib python3-matplotlib python-pandas python3-pandas python-requests python3-requests gnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev" 
+        INSTALL="sudo apt-get install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libboost-all-dev python-dev python3 python3-dev python-pip python3-pip python-virtualenv gnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev" 
     elif [ "$OS" == "redhat" ]; then
-        INSTALL="sudo yum install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python python-devel python3 python3-devel python-lxml python3-lxml Cython zlib zlib-devel python-numpy python3-numpy scipy python3-scipy python-matplotlib python3-matplotlib python3-virtualenv python-pip python3-pip bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel"
+        INSTALL="sudo yum install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python python-devel python3 python3-devel zlib zlib-devel python3-virtualenv python-pip python3-pip bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel"
     elif [ "$OS" == "freebsd" ]; then
         INSTALL="sudo pkg install git gcc libtool autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python2 python3 cython bzip2 py27-virtualenv curl wget gnutls"
     elif [ "$OS" == "mac" ]; then
@@ -71,7 +71,7 @@ if [ "$1" != "noadmin" ]; then
         echo "-------------------------------"
         echo "Updating global dependencies "
         echo "-------------------------------"
-        echo " (this step, and only this step, may require root access, skip it with CTRL-C if you don't have it)"
+        echo " (this step, and only this step, may require root access, skip it with CTRL-C if you do not have it)"
         echo "Command: $INSTALL"
         $INSTALL || error "Global dependencies could not be updated, possibly due to you not having root-access. In which case you may need to ask your system administrator to install the above-mentioned dependencies. Installation will continue as normal, but if a later error occurs, then a missing global dependency is likely the cause."
         sleep 3
