@@ -51,7 +51,7 @@ if [ "$1" != "noadmin" ]; then
     if [ "$OS" == "arch" ]; then
         INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive icu xml2 libxslt zlib libtar boost boost-libs python2 python python-pip python-virtualenv wget gnutls curl libexttextcat"
     elif [ "$OS" == "debian" ]; then
-        INSTALL="sudo apt-get install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libboost-all-dev python-dev python3 python3-dev python-pip python3-pip python-virtualenv gnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev" 
+        INSTALL="sudo apt-get -m install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libboost-all-dev python-dev python3 python3-dev python-pip python3-pip python-virtualenv gnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev" 
     elif [ "$OS" == "redhat" ]; then
         INSTALL="sudo yum install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python python-devel python3 python3-devel zlib zlib-devel python3-virtualenv python-pip python3-pip bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel"
     elif [ "$OS" == "freebsd" ]; then
