@@ -1,6 +1,20 @@
 language: python
+
 python:
     - 3.3
     - 3.4
 install: 
     - bash virtualenv-bootstrap.sh
+script:
+    - . lamachine/bin/activate
+    - which ucto
+    - which frog
+    - which timbl
+    - which mbt
+    - which wopr
+    - which foliavalidator
+    - python -c "import pynlpl"
+    - python -c "import timbl"
+    - python -c "import ucto"
+    - python -c "import frog"
+    - python -c "import colibricore"
