@@ -7,9 +7,9 @@ sudo: required
 before-install:
     - sudo apt-get update
 install: 
-    - bash virtualenv-bootstrap.sh
+    - bash virtualenv-bootstrap.sh  #cause of travis' setup, we will already be in a virtualenv and reuse it
 script:
-    - . lamachine/bin/activate
+    - export LD_LIBRARY_PATH="$VIRTUAL_ENV/lib/:$LD_LIBRARY_PATH" #cause of travis' setup, we will already be in a virtualenv and reuse it, little hack to get LD_LIBRARY_PATH right
     - which ucto
     - which frog
     - which timbl
