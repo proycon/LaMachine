@@ -458,8 +458,10 @@ else
     cd python-timbl
     git pull
 fi
-if [ -d /usr/lib/x86_64-linux-gnu ]; then
+if [ -f /usr/lib/x86_64-linux-gnu/libboost_python.so ]; then
     python setup3.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
+elif [ -f /usr/lib/i386-linux-gnu/libboost_python.so ]; then
+    python setup3.py build_ext --boost-library-dir=/usr/lib/i386-linux-gnu install
 else
     python setup3.py build_ext install
 fi
