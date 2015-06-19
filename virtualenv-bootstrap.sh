@@ -92,15 +92,18 @@ if [ -z "$VIRTUAL_ENV" ]; then
     VENV=`which virtualenv`
     if [ ! -f "$VENV" ]; then
         error "virtualenv not found"
-        PIP3=`which pip3`
-        if [ ! -f "$PIP3" ]; then
-            fatalerror "pip3 not found"
+        PIP=`which pip3`
+        if [ ! -f "$PIP" ]; then
+            PIP=`which pip`
+            if [ ! -f "$PIP" ]; then
+                fatalerror "pip3 or pip not found"
+            fi
         fi
         echo "Attempting to install virtualenv"
-        pip3 install virtualenv
+        $PIP install virtualenv
         if [ "$?" != "0" ]; then
             echo "Retrying as root:"
-            sudo pip3 install virtualenv || fatalerror "Unable to install virtualenv :( .. Giving up, ask your system administrator to install the necessary dependencies first or try the LaMachine VM instead"
+            sudo $PIP install virtualenv || fatalerror "Unable to install virtualenv :( .. Giving up, ask your system administrator to install the necessary dependencies first or try the LaMachine VM instead"
         fi
     fi
     echo
