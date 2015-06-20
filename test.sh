@@ -17,7 +17,7 @@ which foliavalidator || testerror "FoLiA validator not found"
 python -c "import pynlpl" || testerror "PyNLPl not found"
 python -c "import timbl" || testerror "python-timbl not found"
 python -c "import ucto" || testerror "python-ucto not found"
-which patternmodeller || testerror "Colibri Core not found"
+which colibri-patternmodeller || testerror "Colibri Core not found"
 python -c "import colibricore" || testerror "colibricore not found for python"
 python -c "import frog" || testerror "python-frog not found"
 
