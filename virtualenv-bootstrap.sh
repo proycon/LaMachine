@@ -472,7 +472,7 @@ if [ "$?" == 65 ]; then
     echo "boost-python not found for this version of Python, we are gonna attempt to compile it manually"
     TS=`date +%s`
     wget "http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.bz2?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.58.0%2F&ts=$TS&use_mirror=garr" -O boost.tar.bz2
-    tar -xvjf boost.tar.bz2
+    tar -xjf boost.tar.bz2 2>/dev/null
     cd boost*
     ./bootstrap.sh --with-libraries=python --prefix=$VIRTUAL_ENV --with-python-root=$VIRTUAL_ENV
     ./b2 || error "Manual boost compilation failed"
