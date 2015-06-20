@@ -49,15 +49,15 @@ if [ "$1" != "noadmin" ]; then
     echo "Detecting package manager..."
     INSTALL=""
     if [ "$OS" == "arch" ]; then
-        INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive icu xml2 libxslt zlib libtar boost boost-libs python2 python python-pip python-virtualenv wget gnutls curl libexttextcat"
+        INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive bjam icu xml2 libxslt zlib libtar boost boost-libs python2 python python-pip python-virtualenv wget gnutls curl libexttextcat"
     elif [ "$OS" == "debian" ]; then
-        INSTALL="sudo apt-get -m install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libboost-all-dev python-dev python3 python3-dev python-pip python-virtualenv libgnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev $EXTRA" 
+        INSTALL="sudo apt-get -m install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev bjam libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libboost-all-dev python-dev python3 python3-dev python-pip python-virtualenv libgnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev $EXTRA" 
     elif [ "$OS" == "redhat" ]; then
-        INSTALL="sudo yum install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python python-devel python3 python3-devel zlib zlib-devel python3-virtualenv python-pip python3-pip bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel"
+        INSTALL="sudo yum install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ bjam libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python python-devel python3 python3-devel zlib zlib-devel python3-virtualenv python-pip python3-pip bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel"
     elif [ "$OS" == "freebsd" ]; then
-        INSTALL="sudo pkg install git gcc libtool autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python2 python3 cython bzip2 py27-virtualenv curl wget gnutls"
+        INSTALL="sudo pkg install git gcc libtool autoconf automake autoconf-archive gmake bjam libxml2 libxslt icu libtar boost-all lzlib python2 python3 cython bzip2 py27-virtualenv curl wget gnutls"
     elif [ "$OS" == "mac" ]; then
-        INSTALL="brew install python3 autoconf automake libtool autoconf-archive boost xml2 libxslt icu4c libtextcat"
+        INSTALL="brew install python3 autoconf automake libtool bjam autoconf-archive boost xml2 libxslt icu4c libtextcat"
     else
         error "No suitable package manage detected! Unable to verify and install the necessary global dependencies"
         if [ -d "/Users" ]; then
@@ -458,12 +458,26 @@ else
     cd python-timbl
     git pull
 fi
-if [ -f /usr/lib/x86_64-linux-gnu/libboost_python.so ]; then
+if [ -f "$VIRTUAL_ENV/lib/libboost_python.so" ]; then
+    python setup3.py build_ext --boost-library-dir=$VIRTUAL_ENV/lib install
+elif [ -f /usr/lib/x86_64-linux-gnu/libboost_python.so ]; then
     python setup3.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
 elif [ -f /usr/lib/i386-linux-gnu/libboost_python.so ]; then
     python setup3.py build_ext --boost-library-dir=/usr/lib/i386-linux-gnu install
 else
     python setup3.py build_ext install
+fi
+if [ "$?" == 65 ]; then
+    #boost not found
+    echo "boost-python not found for this version of Python, we are gonna attempt to compile it manually"
+    wget "http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.bz2?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.58.0%2F&ts=1434820400&use_mirror=garr" -O boost.tar.bz2
+    tar -xvjf boost.tar.bz2
+    cd boost*
+    ./bootstrap.sh --with-libraries=python --prefix=$VIRTUAL_ENV --with-python-root=$VIRTUAL_ENV
+    ./b2 || error "Manual boost compilation failed"
+    ./b2 install || error "Manual boost installation failed"
+    cd ..
+    python setup3.py build_ext --boost-library-dir=$VIRTUAL_ENV/lib install
 fi
 cd ..
 
@@ -482,6 +496,8 @@ if [ -f /usr/bin/python2.7 ]; then
     fi
     python setup.py install
     cd ..
+else
+    echo "No Python 2.7 available, skipping python-frog"
 fi
 
 echo
