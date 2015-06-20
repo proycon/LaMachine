@@ -470,7 +470,8 @@ fi
 if [ "$?" == 65 ]; then
     #boost not found
     echo "boost-python not found for this version of Python, we are gonna attempt to compile it manually"
-    wget "http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.bz2?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.58.0%2F&ts=1434820400&use_mirror=garr" -O boost.tar.bz2
+    TS=`date +%s`
+    wget "http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.bz2?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.58.0%2F&ts=$TS&use_mirror=garr" -O boost.tar.bz2
     tar -xvjf boost.tar.bz2
     cd boost*
     ./bootstrap.sh --with-libraries=python --prefix=$VIRTUAL_ENV --with-python-root=$VIRTUAL_ENV
