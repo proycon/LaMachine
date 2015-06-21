@@ -476,7 +476,12 @@ if [ "$?" == 65 ]; then
         tar -xjf boost.tar.bz2 2>/dev/null
     fi
     cd boost*
-    PYTHONINCLUDE=`ls -ld $VIRTUAL_ENV/include/python3*`
+    PYTHONINCLUDE=`find -L $VIRTUAL_ENV/include -name pyconfig.h | head -n 1`
+    if [ "$?" != "0" ]; then
+        error "pyconfig.h not found!"
+    fi
+    echo $PYTHONINCLUDE
+    PYTHONINCLUDE=`dirname $PYTHONINCLUDE`
     export CPLUS_INCLUDE_PATH="$PYTHONINCLUDE:$CPLUS_INCLUDE_PATH"
     ./bootstrap.sh --with-libraries=python --prefix=$VIRTUAL_ENV --with-python-root=$VIRTUAL_ENV --with-python="$VIRTUAL_ENV/bin/python"
     ./b2 || error "Manual boost compilation failed"
