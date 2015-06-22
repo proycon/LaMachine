@@ -525,6 +525,22 @@ fi
 python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV
 cd ..
 
+
+project="gecco"
+echo 
+echo "--------------------------------------------------------"
+echo "Installing $project">&2
+echo "--------------------------------------------------------"
+if [ ! -d $project ]; then
+    git clone https://github.com/proycon/$project
+    cd $project
+else
+    cd $project
+    git pull
+fi
+python setup.py install --prefix=$VIRTUAL_ENV || fatalerror "setup.py install $project failed"
+cd ..
+
 echo "--------------------------------------------------------"
 echo "All done!">&2
 echo "  From now on, activate your virtual environment as follows: . $VIRTUAL_ENV/bin/activate">&2
