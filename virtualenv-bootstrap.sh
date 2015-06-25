@@ -406,7 +406,7 @@ echo "Installing Python dependencies from the Python Package Index"
 echo "--------------------------------------------------------------"
 pip install -U cython
 pip install -U numpy
-pip install -U ipython scipy matplotlib gensim scikit-learn lxml django pycrypto pandas textblob nltk psutil
+pip install -U ipython scipy matplotlib gensim scikit-learn lxml django pycrypto pandas textblob nltk psutil flask requests requests_toolbelt requests_oauthlib
 
 
 PYTHONPROJECTS="pynlpl folia foliadocserve flat"
@@ -525,6 +525,21 @@ fi
 python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV
 cd ..
 
+echo 
+echo "--------------------------------------------------------"
+echo "Installing clam">&2
+echo "--------------------------------------------------------"
+if [ ! -d clam ]; then
+    git clone https://github.com/proycon/clam
+    git checkout python3flask
+    cd clam
+else
+    cd clam
+    git checkout python3flask
+    git pull
+fi
+python setup.py install --prefix=$VIRTUAL_ENV || fatalerror "setup.py install clam failed"
+cd ..
 
 project="gecco"
 echo 
