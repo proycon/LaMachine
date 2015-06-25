@@ -531,8 +531,8 @@ echo "Installing clam">&2
 echo "--------------------------------------------------------"
 if [ ! -d clam ]; then
     git clone https://github.com/proycon/clam
-    git checkout python3flask
     cd clam
+    git checkout python3flask
 else
     cd clam
     git checkout python3flask
