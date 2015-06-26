@@ -1,4 +1,5 @@
 FROM nfnty/arch-devel:latest
+EXPOSE 80
 USER root
 MAINTAINER Maarten van Gompel <proycon@anaproy.nl>
 WORKDIR /usr/src/
