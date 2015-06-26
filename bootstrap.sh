@@ -22,7 +22,7 @@ echo "[LaMachine] Installing global dependencies"
 echo "--------------------------------------------------------"
 #will run as root
 pacman -Syu --noconfirm --needed base-devel || fatalerror "Unable to install global dependencies"
-PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs python2 cython cython2 python python2 python-pip python2-pip python-requests python-lxml python2-lxml python-pycurl python-virtualenv python-numpy python2-numpy python-scipy python2-scipy python-matplotlib python2-matplotlib python-pandas python2-pandas python-nltk python-scikit-learn python-psutil ipython ipython-notebook wget curl libexttextcat"
+PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs python2 cython cython2 python python2 python-pip python2-pip python-requests python-lxml python2-lxml python-pycurl python-virtualenv python-numpy python2-numpy python-scipy python2-scipy python-matplotlib python2-matplotlib python-pandas python2-pandas python-nltk python-scikit-learn python-psutil ipython ipython-notebook wget curl libexttextcat python-flask python-requests python-requests-oauthlib python-requests-toolbelt python-crypto nginx uwsgi"
 pacman --noconfirm --needed -Syu $PKGS ||  fatalerror "Unable to install global dependencies"
 
 umask u=rwx,g=rwx,o=r
@@ -53,6 +53,8 @@ else
     git pull
 fi
 cp bootstrap.sh /usr/bin/lamachine-update.sh
+cp nginx.mime.types /etc/nginx/
+cp nginx.conf /etc/nginx/
 cd ..
 
 PACKAGES="ticcutils-git libfolia-git foliatools-git ucto-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git python-gensim"
@@ -106,6 +108,25 @@ echo "--------------------------------------------------------"
 echo "[LaMachine] Installing colibri-core"
 echo "--------------------------------------------------------"
 pip install --root / colibricore || error "Installation of colibri-core failed !!"
+
+
+echo "--------------------------------------------------------"
+echo "[LaMachine] Installing CLAM  (Python 3 beta)"
+echo "--------------------------------------------------------"
+if [ ! -d clam ]; then
+    git clone https://github.com/proycon/clam
+    chmod a+rx clam
+    cd clam
+    git checkout python3flask
+else
+    cd clam
+    git checkout python3flask
+    git pull
+fi
+python setup.py install || error "setup.py install clam failed"
+cd ..
+
+
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] All done!  "
