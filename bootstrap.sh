@@ -25,7 +25,7 @@ pacman -Syu --noconfirm --needed base-devel || fatalerror "Unable to install glo
 PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs python2 cython cython2 python python2 python-pip python2-pip python-requests python-lxml python2-lxml python-pycurl python-virtualenv python-numpy python2-numpy python-scipy python2-scipy python-matplotlib python2-matplotlib python-pandas python2-pandas python-nltk python-scikit-learn python-psutil ipython ipython-notebook wget curl libexttextcat python-flask python-requests python-requests-oauthlib python-requests-toolbelt python-crypto nginx uwsgi"
 pacman --noconfirm --needed -Syu $PKGS ||  fatalerror "Unable to install global dependencies"
 
-umask u=rwx,g=rwx,o=r
+umask u=rwx,g=rwx,o=rx
 
 sed -i s/lecture=once/lecture=never/ /etc/sudoers
 echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
@@ -56,6 +56,7 @@ cp bootstrap.sh /usr/bin/lamachine-update.sh
 cp nginx.mime.types /etc/nginx/
 cp nginx.conf /etc/nginx/
 cd ..
+chmod a+rx LaMachine
 
 PACKAGES="ticcutils-git libfolia-git foliatools-git ucto-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git python-gensim"
 
