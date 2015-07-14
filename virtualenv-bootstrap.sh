@@ -422,9 +422,10 @@ echo
 echo "--------------------------------------------------------------"
 echo "Installing Python dependencies from the Python Package Index"
 echo "--------------------------------------------------------------"
-pip install -U cython || fatalerror "Unable to install Cython from Python Package Index"
-pip install -U numpy || fatalerror "Unable to install Cython from Python Package Index"
-pip install -U ipython scipy matplotlib gensim scikit-learn lxml django pycrypto pandas textblob nltk psutil flask requests requests_toolbelt requests_oauthlib || fatalerror "Unable to install a dependency from Python Package Index"
+PYTHONDEPS="cython numpy ipython scipy matplotlib lxml scikit-learn django pycrypto pandas textblob nltk psutil flask requests requests_toolbelt requests_oauthlib"
+for PYTHONDEP in $PYTHONDEPS; do
+    pip install -U $PYTHONDEP || fatalerror "Unable to install $PYTHONDEP from Python Package Index"
+done
 
 
 PYTHONPROJECTS="pynlpl folia foliadocserve flat"
