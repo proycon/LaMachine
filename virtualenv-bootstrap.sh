@@ -57,7 +57,13 @@ if [ "$1" != "noadmin" ]; then
     elif [ "$OS" == "freebsd" ]; then
         INSTALL="sudo pkg install git gcc libtool autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python2 python3 cython bzip2 py27-virtualenv curl wget gnutls aspell"
     elif [ "$OS" == "mac" ]; then
-        INSTALL="brew install python3 autoconf automake libtool autoconf-archive boost xml2 libxslt icu4c libtextcat aspell"
+        MACPYTHON3=`which python3` 
+        if [ "$?" != 0 ]; then
+            BREWEXTRA="python3"
+        else
+            BREWEXTRA=""
+        fi
+        INSTALL="brew install autoconf automake libtool autoconf-archive boost xml2 libxslt icu4c libtextcat aspell $BREWEXTRA"
     else
         error "No suitable package manage detected! Unable to verify and install the necessary global dependencies"
         if [ -d "/Users" ]; then
