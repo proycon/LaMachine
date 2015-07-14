@@ -122,6 +122,17 @@ if [ "$OS" == "mac" ]; then
     echo "Copying ICU to virtual environment"
     echo "-------------------------------------"
     cp -R /usr/local/opt/icu4c/* $VIRTUAL_ENV/ 2> /dev/null
+
+    echo
+    echo "-------------------------------------"
+    echo "Testing whether libxml2 is sane"
+    echo "-------------------------------------"
+    XMLPATH=`pkg-config --cflags libxml-2.0`
+    if [ "$?" != "0" ] || [ -d ${XMLPATH:2} ]; then
+        echo "xml2 is not sane, attempting to compensate..."
+        export PKG_CONFIG_PATH=`ls /usr/local/Cellar/libxml2/*/lib/pkgconfig`
+    fi
+
 fi
 
 
