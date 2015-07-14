@@ -129,8 +129,9 @@ if [ "$OS" == "mac" ]; then
     echo "-------------------------------------"
     XMLPATH=`pkg-config --cflags libxml-2.0`
     if [ "$?" != "0" ] || [ ! -d ${XMLPATH:2} ]; then
-        echo "xml2 is not sane, attempting to compensate..."
-        export PKG_CONFIG_PATH=`ls /usr/local/Cellar/libxml2/*/lib/pkgconfig`
+        echo "xml2 is not sane, attempting to compensate"
+        export PKG_CONFIG_PATH=`ls -d /usr/local/Cellar/libxml2/*/lib/pkgconfig`
+        echo "PKG_CONFIG_PATH is now $PKG_CONFIG_PATH"
     fi
 
 fi
