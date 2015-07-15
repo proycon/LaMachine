@@ -465,7 +465,7 @@ else
     git pull
     rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
 fi
-python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV
+python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV || error "Python-ucto installation failed"
 cd ..
 
 
@@ -509,11 +509,11 @@ if [ "$?" == 65 ]; then
     ./b2 || error "Manual boost compilation failed"
     ./b2 install || error "Manual boost installation failed"
     cd ..
-    python setup3.py build_ext --boost-library-dir=$VIRTUAL_ENV/lib install
+    python setup3.py build_ext --boost-library-dir=$VIRTUAL_ENV/lib install || error "python-timbl installation failed"
 fi
 cd ..
 
-if [ -f /usr/bin/python2.7 ]; then
+if [ -f /usr/bin/python2.7 ] || [ -f /usr/local/bin/python2.7 ]; then
     echo
     echo "--------------------------------------------------------"
     echo "Installing python-frog"
@@ -526,7 +526,7 @@ if [ -f /usr/bin/python2.7 ]; then
         git pull
         rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
     fi
-    python setup.py install
+    python setup.py install || error "python-frog failed"
     cd ..
 else
     echo "No Python 2.7 available, skipping python-frog"
@@ -544,7 +544,7 @@ else
     git pull
     rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
 fi
-python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV
+python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV || error "colibri core failed"
 cd ..
 
 echo 
@@ -575,7 +575,7 @@ else
     cd $project
     git pull
 fi
-python setup.py install --prefix=$VIRTUAL_ENV || fatalerror "setup.py install $project failed"
+python setup.py install --prefix=$VIRTUAL_ENV || error "setup.py install $project failed"
 cd ..
 
 echo "--------------------------------------------------------"
