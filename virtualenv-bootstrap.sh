@@ -63,7 +63,7 @@ if [ "$1" != "noadmin" ]; then
         else
             BREWEXTRA=""
         fi
-        INSTALL="brew install autoconf automake libtool autoconf-archive boost xml2 libxslt icu4c libtextcat aspell $BREWEXTRA"
+        INSTALL="brew install autoconf automake libtool autoconf-archive boost xml2 libxslt icu4c libtextcat aspell wget $BREWEXTRA"
     else
         error "No suitable package manage detected! Unable to verify and install the necessary global dependencies"
         if [ -d "/Users" ]; then
