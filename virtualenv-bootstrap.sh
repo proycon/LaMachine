@@ -49,11 +49,11 @@ if [ "$1" != "noadmin" ]; then
     echo "Detecting package manager..."
     INSTALL=""
     if [ "$OS" == "arch" ]; then
-        INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive icu xml2 libxslt zlib libtar boost boost-libs python2 python python-pip python-virtualenv wget gnutls curl libexttextcat aspell blas lapack"
+        INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive icu xml2 libxslt zlib libtar boost boost-libs python2 python python-pip python-virtualenv wget gnutls curl libexttextcat aspell blas lapacki suitesparse"
     elif [ "$OS" == "debian" ]; then
-        INSTALL="sudo apt-get -m install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libboost-all-dev python-dev python3 python3-dev python-pip python-virtualenv libgnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev libblas-dev liblapack-dev gfortran" 
+        INSTALL="sudo apt-get -m install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libboost-all-dev python-dev python3 python3-dev python-pip python-virtualenv libgnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse libsuitesparse-dev" 
     elif [ "$OS" == "redhat" ]; then
-        INSTALL="sudo yum install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python python-devel python3 python3-devel zlib zlib-devel python3-virtualenv python-pip python3-pip bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel aspell aspell-devel blas-devel lapack-devel"
+        INSTALL="sudo yum install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python python-devel python3 python3-devel zlib zlib-devel python3-virtualenv python-pip python3-pip bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel aspell aspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel"
     elif [ "$OS" == "freebsd" ]; then
         INSTALL="sudo pkg install git gcc libtool autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python2 python3 cython bzip2 py27-virtualenv curl wget gnutls aspell"
     elif [ "$OS" == "mac" ]; then
