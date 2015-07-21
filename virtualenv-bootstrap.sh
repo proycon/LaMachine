@@ -430,8 +430,15 @@ for PYTHONDEP in $PYTHONDEPS; do
     pip install -U $PYTHONDEP || fatalerror "Unable to install $PYTHONDEP from Python Package Index"
 done
 
+PYTHONMAJOR="python -c \"import sys; print(sys.version_info.major,end='')\""
+PYTHONMINOR="python -c \"import sys; print(sys.version_info.minor,end='')\""
 
 PYTHONPROJECTS="pynlpl folia foliadocserve flat"
+
+#cleanup previous installations (bit of a hack to prevent a bug when reinstalling)
+rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/PyNLPl*egg
+rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/*FoLiA*egg
+rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/*foliadocserve*egg
 
 echo 
 echo "--------------------------------------------------------"
