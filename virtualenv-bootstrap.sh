@@ -430,8 +430,8 @@ for PYTHONDEP in $PYTHONDEPS; do
     pip install -U $PYTHONDEP || fatalerror "Unable to install $PYTHONDEP from Python Package Index"
 done
 
-PYTHONMAJOR="python -c \"import sys; print(sys.version_info.major,end='')\""
-PYTHONMINOR="python -c \"import sys; print(sys.version_info.minor,end='')\""
+PYTHONMAJOR=`python -c "import sys; print(sys.version_info.major,end='')"`
+PYTHONMINOR=`python -c "import sys; print(sys.version_info.minor,end='')"`
 
 PYTHONPROJECTS="pynlpl folia foliadocserve flat"
 
