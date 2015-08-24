@@ -491,10 +491,6 @@ PYTHONMINOR=`python -c "import sys; print(sys.version_info.minor,end='')"`
 
 PYTHONPROJECTS="pynlpl folia foliadocserve flat"
 
-#cleanup previous installations (bit of a hack to prevent a bug when reinstalling)
-rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/PyNLPl*egg
-rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/*FoLiA*egg
-rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/*foliadocserve*egg
 
 echo 
 echo "--------------------------------------------------------"
@@ -514,6 +510,14 @@ for project in $PYTHONPROJECTS; do
         gitcheck
     fi
     if [ $REPOCHANGED -eq 1 ]; then
+        #cleanup previous installations (bit of a hack to prevent a bug when reinstalling)
+        if [ "$project" == "pynlpl" ]; then
+            rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/PyNLPl*egg
+        elif [ "$project" == "folia" ]; then
+            rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/*FoLiA*egg
+        elif [ "$project" == "foliadocserve" ]; then
+            rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/*foliadocserve*egg
+        fi
         python setup.py install --prefix=$VIRTUAL_ENV || fatalerror "setup.py install $project failed"
     else
         echo "$project is up-to-date, no need to recompile ..."
@@ -642,6 +646,7 @@ if [ ! -d clam ]; then
     cd clam
     git checkout python3flask
 else
+    rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/CLAM*egg
     cd clam
     git checkout python3flask
     git pull
