@@ -669,6 +669,8 @@ else
 fi
 if [ $REPOCHANGED -eq 1 ]; then
     python setup.py install --prefix=$VIRTUAL_ENV || error "setup.py install $project failed"
+else
+    echo "Gecco is already up to date ... "
 fi
 cd ..
 
