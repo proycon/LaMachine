@@ -17,6 +17,41 @@ error () {
     sleep 3
 }
 
+gitcheck () {
+    git remote update
+    LOCAL=$(git rev-parse @)
+    REMOTE=$(git rev-parse @{u})
+    BASE=$(git merge-base @ @{u})
+
+    if [ $LOCAL = $REMOTE ]; then
+        echo "Git: up-to-date"
+        REPOCHANGED=0
+    elif [ $LOCAL = $BASE ]; then
+        echo "Git: Pulling..."
+        git pull || fatalerror "Unable to git pull $project"
+        REPOCHANGED=1
+    elif [ $REMOTE = $BASE ]; then
+        echo "Git: Need to push"
+        REPOCHANGED=1
+    else
+        echo "Git: Diverged"
+        REPOCHANGED=1
+    fi
+}
+
+svncheck () {
+    LOCAL=$(svn info HEAD | grep -i "Last Changed Rev")
+    LOCAL=${LOCAL#"Last Changed Rev: "}
+    REMOTE=$(svn info -r HEAD | grep -i "Last Changed Rev")
+    REMOTE=${REMOTE#"Last Changed Rev: "}
+    if [ $LOCAL = $REMOTE ]; then
+        REPOCHANGED=0
+    else 
+        svn update || fatalerror "Unable to svn update $project"
+        REPOCHANGED=1
+    fi
+}
+
 CONDA=0
 #if [ ! -z "$CONDA_DEFAULT_ENV" ]; then
 #    echo "Running in Anaconda environment... THIS IS UNTESTED!" >&2
@@ -358,13 +393,19 @@ case ":$CPATH:" in
       *) export CPATH="$VIRTUAL_ENV/include:$CPATH";; 
 esac
 
-
+if [ "$1" == "force" ]; then
+    RECOMPILE=1
+    echo "Forcing recompilation of everything"
+else
+    RECOMPILE=0
+fi
 
 if [ "$OS" == "mac" ]; then
     PROJECTS="ticcutils libfolia ucto timbl timblserver mbt wopr frogdata" #no foliatools on mac yet
 else
     PROJECTS="ticcutils libfolia foliatools ucto timbl timblserver mbt wopr frogdata"
 fi
+
 
 for project in $PROJECTS; do
     echo 
@@ -374,25 +415,34 @@ for project in $PROJECTS; do
     if [ ! -d $project ]; then
         git clone https://github.com/proycon/$project || fatalerror "Unable to clone git repo for $project"
         cd $project
+        RECOMPILE=1
     else
         cd $project
         pwd
         if [ -d .svn ]; then
-            svn update || fatalerror "Unable to svn update $project" #a cheat for versions with Tilburg's SVN as primary source rather than github
+            #a cheat for versions with Tilburg's SVN as primary source rather than github, privileged access only
+            svncheck
         else
-            git pull || fatalerror "Unable to git pull $project"
+            gitcheck
+        fi
+        if [ $REPOCHANGED -eq 1 ]; then
+            RECOMPILE=1
         fi
     fi
-    bash bootstrap.sh || fatalerror "$project bootstrap failed"
-    EXTRA=""
-    if [ "$OS" == "mac" ]; then
-        if [ "$PROJECT" == "libfolia" ] || [ $PROJECT == "ucto" ]; then
-            EXTRA="--with-icu=/usr/local/opt/icu4c"
+    if [ $RECOMPILE -eq 1 ]; then
+        bash bootstrap.sh || fatalerror "$project bootstrap failed"
+        EXTRA=""
+        if [ "$OS" == "mac" ]; then
+            if [ "$PROJECT" == "libfolia" ] || [ $PROJECT == "ucto" ]; then
+                EXTRA="--with-icu=/usr/local/opt/icu4c"
+            fi
         fi
-    fi
-    ./configure --prefix=$VIRTUAL_ENV $EXTRA || fatalerror "$project configure failed"
-    make || fatalerror "$project make failed"
-    make install || fatalerror "$project make install failed"
+        ./configure --prefix=$VIRTUAL_ENV $EXTRA || fatalerror "$project configure failed"
+        make || fatalerror "$project make failed"
+        make install || fatalerror "$project make install failed"
+    else
+        echo "$project is up-to-date, no need to recompile ..."
+    fi 
     cd ..
 done
 
@@ -404,18 +454,24 @@ if [ -f /usr/bin/python2.7 ]; then
     if [ ! -d frog ]; then
         git clone https://github.com/proycon/frog
         cd frog
+        RECOMPILE=1
     else
         cd frog
         if [ -d .svn ]; then
-            svn update
+            svncheck
         else
-            git pull
+            gitcheck
+        fi
+        if [ $REPOCHANGED -eq 1 ]; then
+            RECOMPILE=1
         fi
     fi
-    bash bootstrap.sh || fatalerror "frog bootstrap failed"
-    ./configure --prefix=$VIRTUAL_ENV --with-python=/usr/bin/python2.7 || fatalerror "frog configure failed"
-    make || fatalerror "frog make failed"
-    make install || fatalerror "frog make install failed"
+    if [ $RECOMPILE -eq 1 ]; then
+        bash bootstrap.sh || fatalerror "frog bootstrap failed"
+        ./configure --prefix=$VIRTUAL_ENV --with-python=/usr/bin/python2.7 || fatalerror "frog configure failed"
+        make || fatalerror "frog make failed"
+        make install || fatalerror "frog make install failed"
+    fi
     cd ..
 else
     echo "Skipping installation of Frog because Python 2.7 was not found in /usr/bin/python2.7 (needed for the parser)">&2
@@ -427,7 +483,7 @@ echo "Installing Python dependencies from the Python Package Index"
 echo "--------------------------------------------------------------"
 PYTHONDEPS="cython numpy ipython scipy matplotlib lxml scikit-learn django pycrypto pandas textblob nltk psutil flask requests requests_toolbelt requests_oauthlib"
 for PYTHONDEP in $PYTHONDEPS; do
-    pip install -U $PYTHONDEP || fatalerror "Unable to install $PYTHONDEP from Python Package Index"
+    pip install -U $PYTHONDEP || fatalerror "Unable to install required dependency $PYTHONDEP from Python Package Index"
 done
 
 PYTHONMAJOR=`python -c "import sys; print(sys.version_info.major,end='')"`
@@ -452,11 +508,16 @@ for project in $PYTHONPROJECTS; do
     if [ ! -d $project ]; then
         git clone https://github.com/proycon/$project
         cd $project
+        REPOCHANGED=1
     else
         cd $project
-        git pull
+        gitcheck
     fi
-    python setup.py install --prefix=$VIRTUAL_ENV || fatalerror "setup.py install $project failed"
+    if [ $REPOCHANGED -eq 1 ]; then
+        python setup.py install --prefix=$VIRTUAL_ENV || fatalerror "setup.py install $project failed"
+    else
+        echo "$project is up-to-date, no need to recompile ..."
+    fi
     cd ..
 done
 
@@ -467,12 +528,17 @@ echo "--------------------------------------------------------"
 if [ ! -d python-ucto ]; then
     git clone https://github.com/proycon/python-ucto
     cd python-ucto
+    REPOCHANGED=1
 else
     cd python-ucto 
-    git pull
-    rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
+    gitcheck 
 fi
-python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV || error "Python-ucto installation failed"
+if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
+    rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
+    python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV || error "Python-ucto installation failed"
+else 
+    echo "Python-ucto is already up to date ... "
+fi
 cd ..
 
 
@@ -483,40 +549,45 @@ echo "--------------------------------------------------------"
 if [ ! -d python-timbl ]; then
     git clone https://github.com/proycon/python-timbl
     cd python-timbl
+    REPOCHANGED=1
 else
     cd python-timbl
-    git pull
+    gitcheck
 fi
-if [ -f "$VIRTUAL_ENV/lib/libboost_python.so" ]; then
-    python setup3.py build_ext --boost-library-dir=$VIRTUAL_ENV/lib install
-elif [ -f /usr/lib/x86_64-linux-gnu/libboost_python.so ]; then
-    python setup3.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
-elif [ -f /usr/lib/i386-linux-gnu/libboost_python.so ]; then
-    python setup3.py build_ext --boost-library-dir=/usr/lib/i386-linux-gnu install
+if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
+    if [ -f "$VIRTUAL_ENV/lib/libboost_python.so" ]; then
+        python setup3.py build_ext --boost-library-dir=$VIRTUAL_ENV/lib install
+    elif [ -f /usr/lib/x86_64-linux-gnu/libboost_python.so ]; then
+        python setup3.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
+    elif [ -f /usr/lib/i386-linux-gnu/libboost_python.so ]; then
+        python setup3.py build_ext --boost-library-dir=/usr/lib/i386-linux-gnu install
+    else
+        python setup3.py build_ext install
+    fi
+    if [ "$?" == 65 ]; then
+        #boost not found
+        echo "boost-python not found for this version of Python, we are gonna attempt to compile it manually"
+        TS=`date +%s`
+        if [ ! -f boost.tar.bz2 ]; then
+            wget "http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.bz2?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.58.0%2F&ts=$TS&use_mirror=garr" -O boost.tar.bz2
+            tar -xjf boost.tar.bz2 2>/dev/null
+        fi
+        cd boost*
+        PYTHONINCLUDE=`find -L $VIRTUAL_ENV/include -name pyconfig.h | head -n 1`
+        if [ "$?" != "0" ]; then
+            error "pyconfig.h not found!"
+        fi
+        echo $PYTHONINCLUDE
+        PYTHONINCLUDE=`dirname $PYTHONINCLUDE`
+        export CPLUS_INCLUDE_PATH="$PYTHONINCLUDE:$CPLUS_INCLUDE_PATH"
+        ./bootstrap.sh --with-libraries=python --prefix=$VIRTUAL_ENV --with-python-root=$VIRTUAL_ENV --with-python="$VIRTUAL_ENV/bin/python"
+        ./b2 || error "Manual boost compilation failed"
+        ./b2 install || error "Manual boost installation failed"
+        cd ..
+        python setup3.py build_ext --boost-library-dir=$VIRTUAL_ENV/lib install || error "python-timbl installation failed"
+    fi
 else
-    python setup3.py build_ext install
-fi
-if [ "$?" == 65 ]; then
-    #boost not found
-    echo "boost-python not found for this version of Python, we are gonna attempt to compile it manually"
-    TS=`date +%s`
-    if [ ! -f boost.tar.bz2 ]; then
-        wget "http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.bz2?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.58.0%2F&ts=$TS&use_mirror=garr" -O boost.tar.bz2
-        tar -xjf boost.tar.bz2 2>/dev/null
-    fi
-    cd boost*
-    PYTHONINCLUDE=`find -L $VIRTUAL_ENV/include -name pyconfig.h | head -n 1`
-    if [ "$?" != "0" ]; then
-        error "pyconfig.h not found!"
-    fi
-    echo $PYTHONINCLUDE
-    PYTHONINCLUDE=`dirname $PYTHONINCLUDE`
-    export CPLUS_INCLUDE_PATH="$PYTHONINCLUDE:$CPLUS_INCLUDE_PATH"
-    ./bootstrap.sh --with-libraries=python --prefix=$VIRTUAL_ENV --with-python-root=$VIRTUAL_ENV --with-python="$VIRTUAL_ENV/bin/python"
-    ./b2 || error "Manual boost compilation failed"
-    ./b2 install || error "Manual boost installation failed"
-    cd ..
-    python setup3.py build_ext --boost-library-dir=$VIRTUAL_ENV/lib install || error "python-timbl installation failed"
+    echo "Python-timbl is already up to date ... "
 fi
 cd ..
 
@@ -528,12 +599,17 @@ if [ -f /usr/bin/python2.7 ] || [ -f /usr/local/bin/python2.7 ]; then
     if [ ! -d python-frog ]; then
         git clone https://github.com/proycon/python-frog
         cd python-frog
+        REPOCHANGED=1
     else
         cd python-frog
-        git pull
-        rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
+        gitcheck
     fi
-    python setup.py install || error "python-frog failed"
+    if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
+        rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
+        python setup.py install || error "python-frog failed"
+    else
+        echo "Python-frog is already up to date ... "
+    fi
     cd ..
 else
     echo "No Python 2.7 available, skipping python-frog"
@@ -546,12 +622,15 @@ echo "--------------------------------------------------------"
 if [ ! -d colibri-core ]; then
     git clone https://github.com/proycon/colibri-core
     cd colibri-core
+    REPOCHANGED=1
 else
     cd colibri-core 
-    git pull
-    rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
+    gitcheck
 fi
-python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV || error "colibri core failed"
+if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
+    rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
+    python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV || error "colibri core failed"
+fi
 cd ..
 
 echo 
@@ -578,11 +657,14 @@ echo "--------------------------------------------------------"
 if [ ! -d $project ]; then
     git clone https://github.com/proycon/$project
     cd $project
+    REPOCHANGED=1
 else
     cd $project
-    git pull
+    gitcheck
 fi
-python setup.py install --prefix=$VIRTUAL_ENV || error "setup.py install $project failed"
+if [ $REPOCHANGED -eq 1 ]; then
+    python setup.py install --prefix=$VIRTUAL_ENV || error "setup.py install $project failed"
+fi
 cd ..
 
 echo "--------------------------------------------------------"
