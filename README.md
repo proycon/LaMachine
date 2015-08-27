@@ -75,16 +75,19 @@ everything. All sources are pulled from git and compiled for you.
 3. Bootstrap the virtual environment by calling: ``/path/to/LaMachine/virtualenv-bootstrap.sh``
 
 Note that you will always have to activate your virtual environment with 
-``. lamachine/bin/activate`` (don't forget the dot!) if you open a new terminal. i
+``. lamachine/bin/activate`` (don't forget the dot!) if you open a new terminal. 
 This requires you use bash or zsh.
 
 Tested to work on:
 * Arch Linux
 * Fedora Core 21
-* Mac OS X Yosemite
 * Ubuntu 15.04 - Vivid Vervet
 * Ubuntu 14.04 LTS - Trusty Tahr
 * Ubuntu 12.04 LTS - Precise Pangolin
+
+Partially works on::
+* Mac OS X Yosemite   (python-ucto, python-frog and python-timbl do not work yet)
+
 
 Updating
 ===========
