@@ -686,6 +686,7 @@ else
     gitcheck
 fi
 if [ $REPOCHANGED -eq 1 ]; then
+    rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/${project}*egg
     python setup.py install --prefix=$VIRTUAL_ENV || error "setup.py install $project failed"
 else
     echo "Gecco is already up to date ... "
@@ -707,6 +708,7 @@ if [ $WITHTSCAN -eq 1 ] || [ -d tscan ]; then
         gitcheck
     fi
     if [ $REPOCHANGED -eq 1 ]; then
+        bash bootstrap.sh || fatalerror "$project bootstrap failed"
         ./configure --prefix=$VIRTUAL_ENV || fatalerror "$project configure failed"
         make || fatalerror "$project make failed"
         make install || fatalerror "$project make install failed"
