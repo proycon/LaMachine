@@ -584,7 +584,7 @@ if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     elif [ -f /usr/lib/i386-linux-gnu/libboost_python.so ]; then
         python setup3.py build_ext --boost-library-dir=/usr/lib/i386-linux-gnu install
     elif [ -f /usr/local/Cellar/boost-python/*/lib/libboost_python.dylib ]; then
-        python setup3.py build_ext --boost-library-dir=/usr/local/Cellar/boost-python/*/lib/ install
+        python setup3.py build_ext --boost-library-dir=/usr/local/Cellar/boost-python/*/lib/ --boost-include-dir=/usr/local/Cellar/boost-python/*/lib install
     else
         python setup3.py build_ext install
     fi
