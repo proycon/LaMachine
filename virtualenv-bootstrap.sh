@@ -656,6 +656,8 @@ if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
         #ugly patch, something wrong in cython?
         echo "Attempting to compensate for colibri-core cython failure and retrying (some architectures such as Mac seem to require this"
         sed -i -e 's/unsigned long/unsigned long long/' colibricore_classes.pxd
+        rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
+        python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV || error "colibri core failed"
         git stash #don't make it permanent
     fi
 fi
