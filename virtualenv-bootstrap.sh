@@ -651,8 +651,9 @@ else
 fi
 if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
-    python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV || error "colibri core failed"
+    python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV 
     if [ $? -ne 0 ]; then
+        error "colibri core failed, attempting to compensate and trying..."
         #ugly patch, something wrong in cython?
         echo "Attempting to compensate for colibri-core cython failure and retrying (some architectures such as Mac seem to require this"
         sed -i -e 's/unsigned long/unsigned long long/' colibricore_classes.pxd
