@@ -655,7 +655,7 @@ if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     if [ $? -ne 0 ]; then
         #ugly patch, something wrong in cython?
         echo "Attempting to compensate for colibri-core cython failure and retrying (some architectures such as Mac seem to require this"
-        sed -i 's/unsigned long/unsigned long long/' colibricore_classes.pxd
+        sed -i -e 's/unsigned long/unsigned long long/' colibricore_classes.pxd
         git stash #don't make it permanent
     fi
 fi
