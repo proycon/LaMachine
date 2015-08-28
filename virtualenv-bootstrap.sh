@@ -116,7 +116,7 @@ if [ "$NOADMIN" == "0" ]; then
         else
             BREWEXTRA=""
         fi
-        INSTALL="brew install autoconf automake libtool autoconf-archive boost xml2 libxslt icu4c libtextcat aspell hunspell wget $BREWEXTRA"
+        INSTALL="brew install autoconf automake libtool autoconf-archive boost --with-python  boost-python xml2 libxslt icu4c libtextcat aspell hunspell wget $BREWEXTRA"
     else
         error "No suitable package manage detected! Unable to verify and install the necessary global dependencies"
         if [ -d "/Users" ]; then
@@ -583,6 +583,8 @@ if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
         python setup3.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
     elif [ -f /usr/lib/i386-linux-gnu/libboost_python.so ]; then
         python setup3.py build_ext --boost-library-dir=/usr/lib/i386-linux-gnu install
+    elif [ -f /usr/local/Cellar/boost-python/*/lib/libboost_python.dylib ]; then
+        python setup3.py build_ext --boost-library-dir=/usr/local/Cellar/boost-python/*/lib/ install
     else
         python setup3.py build_ext install
     fi
