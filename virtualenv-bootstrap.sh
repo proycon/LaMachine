@@ -2,6 +2,7 @@
 
 echo "=== LaMachine Virtualenv Bootstrap ===">&2
 
+
 fatalerror () {
     echo "================ FATAL ERROR ==============" >&2
     echo "An error occured during installation!!" >&2
@@ -52,6 +53,23 @@ svncheck () {
     fi
 }
 
+NOADMIN=0
+FORCE=0
+WITHTSCAN=0
+for OPT in "$@"
+do
+    if [[ "$OPT" == "noadmin" ]]; then
+        NOADMIN=1
+    fi
+    if [[ "$OPT" == "force" ]]; then
+        FORCE=1
+    fi
+    if [[ "$OPT" == "tscan" ]]; then
+        WITHTSCAN=1
+    fi
+done
+
+
 CONDA=0
 #if [ ! -z "$CONDA_DEFAULT_ENV" ]; then
 #    echo "Running in Anaconda environment... THIS IS UNTESTED!" >&2
@@ -80,7 +98,7 @@ else
     OS=""
 fi
 
-if [ "$1" != "noadmin" ]; then
+if [ "$NOADMIN" == "0" ]; then
     echo "Detecting package manager..."
     INSTALL=""
     if [ "$OS" == "arch" ]; then
@@ -393,7 +411,7 @@ case ":$CPATH:" in
       *) export CPATH="$VIRTUAL_ENV/include:$CPATH";; 
 esac
 
-if [ "$1" == "force" ]; then
+if [ "$FORCE" == "1" ]; then
     RECOMPILE=1
     echo "Forcing recompilation of everything"
 else
@@ -674,6 +692,31 @@ else
 fi
 cd ..
 
+if [ $WITHTSCAN -eq 1 ] || [ -d tscan ]; then
+    project="tscan"
+    echo 
+    echo "--------------------------------------------------------"
+    echo "Installing $project">&2
+    echo "--------------------------------------------------------"
+    if [ ! -d $project ]; then
+        git clone https://github.com/proycon/$project
+        cd $project
+        REPOCHANGED=1
+    else
+        cd $project
+        gitcheck
+    fi
+    if [ $REPOCHANGED -eq 1 ]; then
+        ./configure --prefix=$VIRTUAL_ENV || fatalerror "$project configure failed"
+        make || fatalerror "$project make failed"
+        make install || fatalerror "$project make install failed"
+    else
+        echo "T-scan is already up to date ... "
+    fi
+    cd ..
+fi
+
 echo "--------------------------------------------------------"
 echo "All done!">&2
 echo "  From now on, activate your virtual environment as follows: . $VIRTUAL_ENV/bin/activate">&2
+echo "  To facilitate activation, add an alias to your ~/.bashrc: alias lm=\". $VIRTUAL_ENV/bin/activate\"">&2

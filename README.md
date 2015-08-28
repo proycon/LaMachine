@@ -27,6 +27,9 @@ Pre-installed software:
 - *Python bindings* - [python-ucto](https://github.com/proycon/python-ucto), [python-frog](https://github.com/proycon/python-frog), [python-timbl](https://github.com/proycon/python-timbl) 
 - [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices 
 
+Optional additional software in **virtual environment** form only:
+- [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction. 
+
 In the VM, some third-party NLP software is also installed out of the box. Both
 the VM image as well as the docker image are based on Arch Linux.
 
@@ -60,23 +63,31 @@ Installation & Usage locally (for Linux/BSD/Mac OS X)
 =======================================================
 
 LaMachine can also be used on a Linux/BSD/Mac OS X system without root access
-(provided a set of prerequisites is available on the system). This is done
+(provided a set of prerequisites is available on the system!). This is done
 through an extension for Python VirtualEnv (using Python 3.3 or later), as we
 provide a lot of Python bindings anyhow. This offers a local environment, ideal
 for development, that binds against the software globally available on your
 system. The virtual environment will be contained under a single directory and contains
 everything. All sources are pulled from git and compiled for you.
 
-1. Clone this repository and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine``  (or [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) manually from github)
+1. **Clone this repository** and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine``  (or [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) manually from github)
    You will only need this cloned repository once and can safely remote it afterwards.
-2. In a terminal, navigate to the directory where you want to create the
-   virtual environment, or alternatively pre-create and activate one with ``virtualenv --python=python3
+2. In a terminal, **navigate to the directory** under which to create the
+   virtual environment (a ``lamachine`` directory will be created), or alternatively pre-create and activate one with ``virtualenv --python=python3
    lamachine && . lamachine/bin/activate``
-3. Bootstrap the virtual environment by calling: ``/path/to/LaMachine/virtualenv-bootstrap.sh``
+3. **Bootstrap the virtual environment** by calling: ``/path/to/LaMachine/virtualenv-bootstrap.sh``
 
 Note that you will always have to activate your virtual environment with 
-``. lamachine/bin/activate`` (don't forget the dot!) if you open a new terminal. 
-This requires you use bash or zsh.
+``. lamachine/bin/activate`` (*don't forget the dot!*) if you open a new terminal.
+This also requires you use bash or zsh. To facilitate activation, we recommend
+you add an alias ``alias lm=". /path/to/lamachine/bin/activate"`` in your
+``~/.bashrc`` or ``~/.zshrc``.
+
+You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and ``lamachine-update.sh``):
+
+ * ``noadmin`` - Do not attempt to install global dependencies (but if they are missing, compilation will fail)
+ * ``force`` - Force recompilation of everything, even if it's not updated
+ * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine. 
 
 Tested to work on:
 * Arch Linux
@@ -118,21 +129,21 @@ service individually using CLAM's built-in development server:
 * ``clamservice start clam.config.timbl``
 * ``clamservice start clam.config.colibricore``
 
-Each webservice will advertise on what port it has been launch and how to
+Each webservice will advertise on what port it has been launched and how to
 access it. There is no authentication enabled on these webservices, so do not
-expose them to the world.
+expose them to the world!
  
 Alternatives
 ====================
 
-If you have no need for a VM or a self-contained environment, and you have proper
-administrative access to the system, then install our software using the proper
-package manager, provided we have packages available.
+If you have no need for a VM or a self-contained environment, and you have
+proper administrative access to the system, then it may be possible to install
+our software using the proper package manager, provided we have packages
+available:
 
-* Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon , these packages are used as the basis of LaMachine
+* Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
 * Debian/Ubuntu Linux (packages are currently out of date) -- https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl
 * Mac OS X (homebrew), missing some sofware (most notably Frog, Colibri Core, and Python bindings)
 * CentOS/Fedora (packages are outdated completely)
 
-The final alternative is obtaining all software manually (from github or
-tarballs) and compiling everything yourself.
+The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself.
