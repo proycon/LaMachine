@@ -91,6 +91,7 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
 
 Tested to work on:
 * Arch Linux
+* Debian 8
 * Fedora Core 21
 * Ubuntu 15.04 - Vivid Vervet
 * Ubuntu 14.04 LTS - Trusty Tahr
