@@ -8,6 +8,7 @@ fatalerror () {
     echo "An error occured during installation!!" >&2
     echo $1 >&2
     echo "===========================================" >&2
+    echo $1 > error
     exit 2
 }
 
@@ -15,6 +16,7 @@ error () {
     echo "================= ERROR ===================" >&2
     echo $1 >&2
     echo "===========================================" >&2
+    echo $1 > error
     sleep 3
 }
 
@@ -24,7 +26,11 @@ gitcheck () {
     REMOTE=$(git rev-parse @{u})
     BASE=$(git merge-base @ @{u})
 
-    if [ $LOCAL = $REMOTE ]; then
+    if [ -f error ]; then
+        echo "Encountered an error last time, need to recompile"
+        rm error
+        REPOCHANGED=1
+    elif [ $LOCAL = $REMOTE ]; then
         echo "Git: up-to-date"
         REPOCHANGED=0
     elif [ $LOCAL = $BASE ]; then
@@ -45,7 +51,11 @@ svncheck () {
     LOCAL=${LOCAL#"Last Changed Rev: "}
     REMOTE=$(svn info -r HEAD | grep -i "Last Changed Rev")
     REMOTE=${REMOTE#"Last Changed Rev: "}
-    if [ $LOCAL = $REMOTE ]; then
+    if [ -f error ]; then
+        echo "Encountered an error last time, need to recompile"
+        rm error
+        REPOCHANGED=1
+    elif [ $LOCAL = $REMOTE ]; then
         REPOCHANGED=0
     else 
         svn update || fatalerror "Unable to svn update $project"
