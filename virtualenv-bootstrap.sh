@@ -126,7 +126,7 @@ if [ "$NOADMIN" == "0" ]; then
         else
             BREWEXTRA=""
         fi
-        INSTALL="brew install autoconf automake libtool autoconf-archive boost xml2 libxslt icu4c libtextcat aspell hunspell wget $BREWEXTRA"
+        INSTALL="brew install autoconf automake libtool autoconf-archive boost --with-python  boost-python xml2 libxslt icu4c libtextcat aspell hunspell wget $BREWEXTRA"
     else
         error "No suitable package manage detected! Unable to verify and install the necessary global dependencies"
         if [ -d "/Users" ]; then
@@ -593,6 +593,12 @@ if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
         python setup3.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
     elif [ -f /usr/lib/i386-linux-gnu/libboost_python.so ]; then
         python setup3.py build_ext --boost-library-dir=/usr/lib/i386-linux-gnu install
+    elif [ -f /usr/local/Cellar/boost-python/*/lib/libboost_python.dylib ]; then
+        BOOSTVERSION=`ls /usr/local/Cellar/boost-python/ | head -n 1 | tr -d '\n'`
+        BOOSTLIBDIR=/usr/local/Cellar/boost-python/$BOOSTVERSION/lib/
+        BOOSTINCDIR=/usr/local/Cellar/boost/$BOOSTVERSION/include/
+        echo "Boost $BOOSTVERSION found in $BOOSTLIBDIR  , $BOOSTINCDIR"
+        python setup3.py build_ext --boost-library-dir=$BOOSTLIBDIR --boost-include-dir=$BOOSTINCDIR install
     else
         python setup3.py build_ext install
     fi
@@ -661,11 +667,14 @@ else
 fi
 if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
-    python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV || error "colibri core failed"
+    python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV 
     if [ $? -ne 0 ]; then
+        error "colibri core failed, attempting to compensate and trying..."
         #ugly patch, something wrong in cython?
         echo "Attempting to compensate for colibri-core cython failure and retrying (some architectures such as Mac seem to require this"
-        sed -i 's/unsigned long/unsigned long long/' colibricore_classes.pxd
+        sed -i -e 's/unsigned long/unsigned long long/' colibricore_classes.pxd
+        rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
+        python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV || error "colibri core failed"
         git stash #don't make it permanent
     fi
 fi
