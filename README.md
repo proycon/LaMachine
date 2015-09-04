@@ -1,14 +1,25 @@
 LaMachine
 ===========
 
-This is a virtual machine or installer for the latest development versions of
-NLP software developed by the Language Machines research group and CLST (Radboud
-University Nijmegen), as well as TiCC (Tilburg University). 
+LaMachine is a software distribution of NLP software developed by the Language
+Machines research group and CLST (Radboud University Nijmegen), as well as TiCC
+(Tilburg University). 
 
-LaMachine can be used in several forms:
+Our software is highly specialised and generally depends on a lot of other
+software. Installing all this software can be a daunting task, compiling it
+from scratch even more so.  Ideally software is installed through your
+distribution's package manager, but we do not always have packages available
+for all platforms, or they may be out of date. LaMachine ensures you can always
+use all of our software at the very latest (development) versions by bundling
+them all and offering them in three distinct forms:
+
  * As a **Virtual Machine** - Easiest, allows you to run our software on any host OS. 
  * As a **Docker application**
  * As a compilation/installation script in a **virtual environment**
+
+LaMachine is suitable for both end-users and developers. It has to be noted,
+however, that running the latest development versions always comes with the
+risk of decreased stability due to undiscovered bugs.
 
 Pre-installed software:
 - [Timbl](http://ilk.uvt.nl/timbl) - Tilburg Memory Based Learner
@@ -30,8 +41,9 @@ Pre-installed software:
 Optional additional software in **virtual environment** form only:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction. 
 
-In the VM, some third-party NLP software is also installed out of the box. Both
-the VM image as well as the docker image are based on Arch Linux.
+A variety of necessary and recommended third-party NLP software is also
+installed out of the box. Both the VM image as well as the docker image are
+based on Arch Linux.
 
 Installation & Usage as Virtual Machine (for Linux, BSD, MacOS X, Windows)
 =========================================================================
