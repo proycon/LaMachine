@@ -644,11 +644,11 @@ echo "--------------------------------------------------------"
 if [ ! -d clam ]; then
     git clone https://github.com/proycon/clam
     cd clam
-    git checkout python3flask
+    git checkout master
 else
     rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/CLAM*egg
     cd clam
-    git checkout python3flask
+    git checkout master
     git pull
 fi
 python setup.py install --prefix=$VIRTUAL_ENV || fatalerror "setup.py install clam failed"
