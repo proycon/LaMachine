@@ -2,11 +2,13 @@
 
 echo "=== LaMachine Virtualenv Bootstrap ===">&2
 
+
 fatalerror () {
     echo "================ FATAL ERROR ==============" >&2
     echo "An error occured during installation!!" >&2
     echo $1 >&2
     echo "===========================================" >&2
+    echo $1 > error
     exit 2
 }
 
@@ -14,6 +16,7 @@ error () {
     echo "================= ERROR ===================" >&2
     echo $1 >&2
     echo "===========================================" >&2
+    echo $1 > error
     sleep 3
 }
 
@@ -23,7 +26,11 @@ gitcheck () {
     REMOTE=$(git rev-parse @{u})
     BASE=$(git merge-base @ @{u})
 
-    if [ $LOCAL = $REMOTE ]; then
+    if [ -f error ]; then
+        echo "Encountered an error last time, need to recompile"
+        rm error
+        REPOCHANGED=1
+    elif [ $LOCAL = $REMOTE ]; then
         echo "Git: up-to-date"
         REPOCHANGED=0
     elif [ $LOCAL = $BASE ]; then
@@ -44,13 +51,34 @@ svncheck () {
     LOCAL=${LOCAL#"Last Changed Rev: "}
     REMOTE=$(svn info -r HEAD | grep -i "Last Changed Rev")
     REMOTE=${REMOTE#"Last Changed Rev: "}
-    if [ $LOCAL = $REMOTE ]; then
+    if [ -f error ]; then
+        echo "Encountered an error last time, need to recompile"
+        rm error
+        REPOCHANGED=1
+    elif [ $LOCAL = $REMOTE ]; then
         REPOCHANGED=0
     else 
         svn update || fatalerror "Unable to svn update $project"
         REPOCHANGED=1
     fi
 }
+
+NOADMIN=0
+FORCE=0
+WITHTSCAN=0
+for OPT in "$@"
+do
+    if [[ "$OPT" == "noadmin" ]]; then
+        NOADMIN=1
+    fi
+    if [[ "$OPT" == "force" ]]; then
+        FORCE=1
+    fi
+    if [[ "$OPT" == "tscan" ]]; then
+        WITHTSCAN=1
+    fi
+done
+
 
 CONDA=0
 #if [ ! -z "$CONDA_DEFAULT_ENV" ]; then
@@ -80,13 +108,13 @@ else
     OS=""
 fi
 
-if [ "$1" != "noadmin" ]; then
+if [ "$NOADMIN" == "0" ]; then
     echo "Detecting package manager..."
     INSTALL=""
     if [ "$OS" == "arch" ]; then
         INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive icu xml2 libxslt zlib libtar boost boost-libs python2 python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse"
     elif [ "$OS" == "debian" ]; then
-        INSTALL="sudo apt-get -m install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python-dev python3 python3-dev python-pip python-virtualenv libgnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev" 
+        INSTALL="sudo apt-get -m install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python-dev python3 python3-dev python-pip python-virtualenv libgnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev" 
     elif [ "$OS" == "redhat" ]; then
         INSTALL="sudo yum install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python python-devel python3 python3-devel zlib zlib-devel python3-virtualenv python-pip python3-pip bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel"
     elif [ "$OS" == "freebsd" ]; then
@@ -98,7 +126,7 @@ if [ "$1" != "noadmin" ]; then
         else
             BREWEXTRA=""
         fi
-        INSTALL="brew install autoconf automake libtool autoconf-archive boost xml2 libxslt icu4c libtextcat aspell hunspell wget $BREWEXTRA"
+        INSTALL="brew install autoconf automake libtool autoconf-archive boost --with-python  boost-python xml2 libxslt icu4c libtextcat aspell hunspell wget $BREWEXTRA"
     else
         error "No suitable package manage detected! Unable to verify and install the necessary global dependencies"
         if [ -d "/Users" ]; then
@@ -362,7 +390,7 @@ else
         echo "LaMachine has been updated with a newer version, restarting..."
         echo "----------------------------------------------------------------"
         sleep 3
-        ./virtualenv-bootstrap.sh 
+        ./virtualenv-bootstrap.sh $@ 
         exit $?
     fi
 fi
@@ -393,7 +421,7 @@ case ":$CPATH:" in
       *) export CPATH="$VIRTUAL_ENV/include:$CPATH";; 
 esac
 
-if [ "$1" == "force" ]; then
+if [ "$FORCE" == "1" ]; then
     RECOMPILE=1
     echo "Forcing recompilation of everything"
 else
@@ -565,6 +593,12 @@ if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
         python setup3.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
     elif [ -f /usr/lib/i386-linux-gnu/libboost_python.so ]; then
         python setup3.py build_ext --boost-library-dir=/usr/lib/i386-linux-gnu install
+    elif [ -f /usr/local/Cellar/boost-python/*/lib/libboost_python.dylib ]; then
+        BOOSTVERSION=`ls /usr/local/Cellar/boost-python/ | head -n 1 | tr -d '\n'`
+        BOOSTLIBDIR=/usr/local/Cellar/boost-python/$BOOSTVERSION/lib/
+        BOOSTINCDIR=/usr/local/Cellar/boost/$BOOSTVERSION/include/
+        echo "Boost $BOOSTVERSION found in $BOOSTLIBDIR  , $BOOSTINCDIR"
+        python setup3.py build_ext --boost-library-dir=$BOOSTLIBDIR --boost-include-dir=$BOOSTINCDIR install
     else
         python setup3.py build_ext install
     fi
@@ -633,7 +667,16 @@ else
 fi
 if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
-    python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV || error "colibri core failed"
+    python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV 
+    if [ $? -ne 0 ]; then
+        error "colibri core failed, attempting to compensate and trying..."
+        #ugly patch, something wrong in cython?
+        echo "Attempting to compensate for colibri-core cython failure and retrying (some architectures such as Mac seem to require this"
+        sed -i -e 's/unsigned long/unsigned long long/' colibricore_classes.pxd
+        rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
+        python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include/colibri-core --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV || error "colibri core failed"
+        git stash #don't make it permanent
+    fi
 fi
 cd ..
 
@@ -668,12 +711,39 @@ else
     gitcheck
 fi
 if [ $REPOCHANGED -eq 1 ]; then
+    rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/${project}*egg
     python setup.py install --prefix=$VIRTUAL_ENV || error "setup.py install $project failed"
 else
     echo "Gecco is already up to date ... "
 fi
 cd ..
 
+if [ $WITHTSCAN -eq 1 ] || [ -d tscan ]; then
+    project="tscan"
+    echo 
+    echo "--------------------------------------------------------"
+    echo "Installing $project">&2
+    echo "--------------------------------------------------------"
+    if [ ! -d $project ]; then
+        git clone https://github.com/proycon/$project
+        cd $project
+        REPOCHANGED=1
+    else
+        cd $project
+        gitcheck
+    fi
+    if [ $REPOCHANGED -eq 1 ]; then
+        bash bootstrap.sh || fatalerror "$project bootstrap failed"
+        ./configure --prefix=$VIRTUAL_ENV || fatalerror "$project configure failed"
+        make || fatalerror "$project make failed"
+        make install || fatalerror "$project make install failed"
+    else
+        echo "T-scan is already up to date ... "
+    fi
+    cd ..
+fi
+
 echo "--------------------------------------------------------"
 echo "All done!">&2
 echo "  From now on, activate your virtual environment as follows: . $VIRTUAL_ENV/bin/activate">&2
+echo "  To facilitate activation, add an alias to your ~/.bashrc: alias lm=\". $VIRTUAL_ENV/bin/activate\"">&2
