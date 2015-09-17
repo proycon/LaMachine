@@ -68,8 +68,8 @@ based on Arch Linux.
 Installation & Usage as Virtual Machine (for Linux, BSD, MacOS X, Windows)
 =========================================================================
 
-1. Obtain **Vagrant** from https://www.vagrantup.com/downloads.html or your package manager.
-2. Obtain **VirtualBox** from https://www.virtualbox.org/ or your package manager.
+1. Obtain **Vagrant** from [their site](https://www.vagrantup.com/downloads.html) or your package manager.
+2. Obtain **VirtualBox** from [their site](https://www.virtualbox.org/) or your package manager.
 3. Clone this repository and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine``  (or [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) manually from github)
 4. Power up the VM: ``vagrant up`` (this will download and install everything the first time)
 5. SSH into your VM: ``vagrant ssh``
@@ -89,9 +89,9 @@ On most Linux distributions, steps one and two may be combined with a simple com
 Installation & Usage with Docker (for Linux only)
 ===================================================
 
-1. Obtain **Docker** from http://www.docker.com or your package manager (``sudo apt-get install docker`` on Ubuntu).
+1. Obtain **Docker** from the [Docker site](http://www.docker.com or your package manager) (``sudo apt-get install docker`` on Ubuntu).
 2. Pull the [LaMachine image](https://registry.hub.docker.com/u/proycon/lamachine/): ``docker pull proycon/lamachine``
-3. Start an interactive prompt to LaMachine: ``docker run -p 8080:80 -t -i proycon/lamachine /bin/bash``, or run stuff: ``docker run proycon/lamachine <program>``  (use ``run -i`` if the program has an interactive mode; set up a mounted volume to pass file from host OS to docker, see: https://docs.docker.com/userguide/dockervolumes/)
+3. Start an interactive prompt to LaMachine: ``docker run -p 8080:80 -t -i proycon/lamachine /bin/bash``, or run stuff: ``docker run proycon/lamachine <program>``  (use ``run -i`` if the program has an interactive mode; set up a mounted volume to pass file from host OS to docker, see [here](https://docs.docker.com/userguide/dockervolumes/))
 
 There is no need to clone this git repository at all for this method.
 
@@ -194,8 +194,8 @@ proper administrative access to the system, then it may be possible to install
 our software using the proper package manager, provided we have packages
 available:
 
-* Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
-* Debian/Ubuntu Linux (packages are currently out of date) -- https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl
+* Arch Linux (up to date) -- [AUR Packages](https://aur.archlinux.org/packages/?SeB=m&K=proycon) , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
+* Debian/Ubuntu Linux (packages are currently out of date) -- [Debian packages](https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl)
 * Mac OS X (homebrew), missing some sofware (most notably Frog, Colibri Core, and Python bindings)
 * CentOS/Fedora (packages are outdated completely)
 
