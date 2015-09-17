@@ -4,9 +4,11 @@ slogan: An easily installable distribution of Natural Language Processing softwa
 extracredit: Machine photo by Japhen Simpson, Llama photo by S1ghtly
 ---
 
+{::options parse_block_html="true" /}
+<section>
 
-LaMachine
-===========
+What is LaMachine?
+=====================
 
 LaMachine is a software distribution of NLP software developed by the Language
 Machines research group and CLST (Radboud University Nijmegen), as well as TiCC
@@ -28,7 +30,13 @@ LaMachine is suitable for both end-users and developers. It has to be noted,
 however, that running the latest development versions always comes with the
 risk of decreased stability due to undiscovered bugs.
 
-Pre-installed software:
+</section>
+
+{::options parse_block_html="true" /}
+<section>
+Pre-installed software
+========================
+
 - [Timbl](http://ilk.uvt.nl/timbl) - Tilburg Memory Based Learner
 - [Ucto](http://ilk.uvt.nl/ucto) - Tokenizer
 - [Frog](http://ilk.uvt.nl/frog) - Frog is an integration of memory-based natural language processing (NLP) modules developed for Dutch.
@@ -52,6 +60,11 @@ A variety of necessary and recommended third-party NLP software is also
 installed out of the box. Both the VM image as well as the docker image are
 based on Arch Linux.
 
+</section>
+
+{::options parse_block_html="true" /}
+<section>
+
 Installation & Usage as Virtual Machine (for Linux, BSD, MacOS X, Windows)
 =========================================================================
 
@@ -68,6 +81,10 @@ available to the VM (2 CPUs and 3GB RAM by default).
 On most Linux distributions, steps one and two may be combined with a simple command such as
 ``sudo apt-get install virtualbox vagrant`` on Ubuntu, or ``sudo pacman -Syu virtualbox vagrant`` on Arch Linux.
 
+</section>
+
+{::options parse_block_html="true" /}
+<section>
 
 Installation & Usage with Docker (for Linux only)
 ===================================================
@@ -78,6 +95,10 @@ Installation & Usage with Docker (for Linux only)
 
 There is no need to clone this git repository at all for this method.
 
+</section>
+
+{::options parse_block_html="true" /}
+<section>
 Installation & Usage locally (for Linux/BSD/Mac OS X)
 =======================================================
 
@@ -120,12 +141,20 @@ Partially works on::
 * Mac OS X Yosemite   (python-ucto, python-frog and python-timbl do not work yet)
 
 
+</section>
+
+{::options parse_block_html="true" /}
+<section>
 Updating
 ===========
 
 Once you have a LaMachine running, *in any form*, just run ``lamachine-update.sh`` to update
 everything again.
 
+</section>
+
+{::options parse_block_html="true" /}
+<section>
 CLAM Webservices
 ==================
 
@@ -153,6 +182,10 @@ Each webservice will advertise on what port it has been launched and how to
 access it. There is no authentication enabled on these webservices, so do not
 expose them to the world!
  
+</section>
+
+{::options parse_block_html="true" /}
+<section>
 Alternatives
 ====================
 
@@ -169,3 +202,4 @@ available:
 The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself.
 
 
+</section>
