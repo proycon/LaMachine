@@ -1,0 +1,22 @@
+---
+exclude: [bundle]
+defaults:
+   - 
+    scope:
+     path: ""
+     type: pages
+    values: 
+     layout: lamalayout
+     title: LaMachine
+     author: Maarten van Gompel (proycon)
+     keywords: lamachine, natural language processing
+     description: 
+     lang: en
+     menu: 
+      - label: Home
+        url: https://proycon.github.io/LaMachine/
+      - label: Source
+        url: https://github.com/proycon/LaMachine/
+      - label: Docker
+        url: https://registry.hub.docker.com/u/proycon/lamachine/
+---
