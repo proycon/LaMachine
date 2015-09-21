@@ -356,7 +356,7 @@ activate this virtualenv environment.
 
 This can be used when you must use an existing Python interpreter, not
 the virtualenv bin/python
-""""
+"""
 
 try:
     __file__
@@ -385,8 +385,7 @@ for item in list(sys.path):
     if item not in prev_sys_path:
         new_sys_path.append(item)
         sys.path.remove(item)
-sys.path[:0] = new_sys_path
-'
+sys.path[:0] = new_sys_path'
 
 echo
 echo "--------------------------------------------------------"
@@ -403,7 +402,7 @@ else
     printf "$activate" > $VIRTUAL_ENV/bin/activate  
     VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
     sed -i -e "s/_VIRTUAL_ENV_/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/bin/activate || fatalerror "Error modifying environment"
-    printf "$activate_this_py" > $VIRTUAL_ENV/bin/activate_this.py  
+    printf "${activate_this_py}" > $VIRTUAL_ENV/bin/activate_this.py  
     VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
     sed -i -e "s/_VIRTUAL_ENV_/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/bin/activate_this.py || fatalerror "Error modifying environment"
 fi
