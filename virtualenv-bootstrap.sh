@@ -350,7 +350,7 @@ case ":$CPATH:" in
 esac'
 
 
-activate_this_py = '
+activate_this_py='
 """By using execfile(this_file, dict(__file__=this_file)) you will
 activate this virtualenv environment.
 
