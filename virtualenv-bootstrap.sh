@@ -361,7 +361,7 @@ the virtualenv bin/python
 try:
     __file__
 except NameError:
-    raise AssertionError("You must run this like execfile(\\"_VIRTUAL_ENV_/bin/activate_this.py\", dict(__file__=\\"_VIRTUAL_ENV_/bin/activate_this.py\\"))")
+    raise AssertionError("You must run this like execfile(\\"_VIRTUAL_ENV_/bin/activate_this.py\\", dict(__file__=\\"_VIRTUAL_ENV_/bin/activate_this.py\\"))")
 import sys
 import os
 
