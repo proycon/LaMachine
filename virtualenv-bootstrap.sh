@@ -349,6 +349,45 @@ case ":$CPATH:" in
       *) export CPATH="$VIRTUAL_ENV/include:$CPATH";; 
 esac'
 
+
+activate_this_py = '
+"""By using execfile(this_file, dict(__file__=this_file)) you will
+activate this virtualenv environment.
+
+This can be used when you must use an existing Python interpreter, not
+the virtualenv bin/python
+""""
+
+try:
+    __file__
+except NameError:
+    raise AssertionError("You must run this like execfile(\\"_VIRTUAL_ENV_/bin/activate_this.py\", dict(__file__=\\"_VIRTUAL_ENV_/bin/activate_this.py\\"))")
+import sys
+import os
+
+old_os_path = os.environ.get("PATH", "")
+os.environ["PATH"] = os.path.dirname(os.path.abspath(__file__)) + os.pathsep + old_os_path
+old_os_libpath = os.environ.get("LD_LIBRARY_PATH", "")
+os.environ["LD_LIBRARY_PATH"] = "_VIRTUAL_ENV_/lib" + os.pathsep + old_os_libpath
+base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if sys.platform == "win32":
+    site_packages = os.path.join(base, "Lib", "site-packages")
+else:
+    site_packages = os.path.join(base, "lib", "python%s" % sys.version[:3], "site-packages")
+prev_sys_path = list(sys.path)
+import site
+site.addsitedir(site_packages)
+sys.real_prefix = sys.prefix
+sys.prefix = base
+# Move the added items to the front of the path:
+new_sys_path = []
+for item in list(sys.path):
+    if item not in prev_sys_path:
+        new_sys_path.append(item)
+        sys.path.remove(item)
+sys.path[:0] = new_sys_path
+'
+
 echo
 echo "--------------------------------------------------------"
 echo "Modifying environment"
@@ -364,6 +403,9 @@ else
     printf "$activate" > $VIRTUAL_ENV/bin/activate  
     VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
     sed -i -e "s/_VIRTUAL_ENV_/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/bin/activate || fatalerror "Error modifying environment"
+    printf "$activate_this_py" > $VIRTUAL_ENV/bin/activate_this.py  
+    VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
+    sed -i -e "s/_VIRTUAL_ENV_/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/bin/activate_this.py || fatalerror "Error modifying environment"
 fi
 
 if [ ! -d $VIRTUAL_ENV/src ]; then
