@@ -130,15 +130,15 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
  * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine. 
 
 Tested to work on:
-* Arch Linux
-* Debian 8
-* Fedora Core 21
-* Ubuntu 15.04 - Vivid Vervet
-* Ubuntu 14.04 LTS - Trusty Tahr
-* Ubuntu 12.04 LTS - Precise Pangolin
+ * Arch Linux
+ * Debian 8
+ * Fedora Core 21
+ * Ubuntu 15.04 - Vivid Vervet
+ * Ubuntu 14.04 LTS - Trusty Tahr
+ * Ubuntu 12.04 LTS - Precise Pangolin
 
 Partially works on::
-* Mac OS X Yosemite   (python-ucto, python-frog and python-timbl do not work yet)
+ * Mac OS X Yosemite   (python-ucto, python-frog and python-timbl do not work yet)
 
 
 </section>
@@ -173,10 +173,10 @@ Application stack. This page will provide a listing of all available services.
 For the LaMachine Virtual Environment, you have to start and access each
 service individually using CLAM's built-in development server:
 
-* ``clamservice start clam.config.ucto``
-* ``clamservice start clam.config.frog``
-* ``clamservice start clam.config.timbl``
-* ``clamservice start clam.config.colibricore``
+ * ``clamservice start clam.config.ucto``
+ * ``clamservice start clam.config.frog``
+ * ``clamservice start clam.config.timbl``
+ * ``clamservice start clam.config.colibricore``
 
 Each webservice will advertise on what port it has been launched and how to
 access it. There is no authentication enabled on these webservices, so do not
@@ -194,10 +194,10 @@ proper administrative access to the system, then it may be possible to install
 our software using the proper package manager, provided we have packages
 available:
 
-* Arch Linux (up to date) -- [AUR Packages](https://aur.archlinux.org/packages/?SeB=m&K=proycon) , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
-* Debian/Ubuntu Linux (packages are currently out of date) -- [Debian packages](https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl)
-* Mac OS X (homebrew), missing some sofware (most notably Frog, Colibri Core, and Python bindings)
-* CentOS/Fedora (packages are outdated completely)
+ * Arch Linux (up to date) -- [AUR Packages](https://aur.archlinux.org/packages/?SeB=m&K=proycon) , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
+ * Debian/Ubuntu Linux (packages are currently out of date)-- Some of our packages are included in the ``science-linguistics`` meta-package, they are however fairly out of date for the moment: ``sudo apt-get install science-linguistics`` , [package state](https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl)
+ * Mac OS X (homebrew), missing some sofware (most notably Frog, Colibri Core, and Python bindings)
+ * CentOS/Fedora (packages are outdated completely)
 
 The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself.
 
