@@ -100,6 +100,7 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
  * ``noadmin`` - Do not attempt to install global dependencies (but if they are missing, compilation will fail)
  * ``force`` - Force recompilation of everything, even if it's not updated
  * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine. 
+ * ``python2`` - Use python 2.7 instead of Python 3 (some software may be not be available for Python 2)
 
 Tested to work on:
 * Arch Linux

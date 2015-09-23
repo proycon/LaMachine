@@ -66,6 +66,7 @@ svncheck () {
 NOADMIN=0
 FORCE=0
 WITHTSCAN=0
+PYTHON="python3"
 for OPT in "$@"
 do
     if [[ "$OPT" == "noadmin" ]]; then
@@ -76,6 +77,9 @@ do
     fi
     if [[ "$OPT" == "tscan" ]]; then
         WITHTSCAN=1
+    fi
+    if [[ "$OPT" == "python2" ]]; then
+        PYTHON="python2.7"
     fi
 done
 
@@ -164,7 +168,11 @@ if [ -z "$VIRTUAL_ENV" ]; then
     VENV=`which virtualenv`
     if [ ! -f "$VENV" ]; then
         error "virtualenv not found"
-        PIP=`which pip3`
+        if [[ "$PYTHON" == "python2.7" ]]; then
+            PIP=`which pip`
+        else
+            PIP=`which pip3`
+        fi
         if [ ! -f "$PIP" ]; then
             PIP=`which pip`
             if [ ! -f "$PIP" ]; then
@@ -182,7 +190,7 @@ if [ -z "$VIRTUAL_ENV" ]; then
     echo "-----------------------------------------"
     echo "Creating virtual environment"
     echo "-----------------------------------------"
-    virtualenv --python=python3 lamachine || fatalerror "Unable to create virtual environment"
+    virtualenv --python=$PYTHON lamachine || fatalerror "Unable to create virtual environment"
     . lamachine/bin/activate || fatalerror "Unable to activate virtual environment"
 else
     echo "Existing virtual environment detected... good.."
@@ -729,26 +737,29 @@ fi
 python setup.py install --prefix=$VIRTUAL_ENV || fatalerror "setup.py install clam failed"
 cd ..
 
-project="gecco"
-echo 
-echo "--------------------------------------------------------"
-echo "Installing $project">&2
-echo "--------------------------------------------------------"
-if [ ! -d $project ]; then
-    git clone https://github.com/proycon/$project
-    cd $project
-    REPOCHANGED=1
-else
-    cd $project
-    gitcheck
+if [[ "$PYTHON" != "python2.7" ]]; then
+
+    project="gecco"
+    echo 
+    echo "--------------------------------------------------------"
+    echo "Installing $project">&2
+    echo "--------------------------------------------------------"
+    if [ ! -d $project ]; then
+        git clone https://github.com/proycon/$project
+        cd $project
+        REPOCHANGED=1
+    else
+        cd $project
+        gitcheck
+    fi
+    if [ $REPOCHANGED -eq 1 ]; then
+        rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/${project}*egg
+        python setup.py install --prefix=$VIRTUAL_ENV || error "setup.py install $project failed"
+    else
+        echo "Gecco is already up to date ... "
+    fi
+    cd ..
 fi
-if [ $REPOCHANGED -eq 1 ]; then
-    rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/${project}*egg
-    python setup.py install --prefix=$VIRTUAL_ENV || error "setup.py install $project failed"
-else
-    echo "Gecco is already up to date ... "
-fi
-cd ..
 
 if [ $WITHTSCAN -eq 1 ] || [ -d tscan ]; then
     project="tscan"
