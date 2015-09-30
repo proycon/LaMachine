@@ -470,9 +470,9 @@ else
 fi
 
 if [ "$OS" == "mac" ]; then
-    PROJECTS="ticcutils libfolia ucto timbl timblserver mbt wopr frogdata" #no foliatools on mac yet
+    PROJECTS="ticcutils libfolia ucto timbl timblserver mbt wopr frogdata frog" #no foliatools on mac yet
 else
-    PROJECTS="ticcutils libfolia foliatools ucto timbl timblserver mbt wopr frogdata"
+    PROJECTS="ticcutils libfolia foliatools ucto timbl timblserver mbt wopr frogdata frog"
 fi
 
 
@@ -515,36 +515,6 @@ for project in $PROJECTS; do
     cd ..
 done
 
-if [ -f /usr/bin/python2.7 ]; then
-    echo 
-    echo "--------------------------------------------------------"
-    echo "Installing frog"
-    echo "--------------------------------------------------------"
-    if [ ! -d frog ]; then
-        git clone https://github.com/proycon/frog
-        cd frog
-        RECOMPILE=1
-    else
-        cd frog
-        if [ -d .svn ]; then
-            svncheck
-        else
-            gitcheck
-        fi
-        if [ $REPOCHANGED -eq 1 ]; then
-            RECOMPILE=1
-        fi
-    fi
-    if [ $RECOMPILE -eq 1 ]; then
-        bash bootstrap.sh || fatalerror "frog bootstrap failed"
-        ./configure --prefix=$VIRTUAL_ENV --with-python=/usr/bin/python2.7 || fatalerror "frog configure failed"
-        make || fatalerror "frog make failed"
-        make install || fatalerror "frog make install failed"
-    fi
-    cd ..
-else
-    echo "Skipping installation of Frog because Python 2.7 was not found in /usr/bin/python2.7 (needed for the parser)">&2
-fi
 
 echo 
 echo "--------------------------------------------------------------"
