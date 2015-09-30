@@ -100,6 +100,7 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
  * ``noadmin`` - Do not attempt to install global dependencies (but if they are missing, compilation will fail)
  * ``force`` - Force recompilation of everything, even if it's not updated
  * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine. 
+ * ``python2`` - Use python 2.7 instead of Python 3 (some software may be not be available for Python 2)
 
 Tested to work on:
 * Arch Linux
@@ -155,7 +156,7 @@ our software using the proper package manager, provided we have packages
 available:
 
 * Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
-* Debian/Ubuntu Linux (packages are currently out of date) -- https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl
+* Debian/Ubuntu Linux (packages are currently out of date)-- Some of our packages are included in the ``science-linguistics`` meta-package, they are however fairly out of date for the moment: ``sudo apt-get install science-linguistics`` , [package state](https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl)
 * Mac OS X (homebrew), missing some sofware (most notably Frog, Colibri Core, and Python bindings)
 * CentOS/Fedora (packages are outdated completely)
 
