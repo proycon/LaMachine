@@ -490,9 +490,9 @@ else
 fi
 
 if [ "$OS" == "mac" ]; then
-    PROJECTS="ticcutils libfolia ucto timbl timblserver mbt wopr frogdata frog" #no foliatools on mac yet
+    PROJECTS="ticcutils libfolia ucto timbl timblserver mbt mbtserver wopr frogdata frog" #no foliatools on mac yet
 else
-    PROJECTS="ticcutils libfolia foliatools ucto timbl timblserver mbt wopr frogdata frog"
+    PROJECTS="ticcutils libfolia foliatools ucto timbl timblserver mbt mbtserver wopr frogdata frog"
 fi
 
 
