@@ -66,7 +66,7 @@ for package in $PACKAGES; do
         echo "--------------------------------------------------------"
         echo "[LaMachine] Obtaining package $package ..."
         echo "--------------------------------------------------------"
-        git clone https://aur.archlinux.org/packages/${package}.git
+        git clone https://aur.archlinux.org/${package}.git
     fi 
     cd $package
     echo "--------------------------------------------------------"
