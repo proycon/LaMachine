@@ -22,7 +22,7 @@ echo "[LaMachine] Installing global dependencies"
 echo "--------------------------------------------------------"
 #will run as root
 pacman -Syu --noconfirm --needed base-devel || fatalerror "Unable to install global dependencies"
-PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs python2 cython cython2 python python2 python-pip python2-pip python-requests python-lxml python2-lxml python-pycurl python-virtualenv python-numpy python2-numpy python-scipy python2-scipy python-matplotlib python2-matplotlib python-pandas python2-pandas python-nltk python-scikit-learn python-psutil ipython ipython-notebook wget curl libexttextcat python-flask python-requests python-requests-oauthlib python-requests-toolbelt python-crypto nginx uwsgi uwsgi-plugin-python hunspell aspell hunspell-en aspell-en"
+PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs cython python python-pip python-requests python-lxml python-pycurl python-virtualenv python-numpy python-scipy python-matplotlib python-pandas python-nltk python-scikit-learn python-psutil ipython ipython-notebook wget curl libexttextcat python-flask python-requests python-requests-oauthlib python-requests-toolbelt python-crypto nginx uwsgi uwsgi-plugin-python hunspell aspell hunspell-en aspell-en"
 pacman --noconfirm --needed -Syu $PKGS ||  fatalerror "Unable to install global dependencies"
 
 umask u=rwx,g=rwx,o=rx
@@ -77,21 +77,21 @@ for package in $PACKAGES; do
     cd ..
 done
 
-echo "--------------------------------------------------------"
-echo "[LaMachine] Installing Python 2 packages"
-echo "--------------------------------------------------------"
-pip2 install pynlpl FoLiA-tools clam || error "Installation of one or more Python 2 packages failed !!"
+#echo "--------------------------------------------------------"
+#echo "[LaMachine] Installing Python 2 packages"
+#echo "--------------------------------------------------------"
+#pip2 install pynlpl FoLiA-tools clam || error "Installation of one or more Python 2 packages failed !!"
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing Python 3 packages"
 echo "--------------------------------------------------------"
-pip install pynlpl FoLiA-tools python-ucto foliadocserve || error "Installation of one or more Python 3 packages failed !!"
+pip install pynlpl FoLiA-tools python-ucto foliadocserve clam || error "Installation of one or more Python 3 packages failed !!"
 
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing python-timbl"
 echo "--------------------------------------------------------"
-pip2 install python-timbl || error "Installation of python2-timbl failed !!"
+#pip2 install python-timbl || error "Installation of python2-timbl failed !!"
 pip install python3-timbl || error "Installation of python3-timbl failed !!"
 
 echo "--------------------------------------------------------"
