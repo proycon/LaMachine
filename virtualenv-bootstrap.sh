@@ -116,13 +116,25 @@ if [ "$NOADMIN" == "0" ]; then
     echo "Detecting package manager..."
     INSTALL=""
     if [ "$OS" == "arch" ]; then
-        INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive icu xml2 libxslt zlib libtar boost boost-libs python2 python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse"
+        INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse"
+        if [ "$PYTHON" == "python2" ]; then
+            INSTALL="$INSTALL python2 python2-pip python2-virtualenv"
+        fi
     elif [ "$OS" == "debian" ]; then
-        INSTALL="sudo apt-get -m install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python-dev python3 python3-dev python-pip python-virtualenv libgnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev" 
+        INSTALL="sudo apt-get -m install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev python3-pip python-virtualenv libgnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev"  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
+        if [ "$PYTHON" == "python2" ]; then
+            INSTALL="$INSTALL python python-dev python-pip"
+        fi
     elif [ "$OS" == "redhat" ]; then
-        INSTALL="sudo yum install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python python-devel python3 python3-devel zlib zlib-devel python3-virtualenv python-pip python3-pip bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel"
+        INSTALL="sudo yum install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python3 python3-devel zlib zlib-devel python3-virtualenv python3-pip bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel"
+        if [ "$PYTHON" == "python2" ]; then
+            INSTALL="$INSTALL python python-devel python-pip"
+        fi
     elif [ "$OS" == "freebsd" ]; then
-        INSTALL="sudo pkg install git gcc libtool autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python2 python3 cython bzip2 py27-virtualenv curl wget gnutls aspell hunspell"
+        INSTALL="sudo pkg install git gcc libtool autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python3 bzip2 py27-virtualenv curl wget gnutls aspell hunspell"
+        if [ "$PYTHON" == "python2" ]; then
+            INSTALL="$INSTALL python"
+        fi
     elif [ "$OS" == "mac" ]; then
         MACPYTHON3=`which python3` 
         if [ "$?" != 0 ]; then
@@ -478,9 +490,9 @@ else
 fi
 
 if [ "$OS" == "mac" ]; then
-    PROJECTS="ticcutils libfolia ucto timbl timblserver mbt wopr frogdata" #no foliatools on mac yet
+    PROJECTS="ticcutils libfolia ucto timbl timblserver mbt mbtserver wopr frogdata frog" #no foliatools on mac yet
 else
-    PROJECTS="ticcutils libfolia foliatools ucto timbl timblserver mbt wopr frogdata"
+    PROJECTS="ticcutils libfolia foliatools ucto timbl timblserver mbt mbtserver wopr frogdata frog"
 fi
 
 
@@ -523,36 +535,6 @@ for project in $PROJECTS; do
     cd ..
 done
 
-if [ -f /usr/bin/python2.7 ]; then
-    echo 
-    echo "--------------------------------------------------------"
-    echo "Installing frog"
-    echo "--------------------------------------------------------"
-    if [ ! -d frog ]; then
-        git clone https://github.com/proycon/frog
-        cd frog
-        RECOMPILE=1
-    else
-        cd frog
-        if [ -d .svn ]; then
-            svncheck
-        else
-            gitcheck
-        fi
-        if [ $REPOCHANGED -eq 1 ]; then
-            RECOMPILE=1
-        fi
-    fi
-    if [ $RECOMPILE -eq 1 ]; then
-        bash bootstrap.sh || fatalerror "frog bootstrap failed"
-        ./configure --prefix=$VIRTUAL_ENV --with-python=/usr/bin/python2.7 || fatalerror "frog configure failed"
-        make || fatalerror "frog make failed"
-        make install || fatalerror "frog make install failed"
-    fi
-    cd ..
-else
-    echo "Skipping installation of Frog because Python 2.7 was not found in /usr/bin/python2.7 (needed for the parser)">&2
-fi
 
 echo 
 echo "--------------------------------------------------------------"
