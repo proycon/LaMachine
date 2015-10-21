@@ -66,10 +66,7 @@ for package in $PACKAGES; do
         echo "--------------------------------------------------------"
         echo "[LaMachine] Obtaining package $package ..."
         echo "--------------------------------------------------------"
-        URL="https://aur.archlinux.org/packages/${package:0:2}/${package}/${package}.tar.gz"
-        sudo -u build wget $URL
-        sudo -u build tar -xvzf ${package}.tar.gz
-        rm ${package}.tar.gz
+        git clone https://aur.archlinux.org/packages/${package}.git
     fi 
     cd $package
     echo "--------------------------------------------------------"
