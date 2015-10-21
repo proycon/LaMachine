@@ -52,6 +52,7 @@ Pre-installed software
 - *C++ libraries* - [ticcutils](http://ilk.uvt.nl/ticcutils), [libfolia](http://proycon.github.io/folia)
 - *Python bindings* - [python-ucto](https://github.com/proycon/python-ucto), [python-frog](https://github.com/proycon/python-frog), [python-timbl](https://github.com/proycon/python-timbl) 
 - [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices 
+- [Gecco](https://github.com/proycon/gecco) - Generic Environment for Context-Aware Correction of Orthography
 
 Optional additional software in **virtual environment** form only:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction. 
