@@ -105,7 +105,7 @@ cd ..
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing colibri-core"
 echo "--------------------------------------------------------"
-pip install --root / colibricore || error "Installation of colibri-core failed !!"
+pip install colibricore || error "Installation of colibri-core failed !!"
 
 
 echo "--------------------------------------------------------"
