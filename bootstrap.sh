@@ -36,7 +36,7 @@ fi
 
 cd /usr/src/
 
-useradd build || fatalerror "Unable to create user"
+useradd build 
 
 chgrp build /usr/src
 chmod g+ws /usr/src
