@@ -88,6 +88,11 @@ echo "[LaMachine] Installing Python 3 packages"
 echo "--------------------------------------------------------"
 pip install pynlpl FoLiA-tools python-ucto foliadocserve clam || error "Installation of one or more Python 3 packages failed !!"
 
+if [ -f clam ]; then
+    rm clam
+fi
+CLAMDIR=`python -c "import clam; print(clam.__path__[0])"`
+ln -s $CLAMDIR clam
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing python-timbl"
