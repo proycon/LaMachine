@@ -65,7 +65,6 @@ svncheck () {
 
 NOADMIN=0
 FORCE=0
-WITHTSCAN=0
 PYTHON="python3"
 for OPT in "$@"
 do
@@ -74,9 +73,6 @@ do
     fi
     if [[ "$OPT" == "force" ]]; then
         FORCE=1
-    fi
-    if [[ "$OPT" == "tscan" ]]; then
-        WITHTSCAN=1
     fi
     if [[ "$OPT" == "python2" ]]; then
         PYTHON="python2.7"
@@ -743,30 +739,7 @@ if [[ "$PYTHON" != "python2.7" ]]; then
     cd ..
 fi
 
-if [ $WITHTSCAN -eq 1 ] || [ -d tscan ]; then
-    project="tscan"
-    echo 
-    echo "--------------------------------------------------------"
-    echo "Installing $project">&2
-    echo "--------------------------------------------------------"
-    if [ ! -d $project ]; then
-        git clone https://github.com/proycon/$project
-        cd $project
-        REPOCHANGED=1
-    else
-        cd $project
-        gitcheck
-    fi
-    if [ $REPOCHANGED -eq 1 ]; then
-        bash bootstrap.sh || fatalerror "$project bootstrap failed"
-        ./configure --prefix=$VIRTUAL_ENV || fatalerror "$project configure failed"
-        make || fatalerror "$project make failed"
-        make install || fatalerror "$project make install failed"
-    else
-        echo "T-scan is already up to date ... "
-    fi
-    cd ..
-fi
+LaMachine/extra.sh $@ 
 
 echo "--------------------------------------------------------"
 echo "All done!">&2
