@@ -107,23 +107,6 @@ echo "[LaMachine] Installing colibri-core"
 echo "--------------------------------------------------------"
 pip install colibricore || error "Installation of colibri-core failed !!"
 
-
-echo "--------------------------------------------------------"
-echo "[LaMachine] Installing CLAM  (Python 3 beta)"
-echo "--------------------------------------------------------"
-if [ ! -d clam ]; then
-    git clone https://github.com/proycon/clam
-    chmod a+rx clam
-    cd clam
-    git checkout python3flask
-else
-    cd clam
-    git checkout python3flask
-    git pull
-fi
-python setup.py install || error "setup.py install clam failed"
-cd ..
-
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing Gecco dependencies"
 echo "--------------------------------------------------------"
