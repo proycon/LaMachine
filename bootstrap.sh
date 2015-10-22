@@ -72,8 +72,9 @@ for package in $PACKAGES; do
     echo "--------------------------------------------------------"
     echo "[LaMachine] Installing $project ..."
     echo "--------------------------------------------------------"
-    sudo -u build makepkg -s  --noconfirm --needed --noprogressbar
+    sudo -u build makepkg -s -f --noconfirm --needed --noprogressbar
     pacman -U --noconfirm --needed ${project}*.pkg.tar.xz || error "Installation of ${project} failed !!"
+    rm ${project}*.pkg.tar.xz
     cd ..
 done
 
