@@ -28,7 +28,7 @@ Pre-installed software:
 - [Mbt](http://ilk.uvt.nl/mbt) - Memory-based Tagger
 - [Wopr](http://ilk.uvt.nl/wopr) - Memory-based Word Predictor
 - [FoLiA-tools](http://proycon.github.io/folia) - Command line tools for working with the FoLiA format
-- [PyNLPl](https://pypi.python.org/pypi/PyNLPl) - Python Natural Language Processing Library (Python 2 & 3)
+- [PyNLPl](https://pypi.python.org/pypi/PyNLPl) - Python Natural Language Processing Library
 - [Colibri Core](http://proycon.github.io/colibri-core/) - Colibri core is an NLP tool as well as a C++ and Python library for working
   with basic linguistic constructions such as n-grams and skipgrams (i.e patterns
   with one or more gaps, either of fixed or dynamic size) in a quick and
@@ -42,9 +42,7 @@ Pre-installed software:
 Optional additional software in **virtual environment** form only:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction. 
 
-A variety of necessary and recommended third-party NLP software is also
-installed out of the box. Both the VM image as well as the docker image are
-based on Arch Linux.
+The Python bindings and libraries all use Python 3. Both the VM image as well as the docker image are based on Arch Linux.
 
 Installation & Usage as Virtual Machine (for Linux, BSD, MacOS X, Windows)
 =========================================================================
