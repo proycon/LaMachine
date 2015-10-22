@@ -39,7 +39,7 @@ Pre-installed software:
 - [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices 
 - [Gecco](https://github.com/proycon/gecco) - Generic Environment for Context-Aware Correction of Orthography
 
-Optional additional software in **virtual environment** form only:
+Optional additional software:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction. 
 
 The Python bindings and libraries all use Python 3. Both the VM image as well as the docker image are based on Arch Linux.
@@ -98,7 +98,6 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
 
  * ``noadmin`` - Do not attempt to install global dependencies (but if they are missing, compilation will fail)
  * ``force`` - Force recompilation of everything, even if it's not updated
- * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine. 
  * ``python2`` - Use python 2.7 instead of Python 3 (some software may be not be available for Python 2)
 
 Tested to work on:
@@ -118,6 +117,10 @@ Updating
 
 Once you have a LaMachine running, *in any form*, just run ``lamachine-update.sh`` to update
 everything again.
+
+The ``lamachine-update.sh`` script is also used to install additional *optional* software, pass the optional software as a parameter:
+
+ * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine. 
 
 CLAM Webservices
 ==================
