@@ -135,4 +135,6 @@ cd ..
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] All done!  "
-echo " .. Issue $ vagrant ssh to connect to your VM!"
+if [ -d /vagrant ]; then
+    echo " .. Issue $ vagrant ssh to connect to your VM!"
+fi
