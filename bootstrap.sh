@@ -105,8 +105,20 @@ for package in $PACKAGES; do
         echo "[LaMachine] Obtaining package $package ..."
         echo "--------------------------------------------------------"
         git clone https://aur.archlinux.org/${package}.git
+        cd $package
+    else
+        cd $package
+        cp -f PKGBUILD PKGBUILD.old
+        git pull
+        diff PKGBUILD PKGBUILD.old >/dev/null
+        DIFF=$?
+        if [ $DIFF -eq 0 ]; then
+            echo "--------------------------------------------------------"
+            echo "[LaMachine] $project is already up to date..."
+            echo "--------------------------------------------------------"
+            continue
+        fi
     fi 
-    cd $package
     echo "--------------------------------------------------------"
     echo "[LaMachine] Installing $project ..."
     echo "--------------------------------------------------------"
