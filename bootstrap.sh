@@ -83,12 +83,7 @@ else
     OLDSUM=`sum bootstrap.sh`
     git pull
     NEWSUM=`sum bootstrap.sh`
-    if [ $VAGRANT -eq 1 ]; then
-        cp bootstrap.sh /usr/bin/lamachine-update.sh
-    else
-        echo "echo \"To update the LaMachine docker image run the following (outside of the container!): docker pull proycon/lamachine\"" > /usr/bin/lamachine-update.sh
-        chmod a+rx /usr/bin/lamachine-update.sh
-    fi
+    cp bootstrap.sh /usr/bin/lamachine-update.sh
     if [ "$OLDSUM" != "$NEWSUM" ]; then
         echo "----------------------------------------------------------------"
         echo "LaMachine has been updated with a newer version, restarting..."
@@ -100,12 +95,7 @@ else
         echo "LaMachine is up to date..."
     fi
 fi
-if [ $VAGRANT -eq 1 ]; then
-    cp bootstrap.sh /usr/bin/lamachine-update.sh
-else
-    echo "echo \"To update the LaMachine docker image run the following (outside of the container!): docker pull proycon/lamachine\"" > /usr/bin/lamachine-update.sh
-    chmod a+rx /usr/bin/lamachine-update.sh
-fi
+cp bootstrap.sh /usr/bin/lamachine-update.sh
 cp nginx.mime.types /etc/nginx/
 cp nginx.conf /etc/nginx/
 cd ..
@@ -207,4 +197,6 @@ echo "--------------------------------------------------------"
 echo "[LaMachine] All done!  "
 if [ $VAGRANT -eq 1 ]; then
     echo " .. Issue $ vagrant ssh to connect to your VM!"
+else
+    echo "IMPORTANT NOTE: You are most likely using docker, do not forget to commit the container state if you want to preserve this update !!"
 fi
