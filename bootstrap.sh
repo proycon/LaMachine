@@ -77,7 +77,18 @@ if [ ! -d LaMachine ]; then
     cd LaMachine
 else
     cd LaMachine
+    OLDSUM=`sum bootstrap.sh`
     git pull
+    NEWSUM=`sum bootstrap.sh`
+    cp bootstrap.sh /usr/bin/lamachine-update.sh
+    if [ "$OLDSUM" != "$NEWSUM" ]; then
+        echo "----------------------------------------------------------------"
+        echo "LaMachine has been updated with a newer version, restarting..."
+        echo "----------------------------------------------------------------"
+        sleep 3
+        ./bootstrap.sh $@ 
+        exit $?
+    fi
 fi
 cp bootstrap.sh /usr/bin/lamachine-update.sh
 cp nginx.mime.types /etc/nginx/
