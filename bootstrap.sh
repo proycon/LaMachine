@@ -112,6 +112,7 @@ for package in $PACKAGES; do
         cd $package
         cp -f PKGBUILD PKGBUILD.old
         git pull
+        sudo -u build makepkg --nobuild #to get proper version
         diff PKGBUILD PKGBUILD.old >/dev/null
         DIFF=$?
         if [ $DIFF -eq 0 ]; then
