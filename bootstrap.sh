@@ -113,7 +113,7 @@ done
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing Python 3 packages"
 echo "--------------------------------------------------------"
-pip install pynlpl FoLiA-tools python-ucto foliadocserve clam || error "Installation of one or more Python 3 packages failed !!"
+pip install -U pynlpl FoLiA-tools python-ucto foliadocserve clam || error "Installation of one or more Python 3 packages failed !!"
 
 if [ -f clam ]; then
     rm clam
@@ -125,7 +125,7 @@ echo "--------------------------------------------------------"
 echo "[LaMachine] Installing python-timbl"
 echo "--------------------------------------------------------"
 #pip2 install python-timbl || error "Installation of python2-timbl failed !!"
-pip install python3-timbl || error "Installation of python3-timbl failed !!"
+pip install -U python3-timbl || error "Installation of python3-timbl failed !!"
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing python-frog"
@@ -138,12 +138,12 @@ cd ..
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing colibri-core"
 echo "--------------------------------------------------------"
-pip install colibricore || error "Installation of colibri-core failed !!"
+pip install -U colibricore || error "Installation of colibri-core failed !!"
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing Gecco dependencies"
 echo "--------------------------------------------------------"
-pip install hunspell python-Levenshtein aspell-python-py3 || error "Installation of one or more Python 3 packages failed !!"
+pip install -U hunspell python-Levenshtein aspell-python-py3 || error "Installation of one or more Python 3 packages failed !!"
 
 
 echo "--------------------------------------------------------"
