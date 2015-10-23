@@ -188,7 +188,7 @@ fi
 python setup.py install || error "setup.py install gecco failed"
 cd ..
 
-LaMachine/extra.sh $@ 
+./LaMachine/extra.sh $@ 
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] All done!  "
