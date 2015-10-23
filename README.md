@@ -115,8 +115,9 @@ Partially works on::
 Updating
 ===========
 
-Once you have a LaMachine running, *in any form*, just run ``lamachine-update.sh`` to update
-everything again.
+Once you have a LaMachine running as virtual machine or virtual environment, just run ``lamachine-update.sh`` to update
+everything again. For the docker version, use ``docker pull proycon/lamachine``
+instead.
 
 The ``lamachine-update.sh`` script is also used to install additional *optional* software, pass the optional software as a parameter:
 
