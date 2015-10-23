@@ -86,7 +86,7 @@ else
     if [ $VAGRANT -eq 1 ]; then
         cp bootstrap.sh /usr/bin/lamachine-update.sh
     else
-        echo "echo \"To update the LaMachine docker image run the following (outside of the container!): pull docker proycon/lamachine\"" > /usr/bin/lamachine-update.sh
+        echo "echo \"To update the LaMachine docker image run the following (outside of the container!): docker pull proycon/lamachine\"" > /usr/bin/lamachine-update.sh
         chmod a+rx /usr/bin/lamachine-update.sh
     fi
     if [ "$OLDSUM" != "$NEWSUM" ]; then
@@ -103,7 +103,7 @@ fi
 if [ $VAGRANT -eq 1 ]; then
     cp bootstrap.sh /usr/bin/lamachine-update.sh
 else
-    echo "echo \"To update the LaMachine docker image run the following (outside of the container!): pull docker proycon/lamachine\"" > /usr/bin/lamachine-update.sh
+    echo "echo \"To update the LaMachine docker image run the following (outside of the container!): docker pull proycon/lamachine\"" > /usr/bin/lamachine-update.sh
     chmod a+rx /usr/bin/lamachine-update.sh
 fi
 cp nginx.mime.types /etc/nginx/
