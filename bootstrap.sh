@@ -58,7 +58,10 @@ sed -i s/lecture=once/lecture=never/ /etc/sudoers
 echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 if [ -d /vagrant ]; then
+    VAGRANT=1
     cp /vagrant/motd /etc/motd
+else
+    VAGRANT=0
 fi
 
 cd /usr/src/
@@ -80,7 +83,11 @@ else
     OLDSUM=`sum bootstrap.sh`
     git pull
     NEWSUM=`sum bootstrap.sh`
-    cp bootstrap.sh /usr/bin/lamachine-update.sh
+    if [ $VAGRANT -eq 1 ]; then
+        cp bootstrap.sh /usr/bin/lamachine-update.sh
+    else
+        echo "echo \"To update the LaMachine docker image run the following (outside of the container!): pull docker proycon/lamachine\"" >> /usr/bin/lamachine-update.sh
+    fi
     if [ "$OLDSUM" != "$NEWSUM" ]; then
         echo "----------------------------------------------------------------"
         echo "LaMachine has been updated with a newer version, restarting..."
@@ -92,7 +99,11 @@ else
         echo "LaMachine is up to date..."
     fi
 fi
-cp bootstrap.sh /usr/bin/lamachine-update.sh
+if [ $VAGRANT -eq 1 ]; then
+    cp bootstrap.sh /usr/bin/lamachine-update.sh
+else
+    echo "echo \"To update the LaMachine docker image run the following (outside of the container!): pull docker proycon/lamachine\"" >> /usr/bin/lamachine-update.sh
+fi
 cp nginx.mime.types /etc/nginx/
 cp nginx.conf /etc/nginx/
 cd ..
@@ -145,7 +156,7 @@ if [ -f clam ]; then
     rm clam
 fi
 CLAMDIR=`python -c 'import clam; print(clam.__path__[0])'`
-if [ ! -z $CLAMDIR ]; then
+if [ ! -z "$CLAMDIR" ]; then
     ln -s $CLAMDIR clam
 fi
 
@@ -192,6 +203,6 @@ cd ..
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] All done!  "
-if [ -d /vagrant ]; then
+if [ $VAGRANT -eq 1 ]; then
     echo " .. Issue $ vagrant ssh to connect to your VM!"
 fi
