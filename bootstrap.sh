@@ -88,6 +88,8 @@ else
         sleep 3
         ./bootstrap.sh $@ 
         exit $?
+    else
+        echo "LaMachine is up to date..."
     fi
 fi
 cp bootstrap.sh /usr/bin/lamachine-update.sh
@@ -141,8 +143,10 @@ pip install -U pynlpl FoLiA-tools python-ucto foliadocserve clam || error "Insta
 if [ -f clam ]; then
     rm clam
 fi
-CLAMDIR=`python -c "import clam; print(clam.__path__[0])"`
-ln -s $CLAMDIR clam
+CLAMDIR=`python -c 'import clam; print(clam.__path__[0])'`
+if [ ! -z $CLAMDIR ]; then
+    ln -s $CLAMDIR clam
+fi
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing python-timbl"
