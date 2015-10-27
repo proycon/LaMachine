@@ -54,12 +54,10 @@ Pre-installed software
 - [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices 
 - [Gecco](https://github.com/proycon/gecco) - Generic Environment for Context-Aware Correction of Orthography
 
-Optional additional software in **virtual environment** form only:
+Optional additional software:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction. 
 
-A variety of necessary and recommended third-party NLP software is also
-installed out of the box. Both the VM image as well as the docker image are
-based on Arch Linux.
+Both the VM image as well as the docker image are based on Arch Linux.
 
 </section>
 
@@ -150,12 +148,18 @@ Partially works on:
 
 {::options parse_block_html="true" /}
 <section>
-Updating
-===========
+Updating & Extra Software
+=============================
 
-Once you have a LaMachine running, *in any form*, just run ``lamachine-update.sh`` to update
-everything again.
+Once you have a LaMachine running as virtual machine or virtual environment, just run ``lamachine-update.sh`` to update
+everything again. 
 
+The ``lamachine-update.sh`` script is also used to install additional *optional* software, pass the optional software as a parameter:
+
+ * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine. 
+ * ``valkuil`` - Valkuil Spelling Corrector (for Dutch)
+
+Note that for the docker version, you can pull a new docker image using ``docker pull proycon/lamachine`` instead. If you do use ``lamachine-update.sh`` with docker, you most likely will want to ``docker commit`` your container afterwards to preserve the update!
 </section>
 
 {::options parse_block_html="true" /}
