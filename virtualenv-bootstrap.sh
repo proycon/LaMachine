@@ -65,11 +65,15 @@ svncheck () {
 
 NOADMIN=0
 FORCE=0
+NOPYTHONDEPS=0
 PYTHON="python3"
 for OPT in "$@"
 do
     if [[ "$OPT" == "noadmin" ]]; then
         NOADMIN=1
+    fi
+    if [[ "$OPT" == "nopythondeps" ]]; then
+        NOPYTHONDEPS=1
     fi
     if [[ "$OPT" == "force" ]]; then
         FORCE=1
@@ -546,10 +550,14 @@ echo
 echo "--------------------------------------------------------------"
 echo "Installing Python dependencies from the Python Package Index"
 echo "--------------------------------------------------------------"
-PYTHONDEPS="cython numpy ipython scipy matplotlib lxml scikit-learn django pycrypto pandas textblob nltk psutil flask requests requests_toolbelt requests_oauthlib"
-for PYTHONDEP in $PYTHONDEPS; do
-    pip install -U $PYTHONDEP || fatalerror "Unable to install required dependency $PYTHONDEP from Python Package Index"
-done
+if [ $NOPYTHONDEPS -eq 0 ]; then
+    PYTHONDEPS="cython numpy ipython scipy matplotlib lxml scikit-learn django pycrypto pandas textblob nltk psutil flask requests requests_toolbelt requests_oauthlib"
+    for PYTHONDEP in $PYTHONDEPS; do
+        pip install -U $PYTHONDEP || fatalerror "Unable to install required dependency $PYTHONDEP from Python Package Index"
+    done
+else
+    echo "Skipping...."
+fi
 
 PYTHONMAJOR=`python -c "import sys; print(sys.version_info.major,end='')"`
 PYTHONMINOR=`python -c "import sys; print(sys.version_info.minor,end='')"`
