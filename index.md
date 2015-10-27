@@ -127,10 +127,12 @@ you add an alias ``alias lm=". /path/to/lamachine/bin/activate"`` in your
 You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and ``lamachine-update.sh``):
 
  * ``noadmin`` - Do not attempt to install global dependencies (but if they are missing, compilation will fail)
+ * ``nopythondeps`` - Do not update 3rd party Python dependencies (such as numpy and scipy), may save time.
  * ``force`` - Force recompilation of everything, even if it's not updated
  * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine. 
 
 Tested to work on:
+
  * Arch Linux
  * Debian 8
  * Fedora Core 21
@@ -138,8 +140,10 @@ Tested to work on:
  * Ubuntu 14.04 LTS - Trusty Tahr
  * Ubuntu 12.04 LTS - Precise Pangolin
 
-Partially works on::
+Partially works on:
+
  * Mac OS X Yosemite   (python-ucto, python-frog and python-timbl do not work yet)
+
 
 
 </section>
@@ -201,6 +205,18 @@ available:
  * CentOS/Fedora (packages are outdated completely)
 
 The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself.
+
+Troubleshooting
+====================
+
+If you use the Python virtual environment and come across the error ``undefined
+symbol: _PyTraceback_Add`` upon updating LaMachine. Then some dependencies are
+still making a reference to the global Python interpreter, which has a newer
+version than the one in the virtual environment. You can fix this issue by
+copying the newer global version of the Python interpreter into your virtual
+environment as follows: ``cp /usr/bin/python3.4 $VIRTUAL_ENV/bin/python3``.
+Then run ``lamachine-update.sh`` again.
+
 
 
 </section>
