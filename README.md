@@ -167,3 +167,14 @@ available:
 * CentOS/Fedora (packages are outdated completely)
 
 The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself.
+
+Troubleshooting
+====================
+
+If you use the Python virtual environment and come across the error ``undefined
+symbol: _PyTraceback_Add`` upon updating LaMachine. Then some dependencies are
+still making a reference to the global Python interpreter, which has a newer
+version than the one in the virtual environment. You can fix this issue by
+copying the newer global version of the Python interpreter into your virtual
+environment as follows: ``cp /usr/bin/python3.4 $VIRTUAL_ENV/bin/python3``.
+Then run ``lamachine-update.sh`` again.
