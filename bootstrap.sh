@@ -58,7 +58,10 @@ sed -i s/lecture=once/lecture=never/ /etc/sudoers
 echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 if [ -d /vagrant ]; then
+    VAGRANT=1
     cp /vagrant/motd /etc/motd
+else
+    VAGRANT=0
 fi
 
 cd /usr/src/
@@ -88,6 +91,8 @@ else
         sleep 3
         ./bootstrap.sh $@ 
         exit $?
+    else
+        echo "LaMachine is up to date..."
     fi
 fi
 cp bootstrap.sh /usr/bin/lamachine-update.sh
@@ -105,8 +110,21 @@ for package in $PACKAGES; do
         echo "[LaMachine] Obtaining package $package ..."
         echo "--------------------------------------------------------"
         git clone https://aur.archlinux.org/${package}.git
+        cd $package
+    else
+        cd $package
+        cp -f PKGBUILD PKGBUILD.old
+        git pull
+        sudo -u build makepkg --nobuild #to get proper version
+        diff PKGBUILD PKGBUILD.old >/dev/null
+        DIFF=$?
+        if [ $DIFF -eq 0 ]; then
+            echo "--------------------------------------------------------"
+            echo "[LaMachine] $project is already up to date..."
+            echo "--------------------------------------------------------"
+            continue
+        fi
     fi 
-    cd $package
     echo "--------------------------------------------------------"
     echo "[LaMachine] Installing $project ..."
     echo "--------------------------------------------------------"
@@ -129,8 +147,10 @@ pip install -U pynlpl FoLiA-tools python-ucto foliadocserve clam || error "Insta
 if [ -f clam ]; then
     rm clam
 fi
-CLAMDIR=`python -c "import clam; print(clam.__path__[0])"`
-ln -s $CLAMDIR clam
+CLAMDIR=`python -c 'import clam; print(clam.__path__[0])'`
+if [ ! -z "$CLAMDIR" ]; then
+    ln -s $CLAMDIR clam
+fi
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing python-timbl"
@@ -171,10 +191,12 @@ fi
 python setup.py install || error "setup.py install gecco failed"
 cd ..
 
-LaMachine/extra.sh $@ 
+./LaMachine/extra.sh $@ 
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] All done!  "
-if [ -d /vagrant ]; then
+if [ $VAGRANT -eq 1 ]; then
     echo " .. Issue $ vagrant ssh to connect to your VM!"
+else
+    echo "IMPORTANT NOTE: You are most likely using docker, do not forget to commit the container state if you want to preserve this update !!"
 fi
