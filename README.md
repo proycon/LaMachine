@@ -66,7 +66,7 @@ Installation & Usage with Docker (for Linux only)
 
 1. Obtain **Docker** from http://www.docker.com or your package manager (``sudo apt-get install docker`` on Ubuntu).
 2. Pull the [LaMachine image](https://registry.hub.docker.com/u/proycon/lamachine/): ``docker pull proycon/lamachine``
-3. Start an interactive prompt to LaMachine: ``docker run -p 8080:80 -t -i proycon/lamachine /bin/bash``, or run stuff: ``docker run proycon/lamachine <program>``  (use ``run -i`` if the program has an interactive mode; set up a mounted volume to pass file from host OS to docker, see: https://docs.docker.com/userguide/dockervolumes/)
+3. Start an interactive prompt to LaMachine: ``docker run -p 8080:80 -t -i proycon/lamachine``, or run stuff: ``docker run proycon/lamachine <program>``  (use ``run -i`` if the program has an interactive mode; set up a mounted volume to pass files from host OS to docker, see: https://docs.docker.com/userguide/dockervolumes/)
 
 There is no need to clone this git repository at all for this method.
 
@@ -102,21 +102,23 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
  * ``python2`` - Use python 2.7 instead of Python 3 (some software may be not be available for Python 2)
 
 Tested to work on:
-* Arch Linux
-* Debian 8
-* Fedora Core 21
-* Ubuntu 15.04 - Vivid Vervet
-* Ubuntu 14.04 LTS - Trusty Tahr
-* Ubuntu 12.04 LTS - Precise Pangolin
 
-Partially works on::
-* Mac OS X Yosemite   (python-ucto, python-frog and python-timbl do not work yet)
+ * Arch Linux
+ * Debian 8
+ * Fedora Core 21
+ * Ubuntu 15.04 - Vivid Vervet
+ * Ubuntu 14.04 LTS - Trusty Tahr
+ * Ubuntu 12.04 LTS - Precise Pangolin
+
+Partially works on:
+
+ * Mac OS X Yosemite   (python-ucto, python-frog and python-timbl do not work yet)
 
 
 Updating & Extra Software
 ===========================
 
-Once you have a LaMachine running as virtual machine or virtual environment, just run ``lamachine-update.sh`` to update
+Once you have a LaMachine running in whatever form, just run ``lamachine-update.sh`` to update
 everything again. 
 
 The ``lamachine-update.sh`` script is also used to install additional *optional* software, pass the optional software as a parameter:
@@ -133,24 +135,34 @@ LaMachine comes with several CLAM webservices ready out of the box. These are
 RESTful webservices, but also offer a web-interface for human end-users.  You
 will need to explicitly start them before being able to make use of them.
 
-For the LaMachine VM or Docker App, this is done using:
+For the LaMachine VM or Docker App, this is done using the following command
+*from within* the container/VM:
 
 ``sudo /usr/src/LaMachine/startwebservices.sh``
 
 All webservices are then accessible through http://127.0.0.1:8080 (ensure that
-this port is free) *on your host system* rather than within the VM or Docker
-Application stack. This page will provide a listing of all available services.
+this port is free) *from your host system*. For Docker you have to run the
+container with the ``-p 8080:80`` for the port forward to be active.
 
-For the LaMachine Virtual Environment, you have to start and access each
+Webservices are currently available for the following software:
+
+ * ucto
+ * Frog
+ * timbl
+ * Colibri Core
+
+For the LaMachine Virtual Environment, however, you have to start and access each
 service individually using CLAM's built-in development server:
 
-* ``clamservice start clam.config.ucto``
-* ``clamservice start clam.config.frog``
-* ``clamservice start clam.config.timbl``
-* ``clamservice start clam.config.colibricore``
+ * ``clamservice start clam.config.ucto``
+ * ``clamservice start clam.config.frog``
+ * ``clamservice start clam.config.timbl``
+ * ``clamservice start clam.config.colibricore``
 
 Each webservice will advertise on what port it has been launched and how to
-access it. There is no authentication enabled on these webservices, so do not
+access it. 
+
+Note that there is no authentication enabled on the webservices, so do not
 expose them to the world!
  
 Alternatives
@@ -161,10 +173,10 @@ proper administrative access to the system, then it may be possible to install
 our software using the proper package manager, provided we have packages
 available:
 
-* Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
-* Debian/Ubuntu Linux (packages are currently out of date)-- Some of our packages are included in the ``science-linguistics`` meta-package, they are however fairly out of date for the moment: ``sudo apt-get install science-linguistics`` , [package state](https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl)
-* Mac OS X (homebrew), missing some sofware (most notably Frog, Colibri Core, and Python bindings)
-* CentOS/Fedora (packages are outdated completely)
+ * Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
+ * Debian/Ubuntu Linux (packages are currently out of date)-- Some of our packages are included in the ``science-linguistics`` meta-package, they are however fairly out of date for the moment: ``sudo apt-get install science-linguistics`` , [package state](https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl)
+ * Mac OS X (homebrew), missing some sofware (most notably Frog, Colibri Core, and Python bindings)
+ * CentOS/Fedora (packages are outdated completely)
 
 The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself.
 

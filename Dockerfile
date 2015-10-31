@@ -8,3 +8,4 @@ WORKDIR /usr/src/
 RUN git clone https://github.com/proycon/LaMachine
 WORKDIR /usr/src/LaMachine
 RUN bash bootstrap.sh
+CMD /bin/bash
