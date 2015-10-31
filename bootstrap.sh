@@ -65,6 +65,7 @@ else
 fi
 
 cd /usr/src/
+SRCDIR=`pwd`
 
 useradd build 
 
@@ -191,6 +192,7 @@ fi
 python setup.py install || error "setup.py install gecco failed"
 cd ..
 
+cd $SRCDIR
 ./LaMachine/extra.sh $@ 
 
 echo "--------------------------------------------------------"

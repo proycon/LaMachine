@@ -89,7 +89,7 @@ if [ $WITHVALKUIL -eq 1 ] || [-d valkuil-gecco ]; then
     cd ..
 fi
 
-if [ $WITHFOWLT -eq 1 ] || [-d fowlt-gecco ]; then
+if [ $WITHFOWLT -eq 1 ] || [ -d fowlt-gecco ]; then
     project="fowlt-gecco"
     echo 
     echo "--------------------------------------------------------"
