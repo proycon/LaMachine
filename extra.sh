@@ -67,7 +67,7 @@ if [ $WITHTSCAN -eq 1 ] || [ -d tscan ]; then
     cd ..
 fi
 
-if [ $WITHVALKUIL -eq 1 ] || [-d valkuil-gecco ]; then
+if [ $WITHVALKUIL -eq 1 ] || [ -d valkuil-gecco ]; then
     project="valkuil-gecco"
     echo 
     echo "--------------------------------------------------------"
