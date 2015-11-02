@@ -81,6 +81,9 @@ if [ $WITHVALKUIL -eq 1 ] || [ -d valkuil-gecco ]; then
         cd $project
         gitcheck
     fi
+    if [ ! -d /tmp/valkuil-gecco ]; then
+        mkdir /tmp/valkuil-gecco
+    fi
     if [ $REPOCHANGED -eq 1 ]; then
         ./download-models.sh
     else
