@@ -141,7 +141,7 @@ if [ "$NOADMIN" == "0" ]; then
             INSTALL="$INSTALL python python-devel python-pip"
         fi
     elif [ "$OS" == "freebsd" ]; then
-        INSTALL="sudo pkg install git gcc libtool autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python3 bzip2 py27-virtualenv curl wget gnutls aspell hunspell"
+        INSTALL="sudo pkg install git libtool pkgconf autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python3 bzip2 py27-virtualenv curl wget gnutls aspell hunspell libtextcat"
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python"
         fi
@@ -532,13 +532,20 @@ for project in $PROJECTS; do
         bash bootstrap.sh || fatalerror "$project bootstrap failed"
         EXTRA=""
         if [ "$OS" == "mac" ]; then
-            if [ "$PROJECT" == "libfolia" ] || [ $PROJECT == "ucto" ]; then
+            if [ "$project" == "libfolia" ] || [ $PROJECT == "ucto" ]; then
                 EXTRA="--with-icu=/usr/local/opt/icu4c"
             fi
         fi
-        ./configure --prefix=$VIRTUAL_ENV $EXTRA || fatalerror "$project configure failed"
-        make || fatalerror "$project make failed"
-        make install || fatalerror "$project make install failed"
+        if [[ "$project" == "wopr" ]]; then
+            #Wopr fails on FreeBSD, allow process to continue
+            ./configure --prefix=$VIRTUAL_ENV $EXTRA || error "$project configure failed"
+            make || error "$project make failed"
+            make install || error "$project make install failed"
+        else
+            ./configure --prefix=$VIRTUAL_ENV $EXTRA || fatalerror "$project configure failed"
+            make || fatalerror "$project make failed"
+            make install || fatalerror "$project make install failed"
+        fi
     else
         echo "$project is up-to-date, no need to recompile ..."
     fi 
