@@ -65,11 +65,15 @@ svncheck () {
 
 NOADMIN=0
 FORCE=0
+NOPYTHONDEPS=0
 PYTHON="python3"
 for OPT in "$@"
 do
     if [[ "$OPT" == "noadmin" ]]; then
         NOADMIN=1
+    fi
+    if [[ "$OPT" == "nopythondeps" ]]; then
+        NOPYTHONDEPS=1
     fi
     if [[ "$OPT" == "force" ]]; then
         FORCE=1
@@ -127,7 +131,7 @@ if [ "$NOADMIN" == "0" ]; then
                 fi
             fi
         fi
-        INSTALL="sudo apt-get -m install pkg-config git-core make gcc g++ autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE python-virtualenv libgnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev"  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
+        INSTALL="sudo apt-get -m install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE python-virtualenv libgnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev"  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python python-dev python-pip"
         fi
@@ -137,7 +141,7 @@ if [ "$NOADMIN" == "0" ]; then
             INSTALL="$INSTALL python python-devel python-pip"
         fi
     elif [ "$OS" == "freebsd" ]; then
-        INSTALL="sudo pkg install git gcc libtool autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python3 bzip2 py27-virtualenv curl wget gnutls aspell hunspell"
+        INSTALL="sudo pkg install git libtool pkgconf autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python3 bzip2 py27-virtualenv curl wget gnutls aspell hunspell libtextcat"
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python"
         fi
@@ -528,13 +532,20 @@ for project in $PROJECTS; do
         bash bootstrap.sh || fatalerror "$project bootstrap failed"
         EXTRA=""
         if [ "$OS" == "mac" ]; then
-            if [ "$PROJECT" == "libfolia" ] || [ $PROJECT == "ucto" ]; then
+            if [ "$project" == "libfolia" ] || [ $PROJECT == "ucto" ]; then
                 EXTRA="--with-icu=/usr/local/opt/icu4c"
             fi
         fi
-        ./configure --prefix=$VIRTUAL_ENV $EXTRA || fatalerror "$project configure failed"
-        make || fatalerror "$project make failed"
-        make install || fatalerror "$project make install failed"
+        if [[ "$project" == "wopr" ]]; then
+            #Wopr fails on FreeBSD, allow process to continue
+            ./configure --prefix=$VIRTUAL_ENV $EXTRA || error "$project configure failed"
+            make || error "$project make failed"
+            make install || error "$project make install failed"
+        else
+            ./configure --prefix=$VIRTUAL_ENV $EXTRA || fatalerror "$project configure failed"
+            make || fatalerror "$project make failed"
+            make install || fatalerror "$project make install failed"
+        fi
     else
         echo "$project is up-to-date, no need to recompile ..."
     fi 
@@ -546,10 +557,14 @@ echo
 echo "--------------------------------------------------------------"
 echo "Installing Python dependencies from the Python Package Index"
 echo "--------------------------------------------------------------"
-PYTHONDEPS="cython numpy ipython scipy matplotlib lxml scikit-learn django pycrypto pandas textblob nltk psutil flask requests requests_toolbelt requests_oauthlib"
-for PYTHONDEP in $PYTHONDEPS; do
-    pip install -U $PYTHONDEP || fatalerror "Unable to install required dependency $PYTHONDEP from Python Package Index"
-done
+if [ $NOPYTHONDEPS -eq 0 ]; then
+    PYTHONDEPS="cython numpy ipython scipy matplotlib lxml scikit-learn django pycrypto pandas textblob nltk psutil flask requests requests_toolbelt requests_oauthlib"
+    for PYTHONDEP in $PYTHONDEPS; do
+        pip install -U $PYTHONDEP || fatalerror "Unable to install required dependency $PYTHONDEP from Python Package Index"
+    done
+else
+    echo "Skipping...."
+fi
 
 PYTHONMAJOR=`python -c "import sys; print(sys.version_info.major,end='')"`
 PYTHONMINOR=`python -c "import sys; print(sys.version_info.minor,end='')"`
