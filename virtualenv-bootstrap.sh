@@ -46,22 +46,6 @@ gitcheck () {
     fi
 }
 
-svncheck () {
-    LOCAL=$(svn info HEAD | grep -i "Last Changed Rev")
-    LOCAL=${LOCAL#"Last Changed Rev: "}
-    REMOTE=$(svn info -r HEAD | grep -i "Last Changed Rev")
-    REMOTE=${REMOTE#"Last Changed Rev: "}
-    if [ -f error ]; then
-        echo "Encountered an error last time, need to recompile"
-        rm error
-        REPOCHANGED=1
-    elif [ $LOCAL = $REMOTE ]; then
-        REPOCHANGED=0
-    else 
-        svn update || fatalerror "Unable to svn update $project"
-        REPOCHANGED=1
-    fi
-}
 
 NOADMIN=0
 FORCE=0
@@ -512,18 +496,13 @@ for project in $PROJECTS; do
     echo "Installing/updating $project"
     echo "--------------------------------------------------------"
     if [ ! -d $project ]; then
-        git clone https://github.com/proycon/$project || fatalerror "Unable to clone git repo for $project"
+        git clone https://github.com/LanguageMachines/$project || fatalerror "Unable to clone git repo for $project"
         cd $project
         RECOMPILE=1
     else
         cd $project
         pwd
-        if [ -d .svn ]; then
-            #a cheat for versions with Tilburg's SVN as primary source rather than github, privileged access only
-            svncheck
-        else
-            gitcheck
-        fi
+        gitcheck
         if [ $REPOCHANGED -eq 1 ]; then
             RECOMPILE=1
         fi
