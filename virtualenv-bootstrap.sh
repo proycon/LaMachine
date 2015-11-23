@@ -618,6 +618,7 @@ else
     gitcheck
 fi
 if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
+    rm -Rf build
     if [ -f "$VIRTUAL_ENV/lib/libboost_python.so" ]; then
         python setup3.py build_ext --boost-library-dir=$VIRTUAL_ENV/lib install
     elif [ -f /usr/lib/x86_64-linux-gnu/libboost_python.so ]; then
