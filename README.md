@@ -65,7 +65,7 @@ Installation & Usage with Docker (for Linux only)
 ===================================================
 
 1. Obtain **Docker** from http://www.docker.com or your package manager (``sudo apt-get install docker.io`` on Debian/Ubuntu).
-2. Pull the [LaMachine image](https://registry.hub.docker.com/u/proycon/lamachine/): ``docker pull proycon/lamachine``
+2. Pull the [LaMachine image](https://registry.hub.docker.com/u/proycon/lamachine/): ``docker pull proycon/lamachine`` (or the executable may be called ``docker.io`` on Debian/Ubuntu)
 3. Start an interactive prompt to LaMachine: ``docker run -p 8080:80 -t -i proycon/lamachine``, or run stuff: ``docker run proycon/lamachine <program>``  (use ``run -i`` if the program has an interactive mode; set up a mounted volume to pass files from host OS to docker, see: https://docs.docker.com/userguide/dockervolumes/)
 
 There is no need to clone this git repository at all for this method.
