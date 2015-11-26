@@ -52,13 +52,12 @@ Pre-installed software
 - *C++ libraries* - [ticcutils](http://ilk.uvt.nl/ticcutils), [libfolia](http://proycon.github.io/folia)
 - *Python bindings* - [python-ucto](https://github.com/proycon/python-ucto), [python-frog](https://github.com/proycon/python-frog), [python-timbl](https://github.com/proycon/python-timbl) 
 - [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices 
+- [Gecco](https://github.com/proycon/gecco) - Generic Environment for Context-Aware Correction of Orthography
 
-Optional additional software in **virtual environment** form only:
+Optional additional software:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction. 
 
-A variety of necessary and recommended third-party NLP software is also
-installed out of the box. Both the VM image as well as the docker image are
-based on Arch Linux.
+Both the VM image as well as the docker image are based on Arch Linux.
 
 </section>
 
@@ -91,7 +90,7 @@ Installation & Usage with Docker (for Linux only)
 
 1. Obtain **Docker** from the [Docker site](http://www.docker.com or your package manager) (``sudo apt-get install docker.io`` on Debian/Ubuntu).
 2. Pull the [LaMachine image](https://registry.hub.docker.com/u/proycon/lamachine/): ``docker pull proycon/lamachine``
-3. Start an interactive prompt to LaMachine: ``docker run -p 8080:80 -t -i proycon/lamachine /bin/bash``, or run stuff: ``docker run proycon/lamachine <program>``  (use ``run -i`` if the program has an interactive mode; set up a mounted volume to pass file from host OS to docker, see [here](https://docs.docker.com/userguide/dockervolumes/))
+3. Start an interactive prompt to LaMachine: ``docker run -p 8080:80 -t -i proycon/lamachine``, or run stuff: ``docker run proycon/lamachine <program>``  (use ``run -i`` if the program has an interactive mode; set up a mounted volume to pass file from host OS to docker, see [here](https://docs.docker.com/userguide/dockervolumes/))
 
 There is no need to clone this git repository at all for this method.
 
@@ -126,31 +125,41 @@ you add an alias ``alias lm=". /path/to/lamachine/bin/activate"`` in your
 You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and ``lamachine-update.sh``):
 
  * ``noadmin`` - Do not attempt to install global dependencies (but if they are missing, compilation will fail)
+ * ``nopythondeps`` - Do not update 3rd party Python dependencies (such as numpy and scipy), may save time.
  * ``force`` - Force recompilation of everything, even if it's not updated
  * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine. 
 
 Tested to work on:
-* Arch Linux
-* Debian 8
-* Fedora Core 21
-* Ubuntu 15.04 - Vivid Vervet
-* Ubuntu 14.04 LTS - Trusty Tahr
-* Ubuntu 12.04 LTS - Precise Pangolin
 
-Partially works on::
-* Mac OS X Yosemite   (python-ucto, python-frog and python-timbl do not work yet)
+ * Arch Linux
+ * Debian 8
+ * Fedora Core 21
+ * Ubuntu 15.04 - Vivid Vervet
+ * Ubuntu 14.04 LTS - Trusty Tahr
+ * Ubuntu 12.04 LTS - Precise Pangolin
+
+Partially works on:
+
+ * Mac OS X Yosemite   (python-ucto, python-frog and python-timbl do not work yet)
+
 
 
 </section>
 
 {::options parse_block_html="true" /}
 <section>
-Updating
-===========
+Updating & Extra Software
+=============================
 
-Once you have a LaMachine running, *in any form*, just run ``lamachine-update.sh`` to update
-everything again.
+Once you have a LaMachine running in whatever form, just run ``lamachine-update.sh`` to update
+everything again. 
 
+The ``lamachine-update.sh`` script is also used to install additional *optional* software, pass the optional software as a parameter:
+
+ * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine. 
+ * ``valkuil`` - Valkuil Spelling Corrector (for Dutch)
+
+Note that for the docker version, you can pull a new docker image using ``docker pull proycon/lamachine`` instead. If you do use ``lamachine-update.sh`` with docker, you most likely will want to ``docker commit`` your container afterwards to preserve the update!
 </section>
 
 {::options parse_block_html="true" /}
@@ -162,26 +171,35 @@ LaMachine comes with several CLAM webservices ready out of the box. These are
 RESTful webservices, but also offer a web-interface for human end-users.  You
 will need to explicitly start them before being able to make use of them.
 
-For the LaMachine VM or Docker App, this is done using:
+For the LaMachine VM or Docker App, this is done using the following command
+*from within* the container/VM:
 
 ``sudo /usr/src/LaMachine/startwebservices.sh``
 
 All webservices are then accessible through http://127.0.0.1:8080 (ensure that
-this port is free) *on your host system* rather than within the VM or Docker
-Application stack. This page will provide a listing of all available services.
+this port is free) *from your host system*. For Docker you have to run the
+container with the ``-p 8080:80`` for the port forward to be active.
 
-For the LaMachine Virtual Environment, you have to start and access each
+Webservices are currently available for the following software:
+
+ * ucto
+ * Frog
+ * timbl
+ * Colibri Core
+
+For the LaMachine Virtual Environment, however, you have to start and access each
 service individually using CLAM's built-in development server:
 
-* ``clamservice start clam.config.ucto``
-* ``clamservice start clam.config.frog``
-* ``clamservice start clam.config.timbl``
-* ``clamservice start clam.config.colibricore``
+ * ``clamservice start clam.config.ucto``
+ * ``clamservice start clam.config.frog``
+ * ``clamservice start clam.config.timbl``
+ * ``clamservice start clam.config.colibricore``
 
 Each webservice will advertise on what port it has been launched and how to
-access it. There is no authentication enabled on these webservices, so do not
+access it. 
+
+Note that there is no authentication enabled on the webservices, so do not
 expose them to the world!
- 
 </section>
 
 {::options parse_block_html="true" /}
@@ -194,12 +212,24 @@ proper administrative access to the system, then it may be possible to install
 our software using the proper package manager, provided we have packages
 available:
 
-* Arch Linux (up to date) -- [AUR Packages](https://aur.archlinux.org/packages/?SeB=m&K=proycon) , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
-* Debian/Ubuntu Linux (packages are currently out of date) -- [Debian packages](https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl)
-* Mac OS X (homebrew), missing some sofware (most notably Frog, Colibri Core, and Python bindings)
-* CentOS/Fedora (packages are outdated completely)
+ * Arch Linux (up to date) -- [AUR Packages](https://aur.archlinux.org/packages/?SeB=m&K=proycon) , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
+ * Debian/Ubuntu Linux (packages are currently out of date)-- Some of our packages are included in the ``science-linguistics`` meta-package, they are however fairly out of date for the moment: ``sudo apt-get install science-linguistics`` , [package state](https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl)
+ * Mac OS X (homebrew), missing some sofware (most notably Frog, Colibri Core, and Python bindings)
+ * CentOS/Fedora (packages are outdated completely)
 
 The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself.
+
+Troubleshooting
+====================
+
+If you use the Python virtual environment and come across the error ``undefined
+symbol: _PyTraceback_Add`` upon updating LaMachine. Then some dependencies are
+still making a reference to the global Python interpreter, which has a newer
+version than the one in the virtual environment. You can fix this issue by
+copying the newer global version of the Python interpreter into your virtual
+environment as follows: ``cp /usr/bin/python3.4 $VIRTUAL_ENV/bin/python3``.
+Then run ``lamachine-update.sh`` again.
+
 
 
 </section>
