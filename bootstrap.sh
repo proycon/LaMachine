@@ -7,6 +7,7 @@ fatalerror () {
     echo "An error occured during installation!!" >&2
     echo $1 >&2
     echo "===========================================" >&2
+    echo $1 > error
     exit 2
 }
 
@@ -14,6 +15,7 @@ error () {
     echo "================= ERROR ===================" >&2
     echo $1 >&2
     echo "===========================================" >&2
+    echo $1 > error
     sleep 3
 }
 
@@ -23,11 +25,7 @@ gitcheck () {
     REMOTE=$(git rev-parse @{u})
     BASE=$(git merge-base @ @{u})
 
-    if [ -f error ]; then
-        echo "Encountered an error last time, need to recompile"
-        rm error
-        REPOCHANGED=1
-    elif [ $LOCAL = $REMOTE ]; then
+    if [ $LOCAL = $REMOTE ]; then
         echo "Git: up-to-date"
         REPOCHANGED=0
     elif [ $LOCAL = $BASE ]; then
@@ -39,6 +37,12 @@ gitcheck () {
         REPOCHANGED=1
     else
         echo "Git: Diverged"
+        REPOCHANGED=1
+    fi
+
+    if [ -f error ]; then
+        echo "Encountered an error last time, need to recompile"
+        rm error
         REPOCHANGED=1
     fi
 }
