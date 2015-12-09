@@ -47,6 +47,13 @@ gitcheck () {
     fi
 }
 
+FORCE=0
+for OPT in "$@"
+do
+    if [[ "$OPT" == "force" ]]; then
+        FORCE=1
+    fi
+done
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing global dependencies"
@@ -127,7 +134,9 @@ for package in $PACKAGES; do
             echo "--------------------------------------------------------"
             echo "[LaMachine] $project is already up to date..."
             echo "--------------------------------------------------------"
-            continue
+            if [ $FORCE -eq 0 ]; then
+                continue
+            fi
         fi
     fi 
     echo "--------------------------------------------------------"
