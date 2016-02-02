@@ -113,7 +113,7 @@ cp nginx.conf /etc/nginx/
 cd ..
 chmod a+rx LaMachine
 
-PACKAGES="ticcutils-git libfolia-git foliautils-git ucto-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git"
+PACKAGES="ticcutils-git libfolia-git foliautils-git ucto-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git toad-git"
 
 for package in $PACKAGES; do
     project="${package%-git}"
