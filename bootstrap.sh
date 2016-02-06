@@ -7,6 +7,7 @@ fatalerror () {
     echo "An error occured during installation!!" >&2
     echo $1 >&2
     echo "===========================================" >&2
+    echo $1 > error
     exit 2
 }
 
@@ -14,6 +15,7 @@ error () {
     echo "================= ERROR ===================" >&2
     echo $1 >&2
     echo "===========================================" >&2
+    echo $1 > error
     sleep 3
 }
 
@@ -23,11 +25,7 @@ gitcheck () {
     REMOTE=$(git rev-parse @{u})
     BASE=$(git merge-base @ @{u})
 
-    if [ -f error ]; then
-        echo "Encountered an error last time, need to recompile"
-        rm error
-        REPOCHANGED=1
-    elif [ $LOCAL = $REMOTE ]; then
+    if [ $LOCAL = $REMOTE ]; then
         echo "Git: up-to-date"
         REPOCHANGED=0
     elif [ $LOCAL = $BASE ]; then
@@ -41,15 +39,28 @@ gitcheck () {
         echo "Git: Diverged"
         REPOCHANGED=1
     fi
+
+    if [ -f error ]; then
+        echo "Encountered an error last time, need to recompile"
+        rm error
+        REPOCHANGED=1
+    fi
 }
 
+FORCE=0
+for OPT in "$@"
+do
+    if [[ "$OPT" == "force" ]]; then
+        FORCE=1
+    fi
+done
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing global dependencies"
 echo "--------------------------------------------------------"
 #will run as root
 pacman -Syu --noconfirm --needed base-devel || fatalerror "Unable to install global dependencies"
-PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs cython python python-pip python-requests python-lxml python-pycurl python-virtualenv python-numpy python-scipy python-matplotlib python-pandas python-nltk python-scikit-learn python-psutil ipython ipython-notebook wget curl libexttextcat python-flask python-requests python-requests-oauthlib python-requests-toolbelt python-crypto nginx uwsgi uwsgi-plugin-python hunspell aspell hunspell-en aspell-en"
+PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs cython python python-pip python-requests python-lxml python-pycurl python-virtualenv python-numpy python-scipy python-matplotlib python-pandas python-nltk python-scikit-learn python-psutil ipython wget curl libexttextcat python-flask python-requests python-requests-oauthlib python-requests-toolbelt python-crypto nginx uwsgi uwsgi-plugin-python hunspell aspell hunspell-en aspell-en"
 pacman --noconfirm --needed -Syu $PKGS ||  fatalerror "Unable to install global dependencies"
 
 umask u=rwx,g=rwx,o=rx
@@ -102,7 +113,7 @@ cp nginx.conf /etc/nginx/
 cd ..
 chmod a+rx LaMachine
 
-PACKAGES="ticcutils-git libfolia-git foliatools-git ucto-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git"
+PACKAGES="ticcutils-git libfolia-git foliautils-git ucto-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git toad-git"
 
 for package in $PACKAGES; do
     project="${package%-git}"
@@ -123,7 +134,9 @@ for package in $PACKAGES; do
             echo "--------------------------------------------------------"
             echo "[LaMachine] $project is already up to date..."
             echo "--------------------------------------------------------"
-            continue
+            if [ $FORCE -eq 0 ]; then
+                continue
+            fi
         fi
     fi 
     echo "--------------------------------------------------------"

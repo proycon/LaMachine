@@ -26,11 +26,7 @@ gitcheck () {
     REMOTE=$(git rev-parse @{u})
     BASE=$(git merge-base @ @{u})
 
-    if [ -f error ]; then
-        echo "Encountered an error last time, need to recompile"
-        rm error
-        REPOCHANGED=1
-    elif [ $LOCAL = $REMOTE ]; then
+    if [ $LOCAL = $REMOTE ]; then
         echo "Git: up-to-date"
         REPOCHANGED=0
     elif [ $LOCAL = $BASE ]; then
@@ -44,24 +40,14 @@ gitcheck () {
         echo "Git: Diverged"
         REPOCHANGED=1
     fi
-}
 
-svncheck () {
-    LOCAL=$(svn info HEAD | grep -i "Last Changed Rev")
-    LOCAL=${LOCAL#"Last Changed Rev: "}
-    REMOTE=$(svn info -r HEAD | grep -i "Last Changed Rev")
-    REMOTE=${REMOTE#"Last Changed Rev: "}
     if [ -f error ]; then
         echo "Encountered an error last time, need to recompile"
         rm error
         REPOCHANGED=1
-    elif [ $LOCAL = $REMOTE ]; then
-        REPOCHANGED=0
-    else 
-        svn update || fatalerror "Unable to svn update $project"
-        REPOCHANGED=1
     fi
 }
+
 
 NOADMIN=0
 FORCE=0
@@ -152,7 +138,7 @@ if [ "$NOADMIN" == "0" ]; then
         else
             BREWEXTRA=""
         fi
-        INSTALL="brew install autoconf automake libtool autoconf-archive boost --with-python  boost-python xml2 libxslt icu4c libtextcat aspell hunspell wget $BREWEXTRA"
+        INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python  boost-python xml2 libxslt icu4c libtextcat aspell hunspell wget $BREWEXTRA"
     else
         error "No suitable package manage detected! Unable to verify and install the necessary global dependencies"
         if [ -d "/Users" ]; then
@@ -500,9 +486,9 @@ else
 fi
 
 if [ "$OS" == "mac" ]; then
-    PROJECTS="ticcutils libfolia ucto timbl timblserver mbt mbtserver wopr frogdata frog" #no foliatools on mac yet
+    PROJECTS="ticcutils libfolia ucto timbl timblserver mbt mbtserver wopr frogdata frog toad" #no foliautils on mac yet
 else
-    PROJECTS="ticcutils libfolia foliatools ucto timbl timblserver mbt mbtserver wopr frogdata frog"
+    PROJECTS="ticcutils libfolia foliautils ucto timbl timblserver mbt mbtserver wopr frogdata frog toad"
 fi
 
 
@@ -512,18 +498,13 @@ for project in $PROJECTS; do
     echo "Installing/updating $project"
     echo "--------------------------------------------------------"
     if [ ! -d $project ]; then
-        git clone https://github.com/proycon/$project || fatalerror "Unable to clone git repo for $project"
+        git clone https://github.com/LanguageMachines/$project || fatalerror "Unable to clone git repo for $project"
         cd $project
         RECOMPILE=1
     else
         cd $project
         pwd
-        if [ -d .svn ]; then
-            #a cheat for versions with Tilburg's SVN as primary source rather than github, privileged access only
-            svncheck
-        else
-            gitcheck
-        fi
+        gitcheck
         if [ $REPOCHANGED -eq 1 ]; then
             RECOMPILE=1
         fi
