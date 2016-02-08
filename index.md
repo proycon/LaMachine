@@ -128,15 +128,17 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
  * ``nopythondeps`` - Do not update 3rd party Python dependencies (such as numpy and scipy), may save time.
  * ``force`` - Force recompilation of everything, even if it's not updated
  * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine. 
+ * ``python2`` - Use python 2.7 instead of Python 3 *(note that some software may be not be available for Python 2!)*
 
 Tested to work on:
 
  * Arch Linux
  * Debian 8
  * Fedora Core 21
+ * Ubuntu 15.10 - Wily Werewolf
  * Ubuntu 15.04 - Vivid Vervet
  * Ubuntu 14.04 LTS - Trusty Tahr
- * Ubuntu 12.04 LTS - Precise Pangolin
+ * Ubuntu 12.04 LTS - Precise Pangolin  *(provided you first manually upgrade to Python 3.3 or above!)*
 
 Partially works on:
 
