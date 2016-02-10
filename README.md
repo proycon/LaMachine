@@ -22,10 +22,10 @@ however, that running the latest development versions always comes with the
 risk of decreased stability due to undiscovered bugs.
 
 Pre-installed software:
-- [Timbl](http://ilk.uvt.nl/timbl) - Tilburg Memory Based Learner
-- [Ucto](http://ilk.uvt.nl/ucto) - Tokenizer
-- [Frog](http://ilk.uvt.nl/frog) - Frog is an integration of memory-based natural language processing (NLP) modules developed for Dutch.
-- [Mbt](http://ilk.uvt.nl/mbt) - Memory-based Tagger
+- [Timbl](https://languagemachines.github.io/timbl) - Tilburg Memory Based Learner
+- [Ucto](https://languagemachines.github.io/ucto) - Tokenizer
+- [Frog](https://languagemachines.github.io/frog) - Frog is an integration of memory-based natural language processing (NLP) modules developed for Dutch.
+- [Mbt](https://languagemachines.github.io/mbt) - Memory-based Tagger
 - [Wopr](http://ilk.uvt.nl/wopr) - Memory-based Word Predictor
 - [FoLiA-tools](http://proycon.github.io/folia) - Command line tools for working with the FoLiA format
 - [PyNLPl](https://pypi.python.org/pypi/PyNLPl) - Python Natural Language Processing Library
@@ -34,7 +34,7 @@ Pre-installed software:
   with one or more gaps, either of fixed or dynamic size) in a quick and
   memory-efficient way. At the core is the tool colibri-patternmodeller which
   allows you to build, view, manipulate and query pattern models.
-- *C++ libraries* - [ticcutils](http://ilk.uvt.nl/ticcutils), [libfolia](http://proycon.github.io/folia)
+- *C++ libraries* - [ticcutils](https://github.com/LanguageMachines/ticcutils), [libfolia](https://github.com/LanguageMachines/libfolia)
 - *Python bindings* - [python-ucto](https://github.com/proycon/python-ucto), [python-frog](https://github.com/proycon/python-frog), [python-timbl](https://github.com/proycon/python-timbl) 
 - [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices 
 - [Gecco](https://github.com/proycon/gecco) - Generic Environment for Context-Aware Correction of Orthography
