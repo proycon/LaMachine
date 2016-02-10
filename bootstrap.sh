@@ -19,34 +19,6 @@ error () {
     sleep 3
 }
 
-gitcheck () {
-    git remote update
-    LOCAL=$(git rev-parse @)
-    REMOTE=$(git rev-parse @{u})
-    BASE=$(git merge-base @ @{u})
-
-    if [ $LOCAL = $REMOTE ]; then
-        echo "Git: up-to-date"
-        REPOCHANGED=0
-    elif [ $LOCAL = $BASE ]; then
-        echo "Git: Pulling..."
-        git pull || fatalerror "Unable to git pull $project"
-        REPOCHANGED=1
-    elif [ $REMOTE = $BASE ]; then
-        echo "Git: Need to push"
-        REPOCHANGED=1
-    else
-        echo "Git: Diverged"
-        REPOCHANGED=1
-    fi
-
-    if [ -f error ]; then
-        echo "Encountered an error last time, need to recompile"
-        rm error
-        REPOCHANGED=1
-    fi
-}
-
 FORCE=0
 for OPT in "$@"
 do
