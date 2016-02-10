@@ -10,7 +10,7 @@ software. Installing all this software can be a daunting task, compiling it
 from scratch even more so.  Ideally software is installed through your
 distribution's package manager, but we do not always have packages available
 for all platforms, or they may be out of date. LaMachine ensures you can always
-use all of our software at the very latest (development) versions by bundling
+use all of our software at the very latest stable versions by bundling
 them all and offering them in three distinct forms:
 
  * As a **Virtual Machine** - Easiest, allows you to run our software on any host OS. 
@@ -100,6 +100,8 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
  * ``nopythondeps`` - Do not update 3rd party Python dependencies (such as numpy and scipy), may save time.
  * ``force`` - Force recompilation of everything, even if it's not updated
  * ``python2`` - Use python 2.7 instead of Python 3 *(note that some software may be not be available for Python 2!)*
+ * ``stable`` - Use stable releases  *(this is the new default since February 2016)*
+ * ``dev`` - Use cutting-edge development versions *(this may sometimes breaks things)*
 
 Tested to work on:
 
@@ -175,9 +177,10 @@ our software using the proper package manager, provided we have packages
 available:
 
  * Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
- * Debian/Ubuntu Linux (packages are currently out of date)-- Some of our packages are included in the ``science-linguistics`` meta-package, they are however fairly out of date for the moment: ``sudo apt-get install science-linguistics`` , [package state](https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl)
- * Mac OS X (homebrew), missing some sofware (most notably Frog, Colibri Core, and Python bindings)
- * CentOS/Fedora (packages are outdated completely)
+ * Debian Linux (packages are mostly out of date) -- Some of our packages are included in the ``science-linguistics`` meta-package, they are however fairly out of date for the moment: ``sudo apt-get install science-linguistics`` , [package state](https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl)
+ * Ubuntu Linux (packages are currently out of date)
+ * Mac OS X (homebrew), missing most sofware (most notably Frog, Colibri Core, and Python bindings)
+ * CentOS/Fedora (packages are outdated completely, do not use)
 
 The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself.
 

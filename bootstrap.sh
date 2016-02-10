@@ -20,10 +20,17 @@ error () {
 }
 
 FORCE=0
+DEV=0 #prefer stable releases
 for OPT in "$@"
 do
     if [[ "$OPT" == "force" ]]; then
         FORCE=1
+    fi
+    if [[ "$OPT" == "dev" ]]; then
+        DEV=1
+    fi
+    if [[ "$OPT" == "stable" ]]; then
+        DEV=0
     fi
 done
 
@@ -85,7 +92,12 @@ cp nginx.conf /etc/nginx/
 cd ..
 chmod a+rx LaMachine
 
-PACKAGES="ticcutils-git libfolia-git foliautils-git ucto-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git toad-git"
+#development packaged should end in -git , releases should not
+if [ $DEV -eq 0 ]; then
+    PACKAGES="ticcutils libfolia foliautils-git ucto timbl timblserver mbt mbtserver wopr-git frogdata frog toad-git" #not everything is available as releases yet
+else
+    PACKAGES="ticcutils-git libfolia-git foliautils-git ucto-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git toad-git"
+fi
 
 for package in $PACKAGES; do
     project="${package%-git}"
@@ -145,7 +157,7 @@ echo "--------------------------------------------------------"
 pip install -U python3-timbl || error "Installation of python3-timbl failed !!"
 
 echo "--------------------------------------------------------"
-echo "[LaMachine] Installing python-frog"
+echo "[LaMachine] Installing python-frog (latest development release)"
 echo "--------------------------------------------------------"
 git clone https://github.com/proycon/python-frog
 cd python-frog
@@ -158,13 +170,13 @@ echo "--------------------------------------------------------"
 pip install -U colibricore || error "Installation of colibri-core failed !!"
 
 echo "--------------------------------------------------------"
-echo "[LaMachine] Installing Gecco dependencies"
+echo "[LaMachine] Installing Gecco dependencies (3rd party)"
 echo "--------------------------------------------------------"
 pip install -U hunspell python-Levenshtein aspell-python-py3 || error "Installation of one or more Python 3 packages failed !!"
 
 
 echo "--------------------------------------------------------"
-echo "[LaMachine] Installing Gecco"
+echo "[LaMachine] Installing Gecco (latest development release) "
 echo "--------------------------------------------------------"
 if [ ! -d gecco ]; then
     git clone https://github.com/proycon/gecco
