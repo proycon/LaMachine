@@ -35,6 +35,5 @@ sed -i "s/pkgrel=.*/pkgrel=1/g" PKGBUILD
 
 mksrcinfo
 git add PKGBUILD .SRCINFO
-git commit
 
 
