@@ -2,7 +2,6 @@
 
 echo "=== LaMachine Virtualenv Bootstrap ===">&2
 
-
 fatalerror () {
     echo "================ FATAL ERROR ==============" >&2
     echo "An error occured during installation!!" >&2
