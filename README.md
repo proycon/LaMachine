@@ -4,8 +4,8 @@ LaMachine
 ===========
 
 LaMachine is a software distribution of NLP software developed by the Language
-Machines research group and CLST (Radboud University Nijmegen), as well as TiCC
-(Tilburg University). 
+Machines research group and Centre for Language and Speech Technology (Radboud
+University Nijmegen), as well as TiCC (Tilburg University). 
 
 Our software is highly specialised and generally depends on a lot of other
 software. Installing all this software can be a daunting task, compiling it
