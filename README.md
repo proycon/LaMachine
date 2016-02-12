@@ -102,6 +102,8 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
  * ``python2`` - Use python 2.7 instead of Python 3 *(note that some software may be not be available for Python 2!)*
  * ``stable`` - Use stable releases  *(this is the new default since February 2016)*
  * ``dev`` - Use cutting-edge development versions *(this may sometimes breaks things)*
+ * ``private`` - Do not send information to us regarding your LaMachine installation
+ * ``shareinfo`` - Send information to us regarding your LaMachine installation *(default, see privacy section below)*
 
 Tested to work on:
 
@@ -130,6 +132,39 @@ The ``lamachine-update.sh`` script is also used to install additional *optional*
  * ``valkuil`` - Valkuil Spelling Corrector (for Dutch)
 
 Note that for the docker version, you can pull a new docker image using ``docker pull proycon/lamachine`` instead. If you do use ``lamachine-update.sh`` with docker, you most likely will want to ``docker commit`` your container afterwards to preserve the update!
+
+Privacy
+============
+
+Unless you explicitly opt-out, LaMachine send a few details to us regarding
+your installation of LaMachine whenever you install or update it. This is to
+help us keep track of its usage and improve it. 
+
+The following information is sent:
+* The form in which you run LaMachine (vagrant/virtualenv/docker)
+* Is it a new LaMachine installation or an update
+* Stable or Development?
+* The OS you are running on and its version
+* Your Python version
+
+Your IP address will only be used to identify your country and not used in any
+other way. No personally identifiable information whatsoever will be included
+in any reports we generate from this and it will never be used for
+advertisement purposes.
+
+To opt-out of this behaviour, For the ``virtualenv-boostrap.sh`` and
+``lamachine-update.sh`` scripts, add the parameter ``private``. For the VM
+method, prior to building the VM, edit ``Vagrantfile`` and add the ``private``
+parameter after ``bootstrap.sh``. Due to the nature of Docker, installation of
+Docker images are not tracked by us (but may be by Docker itself). 
+
+LaMachine downloads software from a number of external sources, depending on the form you choose,
+which may or may not collect your IP:
+
+ * [Github](https://github.com)
+ * [The Python Package Index](https://pypi.python.org)
+ * [The Arch Linux User Repository](https://aur.archlinux.org)
+ * [Docker](https://docker.io)
 
 CLAM Webservices
 ==================
