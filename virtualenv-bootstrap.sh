@@ -129,6 +129,11 @@ if [ -f $VIRTUAL_ENV/src/LaMachine/.dev ]; then
 else
     DEV=0 #install development versions
 fi
+if [ -f $VIRTUAL_ENV/src/LaMachine/.private ]; then
+    PRIVATE=1 #no not send simple analytics to Nijmegen
+else
+    PRIVATE=0 #send simple analytics to Nijmegen
+fi
 PYTHON="python3"
 for OPT in "$@"
 do
@@ -145,11 +150,20 @@ do
         PYTHON="python2.7"
     fi
     if [[ "$OPT" == "dev" ]]; then
+        touch $VIRTUAL_ENV/src/LaMachine/.dev
         DEV=1
     fi
     if [[ "$OPT" == "stable" ]]; then
         rm $VIRTUAL_ENV/src/LaMachine/.dev 2> /dev/null
         DEV=0
+    fi
+    if [[ "$OPT" == "private" ]]; then
+        touch $VIRTUAL_ENV/src/LaMachine/.private
+        DEV=0
+    fi
+    if [[ "$OPT" == "sendinfo" ]]; then
+        rm $VIRTUAL_ENV/src/LaMachine/.private 2> /dev/null
+        PRIVATE=0
     fi
 done
 
@@ -182,6 +196,16 @@ else
     OS=""
 fi
 
+DISTRIB_ID="unknown"
+DISTRIB_RELEASE="unknown"
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    DISTRIB_ID="$ID"
+    DISTRIB_RELEASE="$VERSION_ID"
+if [ -f /etc/lsb-release ]; then
+    . /etc/lsb-release
+fi
+
 if [ "$NOADMIN" == "0" ]; then
     echo "Detecting package manager..."
     INSTALL=""
@@ -192,13 +216,15 @@ if [ "$NOADMIN" == "0" ]; then
         fi
     elif [ "$OS" == "debian" ]; then
         PIPPACKAGE="python3-pip"
-        if [ -f /etc/lsb-release ]; then
-            . /etc/lsb-release
-            if [ "$DISTRIB_ID" == "Ubuntu" ]; then
-                if [ "$DISTRIB_RELEASE" == "12.04" ]; then
-                    echo "WARNING: Ubuntu 12.04 detected, make sure you manually upgrade Python 3 to at least Python 3.3 first or things may fail!">&2
-                    PIPPACKAGE="python-pip"
-                fi
+        if [ "$DISTRIB_ID" == "Ubuntu" ]; then
+            if [ "$DISTRIB_RELEASE" == "12.04" ]; then
+                echo "===========================================================================================================================================================">&2
+                echo "WARNING: Ubuntu 12.04 detected, make sure you manually upgrade Python 3 to at least Python 3.3 first or things may fail later in the installation process!">&2
+                echo "============================================================================================================================================================">&2
+                sleep 3
+                PIPPACKAGE="python-pip"
+            elif [ "$DISTRIB_RELEASE" == "10.04" ]; then
+                fatalerror "Your Ubuntu version (10.04) is way too old for LaMachine, upgrade to the latest LTS release"
             fi
         fi
         INSTALL="sudo apt-get -m install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE python-virtualenv libgnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev"  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
@@ -284,8 +310,33 @@ if [ -z "$VIRTUAL_ENV" ]; then
     echo "-----------------------------------------"
     virtualenv --python=$PYTHON lamachine || fatalerror "Unable to create virtual environment"
     . lamachine/bin/activate || fatalerror "Unable to activate virtual environment"
+    MODE='new'
 else
     echo "Existing virtual environment detected... good.."
+    MODE='update'
+fi
+
+
+if [ $PRIVATE -eq 0 ]; then
+    #Sending some statistics to us so we know how often and on what systems LaMachine is used
+    #recipient: Language Machines, Centre of Language Studies, Radboud University Nijmegen
+    #
+    #Transmitted are:
+    # - The form in which you run LaMachine (vagrant/virtualenv/docker)
+    # - Is it a new LaMachine installation or an update
+    # - Stable or Development?
+    # - The OS you are running on and its version
+    # - Your Python version
+    #
+    #This information will never be used for any form of advertising
+    #Your IP will only be used to compute country of origin, resulting reports will never contain personally identifiable information
+
+    if [ $DEV -eq 0 ]; then
+        STABLEDEV="stable"
+    else
+        STABLEDEV="dev"
+    fi
+    wget -O - -q http://applejack.science.ru.nl/lamachinetracker.php/virtualenv/$MODE/$STABLEDEV/$OS/$DISTRIB_ID/$DISTRIB_RELEASE  >/dev/null
 fi
 
 if [ "$OS" == "mac" ]; then
