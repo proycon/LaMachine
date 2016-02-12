@@ -60,6 +60,7 @@ available to the VM (2 CPUs and 3GB RAM by default).
 On most Linux distributions, steps one and two may be combined with a simple command such as
 ``sudo apt-get install virtualbox vagrant`` on Ubuntu, or ``sudo pacman -Syu virtualbox vagrant`` on Arch Linux.
 
+Make sure to also read our privacy section below.
 
 Installation & Usage with Docker (for Linux only)
 ===================================================
@@ -102,8 +103,11 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
  * ``python2`` - Use python 2.7 instead of Python 3 *(note that some software may be not be available for Python 2!)*
  * ``stable`` - Use stable releases  *(this is the new default since February 2016)*
  * ``dev`` - Use cutting-edge development versions *(this may sometimes breaks things)*
- * ``private`` - Do not send information to us regarding your LaMachine installation
+ * ``private`` - Do not send information to us regarding your LaMachine installation *(see the privacy section below)*
  * ``shareinfo`` - Send information to us regarding your LaMachine installation *(default, see privacy section below)*
+
+The latter five parameters are persistent, if you specify them once during
+installation or upgrade you won't need to the next time you upgrade your LaMachine.
 
 Tested to work on:
 
@@ -144,7 +148,7 @@ The following information is sent:
 * The form in which you run LaMachine (vagrant/virtualenv/docker)
 * Is it a new LaMachine installation or an update
 * Stable or Development?
-* The OS you are running on and its version
+* The OS you are running on and its version (only for the virtualenv form)
 * Your Python version
 
 Your IP address will only be used to identify your country and not used in any
