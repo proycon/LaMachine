@@ -1,4 +1,14 @@
 #!/bin/bash
+#======================================
+# LaMachine
+#  by Maarten van Gompel
+#  Centre for Language Studies
+#  Radboud University Nijmegen
+#
+# https://proycon.github.io/LaMachine
+# Licensed under GPLv3
+#=====================================
+
 
 echo "=== LaMachine Virtualenv Bootstrap ===">&2
 
@@ -159,7 +169,7 @@ do
     fi
     if [[ "$OPT" == "private" ]]; then
         touch $VIRTUAL_ENV/src/LaMachine/.private
-        DEV=0
+        PRIVATE=1
     fi
     if [[ "$OPT" == "sendinfo" ]]; then
         rm $VIRTUAL_ENV/src/LaMachine/.private 2> /dev/null
@@ -193,7 +203,7 @@ elif [ -f "$REDHAT" ]; then
 elif [ -f "$FREEBSD" ]; then
     OS='freebsd'
 else
-    OS=""
+    OS="unknown"
 fi
 
 DISTRIB_ID="unknown"
@@ -319,7 +329,7 @@ fi
 
 if [ $PRIVATE -eq 0 ]; then
     #Sending some statistics to us so we know how often and on what systems LaMachine is used
-    #recipient: Language Machines, Centre of Language Studies, Radboud University Nijmegen
+    #recipient: Language Machines, Centre for Language Studies, Radboud University Nijmegen
     #
     #Transmitted are:
     # - The form in which you run LaMachine (vagrant/virtualenv/docker)
@@ -336,7 +346,8 @@ if [ $PRIVATE -eq 0 ]; then
     else
         STABLEDEV="dev"
     fi
-    wget -O - -q http://applejack.science.ru.nl/lamachinetracker.php/virtualenv/$MODE/$STABLEDEV/$OS/$DISTRIB_ID/$DISTRIB_RELEASE  >/dev/null
+    PYTHONVERSION=`python -c 'import sys; print(".".join(map(str, sys.version_info[:3])))'`
+    wget -O - -q http://applejack.science.ru.nl/lamachinetracker.php/virtualenv/$MODE/$STABLEDEV/$PYTHONVERSION/$OS/$DISTRIB_ID/$DISTRIB_RELEASE  >/dev/null
 fi
 
 if [ "$OS" == "mac" ]; then
