@@ -111,7 +111,7 @@ if [ $PRIVATE -eq 0 ]; then
     fi
     if [ ! -d LaMachine ]; then
         MODE="new"
-    else:
+    else
         MODE="update"
     fi
     PYTHONVERSION=`python -c 'import sys; print(".".join(map(str, sys.version_info[:3])))'`
