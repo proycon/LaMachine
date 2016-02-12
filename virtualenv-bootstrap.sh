@@ -212,7 +212,7 @@ if [ -f /etc/os-release ]; then
     . /etc/os-release
     DISTRIB_ID="$ID"
     DISTRIB_RELEASE="$VERSION_ID"
-if [ -f /etc/lsb-release ]; then
+elif [ -f /etc/lsb-release ]; then
     . /etc/lsb-release
 fi
 
@@ -350,7 +350,7 @@ if [ $PRIVATE -eq 0 ]; then
         STABLEDEV="dev"
     fi
     PYTHONVERSION=`python -c 'import sys; print(".".join(map(str, sys.version_info[:3])))'`
-    wget -O - -q http://applejack.science.ru.nl/lamachinetracker.php/virtualenv/$MODE/$STABLEDEV/$PYTHONVERSION/$OS/$DISTRIB_ID/$DISTRIB_RELEASE  >/dev/null
+    wget -O - -q "http://applejack.science.ru.nl/lamachinetracker.php/virtualenv/$MODE/$STABLEDEV/$PYTHONVERSION/$OS/$DISTRIB_ID/$DISTRIB_RELEASE"  >/dev/null
 fi
 
 if [ "$OS" == "mac" ]; then
