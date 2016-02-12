@@ -109,6 +109,11 @@ if [ $PRIVATE -eq 0 ]; then
     else
         STABLEDEV="dev"
     fi
+    if [ ! -d LaMachine ]; then
+        MODE="new"
+    else:
+        MODE="update"
+    fi
     PYTHONVERSION=`python -c 'import sys; print(".".join(map(str, sys.version_info[:3])))'`
     wget -O - -q http://applejack.science.ru.nl/lamachinetracker.php/$FORM/$MODE/$STABLEDEV/$PYTHONVERSION >/dev/null
 fi
