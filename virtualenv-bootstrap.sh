@@ -328,7 +328,7 @@ else
 fi
 
 
-if [ $DEV -eq 0 ];
+if [ $DEV -eq 0 ]; then
     rm -f $VIRTUAL_ENV/src/LaMachine/.dev 2/dev/null
 else
     touch $VIRTUAL_ENV/src/LaMachine/.dev
