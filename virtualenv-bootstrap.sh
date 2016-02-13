@@ -82,7 +82,7 @@ gitcheck () {
         fi
         LATESTVERSION=`git tag --sort="v:refname" | tail -n 1`
         if [ ! -z $LATESTVERSION ]; then
-            if [ "$LATESTVERSION" == "$CURRENTVERSION" ]; then
+            if [[ "$LATESTVERSION" == "$CURRENTVERSION" ]]; then
                 echo "   Already up to date on latest stable release: $LATESTVERSION"
                 REPOCHANGED=0
             else
