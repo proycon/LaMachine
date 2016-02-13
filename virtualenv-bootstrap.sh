@@ -134,15 +134,16 @@ gitcheckout () {
 NOADMIN=0
 FORCE=0
 NOPYTHONDEPS=0
-if [ -f $VIRTUAL_ENV/src/LaMachine/.dev ]; then
-    DEV=1 #install development versions
-else
-    DEV=0 #install development versions
-fi
-if [ -f $VIRTUAL_ENV/src/LaMachine/.private ]; then
-    PRIVATE=1 #no not send simple analytics to Nijmegen
-else
-    PRIVATE=0 #send simple analytics to Nijmegen
+DEV=0
+PRIVATE=0
+if [ ! -z $VIRTUAL_ENV ]; then
+    #already in a virtual env
+    if [ -f $VIRTUAL_ENV/src/LaMachine/.dev ]; then
+        DEV=1 #install development versions
+    fi
+    if [ -f $VIRTUAL_ENV/src/LaMachine/.private ]; then
+        PRIVATE=1 #no not send simple analytics to Nijmegen
+    fi
 fi
 PYTHON="python3"
 for OPT in "$@"
@@ -160,19 +161,15 @@ do
         PYTHON="python2.7"
     fi
     if [[ "$OPT" == "dev" ]]; then
-        touch $VIRTUAL_ENV/src/LaMachine/.dev
         DEV=1
     fi
     if [[ "$OPT" == "stable" ]]; then
-        rm $VIRTUAL_ENV/src/LaMachine/.dev 2> /dev/null
         DEV=0
     fi
     if [[ "$OPT" == "private" ]]; then
-        touch $VIRTUAL_ENV/src/LaMachine/.private
         PRIVATE=1
     fi
     if [[ "$OPT" == "sendinfo" ]]; then
-        rm $VIRTUAL_ENV/src/LaMachine/.private 2> /dev/null
         PRIVATE=0
     fi
 done
@@ -295,6 +292,7 @@ fi
 
 
 
+
 if [ -z "$VIRTUAL_ENV" ]; then
     VENV=`which virtualenv`
     if [ ! -f "$VENV" ]; then
@@ -330,7 +328,14 @@ else
 fi
 
 
+if [ $DEV -eq 0 ];
+    rm -f $VIRTUAL_ENV/src/LaMachine/.dev 2/dev/null
+else
+    touch $VIRTUAL_ENV/src/LaMachine/.dev
+fi
+
 if [ $PRIVATE -eq 0 ]; then
+    rm -f $VIRTUAL_ENV/src/LaMachine/.private 2>/dev/null
     #Sending some statistics to us so we know how often and on what systems LaMachine is used
     #recipient: Language Machines, Centre for Language Studies, Radboud University Nijmegen
     #
@@ -351,6 +356,8 @@ if [ $PRIVATE -eq 0 ]; then
     fi
     PYTHONVERSION=`python -c 'import sys; print(".".join(map(str, sys.version_info[:3])))'`
     wget -O - -q "http://applejack.science.ru.nl/lamachinetracker.php/virtualenv/$MODE/$STABLEDEV/$PYTHONVERSION/$OS/$DISTRIB_ID/$DISTRIB_RELEASE"  >/dev/null
+else
+    touch $VIRTUAL_ENV/src/LaMachine/.private
 fi
 
 if [ "$OS" == "mac" ]; then
