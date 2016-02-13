@@ -25,24 +25,24 @@ sleep 1
 fatalerror () {
     echo "================ FATAL ERROR ==============" >&2
     echo "An error occured during installation!!" >&2
-    echo $1 >&2
+    echo "$1" >&2
     echo "===========================================" >&2
-    echo $1 > error
+    echo "$1" > error
     exit 2
 }
 
 error () {
     echo "================= ERROR ===================" >&2
-    echo $1 >&2
+    echo "$1" >&2
     echo "===========================================" >&2
-    echo $1 > error
+    echo "$1" > error
     sleep 3
 }
 
 gitstash () {
         echo "WARNING: Unable to switch branches, there must be uncommited changes. Do you want to stash them away and continue? (y/n)"
-        read yn
-        if [[ "yn" == "y" ]]; then
+        read -r yn
+        if [[ "$yn" == "y" ]]; then
             git stash
         else 
             exit 8
@@ -61,14 +61,14 @@ gitcheckmaster() {
     REMOTE=$(git rev-parse @{u})
     BASE=$(git merge-base @ @{u})
 
-    if [ $LOCAL = $REMOTE ]; then
+    if [ "$LOCAL" = "$REMOTE" ]; then
         echo "Git: up-to-date"
         REPOCHANGED=0
-    elif [ $LOCAL = $BASE ]; then
+    elif [ "$LOCAL" = "$BASE" ]; then
         echo "Git: Pulling..."
         git pull || fatalerror "Unable to git pull $project"
         REPOCHANGED=1
-    elif [ $REMOTE = $BASE ]; then
+    elif [ "$REMOTE" = "$BASE" ]; then
         echo "Git: Need to push"
         REPOCHANGED=1
     else
@@ -88,9 +88,9 @@ gitcheck () {
     if [ $DEV -eq 0 ]; then
         #use github releases, upgrade to latest one
         if [ -f .version.lamachine ]; then
-            CURRENTVERSION=`cat .version.lamachine`
+            CURRENTVERSION=$(cat .version.lamachine)
         fi
-        LATESTVERSION=`git tag --sort="v:refname" | tail -n 1`
+        LATESTVERSION=$(git tag --sort="v:refname" | tail -n 1)
         if [ ! -z $LATESTVERSION ]; then
             if [[ "$LATESTVERSION" == "$CURRENTVERSION" ]]; then
                 echo "   Already up to date on latest stable release: $LATESTVERSION"
@@ -98,12 +98,12 @@ gitcheck () {
             else
                 LATESTVERSION=$(echo $LATESTVERSION|tr -d '\n')
                 echo "   Upgrading from $CURRENTVERSION to latest stable release $LATESTVERSION ..."
-                git checkout tags/$LATESTVERSION #will put us in detached head state
+                git checkout "tags/$LATESTVERSION" #will put us in detached head state
                 if [ $? -ne 0 ]; then
                     gitstash 
-                    git checkout tags/$LATESTVERSION
+                    git checkout "tags/$LATESTVERSION"
                 fi
-                echo $LATESTVERSION > .version.lamachine 
+                echo "$LATESTVERSION" > .version.lamachine 
                 REPOCHANGED=1
             fi
         else
@@ -119,15 +119,15 @@ gitcheck () {
 gitcheckout () {
     if [ $DEV -eq 0 ]; then
         LATESTVERSION=`git tag --sort="v:refname" | tail -n 1`
-        if [ ! -z $LATESTVERSION ]; then
+        if [ ! -z "$LATESTVERSION" ]; then
             LATESTVERSION=$(echo $LATESTVERSION|tr -d '\n')
             echo "   Using latest stable release: $LATESTVERSION"
-            git checkout tags/$LATESTVERSION #will put us in detached head state
+            git checkout "tags/$LATESTVERSION" #will put us in detached head state
             if [ $? -ne 0 ]; then
                 gitstash 
-                git checkout tags/$LATESTVERSION
+                git checkout "tags/$LATESTVERSION"
             fi
-            echo $LATESTVERSION > .version.lamachine 
+            echo "$LATESTVERSION" > .version.lamachine 
         fi
     else
         echo "       Using newest development version"
@@ -146,12 +146,12 @@ FORCE=0
 NOPYTHONDEPS=0
 DEV=0
 PRIVATE=0
-if [ ! -z $VIRTUAL_ENV ]; then
+if [ ! -z "$VIRTUAL_ENV" ]; then
     #already in a virtual env
-    if [ -f $VIRTUAL_ENV/src/LaMachine/.dev ]; then
+    if [ -f "$VIRTUAL_ENV/src/LaMachine/.dev" ]; then
         DEV=1 #install development versions
     fi
-    if [ -f $VIRTUAL_ENV/src/LaMachine/.private ]; then
+    if [ -f "$VIRTUAL_ENV/src/LaMachine/.private" ]; then
         PRIVATE=1 #no not send simple analytics to Nijmegen
     fi
 fi
@@ -194,11 +194,11 @@ CONDA=0
 #    fi
 #    CONDA=1
 
-ARCH=`which pacman 2> /dev/null`
-DEBIAN=`which apt-get 2> /dev/null`
-MAC=`which brew 2> /dev/null`
-REDHAT=`which yum 2> /dev/null`
-FREEBSD=`which pkg 2> /dev/null`
+ARCH=$(which pacman 2> /dev/null)
+DEBIAN=$(which apt-get 2> /dev/null)
+MAC=$(which brew 2> /dev/null)
+REDHAT=$(which yum 2> /dev/null)
+FREEBSD=$(which pkg 2> /dev/null)
 if [ -f "$ARCH" ]; then
     OS='arch'
 elif [ -f "$DEBIAN" ]; then
@@ -259,7 +259,7 @@ if [ "$NOADMIN" == "0" ]; then
             INSTALL="$INSTALL python"
         fi
     elif [ "$OS" == "mac" ]; then
-        MACPYTHON3=`which python3` 
+        MACPYTHON3=$(which python3)
         if [ "$?" != 0 ]; then
             BREWEXTRA="python3"
         else
@@ -268,7 +268,7 @@ if [ "$NOADMIN" == "0" ]; then
         INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python  boost-python xml2 libxslt icu4c libtextcat aspell hunspell wget $BREWEXTRA"
 
         DISTRIB_ID="OSX"
-        DISTRIB_RELEASE=`sw_vers -productVersion | tr -d '\n'`
+        DISTRIB_RELEASE=$(sw_vers -productVersion | tr -d '\n')
     else
         error "No suitable package manage detected! Unable to verify and install the necessary global dependencies"
         if [ -d "/Users" ]; then
@@ -304,16 +304,16 @@ fi
 
 
 if [ -z "$VIRTUAL_ENV" ]; then
-    VENV=`which virtualenv`
+    VENV=$(which virtualenv)
     if [ ! -f "$VENV" ]; then
         error "virtualenv not found"
         if [[ "$PYTHON" == "python2.7" ]]; then
-            PIP=`which pip`
+            PIP=$(which pip)
         else
-            PIP=`which pip3`
+            PIP=$(which pip3)
         fi
         if [ ! -f "$PIP" ]; then
-            PIP=`which pip`
+            PIP=$(which pip)
             if [ ! -f "$PIP" ]; then
                 fatalerror "pip3 or pip not found"
             fi
@@ -339,13 +339,13 @@ fi
 
 
 if [ $DEV -eq 0 ]; then
-    rm -f $VIRTUAL_ENV/src/LaMachine/.dev 2/dev/null
+    rm -f "$VIRTUAL_ENV/src/LaMachine/.dev" 2/dev/null
 else
-    touch $VIRTUAL_ENV/src/LaMachine/.dev
+    touch "$VIRTUAL_ENV/src/LaMachine/.dev"
 fi
 
 if [ $PRIVATE -eq 0 ]; then
-    rm -f $VIRTUAL_ENV/src/LaMachine/.private 2>/dev/null
+    rm -f "$VIRTUAL_ENV/src/LaMachine/.private" 2>/dev/null
     #Sending some statistics to us so we know how often and on what systems LaMachine is used
     #recipient: Language Machines, Centre for Language Studies, Radboud University Nijmegen
     #
@@ -367,7 +367,7 @@ if [ $PRIVATE -eq 0 ]; then
     PYTHONVERSION=`python -c 'import sys; print(".".join(map(str, sys.version_info[:3])))'`
     wget -O - -q "http://applejack.science.ru.nl/lamachinetracker.php/virtualenv/$MODE/$STABLEDEV/$PYTHONVERSION/$OS/$DISTRIB_ID/$DISTRIB_RELEASE"  >/dev/null
 else
-    touch $VIRTUAL_ENV/src/LaMachine/.private
+    touch "$VIRTUAL_ENV/src/LaMachine/.private"
 fi
 
 if [ "$OS" == "mac" ]; then
@@ -375,7 +375,7 @@ if [ "$OS" == "mac" ]; then
     echo "-------------------------------------"
     echo "Copying ICU to virtual environment"
     echo "-------------------------------------"
-    cp -R /usr/local/opt/icu4c/* $VIRTUAL_ENV/ 2> /dev/null
+    cp -R /usr/local/opt/icu4c/* "$VIRTUAL_ENV/" 2> /dev/null
 
     echo
     echo "-------------------------------------"
@@ -574,25 +574,25 @@ echo "--------------------------------------------------------"
 echo "Modifying environment"
 echo "--------------------------------------------------------"
 if [ "$CONDA" == "1" ]; then
-    VIRTUAL_ENV=`pwd`
-    mkdir $VIRTUAL_ENV/activate.d/
-    printf "$activate_conda" > $VIRTUAL_ENV/activate.d/lamachine.sh
-    chmod a+x $VIRTUAL_ENV/activate.d/lamachine.sh
+    VIRTUAL_ENV=$(pwd)
+    mkdir "$VIRTUAL_ENV/activate.d/"
+    printf "$activate_conda" > "$VIRTUAL_ENV/activate.d/lamachine.sh"
+    chmod a+x "$VIRTUAL_ENV/activate.d/lamachine.sh"
     VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
-    sed -i -e "s/_VIRTUAL_ENV_/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/activate.d/lamachine.sh || fatalerror "Error modifying environment"
+    sed -i -e "s/_VIRTUAL_ENV_/${VIRTUAL_ENV_ESCAPED}/" "$VIRTUAL_ENV/activate.d/lamachine.sh" || fatalerror "Error modifying environment"
 else
     printf "$activate" > $VIRTUAL_ENV/bin/activate  
     VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
-    sed -i -e "s/_VIRTUAL_ENV_/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/bin/activate || fatalerror "Error modifying environment"
-    printf "${activate_this_py}" > $VIRTUAL_ENV/bin/activate_this.py  
+    sed -i -e "s/_VIRTUAL_ENV_/${VIRTUAL_ENV_ESCAPED}/" "$VIRTUAL_ENV/bin/activate" || fatalerror "Error modifying environment"
+    printf "${activate_this_py}" > "$VIRTUAL_ENV/bin/activate_this.py"
     VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
-    sed -i -e "s/_VIRTUAL_ENV_/${VIRTUAL_ENV_ESCAPED}/" $VIRTUAL_ENV/bin/activate_this.py || fatalerror "Error modifying environment"
+    sed -i -e "s/_VIRTUAL_ENV_/${VIRTUAL_ENV_ESCAPED}/" "$VIRTUAL_ENV/bin/activate_this.py" || fatalerror "Error modifying environment"
 fi
 
-if [ ! -d $VIRTUAL_ENV/src ]; then
-    mkdir $VIRTUAL_ENV/src
+if [ ! -d "$VIRTUAL_ENV/src" ]; then
+    mkdir "$VIRTUAL_ENV/src"
 fi
-cd $VIRTUAL_ENV/src
+cd "$VIRTUAL_ENV/src"
 
 echo
 echo "--------------------------------------------------------"
@@ -601,13 +601,13 @@ echo "--------------------------------------------------------"
 if [ ! -d LaMachine ]; then
     git clone https://github.com/proycon/LaMachine || fatalerror "Unable to clone git repo for LaMachine"
     cd LaMachine
-    cp virtualenv-bootstrap.sh $VIRTUAL_ENV/bin/lamachine-update.sh
+    cp virtualenv-bootstrap.sh "$VIRTUAL_ENV/bin/lamachine-update.sh"
 else
     cd LaMachine
     OLDSUM=`sum virtualenv-bootstrap.sh`
     git pull
     NEWSUM=`sum virtualenv-bootstrap.sh`
-    cp virtualenv-bootstrap.sh $VIRTUAL_ENV/bin/lamachine-update.sh
+    cp virtualenv-bootstrap.sh "$VIRTUAL_ENV/bin/lamachine-update.sh"
     if [ "$OLDSUM" != "$NEWSUM" ]; then
         echo "----------------------------------------------------------------"
         echo "LaMachine has been updated with a newer version, restarting..."
@@ -714,8 +714,8 @@ else
     echo "Skipping...."
 fi
 
-PYTHONMAJOR=`python -c "import sys; print(sys.version_info.major,end='')"`
-PYTHONMINOR=`python -c "import sys; print(sys.version_info.minor,end='')"`
+PYTHONMAJOR=$(python -c "import sys; print(sys.version_info.major,end='')")
+PYTHONMINOR=$(python -c "import sys; print(sys.version_info.minor,end='')")
 
 PYTHONPROJECTS="pynlpl folia foliadocserve flat"
 
@@ -747,7 +747,7 @@ for project in $PYTHONPROJECTS; do
         elif [ "$project" == "foliadocserve" ]; then
             rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/*foliadocserve*egg
         fi
-        python setup.py install --prefix=$VIRTUAL_ENV || fatalerror "setup.py install $project failed"
+        python setup.py install --prefix="$VIRTUAL_ENV" || fatalerror "setup.py install $project failed"
     else
         echo "$project is up-to-date, no need to recompile ..."
     fi
@@ -769,7 +769,7 @@ else
 fi
 if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
-    python setup.py build_ext --include-dirs=$VIRTUAL_ENV/include --library-dirs=$VIRTUAL_ENV/lib install --prefix=$VIRTUAL_ENV || error "Python-ucto installation failed"
+    python setup.py build_ext --include-dirs="$VIRTUAL_ENV/include" --library-dirs="$VIRTUAL_ENV/lib" install --prefix="$VIRTUAL_ENV" || error "Python-ucto installation failed"
 else 
     echo "Python-ucto is already up to date ... "
 fi
@@ -792,13 +792,13 @@ fi
 if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     rm -Rf build
     if [ -f "$VIRTUAL_ENV/lib/libboost_python.so" ]; then
-        python setup3.py build_ext --boost-library-dir=$VIRTUAL_ENV/lib install
+        python setup3.py build_ext --boost-library-dir="$VIRTUAL_ENV/lib" install
     elif [ -f /usr/lib/x86_64-linux-gnu/libboost_python.so ]; then
         python setup3.py build_ext --boost-library-dir=/usr/lib/x86_64-linux-gnu install
     elif [ -f /usr/lib/i386-linux-gnu/libboost_python.so ]; then
         python setup3.py build_ext --boost-library-dir=/usr/lib/i386-linux-gnu install
     elif [ -f /usr/local/Cellar/boost-python/*/lib/libboost_python.dylib ]; then
-        BOOSTVERSION=`ls /usr/local/Cellar/boost-python/ | head -n 1 | tr -d '\n'`
+        BOOSTVERSION=$(ls /usr/local/Cellar/boost-python/ | head -n 1 | tr -d '\n')
         BOOSTLIBDIR=/usr/local/Cellar/boost-python/$BOOSTVERSION/lib/
         BOOSTINCDIR=/usr/local/Cellar/boost/$BOOSTVERSION/include/
         echo "Boost $BOOSTVERSION found in $BOOSTLIBDIR  , $BOOSTINCDIR"
@@ -809,7 +809,7 @@ if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     if [ "$?" == 65 ]; then
         #boost not found
         echo "boost-python not found for this version of Python, we are gonna attempt to compile it manually"
-        TS=`date +%s`
+        TS=$(date +%s)
         if [ ! -f boost.tar.bz2 ]; then
             wget "http://downloads.sourceforge.net/project/boost/boost/1.58.0/boost_1_58_0.tar.bz2?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.58.0%2F&ts=$TS&use_mirror=garr" -O boost.tar.bz2
             tar -xjf boost.tar.bz2 2>/dev/null
@@ -822,11 +822,11 @@ if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
         echo $PYTHONINCLUDE
         PYTHONINCLUDE=`dirname $PYTHONINCLUDE`
         export CPLUS_INCLUDE_PATH="$PYTHONINCLUDE:$CPLUS_INCLUDE_PATH"
-        ./bootstrap.sh --with-libraries=python --prefix=$VIRTUAL_ENV --with-python-root=$VIRTUAL_ENV --with-python="$VIRTUAL_ENV/bin/python"
+        ./bootstrap.sh --with-libraries=python --prefix="$VIRTUAL_ENV" --with-python-root="$VIRTUAL_ENV" --with-python="$VIRTUAL_ENV/bin/python"
         ./b2 || error "Manual boost compilation failed"
         ./b2 install || error "Manual boost installation failed"
         cd ..
-        python setup3.py build_ext --boost-library-dir=$VIRTUAL_ENV/lib install || error "python-timbl installation failed"
+        python setup3.py build_ext --boost-library-dir="$VIRTUAL_ENV/lib" install || error "python-timbl installation failed"
     fi
 else
     echo "Python-timbl is already up to date ... "
@@ -892,7 +892,7 @@ else
     gitcheck
 fi
 if [ $REPOCHANGED -eq 1 ]; then
-    python setup.py install --prefix=$VIRTUAL_ENV || fatalerror "setup.py install clam failed"
+    python setup.py install --prefix="$VIRTUAL_ENV" || fatalerror "setup.py install clam failed"
 fi
 cd ..
 
@@ -914,7 +914,7 @@ if [[ "$PYTHON" != "python2.7" ]]; then
     fi
     if [ $REPOCHANGED -eq 1 ]; then
         rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/${project}*egg
-        python setup.py install --prefix=$VIRTUAL_ENV || error "setup.py install $project failed"
+        python setup.py install --prefix="$VIRTUAL_ENV" || error "setup.py install $project failed"
     else
         echo "Gecco is already up to date ... "
     fi

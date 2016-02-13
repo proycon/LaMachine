@@ -33,7 +33,7 @@ if [ $WITHTSCAN -eq 1 ] || [ -d tscan ]; then
     fi
     if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
         bash bootstrap.sh || fatalerror "$project bootstrap failed"
-        ./configure --prefix=$VIRTUAL_ENV || fatalerror "$project configure failed"
+        ./configure --prefix="$VIRTUAL_ENV" || fatalerror "$project configure failed"
         make || fatalerror "$project make failed"
         make install || fatalerror "$project make install failed"
     else
