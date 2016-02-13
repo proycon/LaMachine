@@ -115,7 +115,7 @@ if [ $PRIVATE -eq 0 ]; then
         MODE="update"
     fi
     PYTHONVERSION=`python -c 'import sys; print(".".join(map(str, sys.version_info[:3])))'`
-    wget -O - -q http://applejack.science.ru.nl/lamachinetracker.php/$FORM/$MODE/$STABLEDEV/$PYTHONVERSION >/dev/null
+    wget -O - -q "http://applejack.science.ru.nl/lamachinetracker.php/$FORM/$MODE/$STABLEDEV/$PYTHONVERSION" >/dev/null
 fi
 
 
