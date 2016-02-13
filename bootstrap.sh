@@ -12,7 +12,17 @@
 
 #NOTE: Do not run this script directly!
 
-echo "[LaMachine] BOOTSTRAPPING -- (This script is run automatically when first starting the virtual machine)"
+echo "====================================================================="
+echo "           ,              LaMachine - NLP Software distribution" 
+echo "          ~)                     (http://proycon.github.io/LaMachine)"
+echo "           (----í         Language Machines research group"
+echo "            /| |\         & Centre of Language and Speech Technology"
+echo "           / / /|	        Radboud University Nijmegen "
+echo "====================================================================="
+echo
+echo "Bootstrapping Virtual Machine or Docker image...."
+echo
+sleep 1
 
 fatalerror () {
     echo "================ FATAL ERROR ==============" >&2

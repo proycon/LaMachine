@@ -10,7 +10,17 @@
 #=====================================
 
 
-echo "=== LaMachine Virtualenv Bootstrap ===">&2
+echo "====================================================================="
+echo "           ,              LaMachine - NLP Software distribution" 
+echo "          ~)                     (http://proycon.github.io/LaMachine)"
+echo "           (----í         Language Machines research group"
+echo "            /| |\         & Centre of Language and Speech Technology"
+echo "           / / /|	        Radboud University Nijmegen "
+echo "====================================================================="
+echo
+echo "Bootstrapping VirtualEnv...."
+echo
+sleep 1
 
 fatalerror () {
     echo "================ FATAL ERROR ==============" >&2
