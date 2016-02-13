@@ -90,7 +90,7 @@ gitcheck () {
         if [ -f .version.lamachine ]; then
             CURRENTVERSION=$(cat .version.lamachine)
         fi
-        LATESTVERSION=$(git tag --sort="v:refname" | tail -n 1)
+        LATESTVERSION=$(git tag | grep -e "^v" | sort -n -t. -k1,1 -k2,2 -k3,3 -k4,4 | tail -n 1)
         if [ ! -z $LATESTVERSION ]; then
             if [[ "$LATESTVERSION" == "$CURRENTVERSION" ]]; then
                 echo "   Already up to date on latest stable release: $LATESTVERSION"
