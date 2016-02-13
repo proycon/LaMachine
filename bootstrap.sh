@@ -154,7 +154,7 @@ cp nginx.conf /etc/nginx/
 cd ..
 chmod a+rx LaMachine
 
-#development packaged should end in -git , releases should not
+#development packages should end in -git , releases should not
 if [ $DEV -eq 0 ]; then
     PACKAGES="ticcutils libfolia foliautils-git ucto timbl timblserver mbt mbtserver wopr-git frogdata frog toad-git" #not everything is available as releases yet
 else
