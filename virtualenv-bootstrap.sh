@@ -1,7 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#======================================
+# LaMachine
+#  by Maarten van Gompel
+#  Centre for Language Studies
+#  Radboud University Nijmegen
+#
+# https://proycon.github.io/LaMachine
+# Licensed under GPLv3
+#=====================================
+
 
 echo "=== LaMachine Virtualenv Bootstrap ===">&2
-
 
 fatalerror () {
     echo "================ FATAL ERROR ==============" >&2
@@ -20,7 +29,23 @@ error () {
     sleep 3
 }
 
-gitcheck () {
+gitstash () {
+        echo "WARNING: Unable to switch branches, there must be uncommited changes. Do you want to stash them away and continue? (y/n)"
+        read yn
+        if [[ "yn" == "y" ]]; then
+            git stash
+        else 
+            exit 8
+        fi
+}
+
+
+gitcheckmaster() {
+    git checkout master
+    if [ $? -ne 0 ]; then
+        gitstash 
+        git checkout master
+    fi
     git remote update
     LOCAL=$(git rev-parse @)
     REMOTE=$(git rev-parse @{u})
@@ -48,10 +73,77 @@ gitcheck () {
     fi
 }
 
+gitcheck () {
+    git remote update
+    if [ $DEV -eq 0 ]; then
+        #use github releases, upgrade to latest one
+        if [ -f .version.lamachine ]; then
+            CURRENTVERSION=`cat .version.lamachine`
+        fi
+        LATESTVERSION=`git tag --sort="v:refname" | tail -n 1`
+        if [ ! -z $LATESTVERSION ]; then
+            if [[ "$LATESTVERSION" == "$CURRENTVERSION" ]]; then
+                echo "   Already up to date on latest stable release: $LATESTVERSION"
+                REPOCHANGED=0
+            else
+                LATESTVERSION=$(echo $LATESTVERSION|tr -d '\n')
+                echo "   Upgrading from $CURRENTVERSION to latest stable release $LATESTVERSION ..."
+                git checkout tags/$LATESTVERSION #will put us in detached head state
+                if [ $? -ne 0 ]; then
+                    gitstash 
+                    git checkout tags/$LATESTVERSION
+                fi
+                echo $LATESTVERSION > .version.lamachine 
+                REPOCHANGED=1
+            fi
+        else
+            #no tags/releases, use master
+            gitcheckmaster
+        fi
+    else
+        #use master branch
+        gitcheckmaster
+    fi
+}
+
+gitcheckout () {
+    if [ $DEV -eq 0 ]; then
+        LATESTVERSION=`git tag --sort="v:refname" | tail -n 1`
+        if [ ! -z $LATESTVERSION ]; then
+            LATESTVERSION=$(echo $LATESTVERSION|tr -d '\n')
+            echo "   Using latest stable release: $LATESTVERSION"
+            git checkout tags/$LATESTVERSION #will put us in detached head state
+            if [ $? -ne 0 ]; then
+                gitstash 
+                git checkout tags/$LATESTVERSION
+            fi
+            echo $LATESTVERSION > .version.lamachine 
+        fi
+    else
+        echo "       Using newest development version"
+        git checkout master
+        if [ $? -ne 0 ]; then
+            gitstash 
+            git checkout master
+        fi
+        rm .version.lamachine 2> /dev/null
+    fi
+}
+
 
 NOADMIN=0
 FORCE=0
 NOPYTHONDEPS=0
+if [ -f $VIRTUAL_ENV/src/LaMachine/.dev ]; then
+    DEV=1 #install development versions
+else
+    DEV=0 #install development versions
+fi
+if [ -f $VIRTUAL_ENV/src/LaMachine/.private ]; then
+    PRIVATE=1 #no not send simple analytics to Nijmegen
+else
+    PRIVATE=0 #send simple analytics to Nijmegen
+fi
 PYTHON="python3"
 for OPT in "$@"
 do
@@ -66,6 +158,22 @@ do
     fi
     if [[ "$OPT" == "python2" ]]; then
         PYTHON="python2.7"
+    fi
+    if [[ "$OPT" == "dev" ]]; then
+        touch $VIRTUAL_ENV/src/LaMachine/.dev
+        DEV=1
+    fi
+    if [[ "$OPT" == "stable" ]]; then
+        rm $VIRTUAL_ENV/src/LaMachine/.dev 2> /dev/null
+        DEV=0
+    fi
+    if [[ "$OPT" == "private" ]]; then
+        touch $VIRTUAL_ENV/src/LaMachine/.private
+        PRIVATE=1
+    fi
+    if [[ "$OPT" == "sendinfo" ]]; then
+        rm $VIRTUAL_ENV/src/LaMachine/.private 2> /dev/null
+        PRIVATE=0
     fi
 done
 
@@ -95,7 +203,17 @@ elif [ -f "$REDHAT" ]; then
 elif [ -f "$FREEBSD" ]; then
     OS='freebsd'
 else
-    OS=""
+    OS="unknown"
+fi
+
+DISTRIB_ID="unknown"
+DISTRIB_RELEASE="unknown"
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    DISTRIB_ID="$ID"
+    DISTRIB_RELEASE="$VERSION_ID"
+elif [ -f /etc/lsb-release ]; then
+    . /etc/lsb-release
 fi
 
 if [ "$NOADMIN" == "0" ]; then
@@ -108,13 +226,15 @@ if [ "$NOADMIN" == "0" ]; then
         fi
     elif [ "$OS" == "debian" ]; then
         PIPPACKAGE="python3-pip"
-        if [ -f /etc/lsb-release ]; then
-            . /etc/lsb-release
-            if [ "$DISTRIB_ID" == "Ubuntu" ]; then
-                if [ "$DISTRIB_RELEASE" == "12.04" ]; then
-                    echo "WARNING: Ubuntu 12.04 detected, make sure you manually upgrade Python 3 to at least Python 3.3 first or things may fail!">&2
-                    PIPPACKAGE="python-pip"
-                fi
+        if [ "$DISTRIB_ID" == "Ubuntu" ]; then
+            if [ "$DISTRIB_RELEASE" == "12.04" ]; then
+                echo "===========================================================================================================================================================">&2
+                echo "WARNING: Ubuntu 12.04 detected, make sure you manually upgrade Python 3 to at least Python 3.3 first or things may fail later in the installation process!">&2
+                echo "============================================================================================================================================================">&2
+                sleep 3
+                PIPPACKAGE="python-pip"
+            elif [ "$DISTRIB_RELEASE" == "10.04" ]; then
+                fatalerror "Your Ubuntu version (10.04) is way too old for LaMachine, upgrade to the latest LTS release"
             fi
         fi
         INSTALL="sudo apt-get -m install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE python-virtualenv libgnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev"  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
@@ -139,6 +259,9 @@ if [ "$NOADMIN" == "0" ]; then
             BREWEXTRA=""
         fi
         INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python  boost-python xml2 libxslt icu4c libtextcat aspell hunspell wget $BREWEXTRA"
+
+        DISTRIB_ID="OSX"
+        DISTRIB_RELEASE=`sw_vers -productVersion | tr -d '\n'`
     else
         error "No suitable package manage detected! Unable to verify and install the necessary global dependencies"
         if [ -d "/Users" ]; then
@@ -200,8 +323,34 @@ if [ -z "$VIRTUAL_ENV" ]; then
     echo "-----------------------------------------"
     virtualenv --python=$PYTHON lamachine || fatalerror "Unable to create virtual environment"
     . lamachine/bin/activate || fatalerror "Unable to activate virtual environment"
+    MODE='new'
 else
     echo "Existing virtual environment detected... good.."
+    MODE='update'
+fi
+
+
+if [ $PRIVATE -eq 0 ]; then
+    #Sending some statistics to us so we know how often and on what systems LaMachine is used
+    #recipient: Language Machines, Centre for Language Studies, Radboud University Nijmegen
+    #
+    #Transmitted are:
+    # - The form in which you run LaMachine (vagrant/virtualenv/docker)
+    # - Is it a new LaMachine installation or an update
+    # - Stable or Development?
+    # - The OS you are running on and its version
+    # - Your Python version
+    #
+    #This information will never be used for any form of advertising
+    #Your IP will only be used to compute country of origin, resulting reports will never contain personally identifiable information
+
+    if [ $DEV -eq 0 ]; then
+        STABLEDEV="stable"
+    else
+        STABLEDEV="dev"
+    fi
+    PYTHONVERSION=`python -c 'import sys; print(".".join(map(str, sys.version_info[:3])))'`
+    wget -O - -q "http://applejack.science.ru.nl/lamachinetracker.php/virtualenv/$MODE/$STABLEDEV/$PYTHONVERSION/$OS/$DISTRIB_ID/$DISTRIB_RELEASE"  >/dev/null
 fi
 
 if [ "$OS" == "mac" ]; then
@@ -500,6 +649,7 @@ for project in $PROJECTS; do
     if [ ! -d $project ]; then
         git clone https://github.com/LanguageMachines/$project || fatalerror "Unable to clone git repo for $project"
         cd $project
+        gitcheck
         RECOMPILE=1
     else
         cd $project
@@ -565,6 +715,7 @@ for project in $PYTHONPROJECTS; do
     if [ ! -d $project ]; then
         git clone https://github.com/proycon/$project
         cd $project
+        gitcheck
         REPOCHANGED=1
     else
         cd $project
@@ -593,6 +744,7 @@ echo "--------------------------------------------------------"
 if [ ! -d python-ucto ]; then
     git clone https://github.com/proycon/python-ucto
     cd python-ucto
+    gitcheck
     REPOCHANGED=1
 else
     cd python-ucto 
@@ -614,6 +766,7 @@ echo "--------------------------------------------------------"
 if [ ! -d python-timbl ]; then
     git clone https://github.com/proycon/python-timbl
     cd python-timbl
+    gitcheck
     REPOCHANGED=1
 else
     cd python-timbl
@@ -671,6 +824,7 @@ if [ -f /usr/bin/python2.7 ] || [ -f /usr/local/bin/python2.7 ]; then
     if [ ! -d python-frog ]; then
         git clone https://github.com/proycon/python-frog
         cd python-frog
+        gitcheck
         REPOCHANGED=1
     else
         cd python-frog
@@ -694,6 +848,7 @@ echo "--------------------------------------------------------"
 if [ ! -d colibri-core ]; then
     git clone https://github.com/proycon/colibri-core
     cd colibri-core
+    gitcheck
     REPOCHANGED=1
 else
     cd colibri-core 
@@ -712,14 +867,16 @@ echo "--------------------------------------------------------"
 if [ ! -d clam ]; then
     git clone https://github.com/proycon/clam
     cd clam
-    git checkout master
+    gitcheck
+    REPOCHANGED=1
 else
     rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/CLAM*egg
     cd clam
-    git checkout master
-    git pull
+    gitcheck
 fi
-python setup.py install --prefix=$VIRTUAL_ENV || fatalerror "setup.py install clam failed"
+if [ $REPOCHANGED -eq 1 ]; then
+    python setup.py install --prefix=$VIRTUAL_ENV || fatalerror "setup.py install clam failed"
+fi
 cd ..
 
 if [[ "$PYTHON" != "python2.7" ]]; then
@@ -732,6 +889,7 @@ if [[ "$PYTHON" != "python2.7" ]]; then
     if [ ! -d $project ]; then
         git clone https://github.com/proycon/$project
         cd $project
+        gitcheck
         REPOCHANGED=1
     else
         cd $project
@@ -746,7 +904,7 @@ if [[ "$PYTHON" != "python2.7" ]]; then
     cd ..
 fi
 
-LaMachine/extra.sh $@ 
+. LaMachine/extra.sh $@ 
 
 echo "--------------------------------------------------------"
 echo "All done!">&2

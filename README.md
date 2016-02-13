@@ -12,7 +12,7 @@ software. Installing all this software can be a daunting task, compiling it
 from scratch even more so.  Ideally software is installed through your
 distribution's package manager, but we do not always have packages available
 for all platforms, or they may be out of date. LaMachine ensures you can always
-use all of our software at the very latest (development) versions by bundling
+use all of our software at the very latest stable versions by bundling
 them all and offering them in three distinct forms:
 
  * As a **Virtual Machine** - Easiest, allows you to run our software on any host OS. 
@@ -62,6 +62,7 @@ available to the VM (2 CPUs and 3GB RAM by default).
 On most Linux distributions, steps one and two may be combined with a simple command such as
 ``sudo apt-get install virtualbox vagrant`` on Ubuntu, or ``sudo pacman -Syu virtualbox vagrant`` on Arch Linux.
 
+Make sure to also read our privacy section below.
 
 Installation & Usage with Docker (for Linux only)
 ===================================================
@@ -102,6 +103,13 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
  * ``nopythondeps`` - Do not update 3rd party Python dependencies (such as numpy and scipy), may save time.
  * ``force`` - Force recompilation of everything, even if it's not updated
  * ``python2`` - Use python 2.7 instead of Python 3 *(note that some software may be not be available for Python 2!)*
+ * ``stable`` - Use stable releases  *(this is the new default since February 2016)*
+ * ``dev`` - Use cutting-edge development versions *(this may sometimes breaks things)*
+ * ``private`` - Do not send information to us regarding your LaMachine installation *(see the privacy section below)*
+ * ``shareinfo`` - Send information to us regarding your LaMachine installation *(default, see privacy section below)*
+
+The latter five parameters are persistent, if you specify them once during
+installation or upgrade you won't need to the next time you upgrade your LaMachine.
 
 Tested to work on:
 
@@ -130,6 +138,39 @@ The ``lamachine-update.sh`` script is also used to install additional *optional*
  * ``valkuil`` - Valkuil Spelling Corrector (for Dutch)
 
 Note that for the docker version, you can pull a new docker image using ``docker pull proycon/lamachine`` instead. If you do use ``lamachine-update.sh`` with docker, you most likely will want to ``docker commit`` your container afterwards to preserve the update!
+
+Privacy
+============
+
+Unless you explicitly opt-out, LaMachine send a few details to us regarding
+your installation of LaMachine whenever you install or update it. This is to
+help us keep track of its usage and improve it. 
+
+The following information is sent:
+* The form in which you run LaMachine (vagrant/virtualenv/docker)
+* Is it a new LaMachine installation or an update
+* Stable or Development?
+* The OS you are running on and its version (only for the virtualenv form)
+* Your Python version
+
+Your IP address will only be used to identify your country and not used in any
+other way. No personally identifiable information whatsoever will be included
+in any reports we generate from this and it will never be used for
+advertisement purposes.
+
+To opt-out of this behaviour, For the ``virtualenv-boostrap.sh`` and
+``lamachine-update.sh`` scripts, add the parameter ``private``. For the VM
+method, prior to building the VM, edit ``Vagrantfile`` and add the ``private``
+parameter after ``bootstrap.sh``. Due to the nature of Docker, installation of
+Docker images are not tracked by us (but may be by Docker itself). 
+
+LaMachine downloads software from a number of external sources, depending on the form you choose,
+which may or may not collect your IP:
+
+ * [Github](https://github.com)
+ * [The Python Package Index](https://pypi.python.org)
+ * [The Arch Linux User Repository](https://aur.archlinux.org)
+ * [Docker](https://docker.io)
 
 CLAM Webservices
 ==================
@@ -177,9 +218,10 @@ our software using the proper package manager, provided we have packages
 available:
 
  * Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
- * Debian/Ubuntu Linux (packages are currently out of date)-- Some of our packages are included in the ``science-linguistics`` meta-package, they are however fairly out of date for the moment: ``sudo apt-get install science-linguistics`` , [package state](https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl)
- * Mac OS X (homebrew), missing some sofware (most notably Frog, Colibri Core, and Python bindings)
- * CentOS/Fedora (packages are outdated completely)
+ * Debian Linux (packages are mostly out of date) -- Some of our packages are included in the ``science-linguistics`` meta-package, they are however fairly out of date for the moment: ``sudo apt-get install science-linguistics`` , [package state](https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl)
+ * Ubuntu Linux (packages are currently out of date)
+ * Mac OS X (homebrew), missing most sofware (most notably Frog, Colibri Core, and Python bindings)
+ * CentOS/Fedora (packages are outdated completely, do not use)
 
 The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself.
 

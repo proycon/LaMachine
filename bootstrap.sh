@@ -1,4 +1,16 @@
 #!/bin/bash
+#======================================
+# LaMachine
+#  by Maarten van Gompel
+#  Centre for Language Studies
+#  Radboud University Nijmegen
+#
+# https://proycon.github.io/LaMachine
+# Licensed under GPLv3
+#=====================================
+
+
+#NOTE: Do not run this script directly!
 
 echo "[LaMachine] BOOTSTRAPPING -- (This script is run automatically when first starting the virtual machine)"
 
@@ -19,41 +31,58 @@ error () {
     sleep 3
 }
 
-gitcheck () {
-    git remote update
-    LOCAL=$(git rev-parse @)
-    REMOTE=$(git rev-parse @{u})
-    BASE=$(git merge-base @ @{u})
+umask u=rwx,g=rwx,o=rx
 
-    if [ $LOCAL = $REMOTE ]; then
-        echo "Git: up-to-date"
-        REPOCHANGED=0
-    elif [ $LOCAL = $BASE ]; then
-        echo "Git: Pulling..."
-        git pull || fatalerror "Unable to git pull $project"
-        REPOCHANGED=1
-    elif [ $REMOTE = $BASE ]; then
-        echo "Git: Need to push"
-        REPOCHANGED=1
-    else
-        echo "Git: Diverged"
-        REPOCHANGED=1
-    fi
+sed -i s/lecture=once/lecture=never/ /etc/sudoers
+echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-    if [ -f error ]; then
-        echo "Encountered an error last time, need to recompile"
-        rm error
-        REPOCHANGED=1
-    fi
-}
+cd /usr/src/
+SRCDIR=`pwd`
 
 FORCE=0
+DEV=0 #prefer stable releases
+if [ -f .dev ]; then
+    DEV=1 #install development versions
+else
+    DEV=0 #install development versions
+fi
+if [ -f .private ]; then
+    PRIVATE=1 #no not send simple analytics to Nijmegen
+else
+    PRIVATE=0 #send simple analytics to Nijmegen
+fi
 for OPT in "$@"
 do
     if [[ "$OPT" == "force" ]]; then
         FORCE=1
     fi
+    if [[ "$OPT" == "dev" ]]; then
+        touch .dev
+        DEV=1
+    fi
+    if [[ "$OPT" == "stable" ]]; then
+        rm -f .dev
+        DEV=0
+    fi
+    if [[ "$OPT" == "private" ]]; then
+        touch .private
+        PRIVATE=1
+    fi
+    if [[ "$OPT" == "sendinfo" ]]; then
+        rm -f .private
+        PRIVATE=0
+    fi
 done
+
+if [ -d /vagrant ]; then
+    VAGRANT=1
+    cp /vagrant/motd /etc/motd
+    FORM="vagrant"
+else
+    VAGRANT=0
+    FORM="docker"
+fi
+
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing global dependencies"
@@ -63,20 +92,32 @@ pacman -Syu --noconfirm --needed base-devel || fatalerror "Unable to install glo
 PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs cython python python-pip python-requests python-lxml python-pycurl python-virtualenv python-numpy python-scipy python-matplotlib python-pandas python-nltk python-scikit-learn python-psutil ipython wget curl libexttextcat python-flask python-requests python-requests-oauthlib python-requests-toolbelt python-crypto nginx uwsgi uwsgi-plugin-python hunspell aspell hunspell-en aspell-en"
 pacman --noconfirm --needed -Syu $PKGS ||  fatalerror "Unable to install global dependencies"
 
-umask u=rwx,g=rwx,o=rx
+if [ $PRIVATE -eq 0 ]; then
+    #Sending some statistics to us so we know how often and on what systems LaMachine is used
+    #recipient: Language Machines, Centre for Language Studies, Radboud University Nijmegen
+    #
+    #Transmitted are:
+    # - The form in which you run LaMachine (vagrant/virtualenv/docker)
+    # - Is it a new LaMachine installation or an update
+    # - Stable or Development?
+    #
+    #This information will never be used for any form of advertising
+    #Your IP will only be used to compute country of origin, resulting reports will never contain personally identifiable information
 
-sed -i s/lecture=once/lecture=never/ /etc/sudoers
-echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
-
-if [ -d /vagrant ]; then
-    VAGRANT=1
-    cp /vagrant/motd /etc/motd
-else
-    VAGRANT=0
+    if [ $DEV -eq 0 ]; then
+        STABLEDEV="stable"
+    else
+        STABLEDEV="dev"
+    fi
+    if [ ! -d LaMachine ]; then
+        MODE="new"
+    else
+        MODE="update"
+    fi
+    PYTHONVERSION=`python -c 'import sys; print(".".join(map(str, sys.version_info[:3])))'`
+    wget -O - -q "http://applejack.science.ru.nl/lamachinetracker.php/$FORM/$MODE/$STABLEDEV/$PYTHONVERSION" >/dev/null
 fi
 
-cd /usr/src/
-SRCDIR=`pwd`
 
 useradd build 
 
@@ -113,7 +154,12 @@ cp nginx.conf /etc/nginx/
 cd ..
 chmod a+rx LaMachine
 
-PACKAGES="ticcutils-git libfolia-git foliautils-git ucto-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git toad-git"
+#development packages should end in -git , releases should not
+if [ $DEV -eq 0 ]; then
+    PACKAGES="ticcutils libfolia foliautils-git ucto timbl timblserver mbt mbtserver wopr-git frogdata frog toad-git" #not everything is available as releases yet
+else
+    PACKAGES="ticcutils-git libfolia-git foliautils-git ucto-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git toad-git"
+fi
 
 for package in $PACKAGES; do
     project="${package%-git}"
@@ -173,7 +219,7 @@ echo "--------------------------------------------------------"
 pip install -U python3-timbl || error "Installation of python3-timbl failed !!"
 
 echo "--------------------------------------------------------"
-echo "[LaMachine] Installing python-frog"
+echo "[LaMachine] Installing python-frog (latest development release)"
 echo "--------------------------------------------------------"
 git clone https://github.com/proycon/python-frog
 cd python-frog
@@ -186,13 +232,13 @@ echo "--------------------------------------------------------"
 pip install -U colibricore || error "Installation of colibri-core failed !!"
 
 echo "--------------------------------------------------------"
-echo "[LaMachine] Installing Gecco dependencies"
+echo "[LaMachine] Installing Gecco dependencies (3rd party)"
 echo "--------------------------------------------------------"
 pip install -U hunspell python-Levenshtein aspell-python-py3 || error "Installation of one or more Python 3 packages failed !!"
 
 
 echo "--------------------------------------------------------"
-echo "[LaMachine] Installing Gecco"
+echo "[LaMachine] Installing Gecco (latest development release) "
 echo "--------------------------------------------------------"
 if [ ! -d gecco ]; then
     git clone https://github.com/proycon/gecco
