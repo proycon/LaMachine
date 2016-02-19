@@ -233,5 +233,6 @@ environment as follows: ``cp /usr/bin/python3.4 $VIRTUAL_ENV/bin/python3``.
 Then run ``lamachine-update.sh`` again.
 
 
-
 </section>
+
+<a href="http://applejack.science.ru.nl/languagemachines" style="display: block"><img src="http://applejack.science.ru.nl/lamabadge.php/LaMachine" alt="badge" /></a>
