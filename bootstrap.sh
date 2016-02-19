@@ -140,7 +140,7 @@ echo "Updating LaMachine itself"
 echo "--------------------------------------------------------"
 if [ ! -d LaMachine ]; then
     git clone https://github.com/proycon/LaMachine || fatalerror "Unable to clone git repo for LaMachine"
-    cd LaMachine
+    cd LaMachine || fatalerror "No LaMachine dir?, git clone failed?"
 else
     cd LaMachine
     OLDSUM=`sum bootstrap.sh`
@@ -178,7 +178,7 @@ for package in $PACKAGES; do
         echo "[LaMachine] Obtaining package $package ..."
         echo "--------------------------------------------------------"
         git clone https://aur.archlinux.org/${package}.git
-        cd $package
+        cd $package || fatalerror "No such package, git clone $package failed?"
     else
         cd $package
         cp -f PKGBUILD PKGBUILD.old
@@ -232,7 +232,7 @@ echo "--------------------------------------------------------"
 echo "[LaMachine] Installing python-frog (latest development release)"
 echo "--------------------------------------------------------"
 git clone https://github.com/proycon/python-frog
-cd python-frog
+cd python-frog || fatalerror "No python-frog dir, git clone failed?"
 python setup.py install || error "Installation of python-frog failed !!"
 cd ..
 
@@ -253,7 +253,7 @@ echo "--------------------------------------------------------"
 if [ ! -d gecco ]; then
     git clone https://github.com/proycon/gecco
     chmod a+rx gecco
-    cd gecco
+    cd gecco || fatalerror "No gecco dir, git clone failed?"
 else
     cd gecco
     git pull
