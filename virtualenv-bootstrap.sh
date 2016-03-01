@@ -240,8 +240,8 @@ if [ "$NOADMIN" == "0" ]; then
                 echo "============================================================================================================================================================">&2
                 sleep 3
                 PIPPACKAGE="python-pip"
-            elif [ "$DISTRIB_RELEASE" == "10.04" ]; then
-                fatalerror "Your Ubuntu version (10.04) is way too old for LaMachine, upgrade to the latest LTS release"
+            elif [ "$DISTRIB_RELEASE" == "10.04" ] || [ "$DISTRIB_RELEASE" == "10.10" ] || [ "$DISTRIB_RELEASE" == "9.10" ] || [ "$DISTRIB_RELEASE" == "9.04" ] || [ "$DISTRIB_RELEASE" == "8.04" ]; then
+                fatalerror "Your Ubuntu version ($DISTRIB_RELEASE) is way too old for LaMachine, upgrade to the latest LTS release"
             fi
         fi
         INSTALL="sudo apt-get -m install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE python-virtualenv libgnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev"  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
