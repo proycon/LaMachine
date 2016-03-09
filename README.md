@@ -85,7 +85,7 @@ system. The virtual environment will be contained under a single directory and c
 everything. All sources are pulled from git and compiled for you.
 
 1. **Clone this repository** and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine``  (or [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) manually from github)
-   You will only need this cloned repository once and can safely remote it afterwards.
+   You will only need this cloned repository once and can safely remove it afterwards.
 2. In a terminal, **navigate to the directory** under which to create the
    virtual environment (a ``lamachine`` directory will be created), or alternatively pre-create and activate one with ``virtualenv --python=python3
    lamachine && . lamachine/bin/activate``
