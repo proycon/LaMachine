@@ -235,3 +235,4 @@ version than the one in the virtual environment. You can fix this issue by
 copying the newer global version of the Python interpreter into your virtual
 environment as follows: ``cp /usr/bin/python3.4 $VIRTUAL_ENV/bin/python3``.
 Then run ``lamachine-update.sh`` again.
+
