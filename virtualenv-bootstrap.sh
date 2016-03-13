@@ -14,7 +14,7 @@ echo "====================================================================="
 echo "           ,              LaMachine - NLP Software distribution" 
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
-echo "            /| |\         & Centre of Language and Speech Technology"
+echo "            /| |\         & Centre for Language and Speech Technology"
 echo "           / / /|	        Radboud University Nijmegen "
 echo "====================================================================="
 echo
