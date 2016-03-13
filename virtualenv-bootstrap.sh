@@ -287,8 +287,12 @@ if [ "$NOADMIN" == "0" ]; then
         if [ "$OS" == "debian" ]; then
             sudo apt-get update
         fi
-        $INSTALL || error "Global dependencies could not be updated, possibly due to you not having root-access. In which case you may need to ask your system administrator to install the above-mentioned dependencies. Installation will continue as normal, but if a later error occurs, then a missing global dependency is likely the cause."
-        sleep 3
+        if [ "$OS" == "mac" ]; then
+            $INSTALL || error "An error occurred during installation of global dependencies. If you only got 'already installed' messages, however, you can ignore this. Attempting to continue installation in 15s... If a later error occurs, this is likely the cause."
+        else 
+            $INSTALL || error "Global dependencies could not be installed, possibly due to you not having root-access. In which case you may need to ask your system administrator to install the above-mentioned dependencies. Installation will continue as normal in 15s, but if a later error occurs, then a missing global dependency is likely the cause."
+        fi
+        sleep 15
     fi
 
     if [ "$OS" == "redhat" ]; then
