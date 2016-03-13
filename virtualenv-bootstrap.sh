@@ -265,7 +265,7 @@ if [ "$NOADMIN" == "0" ]; then
         else
             BREWEXTRA=""
         fi
-        INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python  boost-python xml2 libxslt icu4c libtextcat aspell hunspell wget $BREWEXTRA"
+        INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python3 boost-python xml2 libxslt icu4c libtextcat aspell hunspell wget $BREWEXTRA"
 
         DISTRIB_ID="OSX"
         DISTRIB_RELEASE=$(sw_vers -productVersion | tr -d '\n')
