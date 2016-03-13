@@ -900,7 +900,7 @@ if [ $REPOCHANGED -eq 1 ]; then
 fi
 cd ..
 
-if [[ "$PYTHON" != "python2.7" ]] then
+if [[ "$PYTHON" != "python2.7" ]]; then
 
     project="gecco"
     echo 
