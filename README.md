@@ -43,6 +43,7 @@ Pre-installed software:
 
 Optional additional software:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction. 
+- [Valkuil](https://github.com/proycon/valkuil-gecco) - A context-aware spelling corrector for Dutch 
 
 The Python bindings and libraries all use Python 3. Both the VM image as well as the docker image are based on Arch Linux.
 
@@ -123,7 +124,7 @@ Tested to work on:
 
 Partially works on:
 
- * Mac OS X Yosemite   (python-ucto, python-frog and python-timbl do not work yet)
+ * Mac OS X Yosemite/El Capitan  *(wopr does not work yet, optional software valkuil and tscan are not supported)*
 
 
 Updating & Extra Software
