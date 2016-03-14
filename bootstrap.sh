@@ -166,8 +166,10 @@ chmod a+rx LaMachine
 
 #development packages should end in -git , releases should not
 if [ $DEV -eq 0 ]; then
+    #Packages to install in stable mode:
     PACKAGES="ticcutils libfolia foliautils-git ucto timbl timblserver mbt mbtserver wopr-git frogdata frog toad-git ticcltools-git" #not everything is available as releases yet
 else
+    #Packages to install in development mode:
     PACKAGES="ticcutils-git libfolia-git foliautils-git ucto-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git toad-git ticcltools-git"
 fi
 

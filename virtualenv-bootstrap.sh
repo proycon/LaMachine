@@ -194,6 +194,10 @@ CONDA=0
 #    fi
 #    CONDA=1
 
+####################################################
+#               Platform Detection
+####################################################
+echo "Detecting package manager..."
 ARCH=$(which pacman 2> /dev/null)
 DEBIAN=$(which apt-get 2> /dev/null)
 MAC=$(which brew 2> /dev/null)
@@ -223,8 +227,11 @@ elif [ -f /etc/lsb-release ]; then
     . /etc/lsb-release
 fi
 
+
+#################################################################
+#           Global package installation (distribition-specific)
+#################################################################
 if [ "$NOADMIN" == "0" ]; then
-    echo "Detecting package manager..."
     INSTALL=""
     if [ "$OS" == "arch" ]; then
         INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse"
@@ -277,6 +284,7 @@ if [ "$NOADMIN" == "0" ]; then
         echo " (will attempt to continue anyway but it will most probably fail)"
         sleep 5
     fi
+
     if [ ! -z "$INSTALL" ]; then
         echo
         echo "-------------------------------"
@@ -655,9 +663,14 @@ else
     RECOMPILE=0
 fi
 
+
+
+
 if [ "$OS" == "mac" ]; then
-    PROJECTS="ticcutils libfolia ucto timbl timblserver mbt mbtserver wopr frogdata frog toad" #no foliautils on mac yet
+    #C++ projects on Mac OS X 
+    PROJECTS="ticcutils libfolia ucto timbl timblserver mbt mbtserver wopr frogdata frog toad" #no foliautils on mac yet, not daring to try ticcltools yet
 else
+    #C++ projects on normal Linux/BSD systems
     PROJECTS="ticcutils libfolia foliautils ucto timbl timblserver mbt mbtserver wopr frogdata frog toad ticcltools"
 fi
 
