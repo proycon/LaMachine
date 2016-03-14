@@ -658,7 +658,7 @@ fi
 if [ "$OS" == "mac" ]; then
     PROJECTS="ticcutils libfolia ucto timbl timblserver mbt mbtserver wopr frogdata frog toad" #no foliautils on mac yet
 else
-    PROJECTS="ticcutils libfolia foliautils ucto timbl timblserver mbt mbtserver wopr frogdata frog toad"
+    PROJECTS="ticcutils libfolia foliautils ucto timbl timblserver mbt mbtserver wopr frogdata frog toad ticcltools"
 fi
 
 
