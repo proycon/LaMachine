@@ -2,7 +2,7 @@
 Adding new software
 ==========================
 
-Requirements and preparation for each software package
+Requirements and guidelines
 ---------------------------------------------------------
 
 * Only add relevant NLP software that fits with the rest
