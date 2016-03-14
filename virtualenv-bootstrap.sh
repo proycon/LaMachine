@@ -559,7 +559,7 @@ base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if sys.platform == "win32":
     site_packages = os.path.join(base, "Lib", "site-packages")
 else:
-    site_packages = os.path.join(base, "lib", "python%s" % sys.version[:3], "site-packages")
+    site_packages = os.path.join(base, "lib", "python" + str(sys.version[:3]), "site-packages")
 prev_sys_path = list(sys.path)
 import site
 site.addsitedir(site_packages)
