@@ -20,15 +20,15 @@ Packaging the software
 
 * **[c++]** 
  * C++ software should use GNU autotools and be installable through: ``bash bootstrap.sh && ./configure && make && make install``
- * C++ software needs to be published to the [Arch User Repository (AUR)](https://aur.archlinux.org)
-  * Create a ``yourproject-git`` package for the Arch User Repository (AUR),
-    tracking latest development release. Consult the ``PKGBUILD`` of https://aur.archlinux.org/packages/frog-git/  as an example. The ``-git`` suffix is mandatory for development software pulled straight from git.
-  * If you have stable releases, create a ``yourproject`` package for the Arch User Repository (AUR). 
-    Consult the ``PKGBUILD`` of https://aur.archlinux.org/packages/frog/  as an example.
+ * C++ software needs to be published to the [Arch User Repository (AUR)](https://aur.archlinux.org) (the LaMachine Docker/VM versions are based on Arch Linux).
+   * AUR packages are maintained as git repositories and contain just a simple ``PKGBUILD`` recipe, and an auto-generated ``.SRCINFO``. Documentation: https://wiki.archlinux.org/index.php/Arch_User_Repository
+   * Create a ``yourproject-git`` package for the AUR, tracking the latest development release. Consult the ``PKGBUILD`` of https://aur.archlinux.org/packages/frog-git/  as an example. The ``-git`` suffix is mandatory for development software pulled straight from git.
+   * If you have stable releases, create a ``yourproject`` package for the AUR. 
+     Consult the ``PKGBUILD`` of https://aur.archlinux.org/packages/frog/  as an example.
 * **[python]**
  * Stable releases of Python software should be published in the [Python Package Index](https://pypi.python.org) (PyPI)
-  * Create a proper ``setup.py`` using the ``distutils`` or ``setuptools`` standard.
-  * Upload your package to the Python Package Index using ``python setup.py sdist upload``
+   * Create a proper ``setup.py`` using the ``distutils`` or ``setuptools`` standard.
+   * Upload your package to the Python Package Index using ``python setup.py sdist upload``
 
 Adding the packages to LaMachine
 ------------------------------------
@@ -49,7 +49,7 @@ Release an updated version (stable)
 -------------------------------------
 
 * First make a release on github (go to the *releases tab* and *create/draft a new
-  release*
+  release*)
 * **[c++]** Run ``/path/to/LaMachine/helpers/aur_github_releaseupdate.sh`` from
   within the ``yourproject`` AUR repo. Not necessary for the
   ``yourproject-git`` versions. This automatically updates your AUR package
