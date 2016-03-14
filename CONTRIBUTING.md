@@ -2,7 +2,9 @@
 Adding new software
 ==========================
 
-**Requirements and preparation for each software package:**
+Requirements and preparation for each software package
+---------------------------------------------------------
+
 * Only add relevant NLP software that fits with the rest
 * All software must be on *github*, be *public*, and be fully *open source*
 * LaMachine distinguishes between latest development versions and stable
@@ -13,7 +15,9 @@ Adding new software
 * LaMachine currently supports **C/C++** and **Python**
 
 
-**Packaging the software:**
+Packaging the software
+---------------------------
+
 * **[c++]** 
  * C++ software should use GNU autotools and be installable through: ``bash bootstrap.sh && ./configure && make && make install``
  * C++ software needs to be published to the [Arch User Repository (AUR)](https://aur.archlinux.org)
@@ -26,7 +30,9 @@ Adding new software
   * Create a proper ``setup.py`` using the ``distutils`` or ``setuptools`` standard.
   * Upload your package to the Python Package Index using ``python setup.py sdist upload``
 
-**Adding the packages to LaMachine**:
+Adding the packages to LaMachine
+------------------------------------
+
 * You will need to adapt two shell script to this end, ``virtualenv-bootstrap.sh`` for the virtualenv version, and ``bootstrap.sh`` for the VM/Docker version. Always do both and not just one!
 * **[c++]** 
  * Add ``yourproject`` to the ``PROJECTS=`` list in ``virtualenv-bootstrap.sh`` (there is one list for Linux/BSD and one list for Mac OS X, so you can decide to omit it if it doesn't work for mac yet)
@@ -39,14 +45,18 @@ Adding new software
   the respective ``INSTALL=`` definitions in ``virtualenv-bootstrap.sh`` and
   to ``PKGS=`` in ``bootstrap.sh`` (always  Arch Linux packages)
 
-**Update a release:**
-* Make a release on github.
+Release an updated version (stable)
+-------------------------------------
+
+* Make a release on github
 * **[c++]** Run ``LaMachine/helpers/aur_github_releaseupdate.sh`` to
   automatically update your AUR package according to the latest github release
 * **[python]** Publish it to PyPI.
 
 
-**Adding a new supported distribution for the virtualenv version**
+Adding a new supported distribution for the virtualenv version
+-------------------------------------------------------------------
+
 * Edit ``virtualenv-bootstrap.sh``
  * add a new detection statement in the *platform detection* section
  * add code to invoke the package manager to install all necessary  dependencies in  *global package installation* section
