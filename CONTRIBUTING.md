@@ -24,7 +24,7 @@ Packaging the software
   * Create a ``yourproject-git`` package for the Arch User Repository (AUR),
     tracking latest development release. Consult the ``PKGBUILD`` of https://aur.archlinux.org/packages/frog-git/  as an example. The ``-git`` suffix is mandatory for development software pulled straight from git.
   * If you have stable releases, create a ``yourproject`` package for the Arch User Repository (AUR). 
-    Consult the ``PKGBUILD`` of https://aur.archlinux.org/packages/frog-git/  as an example.
+    Consult the ``PKGBUILD`` of https://aur.archlinux.org/packages/frog/  as an example.
 * **[python]**
  * Stable releases of Python software should be published in the [Python Package Index](https://pypi.python.org) (PyPI)
   * Create a proper ``setup.py`` using the ``distutils`` or ``setuptools`` standard.
@@ -48,14 +48,20 @@ Adding the packages to LaMachine
 Release an updated version (stable)
 -------------------------------------
 
-* Make a release on github
-* **[c++]** Run ``LaMachine/helpers/aur_github_releaseupdate.sh`` to
-  automatically update your AUR package according to the latest github release
+* First make a release on github (go to the *releases tab* and *create/draft a new
+  release*
+* **[c++]** Run ``/path/to/LaMachine/helpers/aur_github_releaseupdate.sh`` from
+  within the ``yourproject`` AUR repo. Not necessary for the
+  ``yourproject-git`` versions. This automatically updates your AUR package
+  according to the latest github release. ``git commit`` and ``git push`` the
+  result to the AUR. 
 * **[python]** Publish it to PyPI.
 
 
-Adding a new supported distribution for the virtualenv version
--------------------------------------------------------------------
+Adding a new distribution for the virtualenv version
+-------------------------------------------------------------
+
+Does the LaMachine virtualenv version not work on your preferred Linux/BSD distribution? Add it!
 
 * Edit ``virtualenv-bootstrap.sh``
  * add a new detection statement in the *platform detection* section
