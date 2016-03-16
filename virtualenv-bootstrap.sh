@@ -184,6 +184,16 @@ do
     fi
 done
 
+if [ $DEV -eq 0 ]; then
+    echo "================================================================================">&2
+    echo "      LaMachine will install the latest stable releases where possible">&2
+    echo "================================================================================">&2
+else
+    echo "================================================================================">&2
+    echo "      LaMachine will install the very latest development versions">&2
+    echo "================================================================================">&2
+fi
+
 
 CONDA=0
 #if [ ! -z "$CONDA_DEFAULT_ENV" ]; then
@@ -351,7 +361,7 @@ fi
 
 
 if [ $DEV -eq 0 ]; then
-    rm -f "$VIRTUAL_ENV/src/LaMachine/.dev" 2/dev/null
+    rm -f "$VIRTUAL_ENV/src/LaMachine/.dev" 2>/dev/null
 else
     touch "$VIRTUAL_ENV/src/LaMachine/.dev"
 fi
