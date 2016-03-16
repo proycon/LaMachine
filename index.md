@@ -110,10 +110,10 @@ for development, that binds against the software globally available on your
 system. The virtual environment will be contained under a single directory and contains
 everything. All sources are pulled from git and compiled for you.
 
-1. **Clone this repository** in a temporary location (it will only be needed once) and then navigate to this directory in the terminal: ``$ cd /tmp && git clone https://github.com/proycon/LaMachine && cd LaMachine``  (or [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) manually from github).
+1. **Clone this repository** in a temporary location (it will only be needed once) and then navigate to this directory in the terminal: ``$ cd /tmp && git clone https://github.com/proycon/LaMachine``  (or [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) manually from github and extract it).
 2. In a terminal, **navigate to the directory** where you want to install
    LaMachine, for instance your home directory:  ``$ cd ~``. 
-   A ``lamachine/`` directory will be automatically created here in the next step.
+   A ``lamachine/`` directory that contains everything will be automatically created in the next step.
    (Advanced users can also pre-create and activate an existing virtual environment that LaMachine will then reuse.)
 3. **Bootstrap the virtual environment** by calling: ``/tmp/LaMachine/virtualenv-bootstrap.sh``
 
