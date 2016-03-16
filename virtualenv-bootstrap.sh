@@ -234,7 +234,7 @@ fi
 if [ "$NOADMIN" == "0" ]; then
     INSTALL=""
     if [ "$OS" == "arch" ]; then
-        INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse"
+        INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive gcc-fortran icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse"
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python2 python2-pip python2-virtualenv"
         fi
