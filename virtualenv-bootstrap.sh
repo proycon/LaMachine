@@ -924,7 +924,12 @@ fi
 cd ..
 
 if [[ "$PYTHON" != "python2.7" ]]; then
-
+    if [ "$OS" != "mac" ]; then
+        echo "--------------------------------------------------------"
+        echo "Installing extra optional dependencies for Gecco">&2
+        echo "--------------------------------------------------------"
+        pip install -U aspell-python-py3 hunspell
+    fi
     project="gecco"
     echo 
     echo "--------------------------------------------------------"
