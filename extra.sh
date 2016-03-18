@@ -44,6 +44,7 @@ fi
 
 
 if [ $WITHVALKUIL -eq 1 ] || [ -d valkuil-gecco ]; then
+    project="valkuil-gecco"
     echo 
     echo "--------------------------------------------------------"
     echo "Installing $project">&2
