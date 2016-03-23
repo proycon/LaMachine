@@ -231,12 +231,13 @@ echo "--------------------------------------------------------"
 pip install -U python3-timbl || error "Installation of python3-timbl failed !!"
 
 echo "--------------------------------------------------------"
-echo "[LaMachine] Installing python-frog (latest development release)"
+echo "[LaMachine] Installing python-frog"
 echo "--------------------------------------------------------"
-git clone https://github.com/proycon/python-frog
-cd python-frog || fatalerror "No python-frog dir, git clone failed?"
-python setup.py install || error "Installation of python-frog failed !!"
-cd ..
+pip install -U python-frog
+#git clone https://github.com/proycon/python-frog
+#cd python-frog || fatalerror "No python-frog dir, git clone failed?"
+#python setup.py install || error "Installation of python-frog failed !!"
+#cd ..
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing colibri-core"
