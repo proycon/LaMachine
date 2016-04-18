@@ -678,12 +678,15 @@ fi
 
 if [ "$OS" == "mac" ]; then
     #C++ projects on Mac OS X 
-    PROJECTS="ticcutils libfolia ucto timbl timblserver mbt mbtserver wopr frogdata frog toad" #no foliautils on mac yet, not daring to try ticcltools yet
+    PROJECTS="ticcutils libfolia ucto timbl timblserver mbt mbtserver wopr frogdata frog" #no foliautils on mac yet, not daring to try ticcltools yet
 else
     #C++ projects on normal Linux/BSD systems
-    PROJECTS="ticcutils libfolia foliautils ucto timbl timblserver mbt mbtserver wopr frogdata frog toad ticcltools"
+    PROJECTS="ticcutils libfolia foliautils ucto timbl timblserver mbt mbtserver wopr frogdata frog ticcltools"
 fi
 
+if [ $DEV -eq 1 ]; then
+    PROJECT="$PROJECTS toad"
+fi
 
 for project in $PROJECTS; do
     echo 
