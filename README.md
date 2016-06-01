@@ -44,6 +44,7 @@ Pre-installed software:
 Optional additional software:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction. 
 - [Valkuil](https://github.com/proycon/valkuil-gecco) - A context-aware spelling corrector for Dutch 
+- [TICCL](https://github.com/martinreynaert/TICCL) - A spelling correction and OCR post-correction system
 
 The Python bindings and libraries all use Python 3. Both the VM image as well as the docker image are based on Arch Linux.
 
@@ -138,6 +139,7 @@ The ``lamachine-update.sh`` script is also used to install additional *optional*
 
  * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine. 
  * ``valkuil`` - Valkuil Spelling Corrector (for Dutch)
+ * ``ticcl`` - Text-induced Corpus Clean-up: a spelling correction and OCR post-correction system  (the TICCL root directory will be in ``src/TICCL`` in your LaMachine environment)
 
 Note that for the docker version, you can pull a new docker image using ``docker pull proycon/lamachine`` instead. If you do use ``lamachine-update.sh`` with docker, you most likely will want to ``docker commit`` your container afterwards to preserve the update!
 

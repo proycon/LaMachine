@@ -4,6 +4,7 @@
 WITHTSCAN=0
 WITHVALKUIL=0
 WITHFOWLT=0
+WITHTICCL=0
 for OPT in "$@"
 do
     if [[ "$OPT" == "tscan" ]]; then
@@ -14,6 +15,9 @@ do
     fi
     if [[ "$OPT" == "fowlt" ]]; then
         WITHFOWLT=1
+    fi
+    if [[ "$OPT" == "ticcl" ]]; then
+        WITHTICCL=1
     fi
 done
 
@@ -86,3 +90,31 @@ if [ $WITHFOWLT -eq 1 ] || [ -d fowlt-gecco ]; then
     fi
     cd ..
 fi
+
+if [ $WITHTICCL -eq 1 ] || [ -d TICCL ]; then
+    project="ticcl"
+    echo 
+    echo "--------------------------------------------------------"
+    echo "Installing $project">&2
+    echo "--------------------------------------------------------"
+    if [ ! -d $project ]; then
+        git clone https://github.com/martinreynaert/$project
+        cd $project
+        REPOCHANGED=1
+    else
+        cd $project
+        gitcheck
+    fi
+    if [ $REPOCHANGED -eq 1 ]; then
+        if [ ! -d data ]; then
+            wget http://ticclops.uvt.nl/TICCL.languagefiles.ALLavailable.20160421.tar.gz
+            tar -xvzf TICCL.languagefiles.*.tar.gz
+            rm TICCL.languagefiles.*.tar.gz
+        fi
+    else
+        echo "TICCL is already up to date ... "
+    fi
+    cd ..
+    ln -sf TICCL/TICCLops.PICCL.pl ../bin/TICCLops.PICCL.pl
+fi
+
