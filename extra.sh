@@ -92,7 +92,7 @@ if [ $WITHFOWLT -eq 1 ] || [ -d fowlt-gecco ]; then
 fi
 
 if [ $WITHTICCL -eq 1 ] || [ -d TICCL ]; then
-    project="ticcl"
+    project="TICCL"
     echo 
     echo "--------------------------------------------------------"
     echo "Installing $project">&2
