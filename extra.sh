@@ -114,7 +114,9 @@ if [ $WITHTICCL -eq 1 ] || [ -d TICCL ]; then
     else
         echo "TICCL is already up to date ... "
     fi
+    TICCLDIR=`pwd`
+    echo "(Note: TICCL root path is $TICCLDIR)"
     cd ..
-    ln -sf TICCL/TICCLops.PICCL.pl ../bin/TICCLops.PICCL.pl
+    ln -sf $TICCLDIR/TICCLops.PICCL.pl ../bin/TICCLops.PICCL.pl
 fi
 
