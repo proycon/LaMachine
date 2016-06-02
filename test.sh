@@ -53,6 +53,7 @@ runtest TICCL-indexer -h
 runtest TICCL-stats -h
 runtest colibri-classencode -h
 runtest colibri-patternmodeller -h
+runtest clamservice -h
 runtest_python pynlpl
 runtest_python pynlpl.formats.folia
 runtest_python pynlpl.formats.fql
