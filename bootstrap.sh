@@ -151,6 +151,7 @@ else
     git pull
     NEWSUM=`sum bootstrap.sh`
     cp bootstrap.sh /usr/bin/lamachine-update.sh
+    cp test.sh /usr/bin/lamachine-test.sh
     if [ "$OLDSUM" != "$NEWSUM" ]; then
         echo "----------------------------------------------------------------"
         echo "LaMachine has been updated with a newer version, restarting..."

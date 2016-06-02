@@ -144,6 +144,7 @@ gitcheckout () {
 NOADMIN=0
 FORCE=0
 NOPYTHONDEPS=0
+NONINTERACTIVE=0
 DEV=0
 PRIVATE=0
 if [ ! -z "$VIRTUAL_ENV" ]; then
@@ -160,6 +161,9 @@ for OPT in "$@"
 do
     if [[ "$OPT" == "noadmin" ]]; then
         NOADMIN=1
+    fi
+    if [[ "$OPT" == "noninteractive" ]]; then
+        NONINTERACTIVE=1
     fi
     if [[ "$OPT" == "nopythondeps" ]]; then
         NOPYTHONDEPS=1
@@ -245,10 +249,14 @@ echo "Detected distribution release: $DISTRIB_RELEASE"
 #################################################################
 #           Global package installation (distribition-specific)
 #################################################################
+NONINTERACTIVEFLAG=""
 if [ "$NOADMIN" == "0" ]; then
     INSTALL=""
     if [ "$OS" == "arch" ]; then
-        INSTALL="sudo pacman -Syu --needed --noconfirm base-devel pkg-config git autoconf-archive gcc-fortran icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse perl perl-sort-naturally"
+        if [ $NONINTERACTIVE -eq 1 ]; then
+            NONINTERACTIVEFLAG="--noconfirm"
+        fi
+        INSTALL="sudo pacman -Syu $NONINTERACTIVEFLAG --needed base-devel pkg-config git autoconf-archive gcc-fortran icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse perl perl-sort-naturally"
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python2 python2-pip python2-virtualenv"
         fi
@@ -265,12 +273,18 @@ if [ "$NOADMIN" == "0" ]; then
                 fatalerror "Your Ubuntu version ($DISTRIB_RELEASE) is way too old for LaMachine, upgrade to the latest LTS release"
             fi
         fi
-        INSTALL="sudo apt-get -m install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE python-virtualenv libgnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl perl libsort-naturally-perl "  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
+        if [ $NONINTERACTIVE -eq 1 ]; then
+            NONINTERACTIVEFLAG="-y"
+        fi
+        INSTALL="sudo apt-get -m $NONINTERACTIVEFLAG install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE python-virtualenv libgnutls-dev libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl perl libsort-naturally-perl "  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python python-dev python-pip"
         fi
     elif [ "$OS" == "redhat" ]; then
-        INSTALL="sudo yum install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python3 python3-devel zlib zlib-devel python3-virtualenv python3-pip bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel perl perl-Sort-Naturally"
+        if [ $NONINTERACTIVE -eq 1 ]; then
+            NONINTERACTIVEFLAG="-y"
+        fi
+        INSTALL="sudo yum $NONINTERACTIVEFLAG install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python3 python3-devel zlib zlib-devel python3-virtualenv python3-pip bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel perl perl-Sort-Naturally"
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python python-devel python-pip"
         fi
@@ -637,12 +651,14 @@ if [ ! -d LaMachine ]; then
     git clone https://github.com/proycon/LaMachine || fatalerror "Unable to clone git repo for LaMachine"
     cd LaMachine
     cp virtualenv-bootstrap.sh "$VIRTUAL_ENV/bin/lamachine-update.sh"
+    cp test.sh "$VIRTUAL_ENV/bin/lamachine-test.sh"
 else
     cd LaMachine
     OLDSUM=`sum virtualenv-bootstrap.sh`
     git pull
     NEWSUM=`sum virtualenv-bootstrap.sh`
     cp virtualenv-bootstrap.sh "$VIRTUAL_ENV/bin/lamachine-update.sh"
+    cp test.sh "$VIRTUAL_ENV/bin/lamachine-test.sh"
     if [ "$OLDSUM" != "$NEWSUM" ]; then
         echo "----------------------------------------------------------------"
         echo "LaMachine has been updated with a newer version, restarting..."
