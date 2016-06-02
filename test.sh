@@ -1,29 +1,75 @@
 #!/bin/bash
 RETURN=0
 
-testerror () {
-    echo "================ TEST ERROR ==============" >&2
-    echo $1 >&2
-    echo "===========================================" >&2
-    RETURN=2
+echo "============== LaMachine Test ==================="
+
+GREEN='\033[1;32m' 
+RED='\033[1;31m'  
+RESET='\033[0m'
+
+
+runtest () {
+    EXEC=$1
+    OPT=$2
+    $EXEC $OPT 2> test.out >^2
+    if [ $? -eq 0 ]; then
+        echo -e "$EXEC: $GREEN OK $RESET"
+    else 
+        echo -e "$EXEC: $RED FAILED! $RESET"
+        echo "---------------------------------------------------------"
+        echo "Details for failed test $EXEC:"
+        cat test.out
+        echo "---------------------------------------------------------"
+        RETURN=2
+    fi
 }
 
-which ucto || testerror "Ucto not found"
-which frog || testerror "Frog not found"
-which timbl || testerror "Timbl not found"
-which mbt || testerror "Mbt not found"
-which wopr || testerror "Wopr not found"
-which foliavalidator || testerror "FoLiA validator not found"
-which gecco || testerror "Gecco not found"
-python -c "import pynlpl" || testerror "PyNLPl not found"
-python -c "import timbl" || testerror "python-timbl not found"
-python -c "import ucto" || testerror "python-ucto not found"
-which colibri-patternmodeller || testerror "Colibri Core not found"
-python -c "import colibricore" || testerror "colibricore not found for python"
-python -c "import frog" || testerror "python-frog not found"
+runtest_python () {
+    MODULE=$1
+    python -c "import $MODULE" 2> test.out >&2
+    if [ $? -eq 0 ]; then
+        echo -e "[python] $MODULE: $GREEN OK $RESET"
+    else 
+        echo -e "[python] $MODULE: $RED FAILED! $RESET"
+        echo "---------------------------------------------------------"
+        echo "Details for failed test [python] $MODULE:"
+        cat test.out
+        echo "---------------------------------------------------------"
+        FAILURES=$((FAILURES+1))
+    fi
+}
 
-if [ "$RETURN" != "0" ]; then
-    testerror "Test failure... One or more errors occured!"
+
+FAILURES=0
+
+runtest ucto -h
+runtest timbl -h
+runtest timblserver -h
+runtest mbt -h
+runtest mbtserver -h
+runtest frog -h
+runtest wopr ""
+runtest TICCL-indexer -h
+runtest TICCL-stats -h
+runtest colibri-classencode -h
+runtest colibri-patternmodeller -h
+runtest_python pynlpl
+runtest_python pynlpl.formats.folia
+runtest_python pynlpl.formats.fql
+runtest folialint -h
+runtest foliavalidator -h
+runtest folia2html -h
+runtest folia2txt -h
+runtest_python timbl
+runtest_python ucto
+runtest_python frog
+runtest_python colibricore
+runtest gecco --helpmodules
+
+if [ $FAILURES -eq 0 ]; then
+    echo -e "[LaMachine Test] $GREEN All tests passed, good! $RESET"
+else
+    echo -e "[LaMachine Test] $RED $FAILURES tests failed! $RESET"
 fi
 
-exit $RETURN
+exit $FAILURES
