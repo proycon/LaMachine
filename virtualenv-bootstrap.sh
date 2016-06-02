@@ -237,6 +237,10 @@ elif [ -f /etc/lsb-release ]; then
     . /etc/lsb-release
 fi
 
+echo "Detected OS: $OS"
+echo "Detected distribution ID: $DISTRIB_ID"
+echo "Detected distribution release: $DISTRIB_RELEASE"
+
 
 #################################################################
 #           Global package installation (distribition-specific)
