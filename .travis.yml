@@ -3,6 +3,7 @@ language: python
 python:
     - 3.4
 sudo: required
+dist: trusty
 before-install:
     - sudo apt-get update
 install: 
