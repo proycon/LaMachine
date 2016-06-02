@@ -987,7 +987,16 @@ fi
 
 . LaMachine/extra.sh $@ 
 
-echo "--------------------------------------------------------"
-echo "All done!">&2
-echo "  From now on, activate your virtual environment as follows: . $VIRTUAL_ENV/bin/activate">&2
-echo "  To facilitate activation, add an alias to your ~/.bashrc: alias lm=\". $VIRTUAL_ENV/bin/activate\"">&2
+lamachine-test.sh
+if [ $? -eq 0 ]; then
+    echo "--------------------------------------------------------"
+    echo "All done!">&2
+    echo "  From now on, activate your virtual environment as follows: . $VIRTUAL_ENV/bin/activate">&2
+    echo "  To facilitate activation, add an alias to your ~/.bashrc: alias lm=\". $VIRTUAL_ENV/bin/activate\"">&2
+    exit 0
+else
+    echo "--------------------------------------------------------"
+    echo "LaMachine bootstrap FAILED because of failed tests!!!!"
+    echo "--------------------------------------------------------"
+    exit 1
+fi

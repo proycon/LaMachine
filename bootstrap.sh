@@ -272,10 +272,19 @@ cd ..
 cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
 . LaMachine/extra.sh $@ 
 
-echo "--------------------------------------------------------"
-echo "[LaMachine] All done!  "
-if [ $VAGRANT -eq 1 ]; then
-    echo " .. Issue $ vagrant ssh to connect to your VM!"
+lamachine-test.sh
+if [ $? -eq 0 ]; then
+    echo "--------------------------------------------------------"
+    echo "[LaMachine] All done!  "
+    if [ $VAGRANT -eq 1 ]; then
+        echo " .. Issue $ vagrant ssh to connect to your VM!"
+    else
+        echo "IMPORTANT NOTE: You are most likely using docker, do not forget to commit the container state if you want to preserve this update !!"
+    fi
+    exit 0
 else
-    echo "IMPORTANT NOTE: You are most likely using docker, do not forget to commit the container state if you want to preserve this update !!"
+    echo "--------------------------------------------------------"
+    echo "LaMachine bootstrap FAILED because of failed tests!!!!"
+    echo "--------------------------------------------------------"
+    exit 1
 fi
