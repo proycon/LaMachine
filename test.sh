@@ -20,7 +20,7 @@ runtest () {
         echo "Details for failed test $EXEC:"
         cat test.out
         echo "---------------------------------------------------------"
-        RETURN=2
+        FAILURES=$((FAILURES+1))
     fi
 }
 

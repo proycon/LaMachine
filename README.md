@@ -122,11 +122,11 @@ Tested to work on:
  * Ubuntu 15.10 - Wily Werewolf
  * Ubuntu 15.04 - Vivid Vervet
  * Ubuntu 14.04 LTS - Trusty Tahr
- * Ubuntu 12.04 LTS - Precise Pangolin  *(provided you first manually upgrade to Python 3.3 or above!)*
 
 Partially works on:
 
- * Mac OS X Yosemite/El Capitan  *(wopr does not work yet, optional software valkuil and tscan are not supported)*
+ * Mac OS X Yosemite/El Capitan  *(wopr does not work yet, python-frog breaks, optional software valkuil and tscan are not supported)*
+ * Ubuntu 12.04 LTS - Precise Pangolin  *(provided you first manually upgrade to Python 3.3 or above! python-timbl may fail)*
 
 
 Updating & Extra Software
