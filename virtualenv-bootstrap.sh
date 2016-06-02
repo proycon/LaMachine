@@ -256,7 +256,7 @@ if [ "$NOADMIN" == "0" ]; then
                 echo "WARNING: Ubuntu 12.04 detected, make sure you manually upgrade Python 3 to at least Python 3.3 first or things may fail later in the installation process!">&2
                 echo "============================================================================================================================================================">&2
                 sleep 3
-                PIPPACKAGE="python-pip"
+                PIPPACKAGE="python3-setuptools"
             elif [ "$DISTRIB_RELEASE" == "10.04" ] || [ "$DISTRIB_RELEASE" == "10.10" ] || [ "$DISTRIB_RELEASE" == "9.10" ] || [ "$DISTRIB_RELEASE" == "9.04" ] || [ "$DISTRIB_RELEASE" == "8.04" ]; then
                 fatalerror "Your Ubuntu version ($DISTRIB_RELEASE) is way too old for LaMachine, upgrade to the latest LTS release"
             fi
@@ -325,6 +325,7 @@ fi
 
 
 
+
 if [ -z "$VIRTUAL_ENV" ]; then
     VENV=$(which virtualenv)
     if [ ! -f "$VENV" ]; then
@@ -334,10 +335,12 @@ if [ -z "$VIRTUAL_ENV" ]; then
         else
             PIP=$(which pip3)
         fi
-        if [ ! -f "$PIP" ]; then
-            PIP=$(which pip)
+        if [ "$DISTRIB_RELEASE" != "12.04" ]; then
             if [ ! -f "$PIP" ]; then
-                fatalerror "pip3 or pip not found"
+                PIP=$(which pip)
+                if [ ! -f "$PIP" ]; then
+                    fatalerror "pip3 or pip not found"
+                fi
             fi
         fi
         echo "Attempting to install virtualenv"
@@ -354,6 +357,12 @@ if [ -z "$VIRTUAL_ENV" ]; then
     virtualenv --python=$PYTHON lamachine || fatalerror "Unable to create virtual environment"
     . lamachine/bin/activate || fatalerror "Unable to activate virtual environment"
     MODE='new'
+    #Ubuntu 12.04 doesn't package python3-pip yet
+    if [ "$DISTRIB_ID" == "Ubuntu" ]; then 
+        if [ "$DISTRIB_RELEASE" == "12.04" ]; then
+            easy_install3 pip
+        fi
+    fi
 else
     echo "Existing virtual environment detected... good.."
     MODE='update'
