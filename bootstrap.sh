@@ -164,6 +164,7 @@ else
     fi
 fi
 cp bootstrap.sh /usr/bin/lamachine-update.sh
+cp test.sh /usr/bin/lamachine-test.sh
 cp nginx.mime.types /etc/nginx/
 cp nginx.conf /etc/nginx/
 cd ..
