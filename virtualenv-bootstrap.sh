@@ -254,7 +254,7 @@ if [ "$NOADMIN" == "0" ]; then
         fi
     elif [ "$OS" == "debian" ]; then
         PIPPACKAGE="python3-pip"
-        if [ "$DISTRIB_ID" == "Ubuntu" ]; then
+        if [ "$DISTRIB_ID" == "ubuntu" ]; then
             if [ "$DISTRIB_RELEASE" == "12.04" ]; then
                 echo "===========================================================================================================================================================">&2
                 echo "WARNING: Ubuntu 12.04 detected, make sure you manually upgrade Python 3 to at least Python 3.3 first or things may fail later in the installation process!">&2
@@ -362,7 +362,7 @@ if [ -z "$VIRTUAL_ENV" ]; then
     . lamachine/bin/activate || fatalerror "Unable to activate virtual environment"
     MODE='new'
     #Ubuntu 12.04 doesn't package python3-pip yet
-    if [ "$DISTRIB_ID" == "Ubuntu" ]; then 
+    if [ "$DISTRIB_ID" == "ubuntu" ]; then 
         if [ "$DISTRIB_RELEASE" == "12.04" ]; then
             easy_install3 pip
         fi
