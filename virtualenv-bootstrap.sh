@@ -776,7 +776,7 @@ fi
 PYTHONMAJOR=$(python -c "import sys; print(sys.version_info.major,end='')")
 PYTHONMINOR=$(python -c "import sys; print(sys.version_info.minor,end='')")
 
-PYTHONPROJECTS="pynlpl folia foliadocserve flat"
+PYTHONPROJECTS="pynlpl folia foliadocserve flat luiginlp"
 
 
 echo 
@@ -946,11 +946,11 @@ if [ ! -d clam ]; then
     gitcheck
     REPOCHANGED=1
 else
-    rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/CLAM*egg
     cd clam
     gitcheck
 fi
 if [ $REPOCHANGED -eq 1 ]; then
+    rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/CLAM*egg
     python setup.py install --prefix="$VIRTUAL_ENV" || fatalerror "setup.py install clam failed"
 fi
 cd ..
