@@ -776,7 +776,7 @@ fi
 PYTHONMAJOR=$(python -c "import sys; print(sys.version_info.major,end='')")
 PYTHONMINOR=$(python -c "import sys; print(sys.version_info.minor,end='')")
 
-PYTHONPROJECTS="proycon/pynlpl proycon/folia proycon/foliadocserve proycon/flat LanguageMachines/LuigiNLP"
+PYTHONPROJECTS="proycon/pynlpl proycon/folia proycon/foliadocserve proycon/flat" #LanguageMachines/LuigiNLP
 
 
 echo 
