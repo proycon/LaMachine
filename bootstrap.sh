@@ -41,6 +41,107 @@ error () {
     sleep 3
 }
 
+gitstash () {
+        echo "WARNING: Unable to switch branches, there must be uncommited changes. Do you want to stash them away and continue? (y/n)"
+        read -r yn
+        if [[ "$yn" == "y" ]]; then
+            git stash
+        else 
+            exit 8
+        fi
+}
+
+
+gitcheckmaster() {
+    git checkout master
+    if [ $? -ne 0 ]; then
+        gitstash 
+        git checkout master
+    fi
+    git remote update
+    LOCAL=$(git rev-parse @)
+    REMOTE=$(git rev-parse @{u})
+    BASE=$(git merge-base @ @{u})
+
+    if [ "$LOCAL" = "$REMOTE" ]; then
+        echo "Git: up-to-date"
+        REPOCHANGED=0
+    elif [ "$LOCAL" = "$BASE" ]; then
+        echo "Git: Pulling..."
+        git pull || fatalerror "Unable to git pull $project"
+        REPOCHANGED=1
+    elif [ "$REMOTE" = "$BASE" ]; then
+        echo "Git: Need to push"
+        REPOCHANGED=1
+    else
+        echo "Git: Diverged"
+        REPOCHANGED=1
+    fi
+
+    if [ -f error ]; then
+        echo "Encountered an error last time, need to recompile"
+        rm error
+        REPOCHANGED=1
+    fi
+}
+
+gitcheck () {
+    git remote update
+    if [ $DEV -eq 0 ]; then
+        #use github releases, upgrade to latest one
+        if [ -f .version.lamachine ]; then
+            CURRENTVERSION=$(cat .version.lamachine)
+        fi
+        LATESTVERSION=$(git tag | grep -e "^v" | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -n 1)
+        if [ ! -z $LATESTVERSION ]; then
+            if [[ "$LATESTVERSION" == "$CURRENTVERSION" ]]; then
+                echo "   Already up to date on latest stable release: $LATESTVERSION"
+                REPOCHANGED=0
+            else
+                LATESTVERSION=$(echo $LATESTVERSION|tr -d '\n')
+                echo "   Upgrading from $CURRENTVERSION to latest stable release $LATESTVERSION ..."
+                git checkout "tags/$LATESTVERSION" #will put us in detached head state
+                if [ $? -ne 0 ]; then
+                    gitstash 
+                    git checkout "tags/$LATESTVERSION"
+                fi
+                echo "$LATESTVERSION" > .version.lamachine 
+                REPOCHANGED=1
+            fi
+        else
+            #no tags/releases, use master
+            gitcheckmaster
+        fi
+    else
+        #use master branch
+        gitcheckmaster
+    fi
+}
+
+gitcheckout () {
+    if [ $DEV -eq 0 ]; then
+        LATESTVERSION=`git tag --sort="v:refname" | tail -n 1`
+        if [ ! -z "$LATESTVERSION" ]; then
+            LATESTVERSION=$(echo $LATESTVERSION|tr -d '\n')
+            echo "   Using latest stable release: $LATESTVERSION"
+            git checkout "tags/$LATESTVERSION" #will put us in detached head state
+            if [ $? -ne 0 ]; then
+                gitstash 
+                git checkout "tags/$LATESTVERSION"
+            fi
+            echo "$LATESTVERSION" > .version.lamachine 
+        fi
+    else
+        echo "       Using newest development version"
+        git checkout master
+        if [ $? -ne 0 ]; then
+            gitstash 
+            git checkout master
+        fi
+        rm .version.lamachine 2> /dev/null
+    fi
+}
+
 umask u=rwx,g=rwx,o=rx
 
 sed -i s/lecture=once/lecture=never/ /etc/sudoers
@@ -257,19 +358,41 @@ pip install -U hunspell python-Levenshtein aspell-python-py3 || error "Installat
 
 
 echo "--------------------------------------------------------"
-echo "[LaMachine] Installing Gecco (latest development release) "
+echo "[LaMachine] Installing Gecco"
 echo "--------------------------------------------------------"
 if [ ! -d gecco ]; then
     git clone https://github.com/proycon/gecco
     chmod a+rx gecco
-    cd gecco || fatalerror "No gecco dir, git clone failed?"
+    cd gecco 
+    gitcheck
 else
     cd gecco
-    git pull
+    pwd
+    gitcheck
 fi
-python setup.py install || error "setup.py install gecco failed"
+if [ $REPOCHANGED -eq 1 ]; then
+    python setup.py install || error "setup.py install gecco failed"
+fi
 cd ..
 
+echo "--------------------------------------------------------"
+echo "[LaMachine] Installing LuigiNLP"
+echo "--------------------------------------------------------"
+if [ ! -d gecco ]; then
+    git clone https://github.com/LanguageMachines/LuigiNLP
+    chmod a+rx LuigiNLP
+    cd LuigiNLP 
+    gitcheck
+else
+    cd LuigiNLP
+    pwd
+    gitcheck
+fi
+if [ $REPOCHANGED -eq 1 ]; then
+    python setup.py install #extra run since python-daemon may will
+    python setup.py install || error "setup.py install gecco failed"
+fi
+cd ..
 
 cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
 . LaMachine/extra.sh $@ 
