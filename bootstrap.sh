@@ -378,7 +378,7 @@ cd ..
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing LuigiNLP"
 echo "--------------------------------------------------------"
-if [ ! -d gecco ]; then
+if [ ! -d LuigiNLP ]; then
     git clone https://github.com/LanguageMachines/LuigiNLP
     chmod a+rx LuigiNLP
     cd LuigiNLP 
