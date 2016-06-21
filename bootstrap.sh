@@ -270,6 +270,7 @@ fi
 python setup.py install || error "setup.py install gecco failed"
 cd ..
 
+
 cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
 . LaMachine/extra.sh $@ 
 

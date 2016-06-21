@@ -776,7 +776,7 @@ fi
 PYTHONMAJOR=$(python -c "import sys; print(sys.version_info.major,end='')")
 PYTHONMINOR=$(python -c "import sys; print(sys.version_info.minor,end='')")
 
-PYTHONPROJECTS="proycon/pynlpl proycon/folia proycon/foliadocserve proycon/flat" #LanguageMachines/LuigiNLP
+PYTHONPROJECTS="proycon/pynlpl proycon/folia proycon/foliadocserve proycon/flat LanguageMachines/LuigiNLP"
 
 
 echo 
@@ -806,6 +806,9 @@ for projectpath in $PYTHONPROJECTS; do
             rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/*FoLiA*egg
         elif [ "$project" == "foliadocserve" ]; then
             rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/*foliadocserve*egg
+        elif [[ "$project" == "LuigiNLP" ]]; then
+            #workaround for python-daemon issue, first run may fail due to python-daemon setup bug, second run will fix it.
+            python setup.py install --prefix="$VIRTUAL_ENV" 
         fi
         python setup.py install --prefix="$VIRTUAL_ENV" || fatalerror "setup.py install $project failed"
     else
