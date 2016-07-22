@@ -28,7 +28,7 @@ fi
 
 if [ $LOGGED -eq 0 ]; then
     echo "(logging to $LOGFILE)"
-    if [[ ${0:0:1} != "/" ]] || [[ ${0:0:1} != "." ]]; then
+    if [[ ${0:0:1} != "/" ]] && [[ ${0:0:1} != "." ]]; then
         #path not absolute
         if [ ! -z $VIRTUAL_ENV ] && [ -f $VIRTUAL_ENV/bin/$0 ]; then
             $VIRTUAL_ENV/bin/$0 $@ logged | tee $LOGFILE
