@@ -28,7 +28,13 @@ fi
 
 if [ $LOGGED -eq 0 ]; then
     echo "(logging to $LOGFILE)"
-    $0 $@ logged | tee $LOGFILE
+    if [[ $LOGFILE != "/"* ]]; then
+        #path not absolute, use cwd
+        `pwd`/$0 $@ logged | tee $LOGFILE
+    else
+        #path is absolute
+        $0 $@ logged | tee $LOGFILE
+    fi
     exit $?
 fi
 
