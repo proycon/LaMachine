@@ -9,10 +9,34 @@
 # Licensed under GPLv3
 #=====================================
 
+LOGGED=0
+for OPT in "$@"
+do
+    if [[ "$OPT" == "logged" ]]; then
+        LOGGED=1
+    fi
+done
+
+TIMESTAMP=`date +%s`
+if [ ! -z $VIRTUAL_ENV ]; then
+    LOGFILE=$VIRTUAL_ENV/virtualenv-bootstrap-$TIMESTAMP.log
+elif [ ! -z $TMPDIR ]; then
+    LOGFILE=$TMPDIR/virtualenv-bootstrap-$TIMESTAMP.log
+else
+    LOGFILE=/tmp/virtualenv-bootstrap-$TIMESTAMP.log
+fi
+
+if [ $LOGGED -eq 0 ]; then
+    echo "(logging to $LOGFILE)"
+    $0 $@ logged | tee $LOGFILE
+    exit $?
+fi
+
+        
 
 echo "====================================================================="
 echo "           ,              LaMachine - NLP Software distribution" 
-echo "          ~)                     (http://proycon.github.io/LaMachine)"
+echo "          ~)                     (https://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
 echo "            /| |\         & Centre for Language and Speech Technology"
 echo "           / / /|	        Radboud University Nijmegen "
@@ -664,7 +688,7 @@ else
         echo "LaMachine has been updated with a newer version, restarting..."
         echo "----------------------------------------------------------------"
         sleep 3
-        ./virtualenv-bootstrap.sh $@ 
+        ./virtualenv-bootstrap.sh $@ logged
         exit $?
     fi
 fi
