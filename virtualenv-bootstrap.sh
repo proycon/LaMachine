@@ -30,7 +30,11 @@ if [ $LOGGED -eq 0 ]; then
     echo "(logging to $LOGFILE)"
     if [[ $0 != "/"* ]]; then
         #path not absolute, use cwd
-        `pwd`/$0 $@ logged | tee $LOGFILE
+        if [ ! -z $VIRTUAL_ENV ]; then
+            $VIRTUAL_ENV/bin/$0 $@ logged | tee $LOGFILE
+        else
+            `pwd`/$0 $@ logged | tee $LOGFILE
+        fi
     else
         #path is absolute
         $0 $@ logged | tee $LOGFILE
