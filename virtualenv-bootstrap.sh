@@ -58,7 +58,7 @@ sleep 1
 
 fatalerror () {
     echo "================ FATAL ERROR ==============" >&2
-    echo "An error occured during installation!!" >&2
+    echo "An error occurred during installation!!" >&2
     echo "$1" >&2
     echo "===========================================" >&2
     echo "$1" > error
