@@ -49,8 +49,10 @@ runtest mbt -h
 runtest mbtserver -h
 runtest frog -h
 runtest wopr ""
-runtest TICCL-indexer -h
-runtest TICCL-stats -h
+if [ "$OS" != "mac" ]; then
+    runtest TICCL-indexer -h
+    runtest TICCL-stats -h
+fi
 runtest colibri-classencode -h
 runtest colibri-patternmodeller -h
 runtest clamservice -h
