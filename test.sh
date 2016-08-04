@@ -67,7 +67,9 @@ runtest_python timbl
 runtest_python ucto
 runtest_python frog
 runtest_python colibricore
-runtest gecco --helpmodules
+if [ "$OS" != "mac" ]; then
+    runtest gecco --helpmodules
+fi
 
 if [ $FAILURES -eq 0 ]; then
     echo -e "[LaMachine Test] $GREEN All tests passed, good! $RESET"

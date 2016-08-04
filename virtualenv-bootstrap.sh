@@ -993,13 +993,12 @@ if [ $REPOCHANGED -eq 1 ]; then
 fi
 cd ..
 
-if [[ "$PYTHON" != "python2.7" ]]; then
-    if [ "$OS" != "mac" ]; then
-        echo "--------------------------------------------------------"
-        echo "Installing extra optional dependencies for Gecco">&2
-        echo "--------------------------------------------------------"
-        pip install -U aspell-python-py3 hunspell
-    fi
+if [ "$OS" != "mac" ]; then
+ if [[ "$PYTHON" != "python2.7" ]]; then
+    echo "--------------------------------------------------------"
+    echo "Installing extra optional dependencies for Gecco">&2
+    echo "--------------------------------------------------------"
+    pip install -U aspell-python-py3 hunspell
     project="gecco"
     echo 
     echo "--------------------------------------------------------"
@@ -1021,6 +1020,7 @@ if [[ "$PYTHON" != "python2.7" ]]; then
         echo "Gecco is already up to date ... "
     fi
     cd ..
+ fi
 fi
 
 . LaMachine/extra.sh $@ 
@@ -1036,5 +1036,10 @@ else
     echo "--------------------------------------------------------"
     echo "LaMachine bootstrap FAILED because of failed tests!!!!"
     echo "--------------------------------------------------------"
+    if [ "$OS" != "mac" ]; then
+        echo "  However, some failures are expected on Mac OS X, and your LaMachine virtual environment may still be largely functional.">&2
+        echo "  From now on, activate your virtual environment as follows: . $VIRTUAL_ENV/bin/activate">&2
+        echo "  To facilitate activation, add an alias to your ~/.bashrc: alias lm=\". $VIRTUAL_ENV/bin/activate\"">&2
+    fi
     exit 1
 fi
