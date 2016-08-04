@@ -334,7 +334,7 @@ if [ "$NOADMIN" == "0" ]; then
         else
             BREWEXTRA=""
         fi
-        INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python3 boost-python xml2 libxslt icu4c libtextcat aspell hunspell wget $BREWEXTRA"
+        INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python3 boost-python xml2 libxslt icu4c libtextcat wget $BREWEXTRA"
 
         DISTRIB_ID="OSX"
         DISTRIB_RELEASE=$(sw_vers -productVersion | tr -d '\n')
@@ -773,7 +773,7 @@ for project in $PROJECTS; do
         bash bootstrap.sh || fatalerror "$project bootstrap failed"
         EXTRA=""
         if [ "$OS" == "mac" ]; then
-            if [ "$project" == "libfolia" ] || [ $PROJECT == "ucto" ]; then
+            if [ "$project" == "libfolia" ] || [ "$project" == "ucto" ]; then
                 EXTRA="--with-icu=/usr/local/opt/icu4c"
             fi
         fi
