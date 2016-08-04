@@ -1025,6 +1025,7 @@ fi
 
 . LaMachine/extra.sh $@ 
 
+export OS
 lamachine-test.sh
 if [ $? -eq 0 ]; then
     echo "--------------------------------------------------------"
@@ -1036,7 +1037,7 @@ else
     echo "--------------------------------------------------------"
     echo "LaMachine bootstrap FAILED because of failed tests!!!!"
     echo "--------------------------------------------------------"
-    if [ "$OS" != "mac" ]; then
+    if [ "$OS" == "mac" ]; then
         echo "  However, some failures are expected on Mac OS X, and your LaMachine virtual environment may still be largely functional.">&2
         echo "  From now on, activate your virtual environment as follows: . $VIRTUAL_ENV/bin/activate">&2
         echo "  To facilitate activation, add an alias to your ~/.bashrc: alias lm=\". $VIRTUAL_ENV/bin/activate\"">&2

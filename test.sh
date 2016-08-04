@@ -2,6 +2,7 @@
 RETURN=0
 
 echo "============== LaMachine Test ==================="
+echo "OS=$OS"
 
 GREEN='\033[1;32m' 
 RED='\033[1;31m'  
