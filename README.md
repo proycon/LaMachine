@@ -40,6 +40,7 @@ Pre-installed software:
 - *Python bindings* - [python-ucto](https://github.com/proycon/python-ucto), [python-frog](https://github.com/proycon/python-frog), [python-timbl](https://github.com/proycon/python-timbl) 
 - [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices 
 - [Gecco](https://github.com/proycon/gecco) - Generic Environment for Context-Aware Correction of Orthography
+- [Toad](https://github.com/LanguageMachines/toad) - Trainer Of All Data, training tools for Frog
 
 Optional additional software:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction. 
@@ -125,7 +126,7 @@ Tested to work on:
 
 Partially works on:
 
- * Mac OS X Yosemite/El Capitan  *(wopr does not work yet, python-frog breaks, optional software valkuil and tscan are not supported)*
+ * Mac OS X Yosemite/El Capitan  *(wopr does not work yet, python-frog breaks, gecco and toad are not available; optional software valkuil and tscan are not supported)*
  * Ubuntu 12.04 LTS - Precise Pangolin  *(provided you first manually upgrade to Python 3.3 or above! python-timbl may fail)*
 
 
