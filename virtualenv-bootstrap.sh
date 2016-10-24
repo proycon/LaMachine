@@ -744,11 +744,7 @@ if [ "$OS" == "mac" ]; then
     PROJECTS="ticcutils libfolia uctodata ucto timbl timblserver mbt mbtserver wopr frogdata frog" #no foliautils on mac yet, not daring to try ticcltools yet
 else
     #C++ projects on normal Linux/BSD systems
-    PROJECTS="ticcutils libfolia foliautils uctodata ucto timbl timblserver mbt mbtserver wopr frogdata frog ticcltools"
-fi
-
-if [ $DEV -eq 1 ]; then
-    PROJECT="$PROJECTS toad"
+    PROJECTS="ticcutils libfolia foliautils uctodata ucto timbl timblserver mbt mbtserver wopr frogdata frog ticcltools toad"
 fi
 
 for project in $PROJECTS; do
