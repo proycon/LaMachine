@@ -591,7 +591,13 @@ alias pydoc="python -m pydoc"
 # past commands the $PATH changes we made may not be respected
 if [ -n "$BASH" -o -n "$ZSH_VERSION" ] ; then
     hash -r 2>/dev/null
-fi'
+fi
+
+if [ -z "$LAMACHINE_QUIET" ]; then
+    cat $VIRTUAL_ENV/src/LaMachine/motd
+    echo "    (Set LAMACHINE_QUIET=1 prior to activation to suppress this message)"
+fi
+'
 
 activate_conda='
 VIRTUAL_ENV="_VIRTUAL_ENV_"
