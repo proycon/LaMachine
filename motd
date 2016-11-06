@@ -1,6 +1,10 @@
-LaMachine
-    https://proycon.github.io/LaMachine
-----------------------------------------
+==============================================================================
+           ,              LaMachine - NLP Software distribution 
+          ~)                     (https://proycon.github.io/LaMachine)
+           (----í         Language Machines research group
+            /| |\         & Centre for Language and Speech Technology
+           / / /|	        Radboud University Nijmegen 
+==============================================================================
 
 Available software: CLAM (clamservice), Colibri Core (colibri-patternmodeller),
                     FoLiA Tools (foliavalidator, folia2txt, folia2html, foliaquery etc), 
