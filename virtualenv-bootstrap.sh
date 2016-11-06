@@ -297,6 +297,7 @@ if [ "$NOADMIN" == "0" ]; then
     elif [ "$OS" == "debian" ]; then
         PIPPACKAGE="python3-pip"
         if [ "$DISTRIB_ID" == "ubuntu" ]; then
+            GNUTLS="libgnutls-dev"
             if [ "$DISTRIB_RELEASE" == "12.04" ]; then
                 echo "===========================================================================================================================================================">&2
                 echo "WARNING: Ubuntu 12.04 detected, make sure you manually upgrade Python 3 to at least Python 3.3 first or things may fail later in the installation process!">&2
@@ -306,11 +307,14 @@ if [ "$NOADMIN" == "0" ]; then
             elif [ "$DISTRIB_RELEASE" == "10.04" ] || [ "$DISTRIB_RELEASE" == "10.10" ] || [ "$DISTRIB_RELEASE" == "9.10" ] || [ "$DISTRIB_RELEASE" == "9.04" ] || [ "$DISTRIB_RELEASE" == "8.04" ]; then
                 fatalerror "Your Ubuntu version ($DISTRIB_RELEASE) is way too old for LaMachine, upgrade to the latest LTS release"
             fi
+        else
+            #debian
+            GNUTLS="libgnutls28-dev"
         fi
         if [ $NONINTERACTIVE -eq 1 ]; then
             NONINTERACTIVEFLAG="-y"
         fi
-        INSTALL="sudo apt-get -m $NONINTERACTIVEFLAG install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE python-virtualenv libgnutls28-dev libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl perl libsort-naturally-perl "  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
+        INSTALL="sudo apt-get -m $NONINTERACTIVEFLAG install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE python-virtualenv $GNUTLS libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl perl libsort-naturally-perl "  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python python-dev python-pip"
         fi
