@@ -58,7 +58,7 @@ sleep 1
 
 fatalerror () {
     echo "================ FATAL ERROR ==============" >&2
-    echo "An error occured during installation!!" >&2
+    echo "An error occurred during installation!!" >&2
     echo "$1" >&2
     echo "===========================================" >&2
     echo "$1" > error
@@ -334,7 +334,7 @@ if [ "$NOADMIN" == "0" ]; then
         else
             BREWEXTRA=""
         fi
-        INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python3 boost-python xml2 libxslt icu4c libtextcat aspell hunspell wget $BREWEXTRA"
+        INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python3 boost-python xml2 libxslt icu4c libtextcat wget $BREWEXTRA"
 
         DISTRIB_ID="OSX"
         DISTRIB_RELEASE=$(sw_vers -productVersion | tr -d '\n')
@@ -744,11 +744,7 @@ if [ "$OS" == "mac" ]; then
     PROJECTS="ticcutils libfolia uctodata ucto timbl timblserver mbt mbtserver wopr frogdata frog" #no foliautils on mac yet, not daring to try ticcltools yet
 else
     #C++ projects on normal Linux/BSD systems
-    PROJECTS="ticcutils libfolia foliautils uctodata ucto timbl timblserver mbt mbtserver wopr frogdata frog ticcltools"
-fi
-
-if [ $DEV -eq 1 ]; then
-    PROJECT="$PROJECTS toad"
+    PROJECTS="ticcutils libfolia foliautils uctodata ucto timbl timblserver mbt mbtserver wopr frogdata frog ticcltools toad"
 fi
 
 for project in $PROJECTS; do
@@ -773,7 +769,7 @@ for project in $PROJECTS; do
         bash bootstrap.sh || fatalerror "$project bootstrap failed"
         EXTRA=""
         if [ "$OS" == "mac" ]; then
-            if [ "$project" == "libfolia" ] || [ $PROJECT == "ucto" ]; then
+            if [ "$project" == "libfolia" ] || [ "$project" == "ucto" ]; then
                 EXTRA="--with-icu=/usr/local/opt/icu4c"
             fi
         fi
@@ -993,13 +989,12 @@ if [ $REPOCHANGED -eq 1 ]; then
 fi
 cd ..
 
-if [[ "$PYTHON" != "python2.7" ]]; then
-    if [ "$OS" != "mac" ]; then
-        echo "--------------------------------------------------------"
-        echo "Installing extra optional dependencies for Gecco">&2
-        echo "--------------------------------------------------------"
-        pip install -U aspell-python-py3 hunspell
-    fi
+if [ "$OS" != "mac" ]; then
+ if [[ "$PYTHON" != "python2.7" ]]; then
+    echo "--------------------------------------------------------"
+    echo "Installing extra optional dependencies for Gecco">&2
+    echo "--------------------------------------------------------"
+    pip install -U aspell-python-py3 hunspell
     project="gecco"
     echo 
     echo "--------------------------------------------------------"
@@ -1021,10 +1016,12 @@ if [[ "$PYTHON" != "python2.7" ]]; then
         echo "Gecco is already up to date ... "
     fi
     cd ..
+ fi
 fi
 
 . LaMachine/extra.sh $@ 
 
+export OS
 lamachine-test.sh
 if [ $? -eq 0 ]; then
     echo "--------------------------------------------------------"
@@ -1036,5 +1033,10 @@ else
     echo "--------------------------------------------------------"
     echo "LaMachine bootstrap FAILED because of failed tests!!!!"
     echo "--------------------------------------------------------"
+    if [ "$OS" == "mac" ]; then
+        echo "  However, some failures are expected on Mac OS X, and your LaMachine virtual environment may still be largely functional.">&2
+        echo "  From now on, activate your virtual environment as follows: . $VIRTUAL_ENV/bin/activate">&2
+        echo "  To facilitate activation, add an alias to your ~/.bashrc: alias lm=\". $VIRTUAL_ENV/bin/activate\"">&2
+    fi
     exit 1
 fi
