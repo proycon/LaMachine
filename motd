@@ -2,7 +2,7 @@ LaMachine
     https://proycon.github.io/LaMachine
 ----------------------------------------
 
-Available software: Colibri Core (colibri-patternmodeller), CLAM (clamservice),
+Available software: CLAM (clamservice), Colibri Core (colibri-patternmodeller),
                     FoLiA Tools (foliavalidator, folia2txt, folia2html, foliaquery etc), 
                     foliadocserve, foliautils (folialint etc),
                     frog, gecco, mbt, mbtserver, ticcltools, timbl, toad (froggen),
@@ -10,5 +10,6 @@ Available software: Colibri Core (colibri-patternmodeller), CLAM (clamservice),
 
 Python libraries:   pynlpl ucto frog timbl clam
 
-Run lamachine-test.sh to test your installation, run lamachine-update.sh to update everything.
+Run lamachine-test.sh to test your installation, run lamachine-update.sh to
+update everything (with sudo only if you use Vagrant or Docker).
 
