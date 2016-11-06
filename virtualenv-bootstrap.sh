@@ -834,7 +834,7 @@ else
     PYTHONPROJECTS="proycon/pynlpl proycon/folia proycon/foliadocserve proycon/flat proycon/clam LanguageMachines/LuigiNLP"
 fi
 
-if [ ! -z "$PYTHONPROJECTS"]; then
+if [ ! -z "$PYTHONPROJECTS" ]; then
     for projectpath in $PYTHONPROJECTS; do
         project=`basename $projectpath`
         echo 
