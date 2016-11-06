@@ -1,8 +1,14 @@
 LaMachine
-    http://cls.ru.nl/languagemachines
+    https://proycon.github.io/LaMachine
 ----------------------------------------
 
-Available software: timbl, mbt, frog, ucto, colibri-patternmodeller
-                    folia-tools (foliavalidator, foliaquery, etc)
-                    pynlpl python-ucto python-timbl
+Available software: Colibri Core (colibri-patternmodeller), CLAM (clamservice),
+                    FoLiA Tools (foliavalidator, folia2txt, folia2html, foliaquery etc), 
+                    foliadocserve, foliautils (folialint etc),
+                    frog, gecco, mbt, mbtserver, ticcltools, timbl, toad (froggen),
+                    ucto, wopr
+
+Python libraries:   pynlpl ucto frog timbl clam
+
+Run lamachine-test.sh to test your installation, run lamachine-update.sh to update everything.
 
