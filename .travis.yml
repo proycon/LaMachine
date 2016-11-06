@@ -6,6 +6,7 @@ sudo: required
 dist: trusty
 before-install:
     - sudo apt-get update
+    - sudo apt-get -m -y remove gnutls-dev
 install: 
     - travis_wait 60 bash virtualenv-bootstrap.sh noninteractive #cause of travis' setup, we will already be in a virtualenv and reuse it
 script:
