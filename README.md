@@ -65,6 +65,10 @@ available to the VM (2 CPUs and 3GB RAM by default).
 On most Linux distributions, steps one and two may be combined with a simple command such as
 ``sudo apt-get install virtualbox vagrant`` on Ubuntu, or ``sudo pacman -Syu virtualbox vagrant`` on Arch Linux.
 
+Entering your LaMachine Virtual Machine as per step 5 should be password-less,
+other methods may require a login; use username ``vagrant`` and password
+``vagrant``.  The root password is also ``vagrant``.
+
 Make sure to also read our privacy section below.
 
 Installation & Usage with Docker (for Linux only)
