@@ -816,46 +816,64 @@ fi
 PYTHONMAJOR=$(python -c "import sys; print(sys.version_info.major,end='')")
 PYTHONMINOR=$(python -c "import sys; print(sys.version_info.minor,end='')")
 
-PYTHONPROJECTS="proycon/pynlpl proycon/folia proycon/foliadocserve proycon/flat LanguageMachines/LuigiNLP"
-
-
 echo 
-echo "--------------------------------------------------------"
-echo "Installing Python packages"
-echo "--------------------------------------------------------"
-for projectpath in $PYTHONPROJECTS; do
-    project=`basename $projectpath`
-    echo 
+
+if [ $DEV -eq 0 ]; then
     echo "--------------------------------------------------------"
-    echo "Installing $project">&2
+    echo "Installing Python packages (through pip)"
     echo "--------------------------------------------------------"
-    if [ ! -d $project ]; then
-        git clone https://github.com/$projectpath
-        cd $project
-        gitcheck
-        REPOCHANGED=1
-    else
-        cd $project
-        gitcheck
-    fi
-    if [ $REPOCHANGED -eq 1 ]; then
-        #cleanup previous installations (bit of a hack to prevent a bug when reinstalling)
-        if [ "$project" == "pynlpl" ]; then
-            rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/PyNLPl*egg
-        elif [ "$project" == "folia" ]; then
-            rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/*FoLiA*egg
-        elif [ "$project" == "foliadocserve" ]; then
-            rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/*foliadocserve*egg
-        elif [[ "$project" == "LuigiNLP" ]]; then
-            #workaround for python-daemon issue, first run may fail due to python-daemon setup bug, second run will fix it.
-            python setup.py install --prefix="$VIRTUAL_ENV" 
+    #grab everything from PyPI
+    pip install -U pynlpl FoLiA-tools foliadocserve clam FoLiA-Linguistic-Annotation-Tool || error "Installation of one or more Python packages failed !!"
+    #not all is in there yet, despite being experimental, we do want it in stable already:
+    PYTHONPROJECTS="LanguageMachines/LuigiNLP"
+else
+    echo "--------------------------------------------------------"
+    echo "Installing Python packages (from git)"
+    echo "--------------------------------------------------------"
+    #grab all from github
+    PYTHONPROJECTS="proycon/pynlpl proycon/folia proycon/foliadocserve proycon/flat proycon/clam LanguageMachines/LuigiNLP"
+fi
+
+if [ ! -z "$PYTHONPROJECTS"]; then
+    for projectpath in $PYTHONPROJECTS; do
+        project=`basename $projectpath`
+        echo 
+        echo "--------------------------------------------------------"
+        echo "Installing $project">&2
+        echo "--------------------------------------------------------"
+        if [ ! -d $project ]; then
+            git clone https://github.com/$projectpath
+            cd $project
+            gitcheck
+            REPOCHANGED=1
+        else
+            cd $project
+            gitcheck
         fi
-        python setup.py install --prefix="$VIRTUAL_ENV" || fatalerror "setup.py install $project failed"
-    else
-        echo "$project is up-to-date, no need to recompile ..."
-    fi
-    cd ..
-done
+        if [ $REPOCHANGED -eq 1 ]; then
+            #cleanup previous installations (bit of a hack to prevent a bug when reinstalling)
+            if [ "$project" == "pynlpl" ]; then
+                rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/PyNLPl*egg
+            elif [ "$project" == "folia" ]; then
+                rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/*FoLiA*egg
+            elif [ "$project" == "foliadocserve" ]; then
+                rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/*foliadocserve*egg
+            elif [ "$project" == "clam" ]; then
+                rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/*CLAM*egg
+            elif [[ "$project" == "LuigiNLP" ]]; then
+                #workaround for python-daemon issue, first run may fail due to python-daemon setup bug, second run will fix it.
+                python setup.py install --prefix="$VIRTUAL_ENV" 
+            fi
+            python setup.py install --prefix="$VIRTUAL_ENV" || fatalerror "setup.py install $project failed"
+        else
+            echo "$project is up-to-date, no need to recompile ..."
+        fi
+        cd ..
+    done
+fi
+
+
+#PYTHON BINDINGS are not in PyPI:
 
 echo
 echo "--------------------------------------------------------"
@@ -977,25 +995,6 @@ fi
 if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
     python setup.py install || error "colibri core failed"
-fi
-cd ..
-
-echo 
-echo "--------------------------------------------------------"
-echo "Installing clam">&2
-echo "--------------------------------------------------------"
-if [ ! -d clam ]; then
-    git clone https://github.com/proycon/clam
-    cd clam
-    gitcheck
-    REPOCHANGED=1
-else
-    cd clam
-    gitcheck
-fi
-if [ $REPOCHANGED -eq 1 ]; then
-    rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/CLAM*egg
-    python setup.py install --prefix="$VIRTUAL_ENV" || fatalerror "setup.py install clam failed"
 fi
 cd ..
 
