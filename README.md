@@ -69,6 +69,8 @@ Entering your LaMachine Virtual Machine as per step 5 should be password-less,
 other methods may require a login; use username ``vagrant`` and password
 ``vagrant``.  The root password is also ``vagrant``.
 
+Various webservices in the Virtual Machine will be automatically accessible through https://127.0.0.1:8080 .
+
 Make sure to also read our privacy section below.
 
 Installation & Usage with Docker (for Linux only)
@@ -181,15 +183,16 @@ which may or may not collect your IP:
  * [The Arch Linux User Repository](https://aur.archlinux.org)
  * [Docker](https://docker.io)
 
-CLAM Webservices
+Webservices
 ==================
 
-LaMachine comes with several CLAM webservices ready out of the box. These are
-RESTful webservices, but also offer a web-interface for human end-users.  You
-will need to explicitly start them before being able to make use of them.
+LaMachine comes with several webservices ready out of the box. These are
+RESTful webservices served using CLAM, but also offer a web-interface for human
+end-users. 
 
-For the LaMachine VM or Docker App, this is done using the following command
-*from within* the container/VM:
+In the Virtual Machine variant of LaMachine, these are running and available out-of-the
+box. In the docker variant, you will need to explicitly start the services
+first, this is done using the following command *from within* the container:
 
 ``sudo /usr/src/LaMachine/startwebservices.sh``
 
@@ -227,12 +230,12 @@ our software using the proper package manager, provided we have packages
 available:
 
  * Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
- * Debian Linux (packages are mostly out of date) -- Some of our packages are included in the ``science-linguistics`` meta-package, they are however fairly out of date for the moment: ``sudo apt-get install science-linguistics`` , [package state](https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl)
- * Ubuntu Linux (packages are currently out of date)
+ * Debian Linux (up to date for Debian 9 [stretch] or later only) -- ``sudo apt-get install science-linguistics``. Consult the [package state](https://qa.debian.org/developer.php?login=proycon@anaproy.nl).
+ * Ubuntu Linux (packages are currently out of date until Ubuntu 17.04 Zesty Zapus)
  * Mac OS X (homebrew), missing most sofware (most notably Frog, Colibri Core, and Python bindings)
  * CentOS/Fedora (packages are outdated completely, do not use)
 
-The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself.
+The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself, which can be a tedious endeavour.
 
 Troubleshooting
 ====================
