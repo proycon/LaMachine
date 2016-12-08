@@ -1,0 +1,9 @@
+[Unit]
+Description=LaMachine Webservices
+
+[Service]
+ExecStart=/usr/src/LaMachine/startwebservices.sh
+ExecStop=killall -s 9 uwsgi
+
+[Install]
+WantedBy=multi-user.target

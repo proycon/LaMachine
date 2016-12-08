@@ -268,6 +268,7 @@ cp bootstrap.sh /usr/bin/lamachine-update.sh
 cp test.sh /usr/bin/lamachine-test.sh
 cp nginx.mime.types /etc/nginx/
 cp nginx.conf /etc/nginx/
+cp webservices.service /usr/lib/systemd/system/
 cd ..
 chmod a+rx LaMachine
 
@@ -398,11 +399,19 @@ cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
 . LaMachine/extra.sh $@ 
 
 lamachine-test.sh
+if [ $VAGRANT -eq 1 ]; then
+    echo "[LaMachine] Starting webserver and webservices"
+    systemctl enable nginx #enable nginx on bootup for vagrant
+    systemctl enable webservices #enable webservices on bootup for vagrant
+    systemctl start nginx #start nginx
+    systemctl start webservices #start webservices
+fi
 if [ $? -eq 0 ]; then
     echo "--------------------------------------------------------"
     echo "[LaMachine] All done!  "
     if [ $VAGRANT -eq 1 ]; then
         echo " .. Issue $ vagrant ssh to connect to your VM!"
+        echo " or connect your browser to http://127.0.0.1:8080 for the webservices"
     else
         echo "IMPORTANT NOTE: You are most likely using docker, do not forget to commit the container state if you want to preserve this update !!"
     fi
