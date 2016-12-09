@@ -145,9 +145,9 @@ gitcheckout () {
 umask u=rwx,g=rwx,o=rx
 
 #arch linux image has a restrictive umask
-sed -i s/umask 027/umask 022/ /root/.profile
+sed -i 's/umask 027/umask 022/' /root/.profile
 if [ -d /home/vagrant ]; then
-    sed -i s/umask 027/umask 022/ /home/vagrant/.profile
+    sed -i 's/umask 027/umask 022/' /home/vagrant/.profile
 fi
 
 sed -i s/lecture=once/lecture=never/ /etc/sudoers
