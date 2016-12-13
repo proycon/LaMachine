@@ -71,6 +71,11 @@ other methods may require a login; use username ``vagrant`` and password
 
 Various webservices in the Virtual Machine will be automatically accessible through https://127.0.0.1:8080 .
 
+Note that LaMachine by default is running on a 64-bit architecture, if you have
+a 32-bit host OS and really want to run LaMachine despite likely memory shortage;
+checkout the ``32bit`` branch after step 3 and before step 4 by issuing the
+following command: ``git checkout 32bit``.
+
 Make sure to also read our privacy section below.
 
 Installation & Usage with Docker (for Linux only)
