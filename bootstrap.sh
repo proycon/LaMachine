@@ -407,6 +407,7 @@ cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
 lamachine-test.sh
 if [ $VAGRANT -eq 1 ]; then
     echo "[LaMachine] Starting webserver and webservices"
+    mkinitcpio -p linux #apparantly this is explicitly needed as something goes wrong on 32-bit update from 4.1 to 4.8 kernel and /dev/sda1 can't be found..
     systemctl enable nginx #enable nginx on bootup for vagrant
     systemctl enable webservices #enable webservices on bootup for vagrant
     systemctl start nginx #start nginx
