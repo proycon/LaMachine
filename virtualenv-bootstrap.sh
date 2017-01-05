@@ -825,13 +825,13 @@ if [ $DEV -eq 0 ]; then
     #grab everything from PyPI
     pip install -U pynlpl FoLiA-tools foliadocserve clam FoLiA-Linguistic-Annotation-Tool || error "Installation of one or more Python packages failed !!"
     #not all is in there yet, despite being experimental, we do want it in stable already:
-    PYTHONPROJECTS="LanguageMachines/LuigiNLP"
+    PYTHONPROJECTS="proycon/clamservices LanguageMachines/LuigiNLP"
 else
     echo "--------------------------------------------------------"
     echo "Installing Python packages (from git)"
     echo "--------------------------------------------------------"
     #grab all from github
-    PYTHONPROJECTS="proycon/pynlpl proycon/folia proycon/foliadocserve proycon/flat proycon/clam LanguageMachines/LuigiNLP"
+    PYTHONPROJECTS="proycon/pynlpl proycon/folia proycon/foliadocserve proycon/flat proycon/clam proycon/clamservices LanguageMachines/LuigiNLP"
 fi
 
 if [ ! -z "$PYTHONPROJECTS" ]; then

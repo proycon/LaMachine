@@ -191,9 +191,9 @@ which may or may not collect your IP:
 Webservices
 ==================
 
-LaMachine comes with several webservices ready out of the box. These are
-RESTful webservices served using CLAM, but also offer a web-interface for human
-end-users. 
+LaMachine comes with several webservices ready out of the box
+(source: https://github.com/proycon/clamservices). These are RESTful webservices served
+using CLAM, but also offer a web-interface for human end-users. 
 
 In the Virtual Machine variant of LaMachine, these are running and available out-of-the
 box. In the docker variant, you will need to explicitly start the services
@@ -215,10 +215,10 @@ Webservices are currently available for the following software:
 For the LaMachine Virtual Environment, however, you have to start and access each
 service individually using CLAM's built-in development server:
 
- * ``clamservice start clam.config.ucto``
- * ``clamservice start clam.config.frog``
- * ``clamservice start clam.config.timbl``
- * ``clamservice start clam.config.colibricore``
+ * ``clamservice start clamservices.config.ucto``
+ * ``clamservice start clamservices.config.frog``
+ * ``clamservice start clamservices.config.timbl``
+ * ``clamservice start clamservices.config.colibricore``
 
 Each webservice will advertise on what port it has been launched and how to
 access it. 

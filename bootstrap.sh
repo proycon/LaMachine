@@ -330,12 +330,28 @@ echo "[LaMachine] Installing Python 3 packages"
 echo "--------------------------------------------------------"
 pip install -U pynlpl FoLiA-tools python-ucto foliadocserve clam || error "Installation of one or more Python 3 packages failed !!"
 
-if [ -f clam ]; then
-    rm clam
+echo "--------------------------------------------------------"
+echo "[LaMachine] Installing CLAM webservices"
+echo "--------------------------------------------------------"
+if [ ! -d clamservices ]; then
+    git clone https://github.com/proycon/clamservices
+    chmod a+rx clamservices
+    cd clamservices 
+    gitcheck
+else
+    cd clamservices
+    pwd
+    gitcheck
 fi
-CLAMDIR=`python -c 'import clam; print(clam.__path__[0])'`
-if [ ! -z "$CLAMDIR" ]; then
-    ln -s $CLAMDIR clam
+if [ $REPOCHANGED -eq 1 ]; then
+    python setup.py install #extra run since python-daemon may will
+    python setup.py install || error "setup.py install clamservices failed"
+fi
+cd ..
+
+CLAMSERVICEDIR=`python -c 'import clamservices; print(clam.__path__[0])'`
+if [ ! -z "$CLAMSERVICEDIR" ]; then
+    ln -s $CLAMSERVICEDIR _clamservices #referenced from startwebservices.sh
 fi
 
 echo "--------------------------------------------------------"
