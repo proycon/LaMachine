@@ -13,4 +13,5 @@ matrix:
 install: 
     - travis_wait 60 bash virtualenv-bootstrap.sh noninteractive #cause of travis' setup, we will already be in a virtualenv and reuse it
 script:
-    - LD_LIBRARY_PATH="$VIRTUAL_ENV/lib/:$LD_LIBRARY_PATH" ./test.sh #cause of travis' setup, we will already be in a virtualenv and reuse it, little hack to get LD_LIBRARY_PATH right
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then . lamachine/bin/activate; lamachine-test.sh; else LD_LIBRARY_PATH="$VIRTUAL_ENV/lib/:$LD_LIBRARY_PATH" ./test.sh ;fi #on mac we're not yet in the virtualenv automatically, otherwise we reuse it, little hack to get LD_LIBRARY_PATH right
+      
