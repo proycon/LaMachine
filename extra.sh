@@ -35,6 +35,12 @@ if [ $WITHTSCAN -eq 1 ] || [ -d tscan ]; then
         cd $project
         gitcheck
     fi
+    if [ ! -z "$VIRTUAL_ENV" ]; then
+        echo -n "tscan=" >> "$VIRTUAL_ENV/VERSION"
+    else
+        echo -n "tscan=" >> "/VERSION"
+    fi
+    gitversion
     if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
         bash bootstrap.sh || fatalerror "$project bootstrap failed"
         ./configure --prefix="$VIRTUAL_ENV" || fatalerror "$project configure failed"
@@ -61,6 +67,12 @@ if [ $WITHVALKUIL -eq 1 ] || [ -d valkuil-gecco ]; then
         cd $project
         gitcheck
     fi
+    if [ ! -z "$VIRTUAL_ENV" ]; then
+        echo -n "valkuil-gecco=" >> "$VIRTUAL_ENV/VERSION"
+    else
+        echo -n "valkuil-gecco=" >> "/VERSION"
+    fi
+    gitversion
     if [ $REPOCHANGED -eq 1 ]; then
         ./download-models.sh
     else
@@ -83,6 +95,12 @@ if [ $WITHFOWLT -eq 1 ] || [ -d fowlt-gecco ]; then
         cd $project
         gitcheck
     fi
+    if [ ! -z "$VIRTUAL_ENV" ]; then
+        echo -n "fowlt-gecco=" >> "$VIRTUAL_ENV/VERSION"
+    else
+        echo -n "fowlt-gecco=" >> "/VERSION"
+    fi
+    gitversion
     if [ $REPOCHANGED -eq 1 ]; then
         ./download-models.sh
     else
@@ -105,6 +123,12 @@ if [ $WITHTICCL -eq 1 ] || [ -d TICCL ]; then
         cd $project
         gitcheck
     fi
+    if [ ! -z "$VIRTUAL_ENV" ]; then
+        echo -n "TICCL=" >> "$VIRTUAL_ENV/VERSION"
+    else
+        echo -n "TICCL=" >> "/VERSION"
+    fi
+    gitversion
     if [ $REPOCHANGED -eq 1 ]; then
         if [ ! -d data ]; then
             wget http://ticclops.uvt.nl/TICCL.languagefiles.ALLavailable.20160421.tar.gz

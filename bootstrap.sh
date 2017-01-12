@@ -51,6 +51,12 @@ gitstash () {
         fi
 }
 
+gitversion () {
+    git describe --tags >> "/VERSION"
+    if [ $? -ne 0 ]; then
+        git rev-parse HEAD >> "/VERSION"
+    fi
+}
 
 gitcheckmaster() {
     git checkout master
@@ -278,6 +284,8 @@ cp webservices.service /usr/lib/systemd/system/
 cd ..
 chmod a+rx LaMachine
 
+date -u +%Y%m%d%H%M > "/VERSION"
+
 #development packages should end in -git , releases should not
 if [ $DEV -eq 0 ]; then
     #Packages to install in stable mode:
@@ -316,6 +324,8 @@ for package in $PACKAGES; do
     echo "--------------------------------------------------------"
     sudo -u build makepkg -s -f --noconfirm --needed --noprogressbar
     pacman -U --noconfirm --needed ${project}*.pkg.tar.xz || error "Installation of ${project} failed !!"
+    echo "$project=" >> /VERSION
+    cat PKGBUILD | grep "pkgver=" | sed 's/pkgver=/v/' >> /VERSION
     rm ${project}*.pkg.tar.xz
     cd ..
 done
@@ -326,9 +336,21 @@ done
 #pip2 install pynlpl FoLiA-tools clam || error "Installation of one or more Python 2 packages failed !!"
 
 echo "--------------------------------------------------------"
-echo "[LaMachine] Installing Python 3 packages"
+echo "[LaMachine] Installing Python packages from PyPI"
 echo "--------------------------------------------------------"
-pip install -U pynlpl FoLiA-tools python-ucto foliadocserve clam || error "Installation of one or more Python 3 packages failed !!"
+PYPYPROJECTS="pynlpl FoLiA-tools python-ucto foliadocserve clam"
+
+if [ ! -z "$PYPIPROJECTS" ]; then
+    pip install -U $PYPIPROJECTS || error "Installation of one or more Python packages failed !!"
+
+    echo "--------------------------------------------------------"
+    echo "Extracting version information for packages from PyPI"
+    echo "--------------------------------------------------------"
+    for project in $PYPIPROJECTS; do
+        echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
+        pip show $project | grep -e "^Version:" | sed 's/Version: /v/g' >> "/VERSION" 
+    done
+fi
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing CLAM webservices"
@@ -343,6 +365,8 @@ else
     pwd
     gitcheck
 fi
+echo -n "clamservices=" >> /VERSION
+gitversion
 if [ $REPOCHANGED -eq 1 ]; then
     python setup.py install #extra run since python-daemon may will
     python setup.py install || error "setup.py install clamservices failed"

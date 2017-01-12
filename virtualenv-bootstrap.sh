@@ -83,6 +83,14 @@ gitstash () {
         fi
 }
 
+gitversion () {
+    git describe --tags >> "$VIRTUAL_ENV/VERSION"
+    if [ $? -ne 0 ]; then
+        git rev-parse HEAD >> "$VIRTUAL_ENV/VERSION"
+    fi
+}
+
+
 
 gitcheckmaster() {
     git checkout master
@@ -233,6 +241,7 @@ else
 fi
 
 
+
 CONDA=0
 #if [ ! -z "$CONDA_DEFAULT_ENV" ]; then
 #    echo "Running in Anaconda environment... THIS IS UNTESTED!" >&2
@@ -338,7 +347,8 @@ if [ "$NOADMIN" == "0" ]; then
         else
             BREWEXTRA=""
         fi
-        INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python3 boost-python xml2 libxslt icu4c libtextcat wget $BREWEXTRA"
+        INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python3 boost-python xml2 libxslt icu4c libtextcat wget freetype $BREWEXTRA"
+        #freetype is needed for matplotlib
 
         DISTRIB_ID="OSX"
         DISTRIB_RELEASE=$(sw_vers -productVersion | tr -d '\n')
@@ -430,6 +440,8 @@ if [ $DEV -eq 0 ]; then
 else
     touch "$VIRTUAL_ENV/src/LaMachine/.dev"
 fi
+
+date -u +%Y%m%d%H%M > "$VIRTUAL_ENV/VERSION"
 
 if [ $PRIVATE -eq 0 ]; then
     rm -f "$VIRTUAL_ENV/src/LaMachine/.private" 2>/dev/null
@@ -775,6 +787,8 @@ for project in $PROJECTS; do
             RECOMPILE=1
         fi
     fi
+    echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
+    gitversion
     if [ $RECOMPILE -eq 1 ]; then
         bash bootstrap.sh || fatalerror "$project bootstrap failed"
         EXTRA=""
@@ -819,22 +833,34 @@ PYTHONMINOR=$(python -c "import sys; print(sys.version_info.minor,end='')")
 echo 
 
 if [ $DEV -eq 0 ]; then
-    echo "--------------------------------------------------------"
-    echo "Installing Python packages (through pip)"
-    echo "--------------------------------------------------------"
     #grab everything from PyPI
-    pip install -U pynlpl FoLiA-tools foliadocserve clam FoLiA-Linguistic-Annotation-Tool || error "Installation of one or more Python packages failed !!"
+    PYPIPROJECTS="pynlpl FoLiA-tools foliadocserve clam FoLiA-Linguistic-Annotation-Tool"
     #not all is in there yet, despite being experimental, we do want it in stable already:
     PYTHONPROJECTS="proycon/clamservices LanguageMachines/LuigiNLP"
 else
-    echo "--------------------------------------------------------"
-    echo "Installing Python packages (from git)"
-    echo "--------------------------------------------------------"
     #grab all from github
     PYTHONPROJECTS="proycon/pynlpl proycon/folia proycon/foliadocserve proycon/flat proycon/clam proycon/clamservices LanguageMachines/LuigiNLP"
 fi
 
+if [ ! -z "$PYPIPROJECTS" ]; then
+    echo "--------------------------------------------------------"
+    echo "Installing Python packages from PyPI"
+    echo "--------------------------------------------------------"
+    pip install -U $PYPIPROJECTS || error "Installation of one or more Python packages failed !!"
+
+    echo "--------------------------------------------------------"
+    echo "Extracting version information for packages from PyPI"
+    echo "--------------------------------------------------------"
+    for project in $PYPIPROJECTS; do
+        echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
+        pip show $project | grep -e "^Version:" | sed 's/Version: /v/g' >> "$VIRTUAL_ENV/VERSION" 
+    done
+fi
+
 if [ ! -z "$PYTHONPROJECTS" ]; then
+    echo "--------------------------------------------------------"
+    echo "Installing Python packages from git"
+    echo "--------------------------------------------------------"
     for projectpath in $PYTHONPROJECTS; do
         project=`basename $projectpath`
         echo 
@@ -850,6 +876,8 @@ if [ ! -z "$PYTHONPROJECTS" ]; then
             cd $project
             gitcheck
         fi
+        echo "$project=" >> "$VIRTUAL_ENV/VERSION"
+        gitversion
         if [ $REPOCHANGED -eq 1 ]; then
             #cleanup previous installations (bit of a hack to prevent a bug when reinstalling)
             if [ "$project" == "pynlpl" ]; then
@@ -888,6 +916,8 @@ else
     cd python-ucto 
     gitcheck 
 fi
+echo -n "python-ucto=" >> "$VIRTUAL_ENV/VERSION"
+gitversion
 if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
     python setup.py build_ext --include-dirs="$VIRTUAL_ENV/include" --library-dirs="$VIRTUAL_ENV/lib" install --prefix="$VIRTUAL_ENV" || error "Python-ucto installation failed"
@@ -910,6 +940,8 @@ else
     cd python-timbl
     gitcheck
 fi
+echo -n "python-timbl=" >> "$VIRTUAL_ENV/VERSION"
+gitversion
 if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     rm -Rf build
     if [ -f "$VIRTUAL_ENV/lib/libboost_python.so" ]; then
@@ -968,6 +1000,8 @@ if [ -f /usr/bin/python2.7 ] || [ -f /usr/local/bin/python2.7 ]; then
         cd python-frog
         gitcheck
     fi
+    echo "python-frog=" >> "$VIRTUAL_ENV/VERSION"
+    gitversion
     if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
         rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
         python setup.py install || error "python-frog failed"
@@ -992,6 +1026,8 @@ else
     cd colibri-core 
     gitcheck
 fi
+echo -n "colibri-core=" >> "$VIRTUAL_ENV/VERSION"
+gitversion
 if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
     python setup.py install || error "colibri core failed"
@@ -1018,6 +1054,8 @@ if [ "$OS" != "mac" ]; then
         cd $project
         gitcheck
     fi
+    echo -n "gecco=" >> "$VIRTUAL_ENV/VERSION"
+    gitversion
     if [ $REPOCHANGED -eq 1 ]; then
         rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/${project}*egg
         python setup.py install --prefix="$VIRTUAL_ENV" || error "setup.py install $project failed"
