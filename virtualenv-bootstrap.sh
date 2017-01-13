@@ -772,7 +772,7 @@ cd "$VIRTUAL_ENV/src"
 
 echo
 echo "--------------------------------------------------------"
-echo "Updating LaMachine itself"
+echo "Updating LaMachine itself (branch: $BRANCH)"
 echo "--------------------------------------------------------"
 if [ ! -d LaMachine ]; then
     OLDSUM=`sum $0`

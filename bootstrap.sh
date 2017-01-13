@@ -332,7 +332,7 @@ chmod g+ws /usr/src
 
 
 echo "--------------------------------------------------------"
-echo "Updating LaMachine itself"
+echo "Updating LaMachine itself (branch: $BRANCH)"
 echo "--------------------------------------------------------"
 if [ ! -d LaMachine ]; then
     git clone https://github.com/proycon/LaMachine --branch $BRANCH || fatalerror "Unable to clone git repo for LaMachine"
