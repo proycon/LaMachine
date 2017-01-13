@@ -272,7 +272,7 @@ do
         VERSIONFILE=${OPT:8}
         DEV=0
     fi
-    if [[ "$OPT{0:7}" == "branch=" ]]; then
+    if [[ "${OPT:0:7}" == "branch=" ]]; then
         BRANCH=${OPT:7}
     fi
     if [[ "$OPT" == "help" ]] || [[ "$OPT" == "-h" ]]; then
