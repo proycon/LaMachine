@@ -876,7 +876,7 @@ if [ ! -z "$PYTHONPROJECTS" ]; then
             cd $project
             gitcheck
         fi
-        echo "$project=" >> "$VIRTUAL_ENV/VERSION"
+        echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
         gitversion
         if [ $REPOCHANGED -eq 1 ]; then
             #cleanup previous installations (bit of a hack to prevent a bug when reinstalling)
@@ -1000,7 +1000,7 @@ if [ -f /usr/bin/python2.7 ] || [ -f /usr/local/bin/python2.7 ]; then
         cd python-frog
         gitcheck
     fi
-    echo "python-frog=" >> "$VIRTUAL_ENV/VERSION"
+    echo -n "python-frog=" >> "$VIRTUAL_ENV/VERSION"
     gitversion
     if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
         rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
