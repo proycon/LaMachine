@@ -2,6 +2,14 @@
 RETURN=0
 
 echo "============== LaMachine Test ==================="
+if [ -z "$OS" ]; then
+    MAC=$(which brew 2> /dev/null)
+    if [ -f "$MAC" ]; then
+        OS='mac'
+    else
+        OS='linux'
+    fi
+fi
 echo "OS=$OS"
 
 GREEN='\033[1;32m' 
