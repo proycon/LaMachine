@@ -51,7 +51,7 @@ gitstash () {
         fi
 }
 
-gitversion () {
+outputgitversion () {
     git describe --tags >> "/VERSION"
     if [ $? -ne 0 ]; then
         git rev-parse HEAD >> "/VERSION"
@@ -93,34 +93,59 @@ gitcheckmaster() {
 
 gitcheck () {
     git remote update
-    if [ $DEV -eq 0 ]; then
-        #use github releases, upgrade to latest one
+    if [ ! -z $INSTALLVERSION[$project] ]; then
+        #we were asked to install a very specific release
         if [ -f .version.lamachine ]; then
             CURRENTVERSION=$(cat .version.lamachine)
         fi
-        LATESTVERSION=$(git tag | grep -e "^v" | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -n 1)
-        if [ ! -z $LATESTVERSION ]; then
-            if [[ "$LATESTVERSION" == "$CURRENTVERSION" ]]; then
-                echo "   Already up to date on latest stable release: $LATESTVERSION"
-                REPOCHANGED=0
-            else
-                LATESTVERSION=$(echo $LATESTVERSION|tr -d '\n')
-                echo "   Upgrading from $CURRENTVERSION to latest stable release $LATESTVERSION ..."
-                git checkout "tags/$LATESTVERSION" #will put us in detached head state
-                if [ $? -ne 0 ]; then
-                    gitstash 
-                    git checkout "tags/$LATESTVERSION"
-                fi
-                echo "$LATESTVERSION" > .version.lamachine 
-                REPOCHANGED=1
-            fi
+        ver=$INSTALLVERSION[$project]
+        if [[ "$CURRENTVERSION" == "$ver" ]]; then
+            echo "   Already up to date on requested release: $ver"
+            REPOCHANGED=0
         else
-            #no tags/releases, use master
-            gitcheckmaster
+            echo "   Installing specific version for $project: $ver (this may likely be an older release!)"
+            git checkout "tags/$ver" #will put us in detached head state
+            if [ $? -ne 0 ]; then
+                gitstash 
+                git checkout "tags/$ver"
+                if [ $? -ne 0 ]; then
+                    echo "   Unable to check out desired version, expected git tag $ver does not exist!"
+                    exit 2
+                fi
+                echo "$ver" > .version.lamachine 
+            fi
+            REPOCHANGED=1
         fi
     else
-        #use master branch
-        gitcheckmaster
+        if [ $DEV -eq 0 ]; then
+            #use github releases, upgrade to latest one
+            if [ -f .version.lamachine ]; then
+                CURRENTVERSION=$(cat .version.lamachine)
+            fi
+            LATESTVERSION=$(git tag | grep -e "^v" | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -n 1)
+            if [ ! -z $LATESTVERSION ]; then
+                if [[ "$LATESTVERSION" == "$CURRENTVERSION" ]]; then
+                    echo "   Already up to date on latest stable release: $LATESTVERSION"
+                    REPOCHANGED=0
+                else
+                    LATESTVERSION=$(echo $LATESTVERSION|tr -d '\n')
+                    echo "   Upgrading from $CURRENTVERSION to latest stable release $LATESTVERSION ..."
+                    git checkout "tags/$LATESTVERSION" #will put us in detached head state
+                    if [ $? -ne 0 ]; then
+                        gitstash 
+                        git checkout "tags/$LATESTVERSION"
+                    fi
+                    echo "$LATESTVERSION" > .version.lamachine 
+                    REPOCHANGED=1
+                fi
+            else
+                #no tags/releases, use master
+                gitcheckmaster
+            fi
+        else
+            #use master branch
+            gitcheckmaster
+        fi
     fi
 }
 
@@ -148,6 +173,40 @@ gitcheckout () {
     fi
 }
 
+switchaurversion () {
+    if [ ! -z $INSTALLVERSION[$project] ]; then
+        ver=$INSTALLVERSION[$project] 
+        #find the commit hash for the specified version:
+        if [[ "${ver:0:1}" == "v" ]]; then
+            ver=${ver:1}
+            reply=$(git grep "pkgver=$ver" $(git rev-list --all -- PKGBUILD) | head -n 1)
+            if [ ! -z $reply ]; then
+                commithash=${reply%%:*}
+                git checkout $commithash || fatalerror "Unable to check out version $ver (commit $commithash) of package $package"
+            else
+                fatalerror "Unable to find version $ver of package $package"
+            fi
+        fi
+    else
+        git checkout master
+        git pull
+    fi
+}
+
+generaterequirements () {
+    if [ ! -z $INSTALLVERSION[$project] ]; then
+        echo -n "$project" >> requirements.txt
+        ver=$INSTALLVERSION[$project]
+        if [ ${ver:0:1} == 'v' ]; then
+            echo "==${ver:1}" >> requirements.txt
+        else
+            echo "==${ver}" >> requirements.txt
+        fi
+    else
+        echo "$project" >> requirements.txt
+    fi
+}
+
 umask u=rwx,g=rwx,o=rx
 
 #arch linux image has a restrictive umask
@@ -164,6 +223,7 @@ SRCDIR=`pwd`
 
 FORCE=0
 DEV=0 #prefer stable releases
+BRANCH="master"
 if [ -f .dev ]; then
     DEV=1 #install development versions
 else
@@ -194,6 +254,25 @@ do
     if [[ "$OPT" == "sendinfo" ]]; then
         rm -f .private
         PRIVATE=0
+    fi
+    if [[ "${OPT:0:8}" == "version=" ]]; then
+        VERSIONFILE=${OPT:9}
+        DEV=0
+    fi
+    if [[ "$OPT{0:7}" == "branch=" ]]; then
+        BRANCH=${OPT:7}
+    fi
+    if [[ "$OPT" == "help" ]] || [[ "$OPT" == "-h" ]]; then
+        echo "Options (no hyphen preceeding any):"
+        echo "  noadmin          - Skip global installation step for which administrative privileges are requires; presupposes that global dependencies are already installed by a system administrator"
+        echo "  force            - Force recompilation/reinstallation of everything"
+        echo "  nopythondeps     - Do not install/update 3rd party python packages (except those absolutely necessary)"
+        echo "  stable           - Install latest stable releases of all software (default)"
+        echo "  dev              - Install latest development releases of all software (this may break things)"
+        echo "  version=<file>   - Install specific versions of all software, versions are in the specified file. LaMachine's generates a VERSION file on each installation/update that is valid input for this option."
+        echo "  private          - Do not send anonymous statistics about this copy of LaMachine to Radboud University (opt-out)"
+        echo "  branch=<branch>  - Use the following branch of the LaMachine git repository (default: master)"
+        exit 0
     fi
 done
 
@@ -256,7 +335,7 @@ echo "--------------------------------------------------------"
 echo "Updating LaMachine itself"
 echo "--------------------------------------------------------"
 if [ ! -d LaMachine ]; then
-    git clone https://github.com/proycon/LaMachine || fatalerror "Unable to clone git repo for LaMachine"
+    git clone https://github.com/proycon/LaMachine --branch $BRANCH || fatalerror "Unable to clone git repo for LaMachine"
     cd LaMachine || fatalerror "No LaMachine dir?, git clone failed?"
 else
     cd LaMachine
@@ -281,10 +360,30 @@ cp test.sh /usr/bin/lamachine-test.sh
 cp nginx.mime.types /etc/nginx/
 cp nginx.conf /etc/nginx/
 cp webservices.service /usr/lib/systemd/system/
+if [ ! -z "$VERSIONFILE" ]; then
+    source loadversionfile.sh
+fi
 cd ..
 chmod a+rx LaMachine
 
-date -u +%Y%m%d%H%M > "/VERSION"
+if [ ! -z "$VERSIONFILE" ]; then
+    echo "================================================================================">&2
+    echo "      LaMachine will install specific older versions ($VERSIONFILE)">&2
+    echo "================================================================================">&2
+    echo "$VERSIONFILE" > "/VERSION"
+else
+    if [ $DEV -eq 0 ]; then
+        echo "================================================================================">&2
+        echo "      LaMachine will install the latest stable releases">&2
+        echo "================================================================================">&2
+    else
+        echo "================================================================================">&2
+        echo "      LaMachine will install the very latest development versions">&2
+        echo "================================================================================">&2
+    fi
+    date -u +%Y%m%d%H%M > "/VERSION"
+fi
+
 
 #development packages should end in -git , releases should not
 if [ $DEV -eq 0 ]; then
@@ -299,14 +398,22 @@ for package in $PACKAGES; do
     project="${package%-git}"
     if [ ! -d $package ]; then
         echo "--------------------------------------------------------"
-        echo "[LaMachine] Obtaining package $package ..."
+        echo "[LaMachine] Obtaining package $package (AUR) ..."
         echo "--------------------------------------------------------"
         git clone https://aur.archlinux.org/${package}.git
         cd $package || fatalerror "No such package, git clone $package failed?"
+        if [ ! -z "$VERSIONFILE" ]; then
+            switchaurversion
+        fi
     else
         cd $package
         cp -f PKGBUILD PKGBUILD.old
-        git pull
+        if [ ! -z "$VERSIONFILE" ]; then
+            switchaurversion
+        else
+            git checkout master
+            git pull
+        fi
         sudo -u build makepkg --nobuild #to get proper version
         diff PKGBUILD PKGBUILD.old >/dev/null
         DIFF=$?
@@ -335,13 +442,24 @@ done
 #echo "--------------------------------------------------------"
 #pip2 install pynlpl FoLiA-tools clam || error "Installation of one or more Python 2 packages failed !!"
 
-echo "--------------------------------------------------------"
-echo "[LaMachine] Installing Python packages from PyPI"
-echo "--------------------------------------------------------"
-PYPYPROJECTS="pynlpl FoLiA-tools python-ucto foliadocserve clam"
+PYPIPROJECTS="pynlpl FoLiA-tools python-ucto foliadocserve clam python3-timbl python-frog colibri-core"
 
 if [ ! -z "$PYPIPROJECTS" ]; then
-    pip install -U $PYPIPROJECTS || error "Installation of one or more Python packages failed !!"
+    if [ -z "$VERSIONFILE" ]; then
+        echo "--------------------------------------------------------"
+        echo "Installing Python packages from PyPI (latest releases)"
+        echo "--------------------------------------------------------"
+        pip install -U $PYPIPROJECTS || error "Installation of one or more Python packages failed !!"
+    else
+        echo "--------------------------------------------------------"
+        echo "Installing Python packages from PyPI (specific versions)"
+        echo "--------------------------------------------------------"
+        echo -n "" > requirements.txt
+        for project in $PYPIPROJECTS; do
+            generaterequirements
+        done
+        pip install -r requirements.txt || error "Installation of one or more Python packages failed !!"
+    fi
 
     echo "--------------------------------------------------------"
     echo "Extracting version information for packages from PyPI"
@@ -355,18 +473,19 @@ fi
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing CLAM webservices"
 echo "--------------------------------------------------------"
-if [ ! -d clamservices ]; then
-    git clone https://github.com/proycon/clamservices
-    chmod a+rx clamservices
-    cd clamservices 
+project="clamservices"
+if [ ! -d $project ]; then
+    git clone https://github.com/proycon/$project
+    chmod a+rx $project
+    cd $project 
     gitcheck
 else
-    cd clamservices
+    cd $project
     pwd
     gitcheck
 fi
-echo -n "clamservices=" >> /VERSION
-gitversion
+echo -n "$project=" >> /VERSION
+outputgitversion
 if [ $REPOCHANGED -eq 1 ]; then
     python setup.py install #extra run since python-daemon may will
     python setup.py install || error "setup.py install clamservices failed"
@@ -378,25 +497,6 @@ if [ ! -z "$CLAMSERVICEDIR" ]; then
     ln -s $CLAMSERVICEDIR _clamservices #referenced from startwebservices.sh
 fi
 
-echo "--------------------------------------------------------"
-echo "[LaMachine] Installing python-timbl"
-echo "--------------------------------------------------------"
-#pip2 install python-timbl || error "Installation of python2-timbl failed !!"
-pip install -U python3-timbl || error "Installation of python3-timbl failed !!"
-
-echo "--------------------------------------------------------"
-echo "[LaMachine] Installing python-frog"
-echo "--------------------------------------------------------"
-pip install -U python-frog
-#git clone https://github.com/proycon/python-frog
-#cd python-frog || fatalerror "No python-frog dir, git clone failed?"
-#python setup.py install || error "Installation of python-frog failed !!"
-#cd ..
-
-echo "--------------------------------------------------------"
-echo "[LaMachine] Installing colibri-core"
-echo "--------------------------------------------------------"
-pip install -U colibricore || error "Installation of colibri-core failed !!"
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing Gecco dependencies (3rd party)"
@@ -407,13 +507,14 @@ pip install -U hunspell python-Levenshtein aspell-python-py3 || error "Installat
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing Gecco"
 echo "--------------------------------------------------------"
-if [ ! -d gecco ]; then
-    git clone https://github.com/proycon/gecco
-    chmod a+rx gecco
-    cd gecco 
+project="gecco"
+if [ ! -d $project ]; then
+    git clone https://github.com/proycon/$project
+    chmod a+rx $project
+    cd $project 
     gitcheck
 else
-    cd gecco
+    cd $project
     pwd
     gitcheck
 fi
@@ -425,24 +526,30 @@ cd ..
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing LuigiNLP"
 echo "--------------------------------------------------------"
-if [ ! -d LuigiNLP ]; then
-    git clone https://github.com/LanguageMachines/LuigiNLP
-    chmod a+rx LuigiNLP
-    cd LuigiNLP 
+project="LuigiNLP"
+if [ ! -d $project ]; then
+    git clone https://github.com/LanguageMachines/$project
+    chmod a+rx $project
+    cd $project 
     gitcheck
 else
-    cd LuigiNLP
+    cd $project
     pwd
     gitcheck
 fi
 if [ $REPOCHANGED -eq 1 ]; then
     python setup.py install #extra run since python-daemon may will
-    python setup.py install || error "setup.py install gecco failed"
+    python setup.py install || error "setup.py install LuigiNLP failed"
 fi
 cd ..
 
 cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
 . LaMachine/extra.sh $@ 
+
+echo "--------------------------------------------------------"
+echo "Outputting version information of all installed packages"
+echo "--------------------------------------------------------"
+cat /VERSION
 
 lamachine-test.sh
 if [ $VAGRANT -eq 1 ]; then

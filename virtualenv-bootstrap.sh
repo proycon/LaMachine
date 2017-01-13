@@ -83,7 +83,7 @@ gitstash () {
         fi
 }
 
-gitversion () {
+outputgitversion () {
     git describe --tags >> "$VIRTUAL_ENV/VERSION"
     if [ $? -ne 0 ]; then
         git rev-parse HEAD >> "$VIRTUAL_ENV/VERSION"
@@ -127,34 +127,59 @@ gitcheckmaster() {
 
 gitcheck () {
     git remote update
-    if [ $DEV -eq 0 ]; then
-        #use github releases, upgrade to latest one
+    if [ ! -z $INSTALLVERSION[$project] ]; then
+        #we were asked to install a very specific release
         if [ -f .version.lamachine ]; then
             CURRENTVERSION=$(cat .version.lamachine)
         fi
-        LATESTVERSION=$(git tag | grep -e "^v" | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -n 1)
-        if [ ! -z $LATESTVERSION ]; then
-            if [[ "$LATESTVERSION" == "$CURRENTVERSION" ]]; then
-                echo "   Already up to date on latest stable release: $LATESTVERSION"
-                REPOCHANGED=0
-            else
-                LATESTVERSION=$(echo $LATESTVERSION|tr -d '\n')
-                echo "   Upgrading from $CURRENTVERSION to latest stable release $LATESTVERSION ..."
-                git checkout "tags/$LATESTVERSION" #will put us in detached head state
-                if [ $? -ne 0 ]; then
-                    gitstash 
-                    git checkout "tags/$LATESTVERSION"
-                fi
-                echo "$LATESTVERSION" > .version.lamachine 
-                REPOCHANGED=1
-            fi
+        ver=$INSTALLVERSION[$project]
+        if [[ "$CURRENTVERSION" == "$ver" ]]; then
+            echo "   Already up to date on requested release: $ver"
+            REPOCHANGED=0
         else
-            #no tags/releases, use master
-            gitcheckmaster
+            echo "   Installing specific version for $project: $ver (this may likely be an older release!)"
+            git checkout "tags/$ver" #will put us in detached head state
+            if [ $? -ne 0 ]; then
+                gitstash 
+                git checkout "tags/$ver"
+                if [ $? -ne 0 ]; then
+                    echo "   Unable to check out desired version, expected git tag $ver does not exist!"
+                    exit 2
+                fi
+                echo "$ver" > .version.lamachine 
+            fi
+            REPOCHANGED=1
         fi
     else
-        #use master branch
-        gitcheckmaster
+        if [ $DEV -eq 0 ]; then
+            #use github releases, upgrade to latest one
+            if [ -f .version.lamachine ]; then
+                CURRENTVERSION=$(cat .version.lamachine)
+            fi
+            LATESTVERSION=$(git tag | grep -e "^v" | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -n 1)
+            if [ ! -z $LATESTVERSION ]; then
+                if [[ "$LATESTVERSION" == "$CURRENTVERSION" ]]; then
+                    echo "   Already up to date on latest stable release: $LATESTVERSION"
+                    REPOCHANGED=0
+                else
+                    LATESTVERSION=$(echo $LATESTVERSION|tr -d '\n')
+                    echo "   Upgrading from $CURRENTVERSION to latest stable release $LATESTVERSION ..."
+                    git checkout "tags/$LATESTVERSION" #will put us in detached head state
+                    if [ $? -ne 0 ]; then
+                        gitstash 
+                        git checkout "tags/$LATESTVERSION"
+                    fi
+                    echo "$LATESTVERSION" > .version.lamachine 
+                    REPOCHANGED=1
+                fi
+            else
+                #no tags/releases, use master
+                gitcheckmaster
+            fi
+        else
+            #use master branch
+            gitcheckmaster
+        fi
     fi
 }
 
@@ -182,6 +207,20 @@ gitcheckout () {
     fi
 }
 
+generaterequirements () {
+    if [ ! -z $INSTALLVERSION[$project] ]; then
+        echo -n "$project" >> requirements.txt
+        ver=$INSTALLVERSION[$project]
+        if [ ${ver:0:1} == 'v' ]; then
+            echo "==${ver:1}" >> requirements.txt
+        else
+            echo "==${ver}" >> requirements.txt
+        fi
+    else
+        echo "$project" >> requirements.txt
+    fi
+}
+
 
 NOADMIN=0
 FORCE=0
@@ -189,6 +228,7 @@ NOPYTHONDEPS=0
 NONINTERACTIVE=0
 DEV=0
 PRIVATE=0
+BRANCH="master" #LaMachine branch
 if [ ! -z "$VIRTUAL_ENV" ]; then
     #already in a virtual env
     if [ -f "$VIRTUAL_ENV/src/LaMachine/.dev" ]; then
@@ -228,16 +268,43 @@ do
     if [[ "$OPT" == "sendinfo" ]]; then
         PRIVATE=0
     fi
+    if [[ "${OPT:0:8}" == "version=" ]]; then
+        VERSIONFILE=${OPT:8}
+        DEV=0
+    fi
+    if [[ "$OPT{0:7}" == "branch=" ]]; then
+        BRANCH=${OPT:7}
+    fi
+    if [[ "$OPT" == "help" ]] || [[ "$OPT" == "-h" ]]; then
+        echo "Options (no hyphen preceeding any):"
+        echo "  noadmin          - Skip global installation step for which administrative privileges are requires; presupposes that global dependencies are already installed by a system administrator"
+        echo "  force            - Force recompilation/reinstallation of everything"
+        echo "  nopythondeps     - Do not install/update 3rd party python packages (except those absolutely necessary)"
+        echo "  python2          - Build for Python 2.7 instead of default Python 3. Not everything will work on Python 2!"
+        echo "  stable           - Install latest stable releases of all software (default)"
+        echo "  dev              - Install latest development releases of all software (this may break things)"
+        echo "  version=<file>   - Install specific versions of all software, versions are in the specified file. LaMachine's generates a VERSION file on each installation/update that is valid input for this option."
+        echo "  private          - Do not send anonymous statistics about this copy of LaMachine to Radboud University (opt-out)"
+        echo "  noninteractive   - Never query the user for input"
+        echo "  branch=<branch>  - Use the following branch of the LaMachine git repository (default: master)"
+        exit 0
+    fi
 done
 
-if [ $DEV -eq 0 ]; then
-    echo "================================================================================">&2
-    echo "      LaMachine will install the latest stable releases where possible">&2
-    echo "================================================================================">&2
+if [ ! -z "$VERSIONFILE" ]; then
+        echo "================================================================================">&2
+        echo "      LaMachine will install specific older versions ($VERSIONFILE)">&2
+        echo "================================================================================">&2
 else
-    echo "================================================================================">&2
-    echo "      LaMachine will install the very latest development versions">&2
-    echo "================================================================================">&2
+    if [ $DEV -eq 0 ]; then
+        echo "================================================================================">&2
+        echo "      LaMachine will install the latest stable releases where possible">&2
+        echo "================================================================================">&2
+    else
+        echo "================================================================================">&2
+        echo "      LaMachine will install the very latest development versions">&2
+        echo "================================================================================">&2
+    fi
 fi
 
 
@@ -441,7 +508,11 @@ else
     touch "$VIRTUAL_ENV/src/LaMachine/.dev"
 fi
 
-date -u +%Y%m%d%H%M > "$VIRTUAL_ENV/VERSION"
+if [ ! -z "$VERSIONFILE" ]; then
+    echo "$VERSIONFILE" > "$VIRTUAL_ENV/VERSION"
+else
+    date -u +%Y%m%d%H%M > "$VIRTUAL_ENV/VERSION"
+fi
 
 if [ $PRIVATE -eq 0 ]; then
     rm -f "$VIRTUAL_ENV/src/LaMachine/.private" 2>/dev/null
@@ -705,7 +776,7 @@ echo "Updating LaMachine itself"
 echo "--------------------------------------------------------"
 if [ ! -d LaMachine ]; then
     OLDSUM=`sum $0`
-    git clone https://github.com/proycon/LaMachine || fatalerror "Unable to clone git repo for LaMachine"
+    git clone https://github.com/proycon/LaMachine --branch $BRANCH || fatalerror "Unable to clone git repo for LaMachine"
     cd LaMachine
     NEWSUM=`sum virtualenv-bootstrap.sh`
 else
@@ -716,6 +787,9 @@ else
 fi
 cp virtualenv-bootstrap.sh "$VIRTUAL_ENV/bin/lamachine-update.sh"
 cp test.sh "$VIRTUAL_ENV/bin/lamachine-test.sh"
+if [ ! -z "$VERSIONFILE" ]; then
+    source loadversionfile.sh
+fi
 if [ "$OLDSUM" != "$NEWSUM" ]; then
     echo "----------------------------------------------------------------"
     echo "LaMachine has been updated with a newer version, restarting..."
@@ -788,7 +862,7 @@ for project in $PROJECTS; do
         fi
     fi
     echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
-    gitversion
+    outputgitversion
     if [ $RECOMPILE -eq 1 ]; then
         bash bootstrap.sh || fatalerror "$project bootstrap failed"
         EXTRA=""
@@ -820,8 +894,26 @@ echo "Installing Python dependencies from the Python Package Index"
 echo "--------------------------------------------------------------"
 if [ $NOPYTHONDEPS -eq 0 ]; then
     PYTHONDEPS="cython numpy ipython scipy matplotlib lxml scikit-learn django pycrypto pandas textblob nltk psutil flask requests requests_toolbelt requests_oauthlib"
-    for PYTHONDEP in $PYTHONDEPS; do
-        pip install -U $PYTHONDEP || fatalerror "Unable to install required dependency $PYTHONDEP from Python Package Index"
+    if [ -z "$VERSIONFILE" ]; then
+        echo "(Installing latest releases)"
+        for PYTHONDEP in $PYTHONDEPS; do
+            pip install -U $PYTHONDEP || fatalerror "Unable to install required dependency $PYTHONDEP from Python Package Index"
+        done
+    else
+        echo "(Installing specific releases)"
+        echo -n "" > requirements.txt
+        for project in $PYTHONDEPS; do
+            generaterequirements
+        done
+        pip install -r requirements.txt || fatalerror "Unable to install required dependency $PYTHONDEP from Python Package Index"
+    fi
+
+    echo "-------------------------------------------------------------------"
+    echo "Extracting version information for 3rd party packages from PyPI"
+    echo "-------------------------------------------------------------------"
+    for project in $PYTHONDEPS; do
+        echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
+        pip show $project | grep -e "^Version:" | sed 's/Version: /v/g' >> "$VIRTUAL_ENV/VERSION" 
     done
 else
     echo "Skipping...."
@@ -843,10 +935,21 @@ else
 fi
 
 if [ ! -z "$PYPIPROJECTS" ]; then
-    echo "--------------------------------------------------------"
-    echo "Installing Python packages from PyPI"
-    echo "--------------------------------------------------------"
-    pip install -U $PYPIPROJECTS || error "Installation of one or more Python packages failed !!"
+    if [ -z "$VERSIONFILE" ]; then
+        echo "--------------------------------------------------------"
+        echo "Installing Python packages from PyPI (latest releases)"
+        echo "--------------------------------------------------------"
+        pip install -U $PYPIPROJECTS || error "Installation of one or more Python packages failed !!"
+    else
+        echo "--------------------------------------------------------"
+        echo "Installing Python packages from PyPI (specific versions)"
+        echo "--------------------------------------------------------"
+        echo -n "" > requirements.txt
+        for project in $PYPIPROJECTS; do
+            generaterequirements
+        done
+        pip install -r requirements.txt || error "Installation of one or more Python packages failed !!"
+    fi
 
     echo "--------------------------------------------------------"
     echo "Extracting version information for packages from PyPI"
@@ -877,7 +980,7 @@ if [ ! -z "$PYTHONPROJECTS" ]; then
             gitcheck
         fi
         echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
-        gitversion
+        outputgitversion
         if [ $REPOCHANGED -eq 1 ]; then
             #cleanup previous installations (bit of a hack to prevent a bug when reinstalling)
             if [ "$project" == "pynlpl" ]; then
@@ -907,17 +1010,18 @@ echo
 echo "--------------------------------------------------------"
 echo "Installing python-ucto"
 echo "--------------------------------------------------------"
-if [ ! -d python-ucto ]; then
-    git clone https://github.com/proycon/python-ucto
-    cd python-ucto
+project="python-ucto"
+if [ ! -d $project ]; then
+    git clone https://github.com/proycon/$project
+    cd $project
     gitcheck
     REPOCHANGED=1
 else
-    cd python-ucto 
+    cd $project 
     gitcheck 
 fi
-echo -n "python-ucto=" >> "$VIRTUAL_ENV/VERSION"
-gitversion
+echo -n "$project" >> "$VIRTUAL_ENV/VERSION"
+outputgitversion
 if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
     python setup.py build_ext --include-dirs="$VIRTUAL_ENV/include" --library-dirs="$VIRTUAL_ENV/lib" install --prefix="$VIRTUAL_ENV" || error "Python-ucto installation failed"
@@ -931,17 +1035,18 @@ echo
 echo "--------------------------------------------------------"
 echo "Installing python-timbl"
 echo "--------------------------------------------------------"
-if [ ! -d python-timbl ]; then
-    git clone https://github.com/proycon/python-timbl
-    cd python-timbl
+project="python-timbl"
+if [ ! -d $project ]; then
+    git clone https://github.com/proycon/$project
+    cd $project
     gitcheck
     REPOCHANGED=1
 else
-    cd python-timbl
+    cd $project
     gitcheck
 fi
-echo -n "python-timbl=" >> "$VIRTUAL_ENV/VERSION"
-gitversion
+echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
+outputgitversion
 if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     rm -Rf build
     if [ -f "$VIRTUAL_ENV/lib/libboost_python.so" ]; then
@@ -991,17 +1096,18 @@ if [ -f /usr/bin/python2.7 ] || [ -f /usr/local/bin/python2.7 ]; then
     echo "--------------------------------------------------------"
     echo "Installing python-frog"
     echo "--------------------------------------------------------"
-    if [ ! -d python-frog ]; then
-        git clone https://github.com/proycon/python-frog
-        cd python-frog
+    project="python-frog"
+    if [ ! -d $project ]; then
+        git clone https://github.com/proycon/$project
+        cd $project
         gitcheck
         REPOCHANGED=1
     else
-        cd python-frog
+        cd $project
         gitcheck
     fi
-    echo -n "python-frog=" >> "$VIRTUAL_ENV/VERSION"
-    gitversion
+    echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
+    outputgitversion
     if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
         rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
         python setup.py install || error "python-frog failed"
@@ -1017,17 +1123,18 @@ echo
 echo "--------------------------------------------------------"
 echo "Installing colibri-core"
 echo "--------------------------------------------------------"
-if [ ! -d colibri-core ]; then
-    git clone https://github.com/proycon/colibri-core
-    cd colibri-core
+project="colibri-core"
+if [ ! -d $project ]; then
+    git clone https://github.com/proycon/$project
+    cd $project
     gitcheck
     REPOCHANGED=1
 else
-    cd colibri-core 
+    cd $project 
     gitcheck
 fi
-echo -n "colibri-core=" >> "$VIRTUAL_ENV/VERSION"
-gitversion
+echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
+outputgitversion
 if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
     python setup.py install || error "colibri core failed"
@@ -1054,8 +1161,8 @@ if [ "$OS" != "mac" ]; then
         cd $project
         gitcheck
     fi
-    echo -n "gecco=" >> "$VIRTUAL_ENV/VERSION"
-    gitversion
+    echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
+    outputgitversion
     if [ $REPOCHANGED -eq 1 ]; then
         rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/${project}*egg
         python setup.py install --prefix="$VIRTUAL_ENV" || error "setup.py install $project failed"
@@ -1067,6 +1174,11 @@ if [ "$OS" != "mac" ]; then
 fi
 
 . LaMachine/extra.sh $@ 
+
+echo "--------------------------------------------------------"
+echo "Outputting version information of all installed packages"
+echo "--------------------------------------------------------"
+cat $VIRTUAL_ENV/VERSION
 
 export OS
 lamachine-test.sh
