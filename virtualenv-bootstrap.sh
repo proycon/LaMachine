@@ -759,6 +759,7 @@ if [ ! -d LaMachine ]; then
     NEWSUM=`sum virtualenv-bootstrap.sh`
 else
     cd LaMachine
+    git checkout $BRANCH
     OLDSUM=`sum virtualenv-bootstrap.sh`
     git pull
     NEWSUM=`sum virtualenv-bootstrap.sh`
@@ -766,7 +767,7 @@ fi
 cp virtualenv-bootstrap.sh "$VIRTUAL_ENV/bin/lamachine-update.sh"
 cp test.sh "$VIRTUAL_ENV/bin/lamachine-test.sh"
 if [ ! -z "$VERSIONFILE" ]; then
-    source loadversionfile.sh
+    source ./loadversionfile.sh
 fi
 if [ "$OLDSUM" != "$NEWSUM" ]; then
     echo "----------------------------------------------------------------"

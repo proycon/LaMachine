@@ -338,7 +338,7 @@ cp nginx.mime.types /etc/nginx/
 cp nginx.conf /etc/nginx/
 cp webservices.service /usr/lib/systemd/system/
 if [ ! -z "$VERSIONFILE" ]; then
-    source loadversionfile.sh
+    source ./loadversionfile.sh
 fi
 cd ..
 chmod a+rx LaMachine
