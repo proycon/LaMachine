@@ -149,29 +149,6 @@ gitcheck () {
     fi
 }
 
-gitcheckout () {
-    if [ $DEV -eq 0 ]; then
-        LATESTVERSION=`git tag --sort="v:refname" | tail -n 1`
-        if [ ! -z "$LATESTVERSION" ]; then
-            LATESTVERSION=$(echo $LATESTVERSION|tr -d '\n')
-            echo "   Using latest stable release: $LATESTVERSION"
-            git checkout "tags/$LATESTVERSION" #will put us in detached head state
-            if [ $? -ne 0 ]; then
-                gitstash 
-                git checkout "tags/$LATESTVERSION"
-            fi
-            echo "$LATESTVERSION" > .version.lamachine 
-        fi
-    else
-        echo "       Using newest development version"
-        git checkout master
-        if [ $? -ne 0 ]; then
-            gitstash 
-            git checkout master
-        fi
-        rm .version.lamachine 2> /dev/null
-    fi
-}
 
 switchaurversion () {
     if [ ! -z $INSTALLVERSION[$project] ]; then
@@ -256,7 +233,7 @@ do
         PRIVATE=0
     fi
     if [[ "${OPT:0:8}" == "version=" ]]; then
-        VERSIONFILE=${OPT:9}
+        VERSIONFILE=`realpath ${OPT:8}`
         DEV=0
     fi
     if [[ "$OPT{0:7}" == "branch=" ]]; then
@@ -367,10 +344,11 @@ cd ..
 chmod a+rx LaMachine
 
 if [ ! -z "$VERSIONFILE" ]; then
+    VERSIONFILE_BASENAME=`basename $VERSIONFILE`
     echo "================================================================================">&2
-    echo "      LaMachine will install specific older versions ($VERSIONFILE)">&2
+    echo "      LaMachine will install specific older versions ($VERSIONFILE_BASENAME)">&2
     echo "================================================================================">&2
-    echo "$VERSIONFILE" > "/VERSION"
+    echo $VERSIONFILE_BASENAME > "/VERSION"
 else
     if [ $DEV -eq 0 ]; then
         echo "================================================================================">&2
