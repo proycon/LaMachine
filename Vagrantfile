@@ -69,5 +69,5 @@ Vagrant.configure(2) do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "file", source: "loadversionfile.sh", destination: "loadversionfile.sh"
   config.vm.provision "file", source: "VERSION", destination: "VERSION"
-  config.vm.provision :shell, path: "bootstrap.sh", args: "branch=develop"
+  config.vm.provision :shell, path: "bootstrap.sh", args: "branch=develop", keep_color: true;
 end
