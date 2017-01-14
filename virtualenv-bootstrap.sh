@@ -127,12 +127,12 @@ gitcheckmaster() {
 
 gitcheck () {
     git remote update
-    if [ ! -z $INSTALLVERSION[$project] ]; then
+    if [ ! -z ${INSTALLVERSION[$project]} ]; then
         #we were asked to install a very specific release
         if [ -f .version.lamachine ]; then
             CURRENTVERSION=$(cat .version.lamachine)
         fi
-        ver=$INSTALLVERSION[$project]
+        ver=${INSTALLVERSION[$project]}
         if [[ "$CURRENTVERSION" == "$ver" ]]; then
             echo "   Already up to date on requested release: $ver"
             REPOCHANGED=0
@@ -185,9 +185,9 @@ gitcheck () {
 
 
 generaterequirements () {
-    if [ ! -z $INSTALLVERSION[$project] ]; then
+    if [ ! -z ${INSTALLVERSION[$project]} ]; then
         echo -n "$project" >> requirements.txt
-        ver=$INSTALLVERSION[$project]
+        ver=${INSTALLVERSION[$project]}
         if [ ${ver:0:1} == 'v' ]; then
             echo "==${ver:1}" >> requirements.txt
         else
@@ -249,7 +249,7 @@ do
         VERSIONFILE=`realpath ${OPT:8}`
         DEV=0
     fi
-    if [[ "$OPT{0:7}" == "branch=" ]]; then
+    if [[ "${OPT:0:7}" == "branch=" ]]; then
         BRANCH=${OPT:7}
     fi
     if [[ "$OPT" == "help" ]] || [[ "$OPT" == "-h" ]]; then
