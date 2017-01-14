@@ -138,15 +138,20 @@ gitcheck () {
             REPOCHANGED=0
         else
             echo "   Installing specific version for $project: $ver (this may likely be an older release!)"
-            git checkout "tags/$ver" #will put us in detached head state
-            if [ $? -ne 0 ]; then
-                gitstash 
-                git checkout "tags/$ver"
+            if [[ "${ver:0:1}" == "v" ]] || [[ $ver == *"."* ]]; then
+                git checkout "tags/$ver" #will put us in detached head state
                 if [ $? -ne 0 ]; then
-                    echo "   Unable to check out desired version, expected git tag $ver does not exist!"
-                    exit 2
+                    gitstash 
+                    git checkout "tags/$ver"
+                    if [ $? -ne 0 ]; then
+                        echo "   Unable to check out desired version, expected git tag $ver does not exist!"
+                        exit 2
+                    fi
+                    echo "$ver" > .version.lamachine 
                 fi
-                echo "$ver" > .version.lamachine 
+            else
+                #assuming this is a commit hash instead of a version
+                git checkout "$ver" #will put us in detached head state
             fi
             REPOCHANGED=1
         fi
