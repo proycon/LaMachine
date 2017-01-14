@@ -9,6 +9,8 @@ matrix:
         - os: osx
           osx_image: xcode8.2
           language: generic
+      allow_failures:
+        - os: osx
 
 install: 
     - bash virtualenv-bootstrap.sh noninteractive branch=develop #cause of travis' setup, we will already be in a virtualenv and reuse it
