@@ -8,7 +8,9 @@ if [ -f "$VERSIONFILE" ]; then
             firstline=0
         else
             project=${line%=*}
-            INSTALLVERSION[$project]=${line#=*}
+            ver=${line#*=}
+            INSTALLVERSION[$project]=$ver
+            echo "Requested version for $project: $ver"
         fi
     done < "$VERSIONFILE"
 else
