@@ -9,7 +9,7 @@ matrix:
         - os: osx
           osx_image: xcode8.2
           language: generic
-      allow_failures:
+    allow_failures:
         - os: osx
 
 install: 
