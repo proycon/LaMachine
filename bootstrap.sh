@@ -414,7 +414,7 @@ for package in $PACKAGES; do
     echo "--------------------------------------------------------"
     sudo -u build makepkg -s -f --noconfirm --needed --noprogressbar
     pacman -U --noconfirm --needed ${project}*.pkg.tar.xz || error "Installation of ${project} failed !!"
-    echo "$project=" >> /VERSION
+    echo -n "$project=" >> /VERSION
     cat PKGBUILD | grep "pkgver=" | sed 's/pkgver=/v/' >> /VERSION
     rm ${project}*.pkg.tar.xz
     cd ..
@@ -448,7 +448,7 @@ if [ ! -z "$PYPIPROJECTS" ]; then
     echo "Extracting version information for packages from PyPI"
     echo "--------------------------------------------------------"
     for project in $PYPIPROJECTS; do
-        echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
+        echo -n "$project=" >> "/VERSION"
         pip show $project | grep -e "^Version:" | sed 's/Version: /v/g' >> "/VERSION" 
     done
 fi
