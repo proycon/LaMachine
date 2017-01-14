@@ -113,12 +113,12 @@ gitcheck () {
                         echo "   Unable to check out desired version, expected git tag $ver does not exist!"
                         exit 2
                     fi
-                    echo "$ver" > .version.lamachine 
                 fi
             else
                 #assuming this is a commit hash instead of a version
                 git checkout "$ver" #will put us in detached head state
             fi
+            echo "$ver" > .version.lamachine 
             REPOCHANGED=1
         fi
     else
