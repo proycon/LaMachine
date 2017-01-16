@@ -13,7 +13,7 @@ matrix:
         - os: osx
 
 install: 
-    - bash virtualenv-bootstrap.sh noninteractive branch=develop #cause of travis' setup, we will already be in a virtualenv and reuse it
+    - bash virtualenv-bootstrap.sh noninteractive #cause of travis' setup, we will already be in a virtualenv and reuse it
 script:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then . lamachine/bin/activate; lamachine-test.sh; else LD_LIBRARY_PATH="$VIRTUAL_ENV/lib/:$LD_LIBRARY_PATH" ./test.sh ;fi #on mac we're not yet in the virtualenv automatically, otherwise we reuse it, little hack to get LD_LIBRARY_PATH right
       
