@@ -120,8 +120,10 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
  * ``python2`` - Use python 2.7 instead of Python 3 *(note that some software may be not be available for Python 2!)*
  * ``stable`` - Use stable releases  *(this is the new default since February 2016)*
  * ``dev`` - Use cutting-edge development versions *(this may sometimes breaks things)*
+ * ``version=`` - Use the specified version file *(see the versioning section
+   below)*
  * ``private`` - Do not send information to us regarding your LaMachine installation *(see the privacy section below)*
- * ``shareinfo`` - Send information to us regarding your LaMachine installation *(default, see privacy section below)*
+ * ``branch=`` - Use the specified git branch of LaMachine *(default: master)*
 
 The latter five parameters are persistent, if you specify them once during
 installation or upgrade you won't need to the next time you upgrade your LaMachine.
@@ -187,6 +189,31 @@ which may or may not collect your IP:
  * [The Python Package Index](https://pypi.python.org)
  * [The Arch Linux User Repository](https://aur.archlinux.org)
  * [Docker](https://docker.io)
+
+Versioning
+============
+
+LaMachine outputs a ``VERSION`` file for each installation or upgrade. The
+version file contains the exact version numbers of all software installed.  You
+can find this file in either in your virtual environment directory or in the
+root directory (Vagrant/Docker).
+
+You can use the VERSION file to bootstrap LaMachine with specific versions. For
+the virtual environment form of LaMachine, add the argument
+``version=/path/to/your/VERSIONfile`` when running ``virtualenv-bootstrap.sh``.
+For the Vagrant form, substitute the dummy ``VERSION`` file with one of your
+own and adapt ``Vagrantfile`` according to the instructions prior to running
+``vagrant up``. For Docker, you'll have to adapt ``Dockerfile`` and build the
+image locally, or rely on an earlier published build.
+
+This versioning is intended to facilitate scientific reproducibility and
+deployment of production environments. The caveat to always keep in mind is
+that the versions you run may be outdated and not have any of the latest
+improvements/fixes applied.
+
+Note that only our own software and certain Python dependencies are subject to
+this versioning scheme, generic system packages and libraries will always be at
+their latest versions.
 
 Webservices
 ==================
