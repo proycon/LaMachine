@@ -120,8 +120,7 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
  * ``python2`` - Use python 2.7 instead of Python 3 *(note that some software may be not be available for Python 2!)*
  * ``stable`` - Use stable releases  *(this is the new default since February 2016)*
  * ``dev`` - Use cutting-edge development versions *(this may sometimes breaks things)*
- * ``version=`` - Use the specified version file *(see the versioning section
-   below)*
+ * ``version=`` - Use the specified version file *(see the versioning section below)*
  * ``private`` - Do not send information to us regarding your LaMachine installation *(see the privacy section below)*
  * ``branch=`` - Use the specified git branch of LaMachine *(default: master)*
 
