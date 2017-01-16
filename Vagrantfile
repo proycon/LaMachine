@@ -67,13 +67,12 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  config.vm.provision "file", source: "loadversionfile.sh", destination: "loadversionfile.sh"
-  config.vm.provision "file", source: "VERSION", destination: "VERSION"
 
   config.vm.provision :shell, path: "bootstrap.sh", args: "branch=develop", keep_color: true;
   
   #If you want to install a specific version, copy your LaMachine VERSION file over the
-  #dummy file, disable the default shell provisioning above line and enable the
-  #following line:
-  #config.vm.provision :shell, path: "bootstrap.sh", args: "branch=develop version=VERSION", keep_color: true;
+  #dummy file, disable the default shell provisioning line above and enable the
+  #following two lines:
+  #config.vm.provision "file", source: "VERSION", destination: "/tmp/VERSION"
+  #config.vm.provision :shell, path: "bootstrap.sh", args: "branch=develop version=/tmp/VERSION", keep_color: true;
 end
