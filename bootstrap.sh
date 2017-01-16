@@ -386,7 +386,11 @@ for package in $PACKAGES; do
         git clone https://aur.archlinux.org/${package}.git
         cd $package || fatalerror "No such package, git clone $package failed?"
         if [ ! -z "$VERSIONFILE" ]; then
-            switchaurversion
+            if [[ "${package%%-git}" == "$project" ]]; then
+                echo "Installing specific versions is not supported for $project, installing latest git release instead"
+            else
+                switchaurversion
+            fi
         fi
     else
         cd $package
