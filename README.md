@@ -132,6 +132,7 @@ Tested to work on:
  * Arch Linux
  * Debian 8
  * Fedora Core 21
+ * Ubuntu 16.04 - Xenial Xerus
  * Ubuntu 15.10 - Wily Werewolf
  * Ubuntu 15.04 - Vivid Vervet
  * Ubuntu 14.04 LTS - Trusty Tahr
