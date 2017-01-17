@@ -1,4 +1,4 @@
-[![Language Machines Badge](http://applejack.science.ru.nl/lamabadge.php/gecco)](http://applejack.science.ru.nl/languagemachines/)
+[![Language Machines Badge](http://applejack.science.ru.nl/lamabadge.php/LaMachine)](http://applejack.science.ru.nl/languagemachines/)
 
 LaMachine
 ===========
