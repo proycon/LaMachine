@@ -539,6 +539,7 @@ echo "--------------------------------------------------------"
 cat /VERSION
 
 lamachine-test.sh
+TESTRESULT=$?
 if [ $VAGRANT -eq 1 ]; then
     echo "[LaMachine] Starting webserver and webservices"
     systemctl enable nginx #enable nginx on bootup for vagrant
@@ -546,7 +547,7 @@ if [ $VAGRANT -eq 1 ]; then
     systemctl start nginx #start nginx
     systemctl start webservices #start webservices
 fi
-if [ $? -eq 0 ]; then
+if [ $TESTRESULT -eq 0 ]; then
     echo "--------------------------------------------------------"
     echo "[LaMachine] All done!  "
     if [ $VAGRANT -eq 1 ]; then
