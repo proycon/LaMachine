@@ -349,7 +349,7 @@ if [ "$NOADMIN" == "0" ]; then
         if [ $NONINTERACTIVE -eq 1 ]; then
             NONINTERACTIVEFLAG="--noconfirm"
         fi
-        INSTALL="sudo pacman -Syu $NONINTERACTIVEFLAG --needed base-devel pkg-config git autoconf-archive gcc-fortran icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse perl perl-sort-naturally"
+        INSTALL="sudo pacman -Syu $NONINTERACTIVEFLAG --needed base-devel pkg-config git autoconf-archive gcc-fortran icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse perl perl-sort-naturally tesseract tesseract-data-eng tesseract-data-nld poppler"
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python2 python2-pip python2-virtualenv"
         fi
@@ -373,7 +373,7 @@ if [ "$NOADMIN" == "0" ]; then
         if [ $NONINTERACTIVE -eq 1 ]; then
             NONINTERACTIVEFLAG="-y"
         fi
-        INSTALL="sudo apt-get -m $NONINTERACTIVEFLAG install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE python-virtualenv $GNUTLS libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl perl libsort-naturally-perl "  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
+        INSTALL="sudo apt-get -m $NONINTERACTIVEFLAG install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE python-virtualenv $GNUTLS libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl perl libsort-naturally-perl tesseract-ocr tesseract-ocr-eng tesseract-ocr-nld poppler-utils"  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python python-dev python-pip"
         fi
@@ -381,7 +381,7 @@ if [ "$NOADMIN" == "0" ]; then
         if [ $NONINTERACTIVE -eq 1 ]; then
             NONINTERACTIVEFLAG="-y"
         fi
-        INSTALL="sudo yum $NONINTERACTIVEFLAG install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python3 python3-devel zlib zlib-devel python3-virtualenv python3-pip bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel perl perl-Sort-Naturally"
+        INSTALL="sudo yum $NONINTERACTIVEFLAG install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python3 python3-devel zlib zlib-devel python3-virtualenv python3-pip bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel perl perl-Sort-Naturally tesseract poppler"
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python python-devel python-pip"
         fi
