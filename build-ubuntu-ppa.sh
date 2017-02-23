@@ -23,7 +23,7 @@ for package in $PACKAGES; do
         cd $package
         git pull
     fi
-    dch -i && gbp buildpackage -S -k1A31555C
+    dch -i && debcommit -a -m "Rebuilding for ubuntu" && gbp buildpackage -S -k1A31555C
     #wget -r -nc --no-parent --reject "index.html*" http://cdn-fastly.deb.debian.org/debian/pool/main/${package:0:1}/$package/ 
     #dget -ux 
 done
