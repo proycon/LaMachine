@@ -9,20 +9,19 @@ PACKAGES="python-pynlpl"
 mkdir ubuntu-ppa
 cd ubuntu-ppa
 
-#git clone https://anonscm.debian.org/git/debian-science/packages/frog.git
-
 for package in $PACKAGES; do
     echo 
     echo "--------------------------------------------------------"
     echo "Installing/updating $package"
     echo "--------------------------------------------------------"
     if [ ! -d $package ]; then
-        git clone https://anonscm.debian.org/git/debian-science/packages/$package.git || fatalerror "Unable to clone git repo for $project"
+        git clone https://anonscm.debian.org/git/debian-science/packages/$package.git || fatalerror "Unable to clone git repo for $package"
         cd $package
     else
         cd $package
         git pull
     fi
+    sed -i 's/debhelper (>= 10)/debhelper (>= 9)/' $package/debian/control #debhelper 10 is too new for 16.04
     dch -i && gbp buildpackage -S -k1A31555C
     #wget -r -nc --no-parent --reject "index.html*" http://cdn-fastly.deb.debian.org/debian/pool/main/${package:0:1}/$package/ 
     #dget -ux 
