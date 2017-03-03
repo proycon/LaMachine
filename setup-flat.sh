@@ -1,5 +1,10 @@
 #This script is not meant to be called directly
 
+echo
+echo "--------------------------------------------------------------"
+echo "Setting up FLAT"
+echo "--------------------------------------------------------------"
+
 export PYTHONPATH=$(pwd)/src/LaMachine
 export DJANGO_SETTINGS_MODULE=flat_settings
 
