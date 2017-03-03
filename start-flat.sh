@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ ! -z "$VIRTUAL_ENV" ]; then
     mkdir $VIRTUAL_ENV/flat.docroot
-    foliadocserve -d $VIRTUAL_ENV/flat.docroot --git --expirationtime 120 -p 3030
+    foliadocserve -d $VIRTUAL_ENV/flat.docroot --git --expirationtime 120 -p 3030 &
     export PYTHONPATH=$VIRTUAL_ENV/src/LaMachine
     export DJANGO_SETTINGS_MODULE=flat_settings
     django-admin runserver -p 127.0.0.1:8080
