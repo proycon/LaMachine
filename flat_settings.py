@@ -466,11 +466,6 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 # PROTECTION AGAINST LAZINESS, GENERAL SLOPPINESS, OVERCONFIDENCE, AND DOCUMENTATION READING IMPAIRMENTS
 ###########################################################################################################
 
-
-#Remove this when done configuring:
-raise Exception("settings.py hasn't been configured yet!!")
-
-
 # Now you can start FLAT as follows:
 
 # $ export PYTHONPATH=/your/settings/path/
