@@ -790,7 +790,7 @@ if [ "$OLDSUM" != "$NEWSUM" ]; then
     echo "LaMachine has been updated with a newer version, restarting..."
     echo "----------------------------------------------------------------"
     sleep 3
-    ./virtualenv-bootstrap.sh $@ logged
+    exec ./virtualenv-bootstrap.sh $@ logged
     exit $?
 fi
 cd ..
