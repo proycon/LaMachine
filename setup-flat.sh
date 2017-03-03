@@ -5,7 +5,7 @@ echo "--------------------------------------------------------------"
 echo "Setting up FLAT"
 echo "--------------------------------------------------------------"
 
-export PYTHONPATH=$(pwd)/src/LaMachine
+export PYTHONPATH=$(pwd)/LaMachine
 export DJANGO_SETTINGS_MODULE=flat_settings
 
 django-admin makemigrations
