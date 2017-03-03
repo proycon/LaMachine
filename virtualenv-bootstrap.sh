@@ -42,10 +42,10 @@ if [ $LOGGED -eq 0 ]; then
     exit $?
 fi
 
-        
+
 
 echo "====================================================================="
-echo "           ,              LaMachine - NLP Software distribution" 
+echo "           ,              LaMachine - NLP Software distribution"
 echo "          ~)                     (https://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
 echo "            /| |\         & Centre for Language and Speech Technology"
@@ -78,7 +78,7 @@ gitstash () {
         read -r yn
         if [[ "$yn" == "y" ]]; then
             git stash
-        else 
+        else
             exit 8
         fi
 }
@@ -95,7 +95,7 @@ outputgitversion () {
 gitcheckmaster() {
     git checkout master
     if [ $? -ne 0 ]; then
-        gitstash 
+        gitstash
         git checkout master
     fi
     git remote update
@@ -141,7 +141,7 @@ gitcheck () {
             if [[ "${ver:0:1}" == "v" ]] || [[ $ver == *"."* ]]; then
                 git checkout "tags/$ver" #will put us in detached head state
                 if [ $? -ne 0 ]; then
-                    gitstash 
+                    gitstash
                     git checkout "tags/$ver"
                     if [ $? -ne 0 ]; then
                         echo "   Unable to check out desired version, expected git tag $ver does not exist!"
@@ -152,7 +152,7 @@ gitcheck () {
                 #assuming this is a commit hash instead of a version
                 git checkout "$ver" #will put us in detached head state
             fi
-            echo "$ver" > .version.lamachine 
+            echo "$ver" > .version.lamachine
             REPOCHANGED=1
         fi
     else
@@ -171,10 +171,10 @@ gitcheck () {
                     echo "   Upgrading from $CURRENTVERSION to latest stable release $LATESTVERSION ..."
                     git checkout "tags/$LATESTVERSION" #will put us in detached head state
                     if [ $? -ne 0 ]; then
-                        gitstash 
+                        gitstash
                         git checkout "tags/$LATESTVERSION"
                     fi
-                    echo "$LATESTVERSION" > .version.lamachine 
+                    echo "$LATESTVERSION" > .version.lamachine
                     REPOCHANGED=1
                 fi
             else
@@ -433,7 +433,7 @@ if [ "$NOADMIN" == "0" ]; then
         fi
         if [ "$OS" == "mac" ]; then
             $INSTALL || error "An error occurred during installation of global dependencies. If you only got 'already installed' messages, however, you can ignore this. Attempting to continue installation in 15s... If a later error occurs, this is likely the cause."
-        else 
+        else
             $INSTALL || error "Global dependencies could not be installed, possibly due to you not having root-access. In which case you may need to ask your system administrator to install the above-mentioned dependencies. Installation will continue as normal in 15s, but if a later error occurs, then a missing global dependency is likely the cause."
         fi
         sleep 15
@@ -484,7 +484,7 @@ if [ -z "$VIRTUAL_ENV" ]; then
     . lamachine/bin/activate || fatalerror "Unable to activate virtual environment"
     MODE='new'
     #Ubuntu 12.04 doesn't package python3-pip yet
-    if [ "$DISTRIB_ID" == "ubuntu" ]; then 
+    if [ "$DISTRIB_ID" == "ubuntu" ]; then
         if [ "$DISTRIB_RELEASE" == "12.04" ]; then
             easy_install3 pip
         fi
@@ -625,19 +625,19 @@ export PATH
 _OLD_VIRTUAL_LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
 case ":$LD_LIBRARY_PATH:" in
       *":$VIRTUAL_ENV/lib:"*) :;; # already there
-      *) export LD_LIBRARY_PATH="$VIRTUAL_ENV/lib:$LD_LIBRARY_PATH";; 
+      *) export LD_LIBRARY_PATH="$VIRTUAL_ENV/lib:$LD_LIBRARY_PATH";;
 esac
 
 _OLD_VIRTUAL_LD_RUN_PATH="$LD_RUN_PATH"
 case ":$LD_RUN_PATH:" in
       *":$VIRTUAL_ENV/lib:"*) :;; # already there
-      *) export LD_RUN_PATH="$VIRTUAL_ENV/lib:$LD_RUN_PATH";; 
+      *) export LD_RUN_PATH="$VIRTUAL_ENV/lib:$LD_RUN_PATH";;
 esac
 
 export _OLD_VIRTUAL_CPATH="$CPATH"
 case ":$CPATH:" in
       *":$VIRTUAL_ENV/include:"*) :;; # already there
-      *) export CPATH="$VIRTUAL_ENV/include:$CPATH";; 
+      *) export CPATH="$VIRTUAL_ENV/include:$CPATH";;
 esac
 
 # unset PYTHONHOME if set
@@ -685,19 +685,19 @@ VIRTUAL_ENV="_VIRTUAL_ENV_"
 _OLD_VIRTUAL_LD_LIBRARY_PATH="$LD_LIBRARY_PATH"
 case ":$LD_LIBRARY_PATH:" in
       *":$VIRTUAL_ENV/lib:"*) :;; # already there
-      *) export LD_LIBRARY_PATH="$VIRTUAL_ENV/lib:$LD_LIBRARY_PATH";; 
+      *) export LD_LIBRARY_PATH="$VIRTUAL_ENV/lib:$LD_LIBRARY_PATH";;
 esac
 
 _OLD_VIRTUAL_LD_RUN_PATH="$LD_RUN_PATH"
 case ":$LD_RUN_PATH:" in
       *":$VIRTUAL_ENV/lib:"*) :;; # already there
-      *) export LD_RUN_PATH="$VIRTUAL_ENV/lib:$LD_RUN_PATH";; 
+      *) export LD_RUN_PATH="$VIRTUAL_ENV/lib:$LD_RUN_PATH";;
 esac
 
 export _OLD_VIRTUAL_CPATH="$CPATH"
 case ":$CPATH:" in
       *":$VIRTUAL_ENV/include:"*) :;; # already there
-      *) export CPATH="$VIRTUAL_ENV/include:$CPATH";; 
+      *) export CPATH="$VIRTUAL_ENV/include:$CPATH";;
 esac'
 
 
@@ -750,7 +750,7 @@ if [ "$CONDA" == "1" ]; then
     VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
     sed -i -e "s/_VIRTUAL_ENV_/${VIRTUAL_ENV_ESCAPED}/" "$VIRTUAL_ENV/activate.d/lamachine.sh" || fatalerror "Error modifying environment"
 else
-    printf "$activate" > $VIRTUAL_ENV/bin/activate  
+    printf "$activate" > $VIRTUAL_ENV/bin/activate
     VIRTUAL_ENV_ESCAPED=${VIRTUAL_ENV//\//\\/}
     sed -i -e "s/_VIRTUAL_ENV_/${VIRTUAL_ENV_ESCAPED}/" "$VIRTUAL_ENV/bin/activate" || fatalerror "Error modifying environment"
     printf "${activate_this_py}" > "$VIRTUAL_ENV/bin/activate_this.py"
@@ -781,6 +781,7 @@ else
 fi
 cp virtualenv-bootstrap.sh "$VIRTUAL_ENV/bin/lamachine-update.sh"
 cp test.sh "$VIRTUAL_ENV/bin/lamachine-test.sh"
+cp start-flat.sh "$VIRTUAL_ENV/bin/start-flat.sh"
 if [ ! -z "$VERSIONFILE" ]; then
     source ./loadversionfile.sh
 fi
@@ -800,7 +801,7 @@ if [ -z "$_OLD_VIRTUAL_LD_LIBRARY_PATH" ] ; then
 fi
 case ":$LD_LIBRARY_PATH:" in
       *":$VIRTUAL_ENV/lib:"*) :;; # already there
-      *) export LD_LIBRARY_PATH="$VIRTUAL_ENV/lib:$LD_LIBRARY_PATH";; 
+      *) export LD_LIBRARY_PATH="$VIRTUAL_ENV/lib:$LD_LIBRARY_PATH";;
 esac
 
 if [ -z "$_OLD_VIRTUAL_LD_RUN_PATH" ] ; then
@@ -808,7 +809,7 @@ if [ -z "$_OLD_VIRTUAL_LD_RUN_PATH" ] ; then
 fi
 case ":$LD_RUN_PATH:" in
       *":$VIRTUAL_ENV/lib:"*) :;; # already there
-      *) export LD_RUN_PATH="$VIRTUAL_ENV/lib:$LD_RUN_PATH";; 
+      *) export LD_RUN_PATH="$VIRTUAL_ENV/lib:$LD_RUN_PATH";;
 esac
 
 if [ -z "$_OLD_VIRTUAL_CPATH" ] ; then
@@ -816,7 +817,7 @@ if [ -z "$_OLD_VIRTUAL_CPATH" ] ; then
 fi
 case ":$CPATH:" in
       *":$VIRTUAL_ENV/include:"*) :;; # already there
-      *) export CPATH="$VIRTUAL_ENV/include:$CPATH";; 
+      *) export CPATH="$VIRTUAL_ENV/include:$CPATH";;
 esac
 
 if [ "$FORCE" == "1" ]; then
@@ -830,7 +831,7 @@ fi
 
 
 if [ "$OS" == "mac" ]; then
-    #C++ projects on Mac OS X 
+    #C++ projects on Mac OS X
     PROJECTS="ticcutils libfolia uctodata ucto timbl timblserver mbt mbtserver wopr frogdata frog" #no foliautils on mac yet, not daring to try ticcltools yet
 else
     #C++ projects on normal Linux/BSD systems
@@ -838,7 +839,7 @@ else
 fi
 
 for project in $PROJECTS; do
-    echo 
+    echo
     echo "--------------------------------------------------------"
     echo "Installing/updating $project"
     echo "--------------------------------------------------------"
@@ -877,12 +878,12 @@ for project in $PROJECTS; do
         fi
     else
         echo "$project is up-to-date, no need to recompile ..."
-    fi 
+    fi
     cd ..
 done
 
 
-echo 
+echo
 echo "--------------------------------------------------------------"
 echo "Installing Python dependencies from the Python Package Index"
 echo "--------------------------------------------------------------"
@@ -907,7 +908,7 @@ if [ $NOPYTHONDEPS -eq 0 ]; then
     echo "-------------------------------------------------------------------"
     for project in $PYTHONDEPS; do
         echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
-        pip show $project | grep -e "^Version:" | sed 's/Version: /v/g' >> "$VIRTUAL_ENV/VERSION" 
+        pip show $project | grep -e "^Version:" | sed 's/Version: /v/g' >> "$VIRTUAL_ENV/VERSION"
     done
 else
     echo "Skipping...."
@@ -916,7 +917,7 @@ fi
 PYTHONMAJOR=$(python -c "import sys; print(sys.version_info.major,end='')")
 PYTHONMINOR=$(python -c "import sys; print(sys.version_info.minor,end='')")
 
-echo 
+echo
 
 if [ $DEV -eq 0 ]; then
     #grab everything from PyPI
@@ -950,7 +951,7 @@ if [ ! -z "$PYPIPROJECTS" ]; then
     echo "--------------------------------------------------------"
     for project in $PYPIPROJECTS; do
         echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
-        pip show $project | grep -e "^Version:" | sed 's/Version: /v/g' >> "$VIRTUAL_ENV/VERSION" 
+        pip show $project | grep -e "^Version:" | sed 's/Version: /v/g' >> "$VIRTUAL_ENV/VERSION"
     done
 fi
 
@@ -960,7 +961,7 @@ if [ ! -z "$PYTHONPROJECTS" ]; then
     echo "--------------------------------------------------------"
     for projectpath in $PYTHONPROJECTS; do
         project=`basename $projectpath`
-        echo 
+        echo
         echo "--------------------------------------------------------"
         echo "Installing $project">&2
         echo "--------------------------------------------------------"
@@ -987,7 +988,7 @@ if [ ! -z "$PYTHONPROJECTS" ]; then
                 rm -Rf $VIRTUAL_ENV/lib/python${PYTHONMAJOR}.${PYTHONMINOR}/site-packages/*CLAM*egg
             elif [[ "$project" == "LuigiNLP" ]]; then
                 #workaround for python-daemon issue, first run may fail due to python-daemon setup bug, second run will fix it.
-                python setup.py install --prefix="$VIRTUAL_ENV" 
+                python setup.py install --prefix="$VIRTUAL_ENV"
             fi
             python setup.py install --prefix="$VIRTUAL_ENV" || fatalerror "setup.py install $project failed"
         else
@@ -1011,15 +1012,15 @@ if [ ! -d $project ]; then
     gitcheck
     REPOCHANGED=1
 else
-    cd $project 
-    gitcheck 
+    cd $project
+    gitcheck
 fi
 echo -n "$project" >> "$VIRTUAL_ENV/VERSION"
 outputgitversion
 if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
     python setup.py build_ext --include-dirs="$VIRTUAL_ENV/include" --library-dirs="$VIRTUAL_ENV/lib" install --prefix="$VIRTUAL_ENV" || error "Python-ucto installation failed"
-else 
+else
     echo "Python-ucto is already up to date ... "
 fi
 cd ..
@@ -1124,7 +1125,7 @@ if [ ! -d $project ]; then
     gitcheck
     REPOCHANGED=1
 else
-    cd $project 
+    cd $project
     gitcheck
 fi
 echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
@@ -1142,7 +1143,7 @@ if [ "$OS" != "mac" ]; then
     echo "--------------------------------------------------------"
     pip install -U aspell-python-py3 hunspell
     project="gecco"
-    echo 
+    echo
     echo "--------------------------------------------------------"
     echo "Installing $project">&2
     echo "--------------------------------------------------------"
@@ -1167,7 +1168,9 @@ if [ "$OS" != "mac" ]; then
  fi
 fi
 
-. LaMachine/extra.sh $@ 
+. LaMachine/setup-flat.sh
+
+. LaMachine/extra.sh $@
 
 echo "--------------------------------------------------------"
 echo "Outputting version information of all installed packages"

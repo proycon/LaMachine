@@ -13,7 +13,7 @@
 #NOTE: Do not run this script directly!
 
 echo "====================================================================="
-echo "           ,              LaMachine - NLP Software distribution" 
+echo "           ,              LaMachine - NLP Software distribution"
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
 echo "            /| |\         & Centre of Language and Speech Technology"
@@ -46,7 +46,7 @@ gitstash () {
         read -r yn
         if [[ "$yn" == "y" ]]; then
             git stash
-        else 
+        else
             exit 8
         fi
 }
@@ -61,7 +61,7 @@ outputgitversion () {
 gitcheckmaster() {
     git checkout master
     if [ $? -ne 0 ]; then
-        gitstash 
+        gitstash
         git checkout master
     fi
     git remote update
@@ -107,7 +107,7 @@ gitcheck () {
             if [[ "${ver:0:1}" == "v" ]] || [[ $ver == *"."* ]]; then
                 git checkout "tags/$ver" #will put us in detached head state
                 if [ $? -ne 0 ]; then
-                    gitstash 
+                    gitstash
                     git checkout "tags/$ver"
                     if [ $? -ne 0 ]; then
                         echo "   Unable to check out desired version, expected git tag $ver does not exist!"
@@ -118,7 +118,7 @@ gitcheck () {
                 #assuming this is a commit hash instead of a version
                 git checkout "$ver" #will put us in detached head state
             fi
-            echo "$ver" > .version.lamachine 
+            echo "$ver" > .version.lamachine
             REPOCHANGED=1
         fi
     else
@@ -137,10 +137,10 @@ gitcheck () {
                     echo "   Upgrading from $CURRENTVERSION to latest stable release $LATESTVERSION ..."
                     git checkout "tags/$LATESTVERSION" #will put us in detached head state
                     if [ $? -ne 0 ]; then
-                        gitstash 
+                        gitstash
                         git checkout "tags/$LATESTVERSION"
                     fi
-                    echo "$LATESTVERSION" > .version.lamachine 
+                    echo "$LATESTVERSION" > .version.lamachine
                     REPOCHANGED=1
                 fi
             else
@@ -309,7 +309,7 @@ if [ $PRIVATE -eq 0 ]; then
 fi
 
 
-useradd build 
+useradd build
 
 chgrp build /usr/src
 chmod g+ws /usr/src
@@ -333,7 +333,7 @@ else
         echo "LaMachine has been updated with a newer version, restarting..."
         echo "----------------------------------------------------------------"
         sleep 3
-        ./bootstrap.sh $@ 
+        ./bootstrap.sh $@
         exit $?
     else
         echo "LaMachine is up to date..."
@@ -414,7 +414,7 @@ for package in $PACKAGES; do
                 continue
             fi
         fi
-    fi 
+    fi
     echo "--------------------------------------------------------"
     echo "[LaMachine] Installing $project ..."
     echo "--------------------------------------------------------"
@@ -455,7 +455,7 @@ if [ ! -z "$PYPIPROJECTS" ]; then
     echo "--------------------------------------------------------"
     for project in $PYPIPROJECTS; do
         echo -n "$project=" >> "/VERSION"
-        pip show $project | grep -e "^Version:" | sed 's/Version: /v/g' >> "/VERSION" 
+        pip show $project | grep -e "^Version:" | sed 's/Version: /v/g' >> "/VERSION"
     done
 fi
 
@@ -466,7 +466,7 @@ project="clamservices"
 if [ ! -d $project ]; then
     git clone https://github.com/proycon/$project
     chmod a+rx $project
-    cd $project 
+    cd $project
     gitcheck
 else
     cd $project
@@ -481,11 +481,25 @@ if [ $REPOCHANGED -eq 1 ]; then
 fi
 cd ..
 
-CLAMSERVICEDIR=`python -c 'import clamservices; print(clam.__path__[0])'`
+export CLAMSERVICEDIR=`python -c 'import clamservices; print(clamservices.__path__[0])'`
 if [ ! -z "$CLAMSERVICEDIR" ]; then
-    ln -s $CLAMSERVICEDIR _clamservices #referenced from startwebservices.sh
+    ln -sf $CLAMSERVICEDIR _clamservices #referenced from startwebservices.sh / nginx.conf
 fi
 
+export CLAMDIR=`python -c 'import clam; print(clam.__path__[0])'`
+if [ ! -z "$CLAMDIR" ]; then
+    ln -sf $CLAMDIR _clam #referenced from startwebservices.sh / nginx.conf
+fi
+
+export DJANGODIR=`python -c 'import django; print(django.__path__[0])'`
+if [ ! -z "$DJANGODIR" ]; then
+    ln -sf $DJANGODIR _django #referenced from startwebservices.sh / nginx.conf
+fi
+
+export FLATDIR=`python -c 'import django; print(django.__path__[0])'`
+if [ ! -z "$FLATDIR" ]; then
+    ln -sf $FLATDIR _flat #referenced from startwebservices.sh / nginx.conf
+fi
 
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing Gecco dependencies (3rd party)"
@@ -500,7 +514,7 @@ project="gecco"
 if [ ! -d $project ]; then
     git clone https://github.com/proycon/$project
     chmod a+rx $project
-    cd $project 
+    cd $project
     gitcheck
 else
     cd $project
@@ -519,7 +533,7 @@ project="LuigiNLP"
 if [ ! -d $project ]; then
     git clone https://github.com/LanguageMachines/$project
     chmod a+rx $project
-    cd $project 
+    cd $project
     gitcheck
 else
     cd $project
@@ -532,8 +546,10 @@ if [ $REPOCHANGED -eq 1 ]; then
 fi
 cd ..
 
+. LaMachine/setup-flat.sh
+
 cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
-. LaMachine/extra.sh $@ 
+. LaMachine/extra.sh $@
 
 echo "--------------------------------------------------------"
 echo "Outputting version information of all installed packages"
