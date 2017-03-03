@@ -22,10 +22,10 @@ username = '$USER'
 password = '$PASS'
 email = '$MAIL'
 
-if User.objects.filter(username=username).count()==0:
+if User.objects.filter(username=username).count() == 0:
     User.objects.create_superuser(username, email, password)
     print('Superuser created.')
 else:
     print('Superuser creation skipped.')
 "
-printf "$script" | django-admin shell
+printf "$script" | django-admin shell -i python
