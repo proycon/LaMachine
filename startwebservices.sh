@@ -17,6 +17,7 @@ pkill -9 foliadocserve
 cd #change path so the log file can be written
 foliadocserve -d /var/flat.docroot --git --expirationtime 120 -p 3030 &
 cd -
+export PYTHONPATH=/usr/src/LaMachine
 uwsgi --plugins python --socket :3035 --chdir /usr/src/LaMachine --mount /flat=/usr/src/LaMachine/flat.wsgi  --manage-script-name --master --processes 1 --threads 2 &
 
 if [ -d /vagrant ]; then
