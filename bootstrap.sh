@@ -546,9 +546,10 @@ if [ $REPOCHANGED -eq 1 ]; then
 fi
 cd ..
 
+cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
+
 . LaMachine/setup-flat.sh
 
-cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
 . LaMachine/extra.sh $@
 
 echo "--------------------------------------------------------"
