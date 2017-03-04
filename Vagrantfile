@@ -25,8 +25,9 @@ Vagrant.configure(2) do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  config.vm.network "forwarded_port", guest: 80, host: 8080
-  config.vm.network "forwarded_port", guest: 8888, host: 8888
+  config.vm.network "forwarded_port", guest: 80, host: 8080 #clam services and main landing page (nginx)
+  config.vm.network "forwarded_port", guest: 8081, host: 8081 #flat (nginx)
+  config.vm.network "forwarded_port", guest: 8888, host: 8888 #reserved for user defined applications such as jypiter notebooks
   config.vm.network "forwarded_port", guest: 3030, host: 3030 #foliadocserve
 
   # Create a private network, which allows host-only access to the machine
@@ -50,7 +51,7 @@ Vagrant.configure(2) do |config|
   #
   config.vm.provider "virtualbox" do |vb|
      # Customize the amount of memory on the VM:
-     vb.memory = "3072"
+     vb.memory = "3072" #you will want to increase the memory limit for many applications!!
      vb.cpus = 2
      vb.customize ["modifyvm", :id, "--nictype1", "Am79C973"]
   end
