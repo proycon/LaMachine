@@ -8,6 +8,11 @@ echo "--------------------------------------------------------------"
 export PYTHONPATH=$(pwd)/LaMachine
 export DJANGO_SETTINGS_MODULE=flat_settings
 
+if [ -z "$VIRTUAL_ENV" ]; then
+    mkdir /var/flat.docroot
+    chmod a+rwx /var/flat.docroot
+fi
+
 django-admin makemigrations
 django-admin migrate --run-syncdb
 

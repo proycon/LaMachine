@@ -4,6 +4,8 @@ Description=LaMachine Webservices
 [Service]
 ExecStart=/usr/src/LaMachine/startwebservices.sh
 ExecStop=killall -s 9 uwsgi
+User=vagrant
+Group=vagrant
 
 [Install]
 WantedBy=multi-user.target
