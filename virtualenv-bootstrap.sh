@@ -340,7 +340,7 @@ echo "Detected distribution release: $DISTRIB_RELEASE"
 
 
 #################################################################
-#           Global package installation (distribition-specific)
+#           Global package installation (distribution-specific)
 #################################################################
 NONINTERACTIVEFLAG=""
 if [ "$NOADMIN" == "0" ]; then
@@ -882,10 +882,14 @@ for project in $PROJECTS; do
 done
 
 
-echo 
+echo
 echo "--------------------------------------------------------------"
 echo "Installing Python dependencies from the Python Package Index"
 echo "--------------------------------------------------------------"
+# upgrade pip itself and setuptools in the virtualenv
+python -m pip install --upgrade pip
+pip install --upgrade setuptools
+
 if [ $NOPYTHONDEPS -eq 0 ]; then
     PYTHONDEPS="cython numpy ipython scipy matplotlib lxml scikit-learn django pycrypto pandas textblob nltk psutil flask requests requests_toolbelt requests_oauthlib"
     if [ -z "$VERSIONFILE" ]; then
