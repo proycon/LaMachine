@@ -34,3 +34,7 @@ else:
     print('Superuser creation skipped.')
 "
 printf "$script" | django-admin shell -i python
+
+if [ -d /vagrant ]; then
+    chown vagrant /var/db/flat.db
+fi
