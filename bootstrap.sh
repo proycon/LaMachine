@@ -496,7 +496,7 @@ if [ ! -z "$DJANGODIR" ]; then
     ln -sf $DJANGODIR _django #referenced from startwebservices.sh / nginx.conf
 fi
 
-export FLATDIR=`python -c 'import django; print(django.__path__[0])'`
+export FLATDIR=`python -c 'import flat; print(flat.__path__[0])'`
 if [ ! -z "$FLATDIR" ]; then
     ln -sf $FLATDIR _flat #referenced from startwebservices.sh / nginx.conf
 fi
