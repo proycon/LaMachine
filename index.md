@@ -12,7 +12,7 @@ What is LaMachine?
 
 LaMachine is a software distribution of NLP software developed by the Language
 Machines research group and CLST (Radboud University Nijmegen), as well as TiCC
-(Tilburg University). 
+(Tilburg University).
 
 Our software is highly specialised and generally depends on a lot of other
 software. Installing all this software can be a daunting task, compiling it
@@ -22,7 +22,7 @@ for all platforms, or they may be out of date. LaMachine ensures you can always
 use all of our software at the very latest stable versions by bundling
 them all and offering them in three distinct forms:
 
- * As a **Virtual Machine** - Easiest, allows you to run our software on any host OS. 
+ * As a **Virtual Machine** - Easiest, allows you to run our software on any host OS.
  * As a **Docker application**
  * As a compilation/installation script in a **virtual environment**
 
@@ -50,13 +50,13 @@ Pre-installed software
   memory-efficient way. At the core is the tool colibri-patternmodeller which
   allows you to build, view, manipulate and query pattern models.
 - *C++ libraries* - [ticcutils](http://ilk.uvt.nl/ticcutils), [libfolia](http://proycon.github.io/folia)
-- *Python bindings* - [python-ucto](https://github.com/proycon/python-ucto), [python-frog](https://github.com/proycon/python-frog), [python-timbl](https://github.com/proycon/python-timbl) 
-- [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices 
+- *Python bindings* - [python-ucto](https://github.com/proycon/python-ucto), [python-frog](https://github.com/proycon/python-frog), [python-timbl](https://github.com/proycon/python-timbl)
+- [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices
 - [Gecco](https://github.com/proycon/gecco) - Generic Environment for Context-Aware Correction of Orthography
 
 Optional additional software:
-- [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction. 
-- [Valkuil](https://github.com/proycon/valkuil-gecco) - A context-aware spelling corrector for Dutch 
+- [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction.
+- [Valkuil](https://github.com/proycon/valkuil-gecco) - A context-aware spelling corrector for Dutch
 
 Both the VM image as well as the docker image are based on Arch Linux.
 
@@ -112,12 +112,12 @@ everything. All sources are pulled from git and compiled for you.
 
 1. **Clone this repository** in a temporary location (it will only be needed once) and then navigate to this directory in the terminal: ``$ cd /tmp && git clone https://github.com/proycon/LaMachine``  (or [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) manually from github and extract it).
 2. In a terminal, **navigate to the directory** where you want to install
-   LaMachine, for instance your home directory:  ``$ cd ~``. 
+   LaMachine, for instance your home directory:  ``$ cd ~``.
    A ``lamachine/`` directory that contains everything will be automatically created in the next step.
    (Advanced users can also pre-create and activate an existing virtual environment that LaMachine will then reuse.)
 3. **Bootstrap the virtual environment** by calling: ``/tmp/LaMachine/virtualenv-bootstrap.sh``
 
-Note that you will always have to activate your virtual environment with 
+Note that you will always have to activate your virtual environment with
 ``. lamachine/bin/activate`` (*don't forget the dot!*) if you open a new terminal.
 This also requires you use bash or zsh. To facilitate activation, we recommend
 you add an alias ``alias lm=". /path/to/lamachine/bin/activate"`` in your
@@ -128,7 +128,7 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
  * ``noadmin`` - Do not attempt to install global dependencies (but if they are missing, compilation will fail)
  * ``nopythondeps`` - Do not update 3rd party Python dependencies (such as numpy and scipy), may save time.
  * ``force`` - Force recompilation of everything, even if it's not updated
- * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine. 
+ * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine.
  * ``python2`` - Use python 2.7 instead of Python 3 *(note that some software may be not be available for Python 2!)*
  * ``stable`` - Use stable releases  *(this is the new default since February 2016)*
  * ``dev`` - Use cutting-edge development versions *(this may sometimes breaks things)*
@@ -159,11 +159,11 @@ Updating & Extra Software
 =============================
 
 Once you have a LaMachine running in whatever form, just run ``lamachine-update.sh`` to update
-everything again. 
+everything again.
 
 The ``lamachine-update.sh`` script is also used to install additional *optional* software, pass the optional software as a parameter:
 
- * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine. 
+ * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine.
  * ``valkuil`` - Valkuil Spelling Corrector (for Dutch)
 
 Note that for the docker version, you can pull a new docker image using ``docker pull proycon/lamachine`` instead. If you do use ``lamachine-update.sh`` with docker, you most likely will want to ``docker commit`` your container afterwards to preserve the update!
@@ -177,7 +177,7 @@ Privacy
 
 Unless you explicitly opt-out, LaMachine send a few details to us regarding
 your installation of LaMachine whenever you install or update it. This is to
-help us keep track of its usage and improve it. 
+help us keep track of its usage and improve it.
 
 The following information is sent:
 * The form in which you run LaMachine (vagrant/virtualenv/docker)
@@ -195,7 +195,7 @@ To opt-out of this behaviour, For the ``virtualenv-boostrap.sh`` and
 ``lamachine-update.sh`` scripts, add the parameter ``private``. For the VM
 method, prior to building the VM, edit ``Vagrantfile`` and add the ``private``
 parameter after ``bootstrap.sh``. Due to the nature of Docker, installation of
-Docker images are not tracked by us (but may be by Docker itself). 
+Docker images are not tracked by us (but may be by Docker itself).
 
 LaMachine downloads software from a number of external sources, depending on the form you choose,
 which may or may not collect your IP:
@@ -240,7 +240,7 @@ service individually using CLAM's built-in development server:
  * ``clamservice start clam.config.colibricore``
 
 Each webservice will advertise on what port it has been launched and how to
-access it. 
+access it.
 
 Note that there is no authentication enabled on the webservices, so do not
 expose them to the world!
@@ -275,7 +275,10 @@ copying the newer global version of the Python interpreter into your virtual
 environment as follows: ``cp /usr/bin/python3.4 $VIRTUAL_ENV/bin/python3``.
 Then run ``lamachine-update.sh`` again.
 
-
+On some older version you may run into a syntax error error similar to the following when running ``lamachine-update.sh``:
+ ``/home/proycon/lamachine/bin/lamachine-update.sh: line 775: syntax error near unexpected token `fi'``
+ ``/home/proycon/lamachine/bin/lamachine-update.sh: line 775: `fi'``
+In this case, simply run ``lamachine-update.sh`` again and the problem will correct itself.
 </section>
 
 <a href="http://applejack.science.ru.nl/languagemachines" style="display: block"><img src="http://applejack.science.ru.nl/lamabadge.php/LaMachine" alt="badge" /></a>
