@@ -54,6 +54,8 @@ Pre-installed software
 - [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices
 - [Gecco](https://github.com/proycon/gecco) - Generic Environment for Context-Aware Correction of Orthography
 - [Toad](https://github.com/LanguageMachines/toad) - Trainer Of All Data, training tools for Frog
+- [foliadocserve](https://github.com/proycon/foliadocserve) - FoLiA Document Server
+- [FLAT](https://github.com/proycon/flat) - FoLiA Linguistic Annotation Tool
 
 Optional additional software:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction.
