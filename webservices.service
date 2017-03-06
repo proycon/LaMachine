@@ -2,6 +2,7 @@
 Description=LaMachine Webservices
 
 [Service]
+Type=forking
 ExecStart=/usr/src/LaMachine/startwebservices.sh
 ExecStop=killall -s 9 uwsgi
 User=vagrant
