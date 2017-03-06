@@ -273,6 +273,7 @@ echo "[LaMachine] Installing global dependencies"
 echo "--------------------------------------------------------"
 #will run as root
 echo "Conflict prevention..."
+mkinitcpio -p linux
 pacman --noconfirm -R virtualbox-guest-dkms
 pacman --noconfirm -Sy archlinux-keyring
 echo "Installing base-devel...."
@@ -281,6 +282,7 @@ PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs cyth
 #poppler provides pdfimages
 echo "Installing global packages: $PKGS"
 pacman --noconfirm --needed -Syu $PKGS ||  fatalerror "Unable to install global dependencies"
+mkinitcpio -p linux
 
 if [ $PRIVATE -eq 0 ]; then
     #Sending some statistics to us so we know how often and on what systems LaMachine is used
