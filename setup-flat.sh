@@ -17,7 +17,7 @@ django-admin makemigrations
 django-admin migrate --run-syncdb
 
 #create superuser automatically if it does not exist already
-script="
+echo -n "
 from django.contrib.auth.models import User
 
 username = 'flat'
@@ -29,8 +29,7 @@ if User.objects.filter(username=username).count() == 0:
     print('Superuser created.')
 else:
     print('Superuser creation skipped.')
-"
-printf "$script" | django-admin shell -i python
+" | django-admin shell -i python
 
 if [ -d /vagrant ]; then
     chgrp vagrant /var/db
