@@ -36,5 +36,7 @@ else:
 printf "$script" | django-admin shell -i python
 
 if [ -d /vagrant ]; then
+    chodn vagrant /var/db
+    chmod g+w /var/db
     chown vagrant /var/db/flat.db
 fi
