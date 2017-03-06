@@ -266,7 +266,7 @@ ADMINS = ( #Change to your contact details
 # (Use for instance http://www.miniwebtool.com/django-secret-key-generator/)
 SECRET_KEY = 'ki5^nfv02@1f1(+*#l_9GDi9h&cf^_lv6bs4j9^6mpr&(%o4zk'
 
-DEBUG = 'VIRTUAL_ENV' in environ #Set to False for production environments!!!!
+DEBUG = True #Set to False for production environments!!!!
 
 
 
