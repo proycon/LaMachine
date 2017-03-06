@@ -53,10 +53,12 @@ Pre-installed software
 - *Python bindings* - [python-ucto](https://github.com/proycon/python-ucto), [python-frog](https://github.com/proycon/python-frog), [python-timbl](https://github.com/proycon/python-timbl)
 - [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices
 - [Gecco](https://github.com/proycon/gecco) - Generic Environment for Context-Aware Correction of Orthography
+- [Toad](https://github.com/LanguageMachines/toad) - Trainer Of All Data, training tools for Frog
 
 Optional additional software:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction.
 - [Valkuil](https://github.com/proycon/valkuil-gecco) - A context-aware spelling corrector for Dutch
+- [TICCL](https://github.com/martinreynaert/TICCL) - A spelling correction and OCR post-correction system
 
 Both the VM image as well as the docker image are based on Arch Linux.
 
@@ -80,6 +82,19 @@ available to the VM (2 CPUs and 3GB RAM by default).
 
 On most Linux distributions, steps one and two may be combined with a simple command such as
 ``sudo apt-get install virtualbox vagrant`` on Ubuntu, or ``sudo pacman -Syu virtualbox vagrant`` on Arch Linux.
+
+Entering your LaMachine Virtual Machine as per step 5 should be password-less,
+other methods may require a login; use username ``vagrant`` and password
+``vagrant``.  The root password is also ``vagrant``.
+
+Various webservices in the Virtual Machine will be automatically accessible through https://127.0.0.1:8080 .
+
+Note that LaMachine by default is running on a 64-bit architecture, if you have
+a 32-bit host OS and really want to run LaMachine despite likely memory shortage;
+checkout the ``32bit`` branch after step 3 and before step 4 by issuing the
+following command: ``git checkout 32bit``.
+
+Make sure to also read our privacy section below.
 
 </section>
 
@@ -132,14 +147,16 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
  * ``python2`` - Use python 2.7 instead of Python 3 *(note that some software may be not be available for Python 2!)*
  * ``stable`` - Use stable releases  *(this is the new default since February 2016)*
  * ``dev`` - Use cutting-edge development versions *(this may sometimes breaks things)*
+ * ``version=`` - Use the specified version file *(see the versioning section below)*
  * ``private`` - Do not send information to us regarding your LaMachine installation *(see the privacy section below)*
- * ``shareinfo`` - Send information to us regarding your LaMachine installation *(default, see privacy section below)*
+ * ``branch=`` - Use the specified git branch of LaMachine *(default: master)*
 
 Tested to work on:
 
  * Arch Linux
  * Debian 8
  * Fedora Core 21
+ * Ubuntu 16.04 LTS - Xenial Xerus
  * Ubuntu 15.10 - Wily Werewolf
  * Ubuntu 15.04 - Vivid Vervet
  * Ubuntu 14.04 LTS - Trusty Tahr
@@ -147,7 +164,8 @@ Tested to work on:
 
 Partially works on:
 
- * Mac OS X Yosemite/El Capitan  *(wopr does not work yet, optional software valkuil and tscan are not supported)*
+ * Mac OS X Yosemite/El Capitan  *(wopr does not work yet, python-frog breaks, gecco and toad are not available; optional software valkuil and tscan are not supported)*
+ * Ubuntu 12.04 LTS - Precise Pangolin  *(provided you first manually upgrade to Python 3.3 or above! python-timbl may fail)*
 
 
 
@@ -165,6 +183,7 @@ The ``lamachine-update.sh`` script is also used to install additional *optional*
 
  * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine.
  * ``valkuil`` - Valkuil Spelling Corrector (for Dutch)
+ * ``ticcl`` - Text-induced Corpus Clean-up: a spelling correction and OCR post-correction system  (the TICCL root directory will be in ``src/TICCL`` in your LaMachine environment)
 
 Note that for the docker version, you can pull a new docker image using ``docker pull proycon/lamachine`` instead. If you do use ``lamachine-update.sh`` with docker, you most likely will want to ``docker commit`` your container afterwards to preserve the update!
 </section>
@@ -206,17 +225,47 @@ which may or may not collect your IP:
  * [Docker](https://docker.io)
 </section>
 
+
 {::options parse_block_html="true" /}
 <section>
-CLAM Webservices
+Versioning
+============
+
+LaMachine outputs a ``VERSION`` file for each installation or upgrade. The
+version file contains the exact version numbers of all software installed.  You
+can find this file in either in your virtual environment directory or in the
+root directory (Vagrant/Docker).
+
+You can use the VERSION file to bootstrap LaMachine with specific versions. For
+the virtual environment form of LaMachine, add the argument
+``version=/path/to/your/VERSIONfile`` when running ``virtualenv-bootstrap.sh``.
+For the Vagrant form, substitute the dummy ``VERSION`` file with one of your
+own and adapt ``Vagrantfile`` according to the instructions prior to running
+``vagrant up``. For Docker, you'll have to adapt ``Dockerfile`` and build the
+image locally, or rely on an earlier published build.
+
+This versioning is intended to facilitate scientific reproducibility and
+deployment of production environments. The caveat to always keep in mind is
+that the versions you run may be outdated and not have any of the latest
+improvements/fixes applied.
+
+Note that only our own software and certain Python dependencies are subject to
+this versioning scheme, generic system packages and libraries will always be at
+their latest versions.
+</section>
+
+{::options parse_block_html="true" /}
+<section>
+Webservices
 ==================
 
-LaMachine comes with several CLAM webservices ready out of the box. These are
-RESTful webservices, but also offer a web-interface for human end-users.  You
-will need to explicitly start them before being able to make use of them.
+LaMachine comes with several webservices ready out of the box (source:
+https://github.com/proycon/clamservices). These are RESTful webservices served
+using CLAM, but also offer a web-interface for human end-users.
 
-For the LaMachine VM or Docker App, this is done using the following command
-*from within* the container/VM:
+In the Virtual Machine variant of LaMachine, these are running and available out-of-the
+box. In the docker variant, you will need to explicitly start the services
+first, this is done using the following command *from within* the container:
 
 ``sudo /usr/src/LaMachine/startwebservices.sh``
 
@@ -230,6 +279,8 @@ Webservices are currently available for the following software:
  * Frog
  * timbl
  * Colibri Core
+ * FoLiA Document Server
+ * FLAT: FoLiA Linguistic Annotation Tool
 
 For the LaMachine Virtual Environment, however, you have to start and access each
 service individually using CLAM's built-in development server:
@@ -239,11 +290,14 @@ service individually using CLAM's built-in development server:
  * ``clamservice start clam.config.timbl``
  * ``clamservice start clam.config.colibricore``
 
-Each webservice will advertise on what port it has been launched and how to
+For FLAT in the virtual environment, run the following:
+ * ``start-flat.sh``
+
+Each webservice/webapplication will itself advertise on what port it has been launched and how to
 access it.
 
-Note that there is no authentication enabled on the webservices, so do not
-expose them to the world!
+Note that there is no or poor authentication enabled on the webservices, so do not
+expose them to the outside world!
 </section>
 
 {::options parse_block_html="true" /}
@@ -257,12 +311,12 @@ our software using the proper package manager, provided we have packages
 available:
 
  * Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
- * Debian Linux (packages are mostly out of date) -- Some of our packages are included in the ``science-linguistics`` meta-package, they are however fairly out of date for the moment: ``sudo apt-get install science-linguistics`` , [package state](https://qa.debian.org/developer.php?login=ko.vandersloot@uvt.nl)
- * Ubuntu Linux (packages are currently out of date)
+ * Debian Linux (up to date for Debian 9 [stretch] or later only) -- ``sudo apt-get install science-linguistics``. Consult the [package state](https://qa.debian.org/developer.php?login=proycon@anaproy.nl).
+ * Ubuntu Linux (packages are currently out of date until Ubuntu 17.04 Zesty Zapus)
  * Mac OS X (homebrew), missing most sofware (most notably Frog, Colibri Core, and Python bindings)
  * CentOS/Fedora (packages are outdated completely, do not use)
 
-The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself.
+The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself, which can be a tedious endeavour.
 
 Troubleshooting
 ====================
