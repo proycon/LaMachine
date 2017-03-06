@@ -17,15 +17,12 @@ django-admin makemigrations
 django-admin migrate --run-syncdb
 
 #create superuser automatically if it does not exist already
-USER="flat"
-PASS="flat"
-MAIL="flat@localhost"
 script="
 from django.contrib.auth.models import User
 
-username = '$USER'
-password = '$PASS'
-email = '$MAIL'
+username = 'flat'
+password = 'flat'
+email = 'flat@localhost'
 
 if User.objects.filter(username=username).count() == 0:
     User.objects.create_superuser(username, email, password)
