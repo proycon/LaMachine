@@ -2,9 +2,9 @@
 
 #This script should be launched only from within the LaMachine VM or Docker app
 if [ ! -z "$1" ]; then
-    URL=$1
+    BASEURL=$1
 else
-    URL="http://127.0.0.1:8080"
+    BASEURL="http://127.0.0.1:8080"
 fi
 
 
