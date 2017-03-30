@@ -317,6 +317,7 @@ available. Our sofware release procedure and channels are visualised below:
 
 ![Sofware release scheme](https://raw.githubusercontent.com/proycon/LaMachine/master/softwarereleasescheme.png)
 
+
 Details:
 
  * Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
