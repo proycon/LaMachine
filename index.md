@@ -141,6 +141,8 @@ you add an alias ``alias lm=". /path/to/lamachine/bin/activate"`` in your
 You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and ``lamachine-update.sh``):
 
  * ``noadmin`` - Do not attempt to install global dependencies (but if they are missing, compilation will fail)
+ * ``adminonly`` - Only install global dependencies, do not actually set up the virtual environment. Requires a user
+   with sudo rights. Allows for seperation of the bootstrap process for privileged and non-privileged user.
  * ``nopythondeps`` - Do not update 3rd party Python dependencies (such as numpy and scipy), may save time.
  * ``force`` - Force recompilation of everything, even if it's not updated
  * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine.
@@ -156,6 +158,7 @@ Tested to work on:
  * Arch Linux
  * Debian 8
  * Fedora Core 21
+ * CentOS 7
  * Ubuntu 16.04 LTS - Xenial Xerus
  * Ubuntu 15.10 - Wily Werewolf
  * Ubuntu 15.04 - Vivid Vervet
