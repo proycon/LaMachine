@@ -398,9 +398,9 @@ if [ "$NOADMIN" == "0" ]; then
             echo "------------------------------------------------------------------------------"
             echo " (this step, and the next one, requires sudo access and will prompt for your password)"
             sudo yum $NONINTERACTIVEFLAG install epel-release || fatalerror "Unable to install EPEL repository!"  #EPEL repositories are required on CentOS
-            DISTRIBPACKAGES="python34 python34-devel python34-virtualenv python34-pip icu-devel" #may break eventually when newer packages hit the repos, for now 3.4 is latest even though Python 3.6 is out already
+            DISTRIBPACKAGES="python34 python34-devel python34-virtualenv python34-pip libicu-devel" #may break eventually when newer packages hit the repos, for now 3.4 is latest even though Python 3.6 is out already
         else
-            DISTRIBPACKAGES="python3 python3-devel python3-pip python3-virtualenv libicu-devel"
+            DISTRIBPACKAGES="python3 python3-devel python3-pip python3-virtualenv icu-devel"
         fi
         INSTALL="sudo yum $NONINTERACTIVEFLAG install pkgconfig git icu libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python3 python3-devel zlib zlib-devel bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel perl perl-Sort-Naturally tesseract poppler $DISTRIBPACKAGES"
         if [ "$PYTHON" == "python2" ]; then
