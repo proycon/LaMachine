@@ -452,12 +452,23 @@ if [ "$NOADMIN" == "0" ]; then
 
     if [ "$OS" == "redhat" ]; then
         if [ ! -f /usr/bin/virtualenv ]; then
-            ls /usr/bin/virtualenv*
             echo "Linking /usr/bin/virtualenv to version-specific virtualenv, this is done globally on the host system!!! (requires root)"
+            ls /usr/bin/virtualenv*
             if [ $? -eq 0 ]; then
                 sudo ln -s /usr/bin/virtualenv* /usr/bin/virtualenv
             else
                error "Distribution-provided virtualenv not found!"
+            fi
+        fi
+
+        #gecco needs hunspell but this is provided under a version-dependent name on CentOS/RHEL (see https://github.com/blatinier/pyhunspell/issues/25)
+        if [ ! -f /usr/lib64/libhunspell.so ]; then
+            echo "Linking /usr/lib64/libhunspell.so to version-specific variant, this is done globally on the host system!!! (requires root)"
+            ls /usr/lib64/libhunspell-?.?.so
+            if [ $? -eq 0 ]; then
+                sudo ln -s /usr/lib64/libhunspell-?.?.so /usr/lib64/libhunspell.so
+            else
+                error "Linking libhunspell failed, this module will not be available for gecco"
             fi
         fi
     fi
