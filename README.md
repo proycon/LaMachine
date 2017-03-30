@@ -133,6 +133,7 @@ Tested to work on:
 
  * Arch Linux
  * Debian 8
+ * Debian 9
  * Fedora Core 21
  * CentOS 7
  * Ubuntu 16.04 - Xenial Xerus
