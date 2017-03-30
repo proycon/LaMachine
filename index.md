@@ -54,6 +54,8 @@ Pre-installed software
 - [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices
 - [Gecco](https://github.com/proycon/gecco) - Generic Environment for Context-Aware Correction of Orthography
 - [Toad](https://github.com/LanguageMachines/toad) - Trainer Of All Data, training tools for Frog
+- [foliadocserve](https://github.com/proycon/foliadocserve) - FoLiA Document Server
+- [FLAT](https://github.com/proycon/flat) - FoLiA Linguistic Annotation Tool
 
 Optional additional software:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction.
@@ -332,7 +334,10 @@ copying the newer global version of the Python interpreter into your virtual
 environment as follows: ``cp /usr/bin/python3.4 $VIRTUAL_ENV/bin/python3``.
 Then run ``lamachine-update.sh`` again.
 
-
+On some older version you may run into a syntax error error similar to the following when running ``lamachine-update.sh``:
+ ``/home/proycon/lamachine/bin/lamachine-update.sh: line 775: syntax error near unexpected token `fi'``
+ ``/home/proycon/lamachine/bin/lamachine-update.sh: line 775: `fi'``
+In this case, simply run ``lamachine-update.sh`` again and the problem will correct itself.
 </section>
 
 <a href="http://applejack.science.ru.nl/languagemachines" style="display: block"><img src="http://applejack.science.ru.nl/lamabadge.php/LaMachine" alt="badge" /></a>
