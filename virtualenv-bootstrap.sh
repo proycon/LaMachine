@@ -452,8 +452,13 @@ if [ "$NOADMIN" == "0" ]; then
 
     if [ "$OS" == "redhat" ]; then
         if [ ! -f /usr/bin/virtualenv ]; then
+            ls /usr/bin/virtualenv*
             echo "Linking /usr/bin/virtualenv to version-specific virtualenv, this is done globally on the host system!!! (requires root)"
-            sudo ln -s /usr/bin/virtualenv* /usr/bin/virtualenv
+            if [ $? -eq 0 ]; then
+                sudo ln -s /usr/bin/virtualenv* /usr/bin/virtualenv
+            else
+               error "Distribution-provided virtualenv not found!"
+            fi
         fi
     fi
 
@@ -480,7 +485,7 @@ if [ -z "$VIRTUAL_ENV" ]; then
                 fi
             fi
         fi
-        echo "Attempting to install virtualenv"
+        echo "Attempting to install virtualenv from pip"
         $PIP install virtualenv
         if [ "$?" != "0" ]; then
             echo "Retrying as root:"
