@@ -391,7 +391,18 @@ if [ "$NOADMIN" == "0" ]; then
         if [ $NONINTERACTIVE -eq 1 ]; then
             NONINTERACTIVEFLAG="-y"
         fi
-        INSTALL="sudo yum $NONINTERACTIVEFLAG install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python3 python3-devel zlib zlib-devel python3-virtualenv python3-pip bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel perl perl-Sort-Naturally tesseract poppler"
+        if [ "$DISTRIB_ID" == "centos" ]; then
+            echo
+            echo "------------------------------------------------------------------------------"
+            echo "Adding EPEL Repositories for CentOS (See https://fedoraproject.org/wiki/EPEL)"
+            echo "------------------------------------------------------------------------------"
+            echo " (this step, and the next one, requires sudo access and will prompt for your password)"
+            sudo yum $NONINTERACTIVEFLAG install epel-release || fatalerror "Unable to install EPEL repository!"  #EPEL repositories are required on CentOS
+            PYTHONPACKAGES="python34 python34-devel python34-virtualenv python34-pip" #may break eventually when newer packages hit the repos, for now 3.4 is latest even though Python 3.6 is out already
+        else
+            PYTHONPACKAGES="python3 python3-devel python3-pip python3-virtualenv"
+        fi
+        INSTALL="sudo yum $NONINTERACTIVEFLAG install pkgconfig git icu icu-devel libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python3 python3-devel zlib zlib-devel bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel perl perl-Sort-Naturally tesseract poppler $PYTHONPACKAGES"
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python python-devel python-pip"
         fi
@@ -426,7 +437,7 @@ if [ "$NOADMIN" == "0" ]; then
         echo "-------------------------------"
         echo "Updating global dependencies "
         echo "-------------------------------"
-        echo " (this step, and only this step, may require root access, skip it with CTRL-C if you do not have it)"
+        echo " (this step, and only this step, may require root access, skip it with CTRL-C or run the bootstrap/update script with the 'noadmin' parameter if you do not have it)"
         echo "Command: $INSTALL"
         if [ "$OS" == "debian" ]; then
             sudo apt-get update
