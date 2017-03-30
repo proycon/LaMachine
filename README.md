@@ -270,7 +270,11 @@ Alternatives
 If you have no need for a VM or a self-contained environment, and you have
 proper administrative access to the system, then it may be possible to install
 our software using the proper package manager, provided we have packages
-available:
+available. Our sofware release procedure and channels are visualised below:
+
+![Sofware release scheme](https://raw.githubusercontent.com/proycon/LaMachine/master/softwarereleasescheme.png)
+
+Details:
 
  * Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
  * Debian Linux (up to date for Debian 9 [stretch] or later only) -- ``sudo apt-get install science-linguistics``. Consult the [package state](https://qa.debian.org/developer.php?login=proycon@anaproy.nl).
@@ -279,6 +283,7 @@ available:
  * CentOS/Fedora (packages are outdated completely, do not use)
 
 The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself, which can be a tedious endeavour.
+
 
 Troubleshooting
 ====================

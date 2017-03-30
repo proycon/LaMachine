@@ -1,0 +1,979 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="softwarereleasescheme.svg"
+   inkscape:version="0.92.1 r"
+   inkscape:export-filename="/home/proycon/work/LaMachine/softwarereleasescheme.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300">
+  <defs
+     id="defs2">
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker13961"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path13959"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#ff0817;fill-opacity:1;fill-rule:evenodd;stroke:#ff0817;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker12339"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend"
+       inkscape:collect="always">
+      <path
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         style="fill:#2000ff;fill-opacity:1;fill-rule:evenodd;stroke:#2000ff;stroke-width:1.00000003pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path12337"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible;"
+       id="marker11620"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend">
+      <path
+         transform="scale(0.8) rotate(180) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path11618" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker7901"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend">
+      <path
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path7899"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path4555"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-5"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4555-4"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#2000ff;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-5-6"
+       style="overflow:visible"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4555-4-3"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-1"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4555-3"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#2000ff;fill-opacity:1;fill-rule:evenodd;stroke:#2000ff;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-5-3"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4555-4-38"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-1-8"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4555-3-6"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-5-6-1"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4555-4-3-8"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-5-9"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4555-4-4"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-5-9-1"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4555-4-4-6"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#2000ff;fill-opacity:1;fill-rule:evenodd;stroke:#2000ff;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-5-9-9"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4555-4-4-3"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-1-8-6"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4555-3-6-3"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="321.27491"
+     inkscape:cy="506.33514"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:snap-global="false"
+     inkscape:window-width="3840"
+     inkscape:window-height="2124"
+     inkscape:window-x="0"
+     inkscape:window-y="36"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#ffffff;fill-opacity:0.97647059;stroke:none;stroke-width:0.28122628;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.56245256, 0.28122628;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect13313"
+       width="209.00461"
+       height="293.10431"
+       x="0.95305365"
+       y="1.4307319"
+       rx="2.6458333"
+       ry="2.6458333" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#ffeeaa;fill-opacity:0.97783251;stroke:#006586;stroke-width:0.24434462;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495-9-3-5-7-8"
+       width="53.504288"
+       height="25.156071"
+       x="1.2180943"
+       y="79.747856"
+       rx="2.6458333"
+       ry="2.645833" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#ffeeaa;fill-opacity:0.97783251;stroke:#006586;stroke-width:0.28641686;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495-1-7"
+       width="61.588699"
+       height="30.027689"
+       x="64.452026"
+       y="79.583527"
+       rx="2.6458333"
+       ry="2.645833" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#ffeeaa;fill-opacity:0.97783251;stroke:#006586;stroke-width:0.28641686;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495-1"
+       width="61.588699"
+       height="30.027689"
+       x="63.699696"
+       y="34.411751"
+       rx="2.6458333"
+       ry="2.645833" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:6.61458302px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="10.016367"
+       y="6.1473212"
+       id="text4487"><tspan
+         sodipodi:role="line"
+         id="tspan4485"
+         x="10.016367"
+         y="6.1473212"
+         style="stroke-width:0.26458332px">Language Machines  / Centre of Language and Speech Technology / Radboud University Nijmegen</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:8.20208359px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="48.191971"
+       y="21.077379"
+       id="text4491"><tspan
+         sodipodi:role="line"
+         id="tspan4489"
+         x="48.191971"
+         y="21.077379"
+         style="font-weight:bold;font-size:8.46666622px;stroke-width:0.26458332px">SOFTWARE RELEASE PROCEDURE</tspan></text>
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#ffeeaa;fill-opacity:0.97783251;stroke:#006586;stroke-width:0.28641683;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495"
+       width="61.588699"
+       height="30.027689"
+       x="66.912498"
+       y="37.152077"
+       rx="2.6458333"
+       ry="2.645833" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:6.61458302px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="96.705849"
+       y="51.126492"
+       id="text4499"><tspan
+         sodipodi:role="line"
+         x="96.705849"
+         y="51.126492"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332px"
+         id="tspan4521">Source Code VC Repository</tspan><tspan
+         sodipodi:role="line"
+         x="96.705849"
+         y="57.741077"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332px"
+         id="tspan4527">(GitHub)</tspan></text>
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#ffeeaa;fill-opacity:0.97783251;stroke:#006586;stroke-width:0.27916506;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495-9"
+       width="61.595951"
+       height="28.523037"
+       x="67.28685"
+       y="82.60009"
+       rx="2.6458333"
+       ry="2.645833" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:6.61458302px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="97.222092"
+       y="95.349693"
+       id="text4546"><tspan
+         sodipodi:role="line"
+         id="tspan4544"
+         x="97.222092"
+         y="95.349693"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332px">Stable Releases</tspan><tspan
+         sodipodi:role="line"
+         x="97.222092"
+         y="101.96428"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332px"
+         id="tspan4548">(Github)</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+       d="M 98.462797,69.080356 V 81.175595"
+       id="path4550"
+       inkscape:connector-curvature="0" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#aaccff;fill-opacity:0.97783251;stroke:#006586;stroke-width:0.50113958;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495-9-4"
+       width="93.690948"
+       height="60.429039"
+       x="6.7326503"
+       y="194.21405"
+       rx="2.6458333"
+       ry="2.645833" />
+    <path
+       style="fill:#000000;fill-rule:evenodd;stroke:#2000ff;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.52999997, 0.26499999000000002;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Lend-5)"
+       d="m 130.39469,115.46987 12.85683,5.48627"
+       id="path4550-6"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-5-6)"
+       d="m 129.95682,97.365417 12.09283,-0.24139"
+       id="path4550-6-9"
+       inkscape:connector-curvature="0" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#afe9c6;fill-opacity:0.97783251;stroke:#006586;stroke-width:0.27916506;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495-9-9"
+       width="61.595955"
+       height="28.523035"
+       x="143.82703"
+       y="82.60009"
+       rx="2.6458333"
+       ry="2.645833" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="174.25179"
+       y="95.112701"
+       id="text4546-5"><tspan
+         sodipodi:role="line"
+         id="tspan4544-2"
+         x="174.25179"
+         y="95.112701"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332px">Persistent Archive</tspan><tspan
+         sodipodi:role="line"
+         x="174.25179"
+         y="101.72729"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332px"
+         id="tspan4548-1">(Zenodo)</tspan></text>
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#afe9c6;fill-opacity:0.97783251;stroke:#006586;stroke-width:0.26211461;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495-9-3"
+       width="61.613007"
+       height="25.1383"
+       x="143.25153"
+       y="120.95614"
+       rx="2.6458333"
+       ry="2.645833" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="174.06279"
+       y="135.36717"
+       id="text4546-0"><tspan
+         sodipodi:role="line"
+         x="174.06279"
+         y="135.36717"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332px"
+         id="tspan4548-9">Python Package Index</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:6.61458302px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="54.847923"
+       y="206.09673"
+       id="text6333"><tspan
+         sodipodi:role="line"
+         x="54.847923"
+         y="206.09673"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332px"
+         id="tspan8036">LaMachine Software Distribution</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#2000ff;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.79499996, 0.26499999000000002;stroke-opacity:1;marker-end:url(#Arrow1Lend-1);stroke-dashoffset:0"
+       d="m 96.950893,112.85735 v 12.09524"
+       id="path4550-4"
+       inkscape:connector-curvature="0" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#afe9c6;fill-opacity:0.97783251;stroke:#006586;stroke-width:0.26211461;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495-9-3-5"
+       width="61.613007"
+       height="25.1383"
+       x="67.27832"
+       y="127.00376"
+       rx="2.6458333"
+       ry="2.645833" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="97.714798"
+       y="140.9397"
+       id="text4546-0-8"><tspan
+         sodipodi:role="line"
+         x="97.714798"
+         y="140.9397"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332px"
+         id="tspan4548-9-5">Arch User Repository</tspan></text>
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#ffeeaa;fill-opacity:0.97783251;stroke:#006586;stroke-width:0.24434462;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495-9-3-5-7"
+       width="53.504288"
+       height="25.156071"
+       x="2.6355047"
+       y="82.960648"
+       rx="2.6458333"
+       ry="2.645833" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="29.275917"
+       y="94.826576"
+       id="text4546-0-8-5"><tspan
+         sodipodi:role="line"
+         x="29.275917"
+         y="94.826576"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332px"
+         id="tspan4548-9-5-3">Debian package</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-1-8)"
+       d="M 27.78125,109.45556 V 121.5508"
+       id="path4550-4-0"
+       inkscape:connector-curvature="0" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#afe9c6;fill-opacity:0.97647059;stroke:#006586;stroke-width:0.2024767;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495-9-3-5-7-3"
+       width="42.773834"
+       height="21.607164"
+       x="8.2842121"
+       y="159.66888"
+       rx="2.6458335"
+       ry="2.645833" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="28.388494"
+       y="169.85486"
+       id="text4546-0-8-5-3"><tspan
+         sodipodi:role="line"
+         x="28.388494"
+         y="169.85486"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332px"
+         id="tspan4548-9-5-3-6">Ubuntu</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458302px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="4.913692"
+       y="100.2634"
+       id="text7965"><tspan
+         sodipodi:role="line"
+         id="tspan7963"
+         x="4.913692"
+         y="100.2634"
+         style="stroke-width:0.26458332px">(as part of the Debain Science Team)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="11.006864"
+       y="175.96849"
+       id="text7965-0"><tspan
+         sodipodi:role="line"
+         id="tspan7963-5"
+         x="11.006864"
+         y="175.96849"
+         style="stroke-width:0.26458332px">(starting with Ubuntu 17.04?)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="157.26643"
+       y="142.7066"
+       id="text7965-1"><tspan
+         sodipodi:role="line"
+         id="tspan7963-1"
+         x="157.26643"
+         y="142.7066"
+         style="stroke-width:0.26458332px">(for Python software only)</tspan></text>
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#aaccff;fill-opacity:0.97783251;stroke:#006586;stroke-width:0.49329463;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495-9-4-2"
+       width="93.698799"
+       height="58.547005"
+       x="112.65656"
+       y="194.02115"
+       rx="2.6458333"
+       ry="2.645833" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="159.45282"
+       y="205.71875"
+       id="text6333-4"><tspan
+         sodipodi:role="line"
+         x="159.45282"
+         y="205.71875"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332px"
+         id="tspan8036-9">LaMachine Software Distribution</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-5-9)"
+       d="m 173.2979,147.03088 0.006,46.87467"
+       id="path4550-6-98"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#2000ff;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.52999997, 0.26499999000000002;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Lend-5-9-1)"
+       d="m 130.96166,115.46987 16.06999,76.35681"
+       id="path4550-6-98-3"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-5-9-9)"
+       d="m 88.251978,154.05396 -0.371976,38.74818"
+       id="path4550-6-98-34"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker11620)"
+       d="M 173.2979,147.03088 87.880001,192.80214"
+       id="path11610"
+       inkscape:connector-curvature="0" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#80b3ff;fill-opacity:0.97783251;stroke:#006586;stroke-width:0.25562519;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495-9-4-6"
+       width="39.129913"
+       height="37.646473"
+       x="11.807067"
+       y="212.03093"
+       rx="2.6458328"
+       ry="2.645833" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#80b3ff;fill-opacity:0.97783251;stroke:#006586;stroke-width:0.25562519;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495-9-4-6-1"
+       width="39.129917"
+       height="37.646473"
+       x="55.274326"
+       y="211.65295"
+       rx="2.6458328"
+       ry="2.645833" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:6.61458302px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="74.738449"
+       y="232.17709"
+       id="text11740"><tspan
+         sodipodi:role="line"
+         id="tspan11738"
+         x="74.738449"
+         y="232.17709"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332px">Docker Container</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:6.61458302px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="15.875"
+       y="232.17708"
+       id="text11744"><tspan
+         sodipodi:role="line"
+         id="tspan11742"
+         x="15.875"
+         y="232.17708"
+         style="stroke-width:0.26458332px">Virtual Machine</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="39.849697"
+       y="210.17358"
+       id="text7965-1-5"><tspan
+         sodipodi:role="line"
+         id="tspan7963-1-6"
+         x="39.849697"
+         y="210.17358"
+         style="stroke-width:0.26458332px">(based on Arch Linux)</tspan></text>
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#afe9c6;fill-opacity:0.97647059;stroke:#006586;stroke-width:0.19715643;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495-9-3-5-7-3-9"
+       width="41.267254"
+       height="21.234509"
+       x="8.0925646"
+       y="122.62457"
+       rx="2.6458333"
+       ry="2.645833" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="27.212881"
+       y="132.51498"
+       id="text4546-0-8-5-3-2"><tspan
+         sodipodi:role="line"
+         x="27.212881"
+         y="132.51498"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332px"
+         id="tspan4548-9-5-3-6-8">Debian</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#2000ff;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:0.52999997, 0.26499999000000002;marker-end:url(#marker12339);stroke-dashoffset:0"
+       d="M 63.688988,96.483629 H 56.318451"
+       id="path12329"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-1-8-6)"
+       d="m 26.83631,145.5523 v 12.09524"
+       id="path4550-4-0-7"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 127.37797,111.2247 3.59078,4.7247"
+       id="path13183"
+       inkscape:connector-curvature="0" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#80b3ff;fill-opacity:0.97783251;stroke:#006586;stroke-width:0.25562519;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4495-9-4-6-1-2"
+       width="39.129921"
+       height="37.646473"
+       x="138.05112"
+       y="212.5979"
+       rx="2.6458328"
+       ry="2.645833" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="157.51523"
+       y="233.12204"
+       id="text11740-3"><tspan
+         sodipodi:role="line"
+         id="tspan11738-7"
+         x="157.51523"
+         y="233.12204"
+         style="text-align:center;text-anchor:middle;stroke-width:0.26458332px">Local Environment</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="143.79314"
+       y="239.08876"
+       id="text7965-1-2"><tspan
+         sodipodi:role="line"
+         id="tspan7963-1-5"
+         x="143.79314"
+         y="239.08876"
+         style="stroke-width:0.26458332px">(compilation script,</tspan><tspan
+         sodipodi:role="line"
+         x="143.79314"
+         y="245.70334"
+         style="stroke-width:0.26458332px"
+         id="tspan14131">python virtualenv)</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#3114ff;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.52999997, 0.26499999000000002;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 9.4494046,274.32143 H 22.867559"
+       id="path13321"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:6.61458302px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="30.994049"
+       y="275.83331"
+       id="text13325"><tspan
+         sodipodi:role="line"
+         id="tspan13323"
+         x="30.994049"
+         y="275.83331"
+         style="stroke-width:0.26458332px">Does not apply to all software</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 9.6383926,267.32886 H 22.489583"
+       id="path13327"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="31.38533"
+       y="268.76245"
+       id="text13325-2"><tspan
+         sodipodi:role="line"
+         id="tspan13323-1"
+         x="31.38533"
+         y="268.76245"
+         style="stroke-width:0.26458332px">Applies to all software</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 1.1339286,258.25744 H 209.02083"
+       id="path13349"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="12.166384"
+       y="138.1691"
+       id="text7965-0-9"><tspan
+         sodipodi:role="line"
+         id="tspan7963-5-1"
+         x="12.166384"
+         y="138.1691"
+         style="stroke-width:0.26458332px">(starting with Debian 9)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:6.61458302px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="97.83194"
+       y="275.98041"
+       id="text13831"><tspan
+         sodipodi:role="line"
+         id="tspan13829"
+         x="97.83194"
+         y="275.98041"
+         style="stroke-width:0.26458332px">Arch User Repository: </tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="98.042961"
+       y="285.72949"
+       id="text13831-6"><tspan
+         sodipodi:role="line"
+         id="tspan13829-2"
+         x="98.042961"
+         y="285.72949"
+         style="stroke-width:0.26458332px">Debian Package Tracker:</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="97.664993"
+       y="266.07471"
+       id="text13831-5"><tspan
+         sodipodi:role="line"
+         id="tspan13829-3"
+         x="97.664993"
+         y="266.07471"
+         style="stroke-width:0.26458332px">LaMachine: </tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:6.61458302px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="102.93462"
+       y="271.25571"
+       id="text13888"
+       inkscape:transform-center-x="-0.37797619"
+       inkscape:transform-center-y="-4.1577381"><tspan
+         sodipodi:role="line"
+         id="tspan13886"
+         x="102.93462"
+         y="271.25571"
+         style="fill:#0000ff;stroke-width:0.26458332px">https://proycon.github.io/LaMachine</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="103.31463"
+       y="280.26364"
+       id="text13888-2"
+       inkscape:transform-center-x="-0.37797619"
+       inkscape:transform-center-y="-4.1577381"><tspan
+         sodipodi:role="line"
+         id="tspan13886-1"
+         x="103.31463"
+         y="280.26364"
+         style="fill:#0000ff;stroke-width:0.26458332px">https://aur.archlinux.org/packages/?O=0&amp;SeB=m&amp;K=proycon</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="103.03972"
+       y="289.97406"
+       id="text13888-9"
+       inkscape:transform-center-x="-0.37797619"
+       inkscape:transform-center-y="-4.1577381"><tspan
+         sodipodi:role="line"
+         id="tspan13886-7"
+         x="103.03972"
+         y="289.97406"
+         style="fill:#0000ff;stroke-width:0.26458332px">https://qa.debian.org/developer.php?login=proycon@anaproy.nl</tspan></text>
+    <path
+       style="fill:#ff2a2a;fill-rule:evenodd;stroke:#ee1623;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.26499999, 0.26499999000000002;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 9.5438952,281.0467 H 22.96205"
+       id="path13321-6"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="31.088539"
+       y="282.55859"
+       id="text13325-8"><tspan
+         sodipodi:role="line"
+         x="31.088539"
+         y="282.55859"
+         style="stroke-width:0.26458332px"
+         id="tspan13947">Experimental 'bleeding-edge' software</tspan><tspan
+         sodipodi:role="line"
+         x="31.088539"
+         y="289.17319"
+         style="stroke-width:0.26458332px"
+         id="tspan14107">(opt-in alternative route)</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#ff0817;stroke-width:0.26499999;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:0.26499999, 0.26499999000000002;marker-end:url(#marker13961);stroke-dashoffset:0"
+       d="m 129.45684,50.559522 h 78.05209 V 184.55208 l -3.77976,8.12649"
+       id="path13951"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:6.61458302px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+       x="58.964287"
+       y="241.2485"
+       id="text14111"><tspan
+         sodipodi:role="line"
+         id="tspan14109"
+         x="58.964287"
+         y="241.2485"
+         style="stroke-width:0.26458332px;fill:#0000ff;">proycon/LaMachine</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="15.03615"
+       y="238.14558"
+       id="text7965-1-2-0"><tspan
+         sodipodi:role="line"
+         id="tspan7963-1-5-6"
+         x="15.03615"
+         y="238.14558"
+         style="stroke-width:0.26458332px">(generated with Vagrant)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777767px;line-height:6.61458349px;font-family:'Ubuntu Condensed';-inkscape-font-specification:'Ubuntu Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="149.84076"
+       y="108.49799"
+       id="text7965-1-4"><tspan
+         sodipodi:role="line"
+         id="tspan7963-1-3"
+         x="149.84076"
+         y="108.49799"
+         style="stroke-width:0.26458332px">(yields DOIs for citation in publications)</tspan></text>
+    <g
+       id="g4173"
+       transform="matrix(0.31622314,0,0,-0.34070185,35.174625,40.413599)">
+      <path
+         d="m 0,0 c 0,-0.763 -0.62,-1.383 -1.385,-1.383 -0.764,0 -1.384,0.62 -1.384,1.383 0,0.766 0.62,1.385 1.384,1.385 C -0.62,1.385 0,0.766 0,0"
+         style="fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="path4175"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       id="g4177"
+       transform="matrix(0.31622314,0,0,-0.34070185,30.116604,60.340669)">
+      <path
+         d="m 0,0 c 0,0 -2.031,6.527 -2.199,11.012 -0.17,4.484 0.504,8.287 0.504,8.287 0,0 -3.967,-1.123 -8.184,-1.123 -4.215,0 -8.092,1.123 -8.092,1.123 v -19.1"
+         style="fill:none;stroke:#231f20;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path4179"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       id="g4181"
+       transform="matrix(0.31622314,0,0,-0.34070185,31.702051,60.340669)">
+      <path
+         d="m 0,0 v 19.977 c 0,0 4.526,0.568 6.402,7.189 l 5.431,25.781 c 0.668,2.895 6.255,0.543 6.927,4.106 0.676,3.582 -3.933,3.687 -9.25,5.679 l 3.59,3.5 C 11.843,67.074 9.676,67.578 7.233,65.834 4.544,63.916 3.774,60.27 3.003,57.18 0.123,45.666 -2.65,40.568 -7.781,41.113 l -22.285,0.346 c -0.62,1.178 -1.852,1.98 -3.276,1.98 -2.043,0 -3.699,-1.658 -3.699,-3.701 0,-1.422 0.803,-2.656 1.98,-3.275 -0.123,-0.508 -1.714,-3.447 -1.714,-6.756 0,-3.311 2.095,-7.67 5.875,-9.191 0,0 -0.539,-4.996 -0.041,-9.317 C -30.391,6.447 -28.303,0 -28.303,0"
+         style="fill:none;stroke:#231f20;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path4183"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       id="g4185"
+       transform="matrix(0.31622314,0,0,-0.34070185,31.781709,60.385268)">
+      <path
+         d="M 0,0 C 0,0 -7.2411789,1.1094046 31.605523,0"
+         style="fill:none;stroke:#231f20;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path4187"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+    </g>
+    <g
+       id="g4189"
+       transform="matrix(0.31622314,0,0,-0.34070185,24.433852,60.385268)">
+      <path
+         d="M 0,0 H 18.023"
+         style="fill:none;stroke:#231f20;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path4191"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       id="g4193"
+       transform="matrix(0.31622314,0,0,-0.34070185,3.392048,60.385268)">
+      <path
+         d="M 38.249061,-0.55470229 61.111,0"
+         style="fill:none;stroke:#231f20;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path4195"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+    </g>
+  </g>
+</svg>
