@@ -1060,7 +1060,7 @@ else
     cd $project
     gitcheck
 fi
-echo -n "$project" >> "$VIRTUAL_ENV/VERSION"
+echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
 outputgitversion
 if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
     rm *_wrapper.cpp >/dev/null 2>/dev/null #forcing recompilation of cython stuff
