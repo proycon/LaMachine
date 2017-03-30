@@ -117,6 +117,8 @@ you add an alias ``alias lm=". /path/to/lamachine/bin/activate"`` in your
 You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and ``lamachine-update.sh``):
 
  * ``noadmin`` - Do not attempt to install global dependencies (but if they are missing, compilation will fail)
+ * ``adminonly`` - Only install global dependencies, do not actually set up the virtual environment. Requires a user
+   with sudo rights. Allows for seperation of the bootstrap process for privileged and non-privileged user.
  * ``nopythondeps`` - Do not update 3rd party Python dependencies (such as numpy and scipy), may save time.
  * ``force`` - Force recompilation of everything, even if it's not updated
  * ``python2`` - Use python 2.7 instead of Python 3 *(note that some software may be not be available for Python 2!)*
