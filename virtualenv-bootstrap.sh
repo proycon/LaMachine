@@ -205,6 +205,7 @@ generaterequirements () {
 
 
 NOADMIN=0
+ADMINONLY=0
 FORCE=0
 NOPYTHONDEPS=0
 NONINTERACTIVE=0
@@ -225,6 +226,9 @@ for OPT in "$@"
 do
     if [[ "$OPT" == "noadmin" ]]; then
         NOADMIN=1
+    fi
+    if [[ "$OPT" == "adminonly" ]]; then
+        ADMINONLY=1
     fi
     if [[ "$OPT" == "noninteractive" ]]; then
         NONINTERACTIVE=1
@@ -259,7 +263,8 @@ do
     fi
     if [[ "$OPT" == "help" ]] || [[ "$OPT" == "-h" ]]; then
         echo "Options (no hyphen preceeding any):"
-        echo "  noadmin          - Skip global installation step for which administrative privileges are requires; presupposes that global dependencies are already installed by a system administrator"
+        echo "  noadmin          - Skip global installation step for which administrative privileges are required; presupposes that global dependencies are already installed by a system administrator"
+        echo "  adminonly        - Execute only the global installation step for which administrative privileges are required"
         echo "  force            - Force recompilation/reinstallation of everything"
         echo "  nopythondeps     - Do not install/update 3rd party python packages (except those absolutely necessary)"
         echo "  python2          - Build for Python 2.7 instead of default Python 3. Not everything will work on Python 2!"
@@ -479,6 +484,7 @@ fi
 
 
 
+
 if [ -z "$VIRTUAL_ENV" ]; then
     VENV=$(which virtualenv)
     if [ ! -f "$VENV" ]; then
@@ -503,17 +509,19 @@ if [ -z "$VIRTUAL_ENV" ]; then
             sudo $PIP install virtualenv || fatalerror "Unable to install virtualenv :( .. Giving up, ask your system administrator to install the necessary dependencies first or try the LaMachine VM instead"
         fi
     fi
-    echo
-    echo "-----------------------------------------"
-    echo "Creating virtual environment"
-    echo "-----------------------------------------"
-    virtualenv --python=$PYTHON lamachine || fatalerror "Unable to create virtual environment"
-    . lamachine/bin/activate || fatalerror "Unable to activate virtual environment"
-    MODE='new'
-    #Ubuntu 12.04 doesn't package python3-pip yet
-    if [ "$DISTRIB_ID" == "ubuntu" ]; then
-        if [ "$DISTRIB_RELEASE" == "12.04" ]; then
-            easy_install3 pip
+    if [ $ADMINONLY -eq 0 ]; then
+        echo
+        echo "-----------------------------------------"
+        echo "Creating virtual environment"
+        echo "-----------------------------------------"
+        virtualenv --python=$PYTHON lamachine || fatalerror "Unable to create virtual environment"
+        . lamachine/bin/activate || fatalerror "Unable to activate virtual environment"
+        MODE='new'
+        #Ubuntu 12.04 doesn't package python3-pip yet
+        if [ "$DISTRIB_ID" == "ubuntu" ]; then
+            if [ "$DISTRIB_RELEASE" == "12.04" ]; then
+                easy_install3 pip
+            fi
         fi
     fi
 else
@@ -521,6 +529,12 @@ else
     MODE='update'
 fi
 
+if [ $ADMINONLY -eq 1 ]; then
+    echo "--------------------------------------------------------"
+    echo "All global administrative tasks are done!">&2
+    echo "  You can now execute virtual-bootstrap.sh as the desired target user and pass the 'noadmin' option"
+    exit 0
+fi
 
 if [ $DEV -eq 0 ]; then
     rm -f "$VIRTUAL_ENV/src/LaMachine/.dev" 2>/dev/null
