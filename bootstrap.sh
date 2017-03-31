@@ -246,9 +246,7 @@ do
     fi
     if [[ "$OPT" == "help" ]] || [[ "$OPT" == "-h" ]]; then
         echo "Options (no hyphen preceeding any):"
-        echo "  noadmin          - Skip global installation step for which administrative privileges are requires; presupposes that global dependencies are already installed by a system administrator"
         echo "  force            - Force recompilation/reinstallation of everything"
-        echo "  nopythondeps     - Do not install/update 3rd party python packages (except those absolutely necessary)"
         echo "  stable           - Install latest stable releases of all software (default)"
         echo "  dev              - Install latest development releases of all software (this may break things)"
         echo "  version=<file>   - Install specific versions of all software, versions are in the specified file. LaMachine's generates a VERSION file on each installation/update that is valid input for this option."
@@ -278,7 +276,7 @@ pacman --noconfirm -R virtualbox-guest-dkms
 pacman --noconfirm -Sy archlinux-keyring
 echo "Installing base-devel...."
 pacman -Syu --noconfirm --needed base-devel || fatalerror "Unable to install global dependencies"
-PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs cython python python-pip python-requests python-lxml python-pycurl python-virtualenv python-numpy python-scipy python-matplotlib python-pandas python-nltk python-scikit-learn python-psutil ipython jupyter-notebook wget curl libexttextcat python-flask python-requests python-requests-oauthlib python-requests-toolbelt python-crypto nginx uwsgi uwsgi-plugin-python hunspell aspell hunspell-en aspell-en perl perl-sort-naturally tesseract tesseract-data-eng tesseract-data-nld poppler"
+PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs cython python python-pip python-requests python-lxml python-pycurl python-virtualenv python-numpy python-scipy python-matplotlib python-pandas python-nltk python-scikit-learn python-psutil ipython jupyter-notebook wget curl libexttextcat python-flask python-requests python-requests-oauthlib python-requests-toolbelt python-crypto nginx uwsgi uwsgi-plugin-python hunspell aspell hunspell-en aspell-en perl perl-sort-naturally java-runtime tesseract tesseract-data-eng tesseract-data-nld poppler"
 #poppler provides pdfimages
 echo "Installing global packages: $PKGS"
 pacman --noconfirm --needed -Syu $PKGS ||  fatalerror "Unable to install global dependencies"
