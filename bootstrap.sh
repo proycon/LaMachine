@@ -550,6 +550,18 @@ if [ $REPOCHANGED -eq 1 ]; then
 fi
 cd ..
 
+echo "--------------------------------------------------------"
+echo "[LaMachine] Installing Nextflow"
+echo "--------------------------------------------------------"
+
+mkdir /opt/nextflow
+cd /opt/nextflow
+export NXF_HOME="/opt/nextflow"
+curl -fsSL get.nextflow.io | bash
+echo -e '#!/bin/bash\nNXF_HOME="/opt/nextflow" /opt/nextflow/nextflow $@' > /usr/bin/nextflow
+chmod a+rx /usr/bin/nextflow
+
+
 cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
 
 . LaMachine/setup-flat.sh
