@@ -354,7 +354,7 @@ if [ "$NOADMIN" == "0" ]; then
         if [ $NONINTERACTIVE -eq 1 ]; then
             NONINTERACTIVEFLAG="--noconfirm"
         fi
-        INSTALL="sudo pacman -Syu $NONINTERACTIVEFLAG --needed base-devel pkg-config git autoconf-archive gcc-fortran icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse perl perl-sort-naturally tesseract tesseract-data-eng tesseract-data-nld poppler"
+        INSTALL="sudo pacman -Syu $NONINTERACTIVEFLAG --needed base-devel pkg-config git autoconf-archive gcc-fortran icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse perl perl-sort-naturally java-runtime tesseract tesseract-data-eng tesseract-data-nld poppler"
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python2 python2-pip python2-virtualenv"
         fi
@@ -388,7 +388,7 @@ if [ "$NOADMIN" == "0" ]; then
         if [ $NONINTERACTIVE -eq 1 ]; then
             NONINTERACTIVEFLAG="-y"
         fi
-        INSTALL="sudo apt-get -m $NONINTERACTIVEFLAG install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE $VENVPACKAGE $GNUTLS libcurl4-gnutls-dev wget libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl perl libsort-naturally-perl tesseract-ocr tesseract-ocr-eng tesseract-ocr-nld poppler-utils"  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
+        INSTALL="sudo apt-get -m $NONINTERACTIVEFLAG install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE $VENVPACKAGE $GNUTLS libcurl4-gnutls-dev wget curl libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl perl libsort-naturally-perl default-jre tesseract-ocr tesseract-ocr-eng tesseract-ocr-nld poppler-utils"  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python python-dev python-pip"
         fi
@@ -407,12 +407,12 @@ if [ "$NOADMIN" == "0" ]; then
         else
             DISTRIBPACKAGES="python3 python3-devel python3-pip python3-virtualenv icu-devel"
         fi
-        INSTALL="sudo yum $NONINTERACTIVEFLAG install pkgconfig git icu libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python3 python3-devel zlib zlib-devel bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel perl perl-Sort-Naturally tesseract poppler $DISTRIBPACKAGES"
+        INSTALL="sudo yum $NONINTERACTIVEFLAG install pkgconfig git icu libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python3 python3-devel zlib zlib-devel bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget curl libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel perl perl-Sort-Naturally java-1.8.0-openjdk tesseract poppler $DISTRIBPACKAGES"
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python python-devel python-pip"
         fi
     elif [ "$OS" == "freebsd" ]; then
-        INSTALL="sudo pkg install git libtool pkgconf autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python3 bzip2 py27-virtualenv curl wget gnutls aspell hunspell libtextcat"
+        INSTALL="sudo pkg install git libtool pkgconf autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python3 bzip2 py27-virtualenv curl wget gnutls aspell hunspell libtextcat openjdk"
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python"
         fi
@@ -423,7 +423,7 @@ if [ "$NOADMIN" == "0" ]; then
         else
             BREWEXTRA=""
         fi
-        INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python3 boost-python xml2 libxslt icu4c libtextcat wget freetype $BREWEXTRA"
+        INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python3 boost-python xml2 libxslt icu4c libtextcat wget curl freetype $BREWEXTRA"
         #freetype is needed for matplotlib
 
         DISTRIB_ID="OSX"
@@ -453,6 +453,16 @@ if [ "$NOADMIN" == "0" ]; then
             $INSTALL || error "Global dependencies could not be installed, possibly due to you not having root-access. In which case you may need to ask your system administrator to install the above-mentioned dependencies. Installation will continue as normal in 15s, but if a later error occurs, then a missing global dependency is likely the cause."
         fi
         sleep 15
+    fi
+
+    if [ "$OS" == "mac" ] && [ $(which java) -ne 0 ]; then
+        echo "-------------------------------"
+        echo "Installing Java for Mac OS X"
+        echo "-------------------------------"
+        echo "Command: sudo brew tap caskroom/cask"
+        sudo brew tap caskroom/cask
+        echo "Command: sudo brew cask install java"
+        sudo brew cask install java || error "Unable to install java"
     fi
 
     if [ "$OS" == "redhat" ]; then
@@ -718,6 +728,8 @@ if [ -z "$LAMACHINE_QUIET" ]; then
     cat $VIRTUAL_ENV/src/LaMachine/motd
     echo "    (Set LAMACHINE_QUIET=1 prior to activation to suppress this message)"
 fi
+
+export NXF_HOME="$VIRTUAL_ENV/src/nextflow"
 '
 
 activate_conda='
@@ -1211,6 +1223,20 @@ if [ "$OS" != "mac" ]; then
     fi
     cd ..
  fi
+fi
+echo
+
+if [ $(which nextflow) -ne 0 ]; then
+    echo "--------------------------------------------------------"
+    echo "Installing Nextflow"
+    echo "--------------------------------------------------------"
+
+    cd $VIRTUAL_ENV/bin/
+    export NXF_HOME=$VIRTUAL_ENV/src/nextflow
+    curl -fsSL get.nextflow.io | bash || error "Unable to install Nextflow"
+    cd -
+else
+    nextflow self-update
 fi
 
 . LaMachine/setup-flat.sh
