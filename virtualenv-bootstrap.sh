@@ -354,7 +354,7 @@ if [ "$NOADMIN" == "0" ]; then
         if [ $NONINTERACTIVE -eq 1 ]; then
             NONINTERACTIVEFLAG="--noconfirm"
         fi
-        INSTALL="sudo pacman -Syu $NONINTERACTIVEFLAG --needed base-devel pkg-config git autoconf-archive gcc-fortran icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse perl perl-sort-naturally java-runtime tesseract tesseract-data-eng tesseract-data-nld poppler"
+        INSTALL="sudo pacman -Syu $NONINTERACTIVEFLAG --needed base-devel pkg-config git autoconf-archive gcc-fortran icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse perl perl-sort-naturally jre8-openjdk tesseract tesseract-data-eng tesseract-data-nld poppler"
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python2 python2-pip python2-virtualenv"
         fi
