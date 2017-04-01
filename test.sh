@@ -12,18 +12,17 @@ if [ -z "$OS" ]; then
 fi
 echo "OS=$OS"
 
-GREEN='\033[1;32m' 
-RED='\033[1;31m'  
+GREEN='\033[1;32m'
+RED='\033[1;31m'
 RESET='\033[0m'
 
 
 runtest () {
     EXEC=$1
-    OPT=$2
-    $EXEC $OPT 2> test.out >^2
+    $EXEC "${@:2}" 2> test.out >^2
     if [ $? -eq 0 ]; then
         echo -e "$EXEC: $GREEN OK $RESET"
-    else 
+    else
         echo -e "$EXEC: $RED FAILED! $RESET"
         echo "---------------------------------------------------------"
         echo "Details for failed test $EXEC:"
@@ -38,7 +37,7 @@ runtest_python () {
     python -c "import $MODULE" 2> test.out >&2
     if [ $? -eq 0 ]; then
         echo -e "[python] $MODULE: $GREEN OK $RESET"
-    else 
+    else
         echo -e "[python] $MODULE: $RED FAILED! $RESET"
         echo "---------------------------------------------------------"
         echo "Details for failed test [python] $MODULE:"
@@ -85,6 +84,7 @@ runtest_python colibricore
 if [ "$OS" != "mac" ]; then
     runtest gecco --helpmodules
 fi
+runtest nextflow info LanguageMachines/PICCL
 
 if [ $FAILURES -eq 0 ]; then
     echo -e "[LaMachine Test] $GREEN All tests passed, good! $RESET"
