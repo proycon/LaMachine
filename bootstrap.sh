@@ -276,10 +276,12 @@ echo "Conflict prevention..."
 mkinitcpio -p linux
 pacman --noconfirm -R virtualbox-guest-dkms
 pacman --noconfirm -Sy archlinux-keyring
-#next three lines are for issue https://www.archlinux.org/news/ca-certificates-utils-20170307-1-upgrade-requires-manual-intervention/
-pacman -Syuw ca-certificates-utils
-rm /etc/ssl/certs/ca-certificates.crt
-pacman -Su ca-certificates-utils
+if  [ $VAGRANT -eq 1 ]; then
+    #next three lines are for issue https://www.archlinux.org/news/ca-certificates-utils-20170307-1-upgrade-requires-manual-intervention/
+    pacman -Syuw ca-certificates-utils
+    rm /etc/ssl/certs/ca-certificates.crt
+    pacman -Su ca-certificates-utils
+fi
 echo "Installing base-devel...."
 pacman -Syu --noconfirm --needed base-devel || fatalerror "Unable to install global dependencies"
 PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs cython python python-pip python-requests python-lxml python-pycurl python-virtualenv python-numpy python-scipy python-matplotlib python-pandas python-nltk python-scikit-learn python-psutil ipython jupyter-notebook wget curl libexttextcat python-flask python-requests python-requests-oauthlib python-requests-toolbelt python-crypto nginx uwsgi uwsgi-plugin-python hunspell aspell hunspell-en aspell-en perl perl-sort-naturally tesseract tesseract-data-eng tesseract-data-nld poppler"
