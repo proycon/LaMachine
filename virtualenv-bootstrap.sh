@@ -1239,6 +1239,12 @@ else
     nextflow self-update
 fi
 
+echo "--------------------------------------------------------"
+echo "Installing PICCL"
+echo "--------------------------------------------------------"
+
+nextflow pull LanguageMachines/PICCL
+
 . LaMachine/setup-flat.sh
 
 . LaMachine/extra.sh $@

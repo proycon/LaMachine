@@ -550,13 +550,23 @@ echo "--------------------------------------------------------"
 echo "[LaMachine] Installing Nextflow"
 echo "--------------------------------------------------------"
 
-mkdir /opt/nextflow
-cd /opt/nextflow
-export NXF_HOME="/opt/nextflow"
-curl -fsSL get.nextflow.io | bash
-echo -e '#!/bin/bash\nNXF_HOME="/opt/nextflow" /opt/nextflow/nextflow $@' > /usr/bin/nextflow
-chmod a+rx /usr/bin/nextflow
+if [ ! -d /opt/nextflow ]; then
+    mkdir /opt/nextflow
+    cd /opt/nextflow
+    export NXF_HOME="/opt/nextflow"
+    curl -fsSL get.nextflow.io | bash
+    echo -e '#!/bin/bash\nNXF_HOME="/opt/nextflow" NXF_LAUNCHER=~/.nextflow_launcher /opt/nextflow/nextflow $@' > /usr/bin/nextflow
+    chmod a+rx /usr/bin/nextflow /opt/nextflow/nextflow
+else
+    nextflow self-update
+fi
+chmod -R a+r /opt/nextflow
 
+echo "--------------------------------------------------------"
+echo "[LaMachine] Installing PICCL"
+echo "--------------------------------------------------------"
+
+nextflow pull LanguageMachines/PICCL
 
 cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
 
