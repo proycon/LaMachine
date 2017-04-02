@@ -1226,7 +1226,8 @@ if [ "$OS" != "mac" ]; then
 fi
 echo
 
-if [ $(which nextflow) -ne 0 ]; then
+which nextflow
+if [ $? -ne 0 ]; then
     echo "--------------------------------------------------------"
     echo "Installing Nextflow"
     echo "--------------------------------------------------------"
