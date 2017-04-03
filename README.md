@@ -45,11 +45,11 @@ Pre-installed software:
 - [Toad](https://github.com/LanguageMachines/toad) - Trainer Of All Data, training tools for Frog
 - [foliadocserve](https://github.com/proycon/foliadocserve) - FoLiA Document Server
 - [FLAT](https://github.com/proycon/flat) - FoLiA Linguistic Annotation Tool
+- [PICCL](https://github.com/LanguageMachines/PICCL) - PICCL: A set of workflows for corpus building through OCR, post-correction (using TICCL) and Natural Language Processing.
 
 Optional additional software:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction.
 - [Valkuil](https://github.com/proycon/valkuil-gecco) - A context-aware spelling corrector for Dutch
-- [TICCL](https://github.com/martinreynaert/TICCL) - A spelling correction and OCR post-correction system
 
 The Python bindings and libraries all use Python 3. Both the VM image as well as the docker image are based on Arch Linux.
 
