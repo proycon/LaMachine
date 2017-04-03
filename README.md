@@ -25,7 +25,7 @@ LaMachine is suitable for both end-users and developers. It has to be noted,
 however, that running the latest development versions always comes with the
 risk of decreased stability due to undiscovered bugs.
 
-Pre-installed software:
+Our pre-installed software:
 - [Timbl](https://languagemachines.github.io/timbl) - Tilburg Memory Based Learner
 - [Ucto](https://languagemachines.github.io/ucto) - Tokenizer
 - [Frog](https://languagemachines.github.io/frog) - Frog is an integration of memory-based natural language processing (NLP) modules developed for Dutch.
@@ -47,9 +47,20 @@ Pre-installed software:
 - [FLAT](https://github.com/proycon/flat) - FoLiA Linguistic Annotation Tool
 - [PICCL](https://github.com/LanguageMachines/PICCL) - PICCL: A set of workflows for corpus building through OCR, post-correction (using TICCL) and Natural Language Processing.
 
-Optional additional software:
+Our optional additional software:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction.
 - [Valkuil](https://github.com/proycon/valkuil-gecco) - A context-aware spelling corrector for Dutch
+
+Notable pre-installed *third party* software (not exhaustive):
+- [NumPy](http://www.numpy.org/) and [SciPy](http://www.numpy.org/) - Python libraries for scientific computing
+- [Matplotlib](http://matplotlib.org) - A Python 2D plotting library producing publication quality figures
+- [Scikit-learn](http://matplotlib.org) - Machine learning in Python
+- [Tesseract](https://github.com/tesseract-ocr/tesseract) - Open Source Optical Character Recognition (OCR)
+- [IPython](http://ipython.org/) and [Jupyter](https://jupyter.org/) - A rich architecture for interactive computing.
+- [Pandas](http://pandas.pydata.org/) - Python Data Analysis Library
+- [NLTK](http://www.nltk.org) - Natural Language Toolkit for Python
+- [Hunspell](http://hunspell.github.io) - A spell checker
+- [NextFlow](http://www.nextflow.io) - A system and language for writing parallel and scalable pipelines in a portable manner.
 
 The Python bindings and libraries all use Python 3. Both the VM image as well as the docker image are based on Arch Linux.
 
