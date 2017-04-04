@@ -373,7 +373,7 @@ fi
 #development packages should end in -git , releases should not
 if [ $DEV -eq 0 ]; then
     #Packages to install in stable mode:
-    PACKAGES="ticcutils libfolia uctodata ucto foliautils timbl timblserver mbt mbtserver wopr-git frogdata frog ticcltools-git toad" #not everything is available as releases yet
+    PACKAGES="ticcutils libfolia uctodata ucto foliautils timbl timblserver mbt mbtserver wopr-git frogdata frog ticcltools toad" #not everything is available as releases yet
 else
     #Packages to install in development mode:
     PACKAGES="ticcutils-git libfolia-git uctodata-git ucto-git foliautils-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git toad-git ticcltools-git"
