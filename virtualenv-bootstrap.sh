@@ -1226,8 +1226,7 @@ if [ "$OS" != "mac" ]; then
 fi
 echo
 
-which nextflow
-if [ $? -ne 0 ]; then
+if [ ! -f $VIRTUAL_ENV/bin/nextflow ]; then
     echo "--------------------------------------------------------"
     echo "Installing Nextflow"
     echo "--------------------------------------------------------"
