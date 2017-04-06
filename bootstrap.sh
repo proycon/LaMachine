@@ -208,10 +208,11 @@ SRCDIR=`pwd`
 
 FORCE=0
 DEV=0 #prefer stable releases
-BRANCH="master"
 if [ -f .dev ]; then
+    BRANCH="develop"
     DEV=1 #install development versions
 else
+    BRANCH="master"
     DEV=0 #install development versions
 fi
 if [ -f .private ]; then

@@ -216,6 +216,7 @@ if [ ! -z "$VIRTUAL_ENV" ]; then
     #already in a virtual env
     if [ -f "$VIRTUAL_ENV/src/LaMachine/.dev" ]; then
         DEV=1 #install development versions
+        BRANCH="develop"
     fi
     if [ -f "$VIRTUAL_ENV/src/LaMachine/.private" ]; then
         PRIVATE=1 #no not send simple analytics to Nijmegen
@@ -244,9 +245,11 @@ do
     fi
     if [[ "$OPT" == "dev" ]]; then
         DEV=1
+        BRANCH="develop"
     fi
     if [[ "$OPT" == "stable" ]]; then
         DEV=0
+        BRANCH="master"
     fi
     if [[ "$OPT" == "private" ]]; then
         PRIVATE=1
