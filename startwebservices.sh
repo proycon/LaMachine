@@ -28,7 +28,9 @@ CLAMFORCEURL=$BASEURL/timbl/ uwsgi --plugins python --socket :3033 --chdir $BASE
 CLAMFORCEURL=$BASEURL/colibricore/ uwsgi --plugins python --socket :3034 --chdir $BASEDIR/_clamservices/wsgi --mount /colibricore=$BASEDIR/_clamservices/wsgi/colibricore.wsgi  --manage-script-name --master --processes 1 --threads 2 &
 if [ -d $VARDIR/piccldata ]; then
     #we only do PICCL if the data for it has been initialised
-    CLAMFORCEURL=$BASEURL/piccl/ uwsgi --plugins python --socket :3036 --chdir $BASEDIR/PICCL/webservice --mount /PICCL=$BASEDIR/PICCL/webservice/picclservice/picclservice.wsgi  --manage-script-name --master --processes 1 --threads 2 &
+    CLAMFORCEURL=$BASEURL/piccl/ uwsgi --plugins python --socket :3036 --chdir $BASEDIR/PICCL/webservice --mount /piccl=$BASEDIR/PICCL/webservice/picclservice/picclservice.wsgi  --manage-script-name --master --processes 1 --threads 2 &
+else
+    echo "PICCL webservice not enabled yet because PICCL data has not been downloaded yet! (See PICCL documentation)"
 fi
 pkill -9 foliadocserve
 cd #change path so the log file can be written
