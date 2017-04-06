@@ -172,7 +172,6 @@ The ``lamachine-update.sh`` script is also used to install additional *optional*
 
  * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine.
  * ``valkuil`` - Valkuil Spelling Corrector (for Dutch)
- * ``ticcl`` - Text-induced Corpus Clean-up: a spelling correction and OCR post-correction system  (the TICCL root directory will be in ``src/TICCL`` in your LaMachine environment)
 
 Note that for the docker version, you can pull a new docker image using ``docker pull proycon/lamachine`` instead. If you do use ``lamachine-update.sh`` with docker, you most likely will want to ``docker commit`` your container afterwards to preserve the update!
 
