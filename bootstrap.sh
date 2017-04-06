@@ -376,7 +376,7 @@ if [ $DEV -eq 0 ]; then
     PACKAGES="ticcutils libfolia uctodata ucto foliautils timbl timblserver mbt mbtserver wopr-git frogdata frog ticcltools toad" #not everything is available as releases yet
 else
     #Packages to install in development mode:
-    PACKAGES="ticcutils-git libfolia-git uctodata-git ucto-git foliautils-git timbl-git timblserver-git mbt-git wopr-git frogdata-git frog-git toad-git ticcltools-git"
+    PACKAGES="ticcutils-git libfolia-git uctodata-git ucto-git foliautils-git timbl-git timblserver-git mbt-git mbtserver-git wopr-git frogdata-git frog-git toad-git ticcltools-git"
 fi
 
 for package in $PACKAGES; do
