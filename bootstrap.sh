@@ -22,7 +22,6 @@ echo "====================================================================="
 echo
 echo "Bootstrapping Virtual Machine or Docker image...."
 echo
-sleep 1
 
 fatalerror () {
     echo "================ FATAL ERROR ==============" >&2
@@ -189,6 +188,10 @@ generaterequirements () {
     fi
 }
 
+if [ $(whoami) != "root" ]; then
+    fatalerror "This script should be run as root, try adding sudo...">&2
+fi
+sleep 1
 umask u=rwx,g=rwx,o=rx
 
 #arch linux image has a restrictive umask
