@@ -256,6 +256,7 @@ Webservices/webapplications are currently available for the following software:
  * Frog
  * timbl
  * Colibri Core
+ * PICCL
  * FoLiA Document Server
  * FLAT: FoLiA Linguistic Annotation Tool
 
@@ -266,6 +267,7 @@ built-in development server, only one is set up to run at a time:
  * ``clamservice start clamservices.config.frog``
  * ``clamservice start clamservices.config.timbl``
  * ``clamservice start clamservices.config.colibricore``
+ * ``clamservice start picclservice.picclservice``
 
 For FLAT in the virtual environment, run the following:
  * ``start-flat.sh``
