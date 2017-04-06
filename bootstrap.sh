@@ -464,11 +464,11 @@ echo "[LaMachine] Installing CLAM webservices"
 echo "--------------------------------------------------------"
 project="clamservices"
 if [ ! -d $project ]; then
-    REPOCHANGED=1
     git clone https://github.com/proycon/$project
     chmod a+rx $project
     cd $project
     gitcheck
+    REPOCHANGED=1
 else
     cd $project
     pwd
@@ -513,11 +513,11 @@ echo "[LaMachine] Installing Gecco"
 echo "--------------------------------------------------------"
 project="gecco"
 if [ ! -d $project ]; then
-    REPOCHANGED=1
     git clone https://github.com/proycon/$project
     chmod a+rx $project
     cd $project
     gitcheck
+    REPOCHANGED=1
 else
     cd $project
     pwd
@@ -533,11 +533,11 @@ echo "[LaMachine] Installing LuigiNLP"
 echo "--------------------------------------------------------"
 project="LuigiNLP"
 if [ ! -d $project ]; then
-    REPOCHANGED=1
     git clone https://github.com/LanguageMachines/$project
     chmod a+rx $project
     cd $project
     gitcheck
+    REPOCHANGED=1
 else
     cd $project
     pwd
