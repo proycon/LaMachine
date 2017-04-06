@@ -576,6 +576,30 @@ nextflow pull LanguageMachines/PICCL
 
 cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
 
+echo "--------------------------------------------------------"
+echo "Installing PICCL webservice"
+echo "--------------------------------------------------------"
+#webservice is cloned seperately from nextflow pull for now
+project="PICCL"
+if [ ! -d $project ]; then
+    git clone https://github.com/LanguageMachines/$project
+    cd $project
+    gitcheck
+    REPOCHANGED=1
+else
+    cd $project
+    gitcheck
+fi
+echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
+outputgitversion
+if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
+    cd webservice
+    python setup.py install || error "Installing PICCL"
+    cd ..
+fi
+
+cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
+
 . LaMachine/setup-flat.sh
 
 . LaMachine/extra.sh $@
