@@ -391,7 +391,7 @@ if [ "$NOADMIN" == "0" ]; then
         if [ $NONINTERACTIVE -eq 1 ]; then
             NONINTERACTIVEFLAG="-y"
         fi
-        INSTALL="sudo apt-get -m $NONINTERACTIVEFLAG install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE $VENVPACKAGE $GNUTLS libcurl4-gnutls-dev wget curl libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl perl default-jre tesseract-ocr tesseract-ocr-eng tesseract-ocr-nld tesseract-ocr-deu tesseract-ocr-fra poppler-utils djvulibre-bin libdjvulibre-text imagemagick"  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
+        INSTALL="sudo apt-get -m $NONINTERACTIVEFLAG install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE $VENVPACKAGE $GNUTLS libcurl4-gnutls-dev wget curl libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl perl default-jre tesseract-ocr tesseract-ocr-eng tesseract-ocr-nld tesseract-ocr-deu tesseract-ocr-deu-frak tesseract-ocr-fra poppler-utils djvulibre-bin libdjvulibre-text imagemagick"  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
         if [ "$PYTHON" == "python2" ]; then
             INSTALL="$INSTALL python python-dev python-pip"
         fi
@@ -835,7 +835,13 @@ else
     git pull
     NEWSUM=`sum virtualenv-bootstrap.sh`
 fi
-cp virtualenv-bootstrap.sh "$VIRTUAL_ENV/bin/lamachine-update.sh"
+echo """#!/bin/bash
+cd $VIRTUAL_ENV/src/LaMachine
+git pull
+cd -
+$VIRTUAL_ENV/src/LaMachine/virtualenv-bootstrap.sh \$@
+""" > $VIRTUAL_ENV/bin/lamachine-update.sh
+chmod a+rx $VIRTUAL_ENV/bin/lamachine-update.sh
 cp test.sh "$VIRTUAL_ENV/bin/lamachine-test.sh"
 cp start-flat.sh "$VIRTUAL_ENV/bin/start-flat.sh"
 if [ ! -z "$VERSIONFILE" ]; then
