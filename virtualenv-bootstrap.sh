@@ -895,7 +895,7 @@ fi
 
 if [ "$OS" == "mac" ]; then
     #C++ projects on Mac OS X
-    PROJECTS="ticcutils libfolia uctodata ucto timbl timblserver mbt mbtserver wopr frogdata frog" #no foliautils on mac yet, not daring to try ticcltools yet
+    PROJECTS="ticcutils libfolia uctodata ucto foliautils timbl timblserver mbt mbtserver wopr frogdata frog ticcltools toad" #no foliautils on mac yet, not daring to try ticcltools yet
 else
     #C++ projects on normal Linux/BSD systems
     PROJECTS="ticcutils libfolia uctodata ucto foliautils timbl timblserver mbt mbtserver wopr frogdata frog ticcltools toad"
