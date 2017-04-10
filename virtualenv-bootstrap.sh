@@ -463,10 +463,10 @@ if [ "$NOADMIN" == "0" ]; then
         echo "-------------------------------"
         echo "Installing Java for Mac OS X"
         echo "-------------------------------"
-        echo "Command: sudo brew tap caskroom/cask"
-        sudo brew tap caskroom/cask
-        echo "Command: sudo brew cask install java"
-        sudo brew cask install java || error "Unable to install java"
+        echo "Command: brew tap caskroom/cask"
+        brew tap caskroom/cask
+        echo "Command: brew cask install java"
+        brew install caskroom/cask/java || error "Unable to install java"
     fi
 
     if [ "$OS" == "redhat" ]; then
