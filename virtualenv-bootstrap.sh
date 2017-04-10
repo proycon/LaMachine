@@ -458,7 +458,8 @@ if [ "$NOADMIN" == "0" ]; then
         sleep 15
     fi
 
-    if [ "$OS" == "mac" ] && [ $(which java) -ne 0 ]; then
+    JAVA=$(which java)
+    if [ "$OS" == "mac" ] && [ ! -z "$JAVA" ]; then
         echo "-------------------------------"
         echo "Installing Java for Mac OS X"
         echo "-------------------------------"
