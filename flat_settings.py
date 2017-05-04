@@ -101,7 +101,7 @@ DEFAULTMODE = 'editor'
 DEFAULTCONFIGURATION = 'full'
 
 # Allow public anonymous uploads without any authentication?
-ALLOWPUBLICUPLOAD = False
+ALLOWPUBLICUPLOAD = True #DISABLE THIS IF YOU DO NOT NEED ANY ANONYMOUS UNAUTHENTICATED USAGE!
 
 #These are the configurations, add new ones by copying the 'full' configuration and adapting it to your needs.
 CONFIGURATIONS = {
