@@ -11,6 +11,13 @@ matrix:
           language: generic
     allow_failures:
         - os: osx
+notifications:
+  irc:
+    channels:
+      - "irc.uvt.nl#gitlama"
+    template:
+      - "%{repository_slug}#%{build_number} %{message} --> %{build_url}"
+    skip_join: true
 
 install:
     - bash virtualenv-bootstrap.sh noninteractive #cause of travis' setup, we will already be in a virtualenv and reuse it
