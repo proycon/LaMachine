@@ -34,7 +34,12 @@ runtest () {
 
 runtest_python () {
     MODULE=$1
-    python -c "import $MODULE" 2> test.out >&2
+    if [ ! -z "$2" ]; then
+        EXTRA=$2
+    else
+        EXTRA=""
+    fi
+    python -c "import $MODULE; $EXTRA" 2> test.out >&2
     if [ $? -eq 0 ]; then
         echo -e "[python] $MODULE: $GREEN OK $RESET"
     else
@@ -76,7 +81,7 @@ runtest_python ucto
 if [ "$OS" == "mac" ]; then
     TMPFAILURES=$FAILURES
 fi
-runtest_python frog
+runtest_python frog "f = frog.Frog(frog.FrogOptions(parser=False)); f.process(\"Dit is een test.\")"
 if [ "$OS" == "mac" ]; then
     FAILURES=$TMPFAILURES  # we don't count python-frog failing as a final failure as it's expected on OS x for now
 fi
