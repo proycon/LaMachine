@@ -955,7 +955,7 @@ python -m pip install --upgrade pip
 pip install --upgrade setuptools
 
 if [ $NOPYTHONDEPS -eq 0 ]; then
-    PYTHONDEPS="cython numpy ipython scipy matplotlib lxml scikit-learn django pycrypto pandas textblob nltk psutil flask requests requests_toolbelt requests_oauthlib"
+    PYTHONDEPS="cython numpy ipython scipy matplotlib lxml scikit-learn django pycrypto pandas textblob nltk psutil flask requests requests_toolbelt requests_oauthlib theano keras"
     if [ -z "$VERSIONFILE" ]; then
         echo "(Installing latest releases)"
         for PYTHONDEP in $PYTHONDEPS; do
