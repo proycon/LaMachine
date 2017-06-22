@@ -516,7 +516,7 @@ elif [ "$OS" == "debian" ]; then
     dpkg -l $DISTRIBPACKAGES
     ret=$?
 elif [ "$OS" == "redhat" ]; then
-    yum list $DISTRIBPACKAGES #this is incomplete as it will always succeed and ignore missing packages
+    rpm -q $DISTRIBPACKAGES
     ret=$?
 fi
 if [ $ret -ne 0 ]; then
