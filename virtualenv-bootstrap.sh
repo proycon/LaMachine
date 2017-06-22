@@ -351,102 +351,111 @@ echo "Detected distribution release: $DISTRIB_RELEASE"
 #           Global package installation (distribution-specific)
 #################################################################
 NONINTERACTIVEFLAG=""
-if [ "$NOADMIN" == "0" ]; then
-    INSTALL=""
-    if [ "$OS" == "arch" ]; then
-        if [ $NONINTERACTIVE -eq 1 ]; then
-            NONINTERACTIVEFLAG="--noconfirm"
-        fi
-        INSTALL="sudo pacman -Syu $NONINTERACTIVEFLAG --needed base-devel pkg-config git autoconf-archive gcc-fortran icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse perl jre8-openjdk tesseract tesseract-data-eng tesseract-data-nld tesseract-data-deu tesseract-data-deu_frak tesseract-data-fra poppler djvulibre imagemagick"
-        if [ "$PYTHON" == "python2" ]; then
-            INSTALL="$INSTALL python2 python2-pip python2-virtualenv"
-        fi
-    elif [ "$OS" == "debian" ]; then
-        PIPPACKAGE="python3-pip"
-        if [ "$PYTHON" == "python2" ]; then
+INSTALL=""
+if [ "$OS" == "arch" ]; then
+    if [ $NONINTERACTIVE -eq 1 ]; then
+        NONINTERACTIVEFLAG="--noconfirm"
+    fi
+    DISTRIBPACKAGES="base-devel pkg-config git autoconf-archive gcc-fortran icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse perl jre8-openjdk tesseract tesseract-data-eng tesseract-data-nld tesseract-data-deu tesseract-data-deu_frak tesseract-data-fra poppler djvulibre imagemagick"
+    if [ "$PYTHON" == "python2" ]; then
+        DISTRIBPACKAGES="$DISTRIBPACKAGES python2 python2-pip python2-virtualenv"
+    fi
+    INSTALL="sudo pacman -Syu $NONINTERACTIVEFLAG --needed $DISTRIBPACKAGES"
+elif [ "$OS" == "debian" ]; then
+    PIPPACKAGE="python3-pip"
+    if [ "$PYTHON" == "python2" ]; then
+        VENVPACKAGE="python-virtualenv"
+    else
+        VENVPACKAGE="python3-virtualenv"
+    fi
+    if [ "$DISTRIB_ID" == "ubuntu" ]; then
+        GNUTLS="libgnutls-dev"
+        if [ "$DISTRIB_RELEASE" == "12.04" ] || [ "$DISTRIB_RELEASE" == "12.10" ] || [ "$DISTRIB_RELEASE" == "13.04" ] || [ "$DISTRIB_RELEASE" == "13.10" ] || [ "$DISTRIB_RELEASE" == "14.04" ] || [ "$DISTRIB_RELEASE" == "14.10" ]|| [ "$DISTRIB_RELEASE" == "15.05" ] || [ "$DISTRIB_RELEASE" == "15.10" ]; then
+            #everything prior to 16.04 doesn't haved python3-virtualenv, the python 2 version should suffice in those cases
+            #note: debian jessie does have python3-virtualenv (backported probably?), so this is ubuntu only
             VENVPACKAGE="python-virtualenv"
-        else
-            VENVPACKAGE="python3-virtualenv"
         fi
-        if [ "$DISTRIB_ID" == "ubuntu" ]; then
-            GNUTLS="libgnutls-dev"
-            if [ "$DISTRIB_RELEASE" == "12.04" ] || [ "$DISTRIB_RELEASE" == "12.10" ] || [ "$DISTRIB_RELEASE" == "13.04" ] || [ "$DISTRIB_RELEASE" == "13.10" ] || [ "$DISTRIB_RELEASE" == "14.04" ] || [ "$DISTRIB_RELEASE" == "14.10" ]|| [ "$DISTRIB_RELEASE" == "15.05" ] || [ "$DISTRIB_RELEASE" == "15.10" ]; then
-                #everything prior to 16.04 doesn't haved python3-virtualenv, the python 2 version should suffice in those cases
-                #note: debian jessie does have python3-virtualenv (backported probably?), so this is ubuntu only
-                VENVPACKAGE="python-virtualenv"
-            fi
-            if [ "$DISTRIB_RELEASE" == "12.04" ]; then
-                echo "===========================================================================================================================================================">&2
-                echo "WARNING: Ubuntu 12.04 detected, make sure you manually upgrade Python 3 to at least Python 3.3 first or things may fail later in the installation process!">&2
-                echo "============================================================================================================================================================">&2
-                sleep 3
-                PIPPACKAGE="python3-setuptools" #no python3-pip yet
-            elif [ "$DISTRIB_RELEASE" == "10.04" ] || [ "$DISTRIB_RELEASE" == "10.10" ] || [ "$DISTRIB_RELEASE" == "9.10" ] || [ "$DISTRIB_RELEASE" == "9.04" ] || [ "$DISTRIB_RELEASE" == "8.04" ]; then
-                fatalerror "Your Ubuntu version ($DISTRIB_RELEASE) is way too old for LaMachine, upgrade to the latest LTS release"
-            fi
-        else
-            #debian
-            GNUTLS="libgnutls28-dev"
+        if [ "$DISTRIB_RELEASE" == "12.04" ]; then
+            echo "===========================================================================================================================================================">&2
+            echo "WARNING: Ubuntu 12.04 detected, make sure you manually upgrade Python 3 to at least Python 3.3 first or things may fail later in the installation process!">&2
+            echo "============================================================================================================================================================">&2
+            sleep 3
+            PIPPACKAGE="python3-setuptools" #no python3-pip yet
+        elif [ "$DISTRIB_RELEASE" == "10.04" ] || [ "$DISTRIB_RELEASE" == "10.10" ] || [ "$DISTRIB_RELEASE" == "9.10" ] || [ "$DISTRIB_RELEASE" == "9.04" ] || [ "$DISTRIB_RELEASE" == "8.04" ]; then
+            fatalerror "Your Ubuntu version ($DISTRIB_RELEASE) is way too old for LaMachine, upgrade to the latest LTS release"
         fi
-        if [ $NONINTERACTIVE -eq 1 ]; then
-            NONINTERACTIVEFLAG="-y"
-        fi
-        INSTALL="sudo apt-get -m $NONINTERACTIVEFLAG install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE $VENVPACKAGE $GNUTLS libcurl4-gnutls-dev wget curl libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl perl default-jre tesseract-ocr tesseract-ocr-eng tesseract-ocr-nld tesseract-ocr-deu tesseract-ocr-deu-frak tesseract-ocr-fra poppler-utils djvulibre-bin libdjvulibre-text imagemagick"  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
-        if [ "$PYTHON" == "python2" ]; then
-            INSTALL="$INSTALL python python-dev python-pip"
-        fi
-    elif [ "$OS" == "redhat" ]; then
-        if [ $NONINTERACTIVE -eq 1 ]; then
-            NONINTERACTIVEFLAG="-y"
-        fi
-        if [ "$DISTRIB_ID" == "centos" ] || [ "$DISTRIB_ID" == "rhel" ]; then
+    else
+        #debian
+        GNUTLS="libgnutls28-dev"
+    fi
+    if [ $NONINTERACTIVE -eq 1 ]; then
+        NONINTERACTIVEFLAG="-y"
+    fi
+    DISTRIBPACKAGES="pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE $VENVPACKAGE $GNUTLS libcurl4-gnutls-dev wget curl libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl perl default-jre tesseract-ocr tesseract-ocr-eng tesseract-ocr-nld tesseract-ocr-deu tesseract-ocr-deu-frak tesseract-ocr-fra poppler-utils djvulibre-bin libdjvulibre-text imagemagick"
+    if [ "$PYTHON" == "python2" ]; then
+        DISTRIBPACKAGES="$DISTRIBPACKAGES python python-dev python-pip"
+    fi
+    INSTALL="sudo apt-get -m $NONINTERACTIVEFLAG install $DISTRIBPACKAGES"  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
+elif [ "$OS" == "redhat" ]; then
+    if [ $NONINTERACTIVE -eq 1 ]; then
+        NONINTERACTIVEFLAG="-y"
+    fi
+    if [ "$DISTRIB_ID" == "centos" ] || [ "$DISTRIB_ID" == "rhel" ]; then
+        if [ "$NOADMIN" == "0" ]; then
             echo
             echo "------------------------------------------------------------------------------"
             echo "Adding EPEL Repositories for CentOS/RHEL (See https://fedoraproject.org/wiki/EPEL)"
             echo "------------------------------------------------------------------------------"
             echo " (this step, and the next one, requires sudo access and will prompt for your password)"
+            echo "> sudo yum install epel-release"
             sudo yum $NONINTERACTIVEFLAG install epel-release || fatalerror "Unable to install EPEL repository!"  #EPEL repositories are required on CentOS
-            DISTRIBPACKAGES="python34 python34-devel python34-virtualenv python34-pip libicu-devel" #may break eventually when newer packages hit the repos, for now 3.4 is latest even though Python 3.6 is out already
-        else
-            DISTRIBPACKAGES="python3 python3-devel python3-pip python3-virtualenv icu-devel"
         fi
-        INSTALL="sudo yum $NONINTERACTIVEFLAG install pkgconfig git icu libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python3 python3-devel zlib zlib-devel bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget curl libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel perl java-1.8.0-openjdk tesseract poppler djvulibre ImageMagick $DISTRIBPACKAGES"
-        if [ "$PYTHON" == "python2" ]; then
-            INSTALL="$INSTALL python python-devel python-pip"
-        fi
-    elif [ "$OS" == "freebsd" ]; then
-        INSTALL="sudo pkg install git libtool pkgconf autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python3 bzip2 py27-virtualenv curl wget gnutls aspell hunspell libtextcat openjdk imagemagick"
-        if [ "$PYTHON" == "python2" ]; then
-            INSTALL="$INSTALL python"
-        fi
-    elif [ "$OS" == "mac" ]; then
-        MACPYTHON3=$(which python3)
-        if [ "$?" != 0 ]; then
-            BREWEXTRA="python3"
-        else
-            BREWEXTRA=""
-        fi
-        INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python3 boost-python xml2 libxslt icu4c libtextcat wget curl freetype tesseract poppler djvulibre imagemagick $BREWEXTRA"
-        #freetype is needed for matplotlib
-
-        DISTRIB_ID="OSX"
-        DISTRIB_RELEASE=$(sw_vers -productVersion | tr -d '\n')
+        DISTRIBPACKAGES="python34 python34-devel python34-virtualenv python34-pip libicu-devel" #may break eventually when newer packages hit the repos, for now 3.4 is latest even though Python 3.6 is out already
     else
-        error "No suitable package manage detected! Unable to verify and install the necessary global dependencies"
-        if [ -d "/Users" ]; then
-            echo "HINT: It seems you are on Mac OS X? Please install homebrew first from http://brew.sh"
-        fi
-        echo " (will attempt to continue anyway but it will most probably fail)"
-        sleep 5
+        DISTRIBPACKAGES="python3 python3-devel python3-pip python3-virtualenv icu-devel"
     fi
+    DISTRIBPACKAGES="pkgconfig git icu libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python3 python3-devel zlib zlib-devel bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget curl libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel perl java-1.8.0-openjdk tesseract poppler djvulibre ImageMagick $DISTRIBPACKAGES"
+    if [ "$PYTHON" == "python2" ]; then
+        DISTRIBPACKAGES="$DISTRIBPACKAGES python python-devel python-pip"
+    fi
+    INSTALL="sudo yum $NONINTERACTIVEFLAG install $DISTRIBPACKAGES"
+elif [ "$OS" == "freebsd" ]; then
+    DISTRIBPACKAGES="git libtool pkgconf autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python3 bzip2 py27-virtualenv curl wget gnutls aspell hunspell libtextcat openjdk imagemagick"
+    if [ "$PYTHON" == "python2" ]; then
+        DISTRIBPACKAGES="$DISTRIBPACKAGES python"
+    fi
+    INSTALL="sudo pkg install $DISTRIBPACKAGES"
+elif [ "$OS" == "mac" ]; then
+    MACPYTHON3=$(which python3)
+    if [ "$?" != 0 ]; then
+        BREWEXTRA="python3"
+    else
+        BREWEXTRA=""
+    fi
+    INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python3 boost-python xml2 libxslt icu4c libtextcat wget curl freetype tesseract poppler djvulibre imagemagick $BREWEXTRA"
+    #freetype is needed for matplotlib
 
+    DISTRIB_ID="OSX"
+    DISTRIB_RELEASE=$(sw_vers -productVersion | tr -d '\n')
+else
+    error "No suitable package manage detected! Unable to verify and install the necessary global dependencies"
+    if [ -d "/Users" ]; then
+        echo "HINT: It seems you are on Mac OS X? Please install homebrew first from http://brew.sh"
+    fi
+    echo " (will attempt to continue anyway but it will most probably fail)"
+    sleep 5
+fi
+
+
+
+if [ "$NOADMIN" == "0" ]; then
     if [ ! -z "$INSTALL" ]; then
         echo
         echo "-------------------------------"
         echo "Updating global dependencies "
         echo "-------------------------------"
         echo " (this step, and only this step, may require root access, skip it with CTRL-C or run the bootstrap/update script with the 'noadmin' parameter if you do not have it)"
-        echo "Command: $INSTALL"
+        echo "> $INSTALL"
         if [ "$OS" == "debian" ]; then
             sudo apt-get update
         fi
@@ -496,7 +505,24 @@ fi
 
 
 
-
+echo "-------------------------------"
+echo "Verifying global dependencies "
+echo "-------------------------------"
+ret=0
+if [ "$OS" == "arch" ]; then
+    pacman -Q $DISTRIBPACKAGES
+    ret=$?
+elif [ "$OS" == "debian" ]; then
+    dpkg -i $DISTRIBPACKAGES
+    ret=$?
+elif [ "$OS" == "redhat" ]; then
+    yum list $DISTRIBPACKAGES #this is incomplete as it will always succeed and ignore missing packages
+    ret=$?
+fi
+if [ $ret -ne 0 ]; then
+   error "Certain global dependencies are missing on this system, continuing anyway but this may explain later failures..."
+   sleep 2
+fi
 
 
 if [ -z "$VIRTUAL_ENV" ]; then
