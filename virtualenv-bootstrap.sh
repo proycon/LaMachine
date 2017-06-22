@@ -509,6 +509,7 @@ echo "-------------------------------"
 echo "Verifying global dependencies "
 echo "-------------------------------"
 ret=0
+echo "Checking for packages: $DISTRIBPACKAGES"
 if [ "$OS" == "arch" ]; then
     pacman -Q $DISTRIBPACKAGES
     ret=$?
