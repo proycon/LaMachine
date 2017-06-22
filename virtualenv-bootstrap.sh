@@ -513,7 +513,7 @@ if [ "$OS" == "arch" ]; then
     pacman -Q $DISTRIBPACKAGES
     ret=$?
 elif [ "$OS" == "debian" ]; then
-    dpkg -i $DISTRIBPACKAGES
+    dpkg -l $DISTRIBPACKAGES
     ret=$?
 elif [ "$OS" == "redhat" ]; then
     yum list $DISTRIBPACKAGES #this is incomplete as it will always succeed and ignore missing packages
