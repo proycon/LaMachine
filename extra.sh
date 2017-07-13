@@ -148,11 +148,16 @@ if [ $WITHTICCL -eq 1 ] || [ -d TICCL ]; then
     ln -sf $TICCLDIR/TICCLops.PICCL.pl ../bin/TICCLops.PICCL.pl
 fi
 
-if [ $WITHFOLIAENTITY -eq 1 ] || [ -d ../foliaentity ]; then
+if [ $WITHFOLIAENTITY -eq 1 ] || [ -d ../foliaentity ] || [ -d /opt/foliaentity ]; then
     echo "--------------------------------------------------------"
     echo "Installing FoliaEntity">&2
     echo "--------------------------------------------------------"
-    cd .. #descend from the src/ directory!
+    srcdir=$(pwd)
+    if [ ! -z "$VIRTUAL_ENV" ]; then
+        cd ..
+    else
+        cd /opt
+    fi
     if [ ! -d foliaentity ]; then
         mkdir foliaentity
     fi
@@ -160,5 +165,5 @@ if [ $WITHFOLIAENTITY -eq 1 ] || [ -d ../foliaentity ]; then
     rm entity-pack.tar.gz 2>/dev/null >/dev/null
     wget https://www.dropbox.com/s/5rrk7f8wcplchlo/entity-pack.tar.gz #download from Nederlab dropbox (binary!)
     tar -xvzf entity-pack.tar.gz
-    cd ../src #back to src/ dir
+    cd $srcdir #back to src/ dir
 fi
