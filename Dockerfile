@@ -8,7 +8,7 @@ WORKDIR /usr/src/
 RUN cp /etc/hosts .
 RUN sed -i '/::/d' hosts
 RUN cp hosts /etc/hosts
-RUN git clone https://github.com/proycon/LaMachine
+RUN git clone https://github.com/proycon/LaMachine --branch develop
 WORKDIR /usr/src/LaMachine
-RUN bash bootstrap.sh
+RUN bash bootstrap.sh dev
 CMD /bin/bash
