@@ -50,6 +50,7 @@ Our pre-installed software:
 Our optional additional software:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction.
 - [Valkuil](https://github.com/proycon/valkuil-gecco) - A context-aware spelling corrector for Dutch
+- [FoliaEntity](https://github.com/ErwinKomen/FoliaEntity) - A named entity linker
 
 Notable pre-installed *third party* software (not exhaustive):
 - [NumPy](http://www.numpy.org/) and [SciPy](http://www.numpy.org/) - Python libraries for scientific computing
@@ -172,6 +173,7 @@ The ``lamachine-update.sh`` script is also used to install additional *optional*
 
  * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine.
  * ``valkuil`` - Valkuil Spelling Corrector (for Dutch)
+ * ``foliaentity`` - Named entity linker
 
 Note that for the docker version, you can pull a new docker image using ``docker pull proycon/lamachine`` instead. If you do use ``lamachine-update.sh`` with docker, you most likely will want to ``docker commit`` your container afterwards to preserve the update!
 

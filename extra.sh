@@ -5,6 +5,7 @@ WITHTSCAN=0
 WITHVALKUIL=0
 WITHFOWLT=0
 WITHTICCL=0
+WITHFOLIAENTITY=0
 for OPT in "$@"
 do
     if [[ "$OPT" == "tscan" ]]; then
@@ -19,11 +20,14 @@ do
     if [[ "$OPT" == "ticcl" ]]; then
         WITHTICCL=1
     fi
+    if [[ "$OPT" == "foliaentity" ]]; then
+        WITHFOLIAENTITY=1
+    fi
 done
 
 if [ $WITHTSCAN -eq 1 ] || [ -d tscan ]; then
     project="tscan"
-    echo 
+    echo
     echo "--------------------------------------------------------"
     echo "Installing $project">&2
     echo "--------------------------------------------------------"
@@ -55,7 +59,7 @@ fi
 
 if [ $WITHVALKUIL -eq 1 ] || [ -d valkuil-gecco ]; then
     project="valkuil-gecco"
-    echo 
+    echo
     echo "--------------------------------------------------------"
     echo "Installing $project">&2
     echo "--------------------------------------------------------"
@@ -83,7 +87,7 @@ fi
 
 if [ $WITHFOWLT -eq 1 ] || [ -d fowlt-gecco ]; then
     project="fowlt-gecco"
-    echo 
+    echo
     echo "--------------------------------------------------------"
     echo "Installing $project">&2
     echo "--------------------------------------------------------"
@@ -111,7 +115,7 @@ fi
 
 if [ $WITHTICCL -eq 1 ] || [ -d TICCL ]; then
     project="TICCL"
-    echo 
+    echo
     echo "--------------------------------------------------------"
     echo "Installing $project">&2
     echo "--------------------------------------------------------"
@@ -144,3 +148,17 @@ if [ $WITHTICCL -eq 1 ] || [ -d TICCL ]; then
     ln -sf $TICCLDIR/TICCLops.PICCL.pl ../bin/TICCLops.PICCL.pl
 fi
 
+if [ $WITHFOLIAENTITY -eq 1 ] || [ -d ../foliaentity ]; then
+    echo "--------------------------------------------------------"
+    echo "Installing FoliaEntity">&2
+    echo "--------------------------------------------------------"
+    cd .. #descend from the src/ directory!
+    if [ ! -d foliaentity ]; then
+        mkdir foliaentity
+    fi
+    cd foliaentity
+    rm entity-pack.tar.gz 2>/dev/null >/dev/null
+    wget https://www.dropbox.com/s/5rrk7f8wcplchlo/entity-pack.tar.gz #download from Nederlab dropbox (binary!)
+    tar -xvzf entity-pack.tar.gz
+    cd ../src #back to src/ dir
+fi
