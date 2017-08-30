@@ -123,14 +123,14 @@ Installation
 
 0. Open a command line terminal
 1. **Obtain a copy of LaMachine** in a temporary location (it will only be needed once).
-  * A copy is best obtained through git: ``$ cd /tmp && git clone https://github.com/proycon/LaMachine``, provided you have git installed already (``sudo apt-get install git`` installs it on Ubuntu/Debian systems)
-  * Alternatively, you can [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) from github and extract it: ``$ cd /tmp && wget https://github.com/proycon/LaMachine/archive/master.zip && unzip master.zip``
+   * A copy is best obtained through git: ``$ cd /tmp && git clone https://github.com/proycon/LaMachine``, provided you have git installed already (``sudo apt-get install git`` installs it on Ubuntu/Debian systems)
+   * Alternatively, you can [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) from github and extract it: ``$ cd /tmp && wget https://github.com/proycon/LaMachine/archive/master.zip && unzip master.zip``
 2. In a terminal, **navigate to the directory** where you want to install
    LaMachine, for instance your home directory:  ``$ cd ~``.
    A ``lamachine/`` directory that contains everything will be automatically created in the next step.
    (Advanced users can also pre-create and activate an existing virtual environment that LaMachine will then reuse.)
 3. **Bootstrap the virtual environment** by calling: ``/tmp/LaMachine/virtualenv-bootstrap.sh``
-  * Do not run this as root, you will be queried for ``sudo`` for specific parts pertaining to the installation of
+   * Do not run this as root, you will be queried for ``sudo`` for specific parts pertaining to the installation of
    required global packages.
 
 Usage
@@ -140,7 +140,7 @@ Note that you will always have to activate your virtual environment before you c
 in it.
 
 1. Navigate to the directory where you installed LaMachine (e.g. ``cd ~/lamachine``)
-  * Note that this is not the same as the temporary ``/tmp/LaMachine`` we created during installation
+   * Note that this is not the same as the temporary ``/tmp/LaMachine`` we created during installation
 2. Run ``. bin/activate`` (don't forget the dot and the space!)
 
 In most configurations, your prompt will change to indicate LaMachine is activated.
