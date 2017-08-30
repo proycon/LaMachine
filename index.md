@@ -116,29 +116,53 @@ There is no need to clone this git repository at all for this method.
 
 {::options parse_block_html="true" /}
 <section>
-Installation & Usage locally (for Linux/BSD/Mac OS X)
-=======================================================
+Installation & Usage locally (for Linux/BSD/Mac OS X/Windows 10)
+==================================================================
 
-LaMachine can also be used on a Linux/BSD/Mac OS X system without root access
-(provided a set of prerequisites is available on the system!). This is done
-through an extension for Python VirtualEnv (using Python 3.3 or later), as we
-provide a lot of Python bindings anyhow. This offers a local environment, ideal
-for development, that binds against the software globally available on your
-system. The virtual environment will be contained under a single directory and contains
-everything. All sources are pulled from git and compiled for you.
+LaMachine can be used on a Linux/BSD/Mac OS X systems without root access (provided a set of prerequisites is available
+on the system or installed by a system administrator!) and even on Windows 10 systems, provided the latter has the
+Windows Subsystem for Linux and Ubuntu on Windows installed (so if you use Windows, see
+[here](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide) for instructions first).
 
-1. **Clone this repository** in a temporary location (it will only be needed once) and then navigate to this directory in the terminal: ``$ cd /tmp && git clone https://github.com/proycon/LaMachine``  (or [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) manually from github and extract it).
+This local flavour of LaMachine runs in an extended Python Virtual Environment (using Python 3.3 or later) and is the option with
+least overhead (i.e. the most performant). This offers a local environment (not a virtual machine!), ideal for development, that binds against
+the software globally available on your system. The virtual environment will be contained under a single directory and
+contains everything.  All sources are pulled from git and compiled for you.
+
+
+Installation
+--------------
+
+0. Open a command line terminal
+1. **Obtain a copy of LaMachine** in a temporary location (it will only be needed once).
+   * A copy is best obtained through git: ``$ cd /tmp && git clone https://github.com/proycon/LaMachine``, provided you have git installed already (``sudo apt-get install git`` installs it on Ubuntu/Debian systems)
+   * Alternatively, you can [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) from github and extract it: ``$ cd /tmp && wget https://github.com/proycon/LaMachine/archive/master.zip && unzip master.zip``
 2. In a terminal, **navigate to the directory** where you want to install
    LaMachine, for instance your home directory:  ``$ cd ~``.
    A ``lamachine/`` directory that contains everything will be automatically created in the next step.
    (Advanced users can also pre-create and activate an existing virtual environment that LaMachine will then reuse.)
 3. **Bootstrap the virtual environment** by calling: ``/tmp/LaMachine/virtualenv-bootstrap.sh``
+   * Do not run this as root, you will be queried for ``sudo`` for specific parts pertaining to the installation of
+   required global packages.
 
-Note that you will always have to activate your virtual environment with
-``. lamachine/bin/activate`` (*don't forget the dot!*) if you open a new terminal.
-This also requires you use bash or zsh. To facilitate activation, we recommend
-you add an alias ``alias lm=". /path/to/lamachine/bin/activate"`` in your
-``~/.bashrc`` or ``~/.zshrc``.
+Usage
+--------------
+
+Note that you will always have to activate your virtual environment before you can use any of the applications installed
+in it.
+
+1. Navigate to the directory where you installed LaMachine (e.g. ``cd ~/lamachine``)
+   * Note that this is not the same as the temporary ``/tmp/LaMachine`` we created during installation
+2. Run ``. bin/activate`` (don't forget the dot and the space!)
+
+In most configurations, your prompt will change to indicate LaMachine is activated.
+
+To facilitate activation, we recommend you add an alias ``alias lm=". /path/to/lamachine/bin/activate"`` to your
+``~/.bashrc`` (or ``~/.zshrc`` or whatever shell you prefer), allowing you to simply activate LaMachine by typing
+``lm``.
+
+Parameters
+---------------
 
 You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and ``lamachine-update.sh``):
 
@@ -147,7 +171,6 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
    with sudo rights. Allows for seperation of the bootstrap process for privileged and non-privileged user.
  * ``nopythondeps`` - Do not update 3rd party Python dependencies (such as numpy and scipy), may save time.
  * ``force`` - Force recompilation of everything, even if it's not updated
- * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine.
  * ``python2`` - Use python 2.7 instead of Python 3 *(note that some software may be not be available for Python 2!)*
  * ``stable`` - Use stable releases  *(this is the new default since February 2016)*
  * ``dev`` - Use cutting-edge development versions *(this may sometimes breaks things)*
@@ -155,24 +178,46 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
  * ``private`` - Do not send information to us regarding your LaMachine installation *(see the privacy section below)*
  * ``branch=`` - Use the specified git branch of LaMachine *(default: master)*
 
+The latter five parameters are persistent, if you specify them once during
+installation or upgrade you won't need to the next time you upgrade your LaMachine.
+
+Compatibility
+---------------
+
 Tested to work on:
 
  * Arch Linux
  * Debian 8
+ * Debian 9
  * Fedora Core 21
  * CentOS 7
  * Ubuntu 16.04 LTS - Xenial Xerus
  * Ubuntu 15.10 - Wily Werewolf
  * Ubuntu 15.04 - Vivid Vervet
  * Ubuntu 14.04 LTS - Trusty Tahr
- * Ubuntu 12.04 LTS - Precise Pangolin  *(provided you first manually upgrade to Python 3.3 or above!)*
+ * Windows 10 with Ubuntu Linux 14.04 Subsystem
 
 Partially works on:
+ * Mac OS X Yosemite/El Capitán/and later  *(wopr does not work yet, python-frog breaks, gecco and toad are not available; optional software valkuil and tscan are not supported)*
 
- * Mac OS X Yosemite/El Capitan  *(wopr does not work yet, python-frog breaks, gecco and toad are not available; optional software valkuil and tscan are not supported)*
- * Ubuntu 12.04 LTS - Precise Pangolin  *(provided you first manually upgrade to Python 3.3 or above! python-timbl may fail)*
+Deprecated:
+ * Ubuntu 12.04 LTS - Precise Pangolin
+ * CentOS 6
+ * Debian 7
 
+Updating & Extra Software
+===========================
 
+Once you have a LaMachine running in whatever form, just run ``lamachine-update.sh`` to update
+everything again.
+
+The ``lamachine-update.sh`` script is also used to install additional *optional* software, pass the optional software as a parameter:
+
+ * ``tscan`` - Compile and install tscan (will download about 1GB in data), t-scan also suggests you install [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) (another 1GB), which is not included in LaMachine.
+ * ``valkuil`` - Valkuil Spelling Corrector (for Dutch)
+ * ``foliaentity`` - Named entity linker
+
+Note that for the docker version, you can pull a new docker image using ``docker pull proycon/lamachine`` instead. If you do use ``lamachine-update.sh`` with docker, you most likely will want to ``docker commit`` your container afterwards to preserve the update!
 
 </section>
 
