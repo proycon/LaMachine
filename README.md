@@ -15,11 +15,12 @@ from scratch even more so.  Ideally software is installed through your
 distribution's package manager, but we do not always have packages available
 for all platforms, or they may be out of date. LaMachine ensures you can always
 use all of our software at the very latest stable versions by bundling
-them all and offering them in three distinct forms:
+them all and offering them in three distinct forms or flavours:
 
  * As a **Virtual Machine** - Easiest, allows you to run our software on any host OS.
  * As a **Docker application**
- * As a compilation/installation script in a **virtual environment**
+ * As a compilation/installation script in a **virtual environment** - This is the option with least overhead and most
+   tightly bound with the OS.
 
 LaMachine is suitable for both end-users and developers. It has to be noted,
 however, that running the latest development versions always comes with the
@@ -103,30 +104,53 @@ Installation & Usage with Docker (for Linux only)
 
 There is no need to clone this git repository at all for this method.
 
-Installation & Usage locally (for Linux/BSD/Mac OS X)
-=======================================================
+Installation & Usage locally (for Linux/BSD/Mac OS X/Windows 10)
+==================================================================
 
-LaMachine can also be used on a Linux/BSD/Mac OS X system without root access
-(provided a set of prerequisites is available on the system!). This is done
-through an extension for Python VirtualEnv (using Python 3.3 or later), as we
-provide a lot of Python bindings anyhow. This offers a local environment, ideal
-for development, that binds against the software globally available on your
-system. The virtual environment will be contained under a single directory and contains
-everything. All sources are pulled from git and compiled for you.
+LaMachine can be used on a Linux/BSD/Mac OS X systems without root access (provided a set of prerequisites is available
+on the system or installed by a system administrator!) and even on Windows 10 systems, provided the latter has the
+Windows Subsystem for Linux and Ubuntu on Windows installed (so if you use Windows, see
+[here](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide) for instructions first).
 
-1. **Clone this repository** in a temporary location (it will only be needed once) and then navigate to this directory in the terminal: ``$ cd /tmp && git clone https://github.com/proycon/LaMachine``  (or [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) manually from github and extract it).
+This local flavour of LaMachine runs in an extended Python Virtual Environment (using Python 3.3 or later) and is the option with
+least overhead (i.e. the most performant). This offers a local environment (not a virtual machine!), ideal for development, that binds against
+the software globally available on your system. The virtual environment will be contained under a single directory and
+contains everything.  All sources are pulled from git and compiled for you.
+
+
+Installation
+--------------
+
+0. Open a command line terminal
+1. **Obtain a copy of LaMachine** in a temporary location (it will only be needed once).
+ * A copy is best obtained through git: ``$ cd /tmp && git clone https://github.com/proycon/LaMachine``, provided you have git installed already (``sudo apt-get install git`` installs it on Ubuntu/Debian systems)
+ * Alternatively, you can [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) from github and extract it: ``$ cd /tmp && wget https://github.com/proycon/LaMachine/archive/master.zip && unzip master.zip``
 2. In a terminal, **navigate to the directory** where you want to install
    LaMachine, for instance your home directory:  ``$ cd ~``.
    A ``lamachine/`` directory that contains everything will be automatically created in the next step.
    (Advanced users can also pre-create and activate an existing virtual environment that LaMachine will then reuse.)
 3. **Bootstrap the virtual environment** by calling: ``/tmp/LaMachine/virtualenv-bootstrap.sh``
+ * Do not run this as root, you will be queried for ``sudo`` for specific parts pertaining to the installation of
+   required global packages.
 
+Usage
+--------------
 
-Note that you will always have to activate your virtual environment with
-``. lamachine/bin/activate`` (*don't forget the dot!*) if you open a new terminal.
-This also requires you use bash or zsh. To facilitate activation, we recommend
-you add an alias ``alias lm=". /path/to/lamachine/bin/activate"`` in your
-``~/.bashrc`` or ``~/.zshrc``.
+Note that you will always have to activate your virtual environment before you can use any of the applications installed
+in it.
+
+1. Navigate to the directory where you installed LaMachine (e.g. ``cd ~/lamachine``)
+ * Note that this is not the same as the temporary ``/tmp/LaMachine`` we created during installation
+2. Run ``. bin/activate`` (don't forget the dot and the space!)
+
+In most configurations, your prompt will change to indicate LaMachine is activated.
+
+To facilitate activation, we recommend you add an alias ``alias lm=". /path/to/lamachine/bin/activate"`` to your
+``~/.bashrc`` (or ``~/.zshrc`` or whatever shell you prefer), allowing you to simply activate LaMachine by typing
+``lm``.
+
+Parameters
+---------------
 
 You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and ``lamachine-update.sh``):
 
@@ -145,6 +169,9 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
 The latter five parameters are persistent, if you specify them once during
 installation or upgrade you won't need to the next time you upgrade your LaMachine.
 
+Compatibility
+---------------
+
 Tested to work on:
 
  * Arch Linux
@@ -152,16 +179,19 @@ Tested to work on:
  * Debian 9
  * Fedora Core 21
  * CentOS 7
- * Ubuntu 16.04 - Xenial Xerus
+ * Ubuntu 16.04 LTS - Xenial Xerus
  * Ubuntu 15.10 - Wily Werewolf
  * Ubuntu 15.04 - Vivid Vervet
  * Ubuntu 14.04 LTS - Trusty Tahr
+ * Windows 10 with Ubuntu Linux 14.04 Subsystem
 
 Partially works on:
+ * Mac OS X Yosemite/El Capitán/and later  *(wopr does not work yet, python-frog breaks, gecco and toad are not available; optional software valkuil and tscan are not supported)*
 
- * Mac OS X Yosemite/El Capitan  *(wopr does not work yet, python-frog breaks, gecco and toad are not available; optional software valkuil and tscan are not supported)*
- * Ubuntu 12.04 LTS - Precise Pangolin  *(provided you first manually upgrade to Python 3.3 or above! python-timbl may fail)*
-
+Deprecated:
+ * Ubuntu 12.04 LTS - Precise Pangolin
+ * CentOS 6
+ * Debian 7
 
 Updating & Extra Software
 ===========================
