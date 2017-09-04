@@ -4,24 +4,25 @@
 WITHTSCAN=0
 WITHVALKUIL=0
 WITHFOWLT=0
-WITHTICCL=0
 WITHFOLIAENTITY=0
+WITHALPINO=0
 for OPT in "$@"
 do
-    if [[ "$OPT" == "tscan" ]]; then
+    if [[ "$OPT" == "tscan" ]] || [[ "$OPT" == "all" ]]; then
         WITHTSCAN=1
+        WITHALPINO=1
     fi
-    if [[ "$OPT" == "valkuil" ]]; then
+    if [[ "$OPT" == "valkuil" ]] || [[ "$OPT" == "all" ]]; then
         WITHVALKUIL=1
     fi
-    if [[ "$OPT" == "fowlt" ]]; then
+    if [[ "$OPT" == "fowlt" ]] || [[ "$OPT" == "all" ]]; then
         WITHFOWLT=1
     fi
-    if [[ "$OPT" == "ticcl" ]]; then
-        WITHTICCL=1
-    fi
-    if [[ "$OPT" == "foliaentity" ]]; then
+    if [[ "$OPT" == "foliaentity" ]] || [[ "$OPT" == "all" ]]; then
         WITHFOLIAENTITY=1
+    fi
+    if [[ "$OPT" == "alpino" ]] || [[ "$OPT" == "all" ]]; then
+        WITHALPINO=1
     fi
 done
 
@@ -113,45 +114,12 @@ if [ $WITHFOWLT -eq 1 ] || [ -d fowlt-gecco ]; then
     cd ..
 fi
 
-if [ $WITHTICCL -eq 1 ] || [ -d TICCL ]; then
-    project="TICCL"
-    echo
-    echo "--------------------------------------------------------"
-    echo "Installing $project">&2
-    echo "--------------------------------------------------------"
-    if [ ! -d $project ]; then
-        git clone https://github.com/martinreynaert/$project
-        cd $project
-        REPOCHANGED=1
-    else
-        cd $project
-        gitcheck
-    fi
-    if [ ! -z "$VIRTUAL_ENV" ]; then
-        echo -n "TICCL=" >> "$VIRTUAL_ENV/VERSION"
-    else
-        echo -n "TICCL=" >> "/VERSION"
-    fi
-    outputgitversion
-    if [ $REPOCHANGED -eq 1 ]; then
-        if [ ! -d data ]; then
-            wget http://ticclops.uvt.nl/TICCL.languagefiles.ALLavailable.20160421.tar.gz
-            tar -xvzf TICCL.languagefiles.*.tar.gz
-            rm TICCL.languagefiles.*.tar.gz
-        fi
-    else
-        echo "TICCL is already up to date ... "
-    fi
-    TICCLDIR=`pwd`
-    echo "(Note: TICCL root path is $TICCLDIR)"
-    cd ..
-    ln -sf $TICCLDIR/TICCLops.PICCL.pl ../bin/TICCLops.PICCL.pl
-fi
 
 if [ $WITHFOLIAENTITY -eq 1 ] || [ -d ../foliaentity ] || [ -d /opt/foliaentity ]; then
     echo "--------------------------------------------------------"
     echo "Installing FoliaEntity">&2
     echo "--------------------------------------------------------"
+    echo " (Note that this is a binary release that might not work on all platforms!)">&2
     srcdir=$(pwd)
     if [ ! -z "$VIRTUAL_ENV" ]; then
         cd ..
@@ -165,5 +133,44 @@ if [ $WITHFOLIAENTITY -eq 1 ] || [ -d ../foliaentity ] || [ -d /opt/foliaentity 
     rm entity-pack.tar.gz 2>/dev/null >/dev/null
     wget https://www.dropbox.com/s/5rrk7f8wcplchlo/entity-pack.tar.gz #download from Nederlab dropbox (binary!)
     tar -xvzf entity-pack.tar.gz
+    cd $srcdir #back to src/ dir
+fi
+
+if [ $WITHALPINO -eq 1 ] || [ -d ../Alpino ] || [ -d /opt/Alpino ]; then
+    echo "--------------------------------------------------------"
+    echo "Installing Alpino">&2
+    echo "--------------------------------------------------------"
+    echo " (Note that this is a binary release that might not work on all platforms!)">&2
+    srcdir=$(pwd)
+    if [ ! -z "$VIRTUAL_ENV" ]; then
+        cd ..
+    else
+        cd /opt
+    fi
+    if [ ! -d Alpino ] || [ $FORCE -eq 1 ]; then
+        wget http://www.let.rug.nl/vannoord/alp/Alpino/versions/binary/latest.tar.gz
+        tar -xvzf latest.tar.gz
+        rm latest.tar.gz
+        cd Alpino
+        ALPINO_HOME=`realpath .`
+        if [ ! -z "$VIRTUAL_ENV" ]; then
+            echo "export ALPINO_HOME=\"$ALPINO_HOME\"" > $VIRTUAL_ENV/bin/extraactivate.alpino.sh
+            echo "export TCL_LIBRARY=\"\$ALPINO_HOME/create_bin/tcl8.5\"" >> $VIRTUAL_ENV/bin/extraactivate.alpino.sh
+            echo "export TCLLIBPATH=\"\$ALPINO_HOME/create_bin/tcl8.5\"" >> $VIRTUAL_ENV/bin/extraactivate.alpino.sh
+            chmod a+x $VIRTUAL_ENV/bin/extraactivate.alpino.sh
+            BASEDIR=$VIRTUAL_ENV
+        else
+            BASEDIR=/usr/
+        fi
+        echo "#!/bin/bash" > $BASEDIR/bin/Alpino
+        echo "export ALPINO_HOME=\"$ALPINO_HOME\"" >> $BASEDIR/bin/Alpino
+        echo "\$ALPINO_HOME/bin/Alpino $@" >> $BASEDIR/bin/Alpino
+        echo "exit \$?" >> $BASEDIR/bin/Alpino
+        chmod a+x $BASEDIR/bin/Alpino
+    else
+        cd Alpino
+        ALPINO_HOME=`realpath .`
+        echo "--> NOTE: Alpino is already installed and can not be upgraded automatically, if you want to force an update, first delete $ALPINO_HOME or pass the 'force' parameter....">&2
+    fi
     cd $srcdir #back to src/ dir
 fi

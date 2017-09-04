@@ -761,6 +761,10 @@ if [ -z "$LAMACHINE_QUIET" ]; then
 fi
 
 export NXF_HOME="$VIRTUAL_ENV/src/nextflow"
+
+for f in $VIRTUAL_ENV/bin/extraactivate.*.sh; do
+    source $f
+done
 '
 
 activate_conda='
