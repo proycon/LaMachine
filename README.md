@@ -226,7 +226,7 @@ other way. No personally identifiable information whatsoever will be included
 in any reports we generate from this and it will never be used for
 advertisement purposes.
 
-To opt-out of this behaviour, For the ``virtualenv-boostrap.sh`` and
+To opt-out of this behaviour, For the ``virtualenv-bootstrap.sh`` and
 ``lamachine-update.sh`` scripts, add the parameter ``private``. For the VM
 method, prior to building the VM, edit ``Vagrantfile`` and add the ``private``
 parameter after ``bootstrap.sh``. Due to the nature of Docker, installation of
