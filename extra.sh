@@ -171,8 +171,9 @@ if [ $WITHALPINO -eq 1 ] || [ -d ../Alpino ] || [ -d /opt/Alpino ]; then
     echo "export ALPINO_HOME=\"$ALPINO_HOME\"" >> $BASEDIR/bin/Alpino
     echo "export TCL_LIBRARY=\"\$ALPINO_HOME/create_bin/tcl8.5\"" >> $BASEDIR/bin/Alpino
     echo "export TCLLIBPATH=\"\$ALPINO_HOME/create_bin/tcl8.5\"" >> $BASEDIR/bin/Alpino
-    echo "\$ALPINO_HOME/bin/Alpino $@" >> $BASEDIR/bin/Alpino
+    echo "\$ALPINO_HOME/bin/Alpino \$@" >> $BASEDIR/bin/Alpino
     echo "exit \$?" >> $BASEDIR/bin/Alpino
+    ln -sf $ALPINO_HOME/create_bin/tk8.5 $ALPINO_HOME/create_bin/tcl8.5/tk8.5
     chmod a+x $BASEDIR/bin/Alpino
     cd $srcdir #back to src/ dir
 fi
