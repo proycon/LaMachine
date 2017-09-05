@@ -153,24 +153,26 @@ if [ $WITHALPINO -eq 1 ] || [ -d ../Alpino ] || [ -d /opt/Alpino ]; then
         rm latest.tar.gz
         cd Alpino
         ALPINO_HOME=`realpath .`
-        if [ ! -z "$VIRTUAL_ENV" ]; then
-            echo "export ALPINO_HOME=\"$ALPINO_HOME\"" > $VIRTUAL_ENV/bin/extraactivate.alpino.sh
-            echo "export TCL_LIBRARY=\"\$ALPINO_HOME/create_bin/tcl8.5\"" >> $VIRTUAL_ENV/bin/extraactivate.alpino.sh
-            echo "export TCLLIBPATH=\"\$ALPINO_HOME/create_bin/tcl8.5\"" >> $VIRTUAL_ENV/bin/extraactivate.alpino.sh
-            chmod a+x $VIRTUAL_ENV/bin/extraactivate.alpino.sh
-            BASEDIR=$VIRTUAL_ENV
-        else
-            BASEDIR=/usr/
-        fi
-        echo "#!/bin/bash" > $BASEDIR/bin/Alpino
-        echo "export ALPINO_HOME=\"$ALPINO_HOME\"" >> $BASEDIR/bin/Alpino
-        echo "\$ALPINO_HOME/bin/Alpino $@" >> $BASEDIR/bin/Alpino
-        echo "exit \$?" >> $BASEDIR/bin/Alpino
-        chmod a+x $BASEDIR/bin/Alpino
     else
         cd Alpino
         ALPINO_HOME=`realpath .`
         echo "--> NOTE: Alpino is already installed and can not be upgraded automatically, if you want to force an update, first delete $ALPINO_HOME or pass the 'force' parameter....">&2
     fi
+    if [ ! -z "$VIRTUAL_ENV" ]; then
+        echo "export ALPINO_HOME=\"$ALPINO_HOME\"" > $VIRTUAL_ENV/bin/extraactivate.alpino.sh
+        echo "export TCL_LIBRARY=\"\$ALPINO_HOME/create_bin/tcl8.5\"" >> $VIRTUAL_ENV/bin/extraactivate.alpino.sh
+        echo "export TCLLIBPATH=\"\$ALPINO_HOME/create_bin/tcl8.5\"" >> $VIRTUAL_ENV/bin/extraactivate.alpino.sh
+        chmod a+x $VIRTUAL_ENV/bin/extraactivate.alpino.sh
+        BASEDIR=$VIRTUAL_ENV
+    else
+        BASEDIR=/usr/
+    fi
+    echo "#!/bin/bash" > $BASEDIR/bin/Alpino
+    echo "export ALPINO_HOME=\"$ALPINO_HOME\"" >> $BASEDIR/bin/Alpino
+    echo "export TCL_LIBRARY=\"\$ALPINO_HOME/create_bin/tcl8.5\"" >> $BASEDIR/bin/Alpino
+    echo "export TCLLIBPATH=\"\$ALPINO_HOME/create_bin/tcl8.5\"" >> $BASEDIR/bin/Alpino
+    echo "\$ALPINO_HOME/bin/Alpino $@" >> $BASEDIR/bin/Alpino
+    echo "exit \$?" >> $BASEDIR/bin/Alpino
+    chmod a+x $BASEDIR/bin/Alpino
     cd $srcdir #back to src/ dir
 fi
