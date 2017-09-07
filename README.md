@@ -52,6 +52,7 @@ Our optional additional software:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction.
 - [Valkuil](https://github.com/proycon/valkuil-gecco) - A context-aware spelling corrector for Dutch
 - [FoliaEntity](https://github.com/ErwinKomen/FoliaEntity) - A named entity linker
+- [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/), a dependency parser and tagger for Dutch (about 1GB)
 
 Notable pre-installed *third party* software (not exhaustive):
 - [NumPy](http://www.numpy.org/) and [SciPy](http://www.numpy.org/) - Python libraries for scientific computing
