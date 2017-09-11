@@ -762,7 +762,8 @@ fi
 
 export NXF_HOME="$VIRTUAL_ENV/src/nextflow"
 
-for f in $VIRTUAL_ENV/bin/extraactivate.*.sh; do
+EXTRAACTIVATE=`find $VIRTUAL_ENV/bin -type f -name "extraactivate.*.sh"`
+for f in $EXTRAACTIVATE; do
     source $f
 done
 '
