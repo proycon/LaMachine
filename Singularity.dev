@@ -1,6 +1,7 @@
 Bootstrap: arch
 
 %post
+    pacman --noconfirm -Syu git
     cd /usr/src
     cp /etc/hosts .
     sed -i '/::/d' hosts
