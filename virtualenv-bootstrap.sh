@@ -954,6 +954,10 @@ for project in $PROJECTS; do
     echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
     outputgitversion
     if [ $RECOMPILE -eq 1 ]; then
+        if [ -f Makefile ]; then
+            make clean
+            make distclean
+        fi
         bash bootstrap.sh || fatalerror "$project bootstrap failed"
         EXTRA=""
         if [ "$OS" == "mac" ]; then
