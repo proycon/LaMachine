@@ -220,6 +220,16 @@ if [ -f .private ]; then
 else
     PRIVATE=0 #send simple analytics to Nijmegen
 fi
+if [ -f .minimal ]; then
+    MINIMAL=1
+else
+    MINIMAL=0
+fi
+if [ -f .cuda ]; then
+    CUDA=1
+else
+    CUDA=0
+fi
 for OPT in "$@"
 do
     if [[ "$OPT" == "force" ]]; then
@@ -236,6 +246,14 @@ do
     if [[ "$OPT" == "private" ]]; then
         touch .private
         PRIVATE=1
+    fi
+    if [[ "$OPT" == "cuda" ]]; then
+        touch .cuda
+        CUDA=1
+    fi
+    if [[ "$OPT" == "minimal" ]]; then
+        touch .minimal
+        MINIMAL=1
     fi
     if [[ "$OPT" == "sendinfo" ]]; then
         rm -f .private
@@ -255,6 +273,8 @@ do
         echo "  dev              - Install latest development releases of all software (this may break things)"
         echo "  version=<file>   - Install specific versions of all software, versions are in the specified file. LaMachine's generates a VERSION file on each installation/update that is valid input for this option."
         echo "  private          - Do not send anonymous statistics about this copy of LaMachine to Radboud University (opt-out)"
+        echo "  cuda             - Install with cuda support for Nvidia GPU acceleration"
+        echo "  minimal          - Do not install third party software that is not a direct dependency"
         echo "  branch=<branch>  - Use the following branch of the LaMachine git repository (default: master)"
         exit 0
     fi
@@ -282,6 +302,15 @@ echo "Installing base-devel...."
 pacman -Syu --noconfirm --needed base-devel || fatalerror "Unable to install global dependencies"
 PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs cython python python-pip python-requests python-lxml python-pycurl python-virtualenv python-numpy python-scipy python-matplotlib python-pandas python-nltk python-scikit-learn python-psutil ipython jupyter-notebook wget curl libexttextcat python-flask python-requests python-requests-oauthlib python-requests-toolbelt python-crypto nginx uwsgi uwsgi-plugin-python hunspell aspell hunspell-en aspell-en perl perl-sort-naturally jre8-openjdk tesseract tesseract-data-eng tesseract-data-nld tesseract-data-deu tesseract-data-deu_frak tesseract-data-fra poppler djvulibre imagemagick"
 #poppler provides pdfimages
+#secondary dependencies for 3rd party AUR packages later on:
+if [ $MINIMAL -eq 0 ]; then
+    PKGS="$PKGS subversion python2"
+    if [ $CUDA -eq 1 ]; then
+        PKGS="$PKGS python-pytorch-cuda python-tensorflow-cuda"
+    else
+        PKGS="$PKGS python-pytorch python-tensorflow"
+    fi
+fi
 echo "Installing global packages: $PKGS"
 pacman --noconfirm --needed -Syu $PKGS ||  fatalerror "Unable to install global dependencies"
 mkinitcpio -p linux
@@ -381,6 +410,11 @@ if [ $DEV -eq 0 ]; then
 else
     #Packages to install in development mode:
     PACKAGES="ticcutils-git libfolia-git uctodata-git ucto-git foliautils-git timbl-git timblserver-git mbt-git mbtserver-git wopr-git frogdata-git frog-git toad-git ticcltools-git"
+fi
+#3rd party AUR packages:
+if [ $MINIMAL -eq 0 ]; then
+    PACKAGES="$PACKAGES python-keras kaldi-openfst kaldi kaldi-irstlm kaldi-sctk kaldi-sph2pipe"
+    #note: kaldi AUR by definition pulls development versions (git master)
 fi
 
 for package in $PACKAGES; do
