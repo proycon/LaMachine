@@ -190,7 +190,7 @@ if [ $WITHALPINO -eq 1 ] || [ -d ../Alpino ] || [ -d /opt/Alpino ]; then
     cd $srcdir #back to src/ dir
 fi
 
-if [ $WITHKALDI -eq 1 ] || [ -d ../kaldi ]; then
+if [ $WITHKALDI -eq 1 ] || [ -d ../kaldi ] || [ -d /opt/kaldi ]; then
     cd ..
     echo "--------------------------------------------------------"
     echo "Installing Kaldi">&2
@@ -218,6 +218,11 @@ if [ $WITHKALDI -eq 1 ] || [ -d ../kaldi ]; then
 
     cd src
     make -j $(nproc)
+
+    if [ ! -z "$VIRTUAL_ENV" ]; then
+        echo "export KALDI_ROOT=\"$KALDI_ROOT\"" > $VIRTUAL_ENV/bin/extraactivate.kaldi.sh
+        chmod a+x $VIRTUAL_ENV/bin/extraactivate.kaldi.sh
+    fi
 
     cd $scrdir
 fi
