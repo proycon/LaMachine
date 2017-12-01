@@ -266,6 +266,9 @@ do
     if [[ "${OPT:0:7}" == "branch=" ]]; then
         BRANCH=${OPT:7}
     fi
+    if [[ "$OPT" == "kaldi" ]]; then
+        WITHKALDI=1
+    fi
     if [[ "$OPT" == "help" ]] || [[ "$OPT" == "-h" ]]; then
         echo "Options (no hyphen preceeding any):"
         echo "  force            - Force recompilation/reinstallation of everything"
@@ -414,9 +417,9 @@ else
 fi
 #3rd party AUR packages:
 if [ $MINIMAL -eq 0 ]; then
-    PACKAGES="$PACKAGES python-keras kaldi-openfst kaldi kaldi-irstlm kaldi-sctk kaldi-sph2pipe"
-    #note: kaldi AUR by definition pulls development versions (git master)
+    PACKAGES="$PACKAGES python-keras"
 fi
+
 
 for package in $PACKAGES; do
     project="${package%-git}"
