@@ -255,6 +255,10 @@ do
         touch .minimal
         MINIMAL=1
     fi
+    if [[ "$OPT" == "full" ]]; then
+        rm -f .minimal
+        MINIMAL=0
+    fi
     if [[ "$OPT" == "sendinfo" ]]; then
         rm -f .private
         PRIVATE=0
@@ -277,9 +281,10 @@ do
         echo "  version=<file>   - Install specific versions of all software, versions are in the specified file. LaMachine's generates a VERSION file on each installation/update that is valid input for this option."
         echo "  private          - Do not send anonymous statistics about this copy of LaMachine to Radboud University (opt-out)"
         echo "  cuda             - Install with cuda support for Nvidia GPU acceleration"
-        echo "  minimal          - Do not install third party software that is not a direct dependency"
+        echo "  minimal          - do not install third party software that is not a direct dependency and exclude certain large software packages"
+        echo "  full             - install the full default package (opposite of minimal, default)"
+        echo "  all              - install all optional software as well (i.e. more than full)"
         echo "  branch=<branch>  - Use the following branch of the LaMachine git repository (default: master)"
-        exit 0
     fi
 done
 
@@ -303,10 +308,12 @@ pacman --noconfirm -R virtualbox-guest-dkms
 pacman --noconfirm -Sy archlinux-keyring
 echo "Installing base-devel...."
 pacman -Syu --noconfirm --needed base-devel || fatalerror "Unable to install global dependencies"
-PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs cython python python-pip python-requests python-lxml python-pycurl python-virtualenv python-numpy python-scipy python-matplotlib  wget curl libexttextcat python-flask python-requests python-requests-oauthlib python-requests-toolbelt python-crypto nginx uwsgi uwsgi-plugin-python hunspell aspell hunspell-en aspell-en perl perl-sort-naturally jre8-openjdk tesseract tesseract-data-eng tesseract-data-nld tesseract-data-deu tesseract-data-deu_frak tesseract-data-fra poppler djvulibre imagemagick"
+PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs cython python python-pip python-requests python-lxml python-pycurl python-virtualenv python-numpy python-scipy python-matplotlib  wget curl libexttextcat python-flask python-requests python-requests-oauthlib python-requests-toolbelt python-crypto nginx uwsgi uwsgi-plugin-python hunspell aspell hunspell-en aspell-en"
 #poppler provides pdfimages
 if [ $MINIMAL -eq 0 ]; then
     PKGS="$PKGS python-pandas python-nltk python-scikit-learn python-psutil ipython jupyter-notebook"
+    #dependencies for PICCL
+    PKGS="$PKGS perl perl-sort-naturally jre8-openjdk tesseract tesseract-data-eng tesseract-data-nld tesseract-data-deu tesseract-data-deu_frak tesseract-data-fra poppler djvulibre imagemagick"
     #secondary dependencies for 3rd party AUR packages later on:
     PKGS="$PKGS subversion python2"
     if [ $CUDA -eq 1 ]; then
@@ -591,57 +598,59 @@ if [ $REPOCHANGED -eq 1 ]; then
 fi
 cd ..
 
-echo "--------------------------------------------------------"
-echo "[LaMachine] Installing Nextflow"
-echo "--------------------------------------------------------"
+if [ $MINIMAL -eq 0 ]; then
+    echo "--------------------------------------------------------"
+    echo "[LaMachine] Installing Nextflow"
+    echo "--------------------------------------------------------"
 
-if [ ! -d /opt/nextflow ]; then
-    mkdir /opt/nextflow
-    cd /opt/nextflow
-    export NXF_HOME="/opt/nextflow"
-    curl -fsSL get.nextflow.io | bash
-    echo -e '#!/bin/bash\nNXF_HOME="/opt/nextflow" NXF_LAUNCHER=~/.nextflow_launcher /opt/nextflow/nextflow $@' > /usr/bin/nextflow
-    chmod a+rx /usr/bin/nextflow /opt/nextflow/nextflow
-else
-    nextflow self-update
+    if [ ! -d /opt/nextflow ]; then
+        mkdir /opt/nextflow
+        cd /opt/nextflow
+        export NXF_HOME="/opt/nextflow"
+        curl -fsSL get.nextflow.io | bash
+        echo -e '#!/bin/bash\nNXF_HOME="/opt/nextflow" NXF_LAUNCHER=~/.nextflow_launcher /opt/nextflow/nextflow $@' > /usr/bin/nextflow
+        chmod a+rx /usr/bin/nextflow /opt/nextflow/nextflow
+    else
+        nextflow self-update
+    fi
+    chmod -R a+r /opt/nextflow
+
+    echo "--------------------------------------------------------"
+    echo "[LaMachine] Installing PICCL"
+    echo "--------------------------------------------------------"
+
+    nextflow pull LanguageMachines/PICCL
+
+    cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
+
+    echo "--------------------------------------------------------"
+    echo "Installing PICCL webservice"
+    echo "--------------------------------------------------------"
+    #webservice is cloned seperately from nextflow pull for now
+    project="PICCL"
+    if [ ! -d $project ]; then
+        git clone https://github.com/LanguageMachines/$project
+        cd $project
+        gitcheck
+        REPOCHANGED=1
+    else
+        cd $project
+        gitcheck
+    fi
+    echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
+    outputgitversion
+    if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
+        cd webservice
+        python setup.py install || error "Installing PICCL"
+        cd ..
+    fi
+
+    cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
+
+    . LaMachine/setup-flat.sh
+
+    . LaMachine/extra.sh $@
 fi
-chmod -R a+r /opt/nextflow
-
-echo "--------------------------------------------------------"
-echo "[LaMachine] Installing PICCL"
-echo "--------------------------------------------------------"
-
-nextflow pull LanguageMachines/PICCL
-
-cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
-
-echo "--------------------------------------------------------"
-echo "Installing PICCL webservice"
-echo "--------------------------------------------------------"
-#webservice is cloned seperately from nextflow pull for now
-project="PICCL"
-if [ ! -d $project ]; then
-    git clone https://github.com/LanguageMachines/$project
-    cd $project
-    gitcheck
-    REPOCHANGED=1
-else
-    cd $project
-    gitcheck
-fi
-echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
-outputgitversion
-if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
-    cd webservice
-    python setup.py install || error "Installing PICCL"
-    cd ..
-fi
-
-cd $SRCDIR || fatalerror "Unable to go back to sourcedir"
-
-. LaMachine/setup-flat.sh
-
-. LaMachine/extra.sh $@
 
 echo "--------------------------------------------------------"
 echo "Outputting version information of all installed packages"

@@ -89,7 +89,9 @@ runtest_python colibricore
 if [ "$OS" != "mac" ]; then
     runtest gecco --helpmodules
 fi
-runtest nextflow info LanguageMachines/PICCL
+if [ $MINIMAL -eq 0 ]; then
+    runtest nextflow info LanguageMachines/PICCL
+fi
 
 if [ $FAILURES -eq 0 ]; then
     echo -e "[LaMachine Test] $GREEN All tests passed, good! $RESET"

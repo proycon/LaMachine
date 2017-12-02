@@ -264,6 +264,9 @@ do
     if [[ "$OPT" == "minimal" ]]; then
         MINIMAL=1
     fi
+    if [[ "$OPT" == "full" ]]; then
+        MINIMAL=0
+    fi
     if [[ "${OPT:0:8}" == "version=" ]]; then
         VERSIONFILE=`realpath ${OPT:8}`
         DEV=0
@@ -284,6 +287,9 @@ do
         echo "  private          - Do not send anonymous statistics about this copy of LaMachine to Radboud University (opt-out)"
         echo "  noninteractive   - Never query the user for input"
         echo "  branch=<branch>  - Use the following branch of the LaMachine git repository (default: master)"
+        echo "  minimal          - do not install third party software that is not a direct dependency and exclude certain large software packages"
+        echo "  full             - install the full default package (opposite of minimal, default)"
+        echo "  all              - install all optional software as well (i.e. more than full)"
         exit 0
     fi
 done
@@ -363,9 +369,12 @@ if [ "$OS" == "arch" ]; then
     if [ $NONINTERACTIVE -eq 1 ]; then
         NONINTERACTIVEFLAG="--noconfirm"
     fi
-    DISTRIBPACKAGES="base-devel pkg-config git autoconf-archive gcc-fortran icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse perl jre8-openjdk tesseract tesseract-data-eng tesseract-data-nld tesseract-data-deu tesseract-data-deu_frak tesseract-data-fra poppler djvulibre imagemagick"
+    DISTRIBPACKAGES="base-devel pkg-config git autoconf-archive gcc-fortran icu xml2 libxslt zlib libtar boost boost-libs python python-pip python-virtualenv wget gnutls curl libexttextcat aspell hunspell blas lapack suitesparse"
     if [ "$PYTHON" == "python2" ]; then
         DISTRIBPACKAGES="$DISTRIBPACKAGES python2 python2-pip python2-virtualenv"
+    fi
+    if [ $MINIMAL -eq 0 ]; then
+        DISTRIBPACKAGES="$DISTRIBPACKAGES perl jre8-openjdk tesseract tesseract-data-eng tesseract-data-nld tesseract-data-deu tesseract-data-deu_frak tesseract-data-fra poppler djvulibre imagemagick"
     fi
     INSTALL="sudo pacman -Syu $NONINTERACTIVEFLAG --needed $DISTRIBPACKAGES"
 elif [ "$OS" == "debian" ]; then
@@ -383,9 +392,9 @@ elif [ "$OS" == "debian" ]; then
             VENVPACKAGE="python-virtualenv"
         fi
         if [ "$DISTRIB_RELEASE" == "12.04" ]; then
-            echo "===========================================================================================================================================================">&2
-            echo "WARNING: Ubuntu 12.04 detected, make sure you manually upgrade Python 3 to at least Python 3.3 first or things may fail later in the installation process!">&2
-            echo "============================================================================================================================================================">&2
+            echo "===========================================================================================================================================================================">&2
+            echo "WARNING: Ubuntu 12.04 detected, this is old!! Make sure you manually upgrade Python 3 to at least Python 3.4 first or things may fail later in the installation process!">&2
+            echo "===========================================================================================================================================================================">&2
             sleep 3
             PIPPACKAGE="python3-setuptools" #no python3-pip yet
         elif [ "$DISTRIB_RELEASE" == "10.04" ] || [ "$DISTRIB_RELEASE" == "10.10" ] || [ "$DISTRIB_RELEASE" == "9.10" ] || [ "$DISTRIB_RELEASE" == "9.04" ] || [ "$DISTRIB_RELEASE" == "8.04" ]; then
@@ -398,9 +407,12 @@ elif [ "$OS" == "debian" ]; then
     if [ $NONINTERACTIVE -eq 1 ]; then
         NONINTERACTIVEFLAG="-y"
     fi
-    DISTRIBPACKAGES="pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE $VENVPACKAGE $GNUTLS libcurl4-gnutls-dev wget curl libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl perl default-jre tesseract-ocr tesseract-ocr-eng tesseract-ocr-nld tesseract-ocr-deu tesseract-ocr-deu-frak tesseract-ocr-fra poppler-utils djvulibre-bin libdjvulibre-text imagemagick"
+    DISTRIBPACKAGES="pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev python3 python3-dev $PIPPACKAGE $VENVPACKAGE $GNUTLS libcurl4-gnutls-dev wget curl libexttextcat-dev libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl"
     if [ "$PYTHON" == "python2" ]; then
         DISTRIBPACKAGES="$DISTRIBPACKAGES python python-dev python-pip"
+    fi
+    if [ $MINIMAL -eq 0 ]; then
+        DISTRIBPACKAGES="$DISTRIBPACKAGES perl default-jre tesseract-ocr tesseract-ocr-eng tesseract-ocr-nld tesseract-ocr-deu tesseract-ocr-deu-frak tesseract-ocr-fra poppler-utils djvulibre-bin libdjvulibre-text imagemagick"
     fi
     INSTALL="sudo apt-get -m $NONINTERACTIVEFLAG install $DISTRIBPACKAGES"  #python-virtualenv will still pull in python2 unfortunately, no separate 3 package but 2 version is good enough
 elif [ "$OS" == "redhat" ]; then
@@ -421,15 +433,21 @@ elif [ "$OS" == "redhat" ]; then
     else
         DISTRIBPACKAGES="python3 python3-devel python3-pip python3-virtualenv icu-devel"
     fi
-    DISTRIBPACKAGES="pkgconfig git icu libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python3 python3-devel zlib zlib-devel bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget curl libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel perl java-1.8.0-openjdk tesseract poppler djvulibre ImageMagick $DISTRIBPACKAGES"
+    DISTRIBPACKAGES="pkgconfig git icu libtool autoconf automake autoconf-archive make gcc gcc-c++ libxml2 libxml2-devel libxslt libxslt-devel libtar libtar-devel boost boost-devel python3 python3-devel zlib zlib-devel bzip2 bzip2-devel libcurl gnutls-devel libcurl-devel wget curl libexttextcat libexttextcat-devel aspell aspell-devel hunspell-devel atlas-devel blas-devel lapack-devel libgfortran suitesparse suitesparse-devel $DISTRIBPACKAGES"
     if [ "$PYTHON" == "python2" ]; then
         DISTRIBPACKAGES="$DISTRIBPACKAGES python python-devel python-pip"
     fi
+    if [ $MINIMAL -eq 0 ]; then
+        DISTRIBPACKAGES="$DISTRIBPACKAGES perl java-1.8.0-openjdk tesseract poppler djvulibre ImageMagick"
+    fi
     INSTALL="sudo yum $NONINTERACTIVEFLAG install $DISTRIBPACKAGES"
 elif [ "$OS" == "freebsd" ]; then
-    DISTRIBPACKAGES="git libtool pkgconf autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python3 bzip2 py27-virtualenv curl wget gnutls aspell hunspell libtextcat openjdk imagemagick"
+    DISTRIBPACKAGES="git libtool pkgconf autoconf automake autoconf-archive gmake libxml2 libxslt icu libtar boost-all lzlib python3 bzip2 py27-virtualenv curl wget gnutls aspell hunspell libtextcat"
     if [ "$PYTHON" == "python2" ]; then
         DISTRIBPACKAGES="$DISTRIBPACKAGES python"
+    fi
+    if [ $MINIMAL -eq 0 ]; then
+        DISTRIBPACKAGES="$DISTRIBPACKAGES openjdk imagemagick"
     fi
     INSTALL="sudo pkg install $DISTRIBPACKAGES"
 elif [ "$OS" == "mac" ]; then
@@ -439,7 +457,10 @@ elif [ "$OS" == "mac" ]; then
     else
         BREWEXTRA=""
     fi
-    INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python3 boost-python xml2 libxslt icu4c libtextcat wget curl freetype tesseract poppler djvulibre imagemagick $BREWEXTRA"
+    if [ $MINIMAL -eq 0 ]; then
+        BREWEXTRA="$BREWEXTRA tesseract poppler djvulibre imagemagick"
+    fi
+    INSTALL="brew install pkg-config autoconf automake libtool autoconf-archive boost --with-python3 boost-python xml2 libxslt icu4c libtextcat wget curl freetype $BREWEXTRA"
     #freetype is needed for matplotlib
 
     DISTRIB_ID="OSX"
@@ -589,7 +610,9 @@ if [ $DEV -eq 0 ]; then
 else
     touch "$VIRTUAL_ENV/src/LaMachine/.dev"
 fi
-if [ $MINIMAL -eq 1 ]; then
+if [ $MINIMAL -eq 0 ]; then
+    rm -f "$VIRTUAL_ENV/src/LaMachine/.minimal" 2>/dev/null
+else
     touch "$VIRTUAL_ENV/src/LaMachine/.minimal"
 fi
 
@@ -1286,54 +1309,56 @@ if [ "$OS" != "mac" ]; then
 fi
 echo
 
-if [ ! -f $VIRTUAL_ENV/bin/nextflow ]; then
+if [ $MINIMAL -eq 0 ]; then
+    if [ ! -f $VIRTUAL_ENV/bin/nextflow ]; then
+        echo "--------------------------------------------------------"
+        echo "Installing Nextflow"
+        echo "--------------------------------------------------------"
+
+        cd $VIRTUAL_ENV/bin/
+        export NXF_HOME=$VIRTUAL_ENV/src/nextflow
+        curl -fsSL get.nextflow.io | bash || error "Unable to install Nextflow"
+        cd -
+    else
+        nextflow self-update
+    fi
+
+    chmod a+rx $VIRTUAL/bin/nextflow
+
+
     echo "--------------------------------------------------------"
-    echo "Installing Nextflow"
+    echo "Installing PICCL"
     echo "--------------------------------------------------------"
+    nextflow pull LanguageMachines/PICCL
 
-    cd $VIRTUAL_ENV/bin/
-    export NXF_HOME=$VIRTUAL_ENV/src/nextflow
-    curl -fsSL get.nextflow.io | bash || error "Unable to install Nextflow"
-    cd -
-else
-    nextflow self-update
-fi
-
-chmod a+rx $VIRTUAL/bin/nextflow
-
-
-echo "--------------------------------------------------------"
-echo "Installing PICCL"
-echo "--------------------------------------------------------"
-nextflow pull LanguageMachines/PICCL
-
-echo "--------------------------------------------------------"
-echo "Installing PICCL webservice"
-echo "--------------------------------------------------------"
-#webservice is cloned seperately from nextflow pull for now
-project="PICCL"
-if [ ! -d $project ]; then
-    git clone https://github.com/LanguageMachines/$project
-    cd $project
-    gitcheck
-    REPOCHANGED=1
-else
-    cd $project
-    gitcheck
-fi
-echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
-outputgitversion
-if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
-    cd webservice
-    python setup.py install || error "Installing PICCL"
+    echo "--------------------------------------------------------"
+    echo "Installing PICCL webservice"
+    echo "--------------------------------------------------------"
+    #webservice is cloned seperately from nextflow pull for now
+    project="PICCL"
+    if [ ! -d $project ]; then
+        git clone https://github.com/LanguageMachines/$project
+        cd $project
+        gitcheck
+        REPOCHANGED=1
+    else
+        cd $project
+        gitcheck
+    fi
+    echo -n "$project=" >> "$VIRTUAL_ENV/VERSION"
+    outputgitversion
+    if [ $REPOCHANGED -eq 1 ] || [ $RECOMPILE -eq 1 ]; then
+        cd webservice
+        python setup.py install || error "Installing PICCL"
+        cd ..
+    fi
     cd ..
+
+
+    . LaMachine/setup-flat.sh
+
+    . LaMachine/extra.sh $@
 fi
-cd ..
-
-
-. LaMachine/setup-flat.sh
-
-. LaMachine/extra.sh $@
 
 echo "--------------------------------------------------------"
 echo "Outputting version information of all installed packages"

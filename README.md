@@ -46,26 +46,32 @@ Our pre-installed software:
 - [Toad](https://github.com/LanguageMachines/toad) - Trainer Of All Data, training tools for Frog
 - [foliadocserve](https://github.com/proycon/foliadocserve) - FoLiA Document Server
 - [FLAT](https://github.com/proycon/flat) - FoLiA Linguistic Annotation Tool
-- [PICCL](https://github.com/LanguageMachines/PICCL) - PICCL: A set of workflows for corpus building through OCR, post-correction (using TICCL) and Natural Language Processing.
+- [PICCL](https://github.com/LanguageMachines/PICCL)¹ - PICCL: A set of workflows for corpus building through OCR, post-correction (using TICCL) and Natural Language Processing.
 
-Our optional additional software:
+Our optional additional software, will not be installed by default but explicitly opt-in:
 - [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction.
 - [Valkuil](https://github.com/proycon/valkuil-gecco) - A context-aware spelling corrector for Dutch
 - [FoliaEntity](https://github.com/ErwinKomen/FoliaEntity) - A named entity linker
-- [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/), a dependency parser and tagger for Dutch (about 1GB)
 
 Notable pre-installed *third party* software (not exhaustive):
 - [NumPy](http://www.numpy.org/) and [SciPy](http://www.numpy.org/) - Python libraries for scientific computing
 - [Matplotlib](http://matplotlib.org) - A Python 2D plotting library producing publication quality figures
-- [Scikit-learn](http://matplotlib.org) - Machine learning in Python
-- [Tesseract](https://github.com/tesseract-ocr/tesseract) - Open Source Optical Character Recognition (OCR)
-- [IPython](http://ipython.org/) and [Jupyter](https://jupyter.org/) - A rich architecture for interactive computing.
-- [Pandas](http://pandas.pydata.org/) - Python Data Analysis Library
-- [NLTK](http://www.nltk.org) - Natural Language Toolkit for Python
+- [Scikit-learn](http://matplotlib.org)¹ - Machine learning in Python
+- [Tesseract](https://github.com/tesseract-ocr/tesseract)¹ - Open Source Optical Character Recognition (OCR)
+- [IPython](http://ipython.org/) and [Jupyter](https://jupyter.org/)¹ - A rich architecture for interactive computing.
+- [Pandas](http://pandas.pydata.org/)¹ - Python Data Analysis Library
+- [NLTK](http://www.nltk.org)¹ - Natural Language Toolkit for Python
 - [Hunspell](http://hunspell.github.io) - A spell checker
-- [NextFlow](http://www.nextflow.io) - A system and language for writing parallel and scalable pipelines in a portable manner.
+- [NextFlow](http://www.nextflow.io)¹ - A system and language for writing parallel and scalable pipelines in a portable manner.
+
+Notable optional third party software:
+- [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) - A dependency parser and tagger for Dutch (about 1GB)
+- [Kaldi](https://github.com/kaldi-asr/kaldi) - Open source speech recognition toolkit (several GB!, experimental!)
+
 
 The Python bindings and libraries all use Python 3. Both the VM image as well as the docker image are based on Arch Linux.
+
+(¹ = This software will be excluded if a minimal installation is chosen)
 
 Installation & Usage as Virtual Machine (for Linux, BSD, MacOS X, Windows)
 =========================================================================
@@ -159,12 +165,17 @@ You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and
    with sudo rights. Allows for seperation of the bootstrap process for privileged and non-privileged user.
  * ``nopythondeps`` - Do not update 3rd party Python dependencies (such as numpy and scipy), may save time.
  * ``force`` - Force recompilation of everything, even if it's not updated
- * ``python2`` - Use python 2.7 instead of Python 3 *(note that some software may be not be available for Python 2!)*
+ * ``python2`` - Use python 2.7 instead of Python 3 *(note that some software may be not be available for Python 2!
+   This is experimental and not really supported!)*
  * ``stable`` - Use stable releases  *(this is the new default since February 2016)*
  * ``dev`` - Use cutting-edge development versions *(this may sometimes breaks things)*
  * ``version=`` - Use the specified version file *(see the versioning section below)*
  * ``private`` - Do not send information to us regarding your LaMachine installation *(see the privacy section below)*
  * ``branch=`` - Use the specified git branch of LaMachine *(default: master)*
+ * ``minimal`` - Install a minimal configuration (this includes a lot but will exclude certain large software packages
+   and certain third party software that is not strictly needed, all marked with ¹ in the listing above)
+ * ``full`` - Install the full configuration (default)
+ * ``all`` - Install all optional software as well (i.e more than full)
 
 The latter five parameters are persistent, if you specify them once during
 installation or upgrade you won't need to the next time you upgrade your LaMachine.
@@ -197,14 +208,15 @@ Updating & Extra Software
 ===========================
 
 Once you have a LaMachine running in whatever form, just run ``lamachine-update.sh`` to update
-everything again.
+everything again, it takes all of the parameters the normal bootstrap script takes as well (see section: Parameters).
 
-The ``lamachine-update.sh`` script is also used to install additional *optional* software, pass the optional software as a parameter (multiple are allowed, or just used the ``all`` parameter to install all optional software):
+The ``lamachine-update.sh`` script is also used to install additional *optional* software, pass the optional software as a parameter (multiple are allowed, or just used the ``all`` parameter to install all optional software). Note that additional software does not work if you bootstrapped LaMachine in the ``minimal`` configuration.
 
  * ``tscan`` - Compile and install tscan (will download about 1GB in data), also installs Alpino (another 1GB)
  * ``valkuil`` - Valkuil Spelling Corrector (for Dutch)
  * ``foliaentity`` - Named entity linker
  * ``alpino`` - [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/), a dependency parser and tagger for Dutch (about 1GB)
+ * ``kaldi`` - [Kaldi](https://github.com/kaldi-asr/kaldi), open source speech recognition toolkit (several GB!, experimental!). You can use extra parameters ``kaldisource=`` to set the source repository of kaldi (defaults to https://github.com/kaldi-asr/kaldi) and ``kaldibranch=`` to set the git branch (defaults to master).
 
 Note that for the docker version, you can pull a new docker image using ``docker pull proycon/lamachine`` instead. If you do use ``lamachine-update.sh`` with docker, you most likely will want to ``docker commit`` your container afterwards to preserve the update!
 
