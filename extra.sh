@@ -6,6 +6,9 @@ WITHVALKUIL=0
 WITHFOWLT=0
 WITHFOLIAENTITY=0
 WITHALPINO=0
+WITHKALDI=0
+KALDI_SOURCE="https://github.com/kaldi-asr/kaldi.git"
+KALDI_BRANCH="master"
 for OPT in "$@"
 do
     if [[ "$OPT" == "tscan" ]] || [[ "$OPT" == "all" ]]; then
@@ -23,6 +26,15 @@ do
     fi
     if [[ "$OPT" == "alpino" ]] || [[ "$OPT" == "all" ]]; then
         WITHALPINO=1
+    fi
+    if [[ "$OPT" == "kaldi" ]] || [[ "$OPT" == "all" ]]; then
+        WITHKALDI=1
+    fi
+    if [[ "${OPT:0:12}" == "kaldibranch=" ]]; then
+        KALDI_BRANCH=${OPT:12}
+    fi
+    if [[ "${OPT:0:12}" == "kaldisource=" ]]; then
+        KALDI_SOURCE=${OPT:12}
     fi
 done
 
@@ -176,4 +188,41 @@ if [ $WITHALPINO -eq 1 ] || [ -d ../Alpino ] || [ -d /opt/Alpino ]; then
     ln -sf $ALPINO_HOME/create_bin/tk8.5 $ALPINO_HOME/create_bin/tcl8.5/tk8.5
     chmod a+x $BASEDIR/bin/Alpino
     cd $srcdir #back to src/ dir
+fi
+
+if [ $WITHKALDI -eq 1 ] || [ -d ../kaldi ] || [ -d /opt/kaldi ]; then
+    cd ..
+    echo "--------------------------------------------------------"
+    echo "Installing Kaldi">&2
+    echo "--------------------------------------------------------"
+
+    srcdir=$(pwd)
+    if [ ! -z "$VIRTUAL_ENV" ]; then
+        cd ..
+    else
+        cd /opt
+    fi
+    if [ ! -d kaldi ]; then
+        git clone $KALDI_SOURCE --branch $KALDI_BRANCH --single-branch
+        REPOCHANGED=1
+        cd kaldi
+    else
+        cd kaldi
+        git pull
+    fi
+
+    KALDI_ROOT=`realpath .`
+    cd tools
+    make -j $(nproc)
+    cd ..
+
+    cd src
+    make -j $(nproc)
+
+    if [ ! -z "$VIRTUAL_ENV" ]; then
+        echo "export KALDI_ROOT=\"$KALDI_ROOT\"" > $VIRTUAL_ENV/bin/extraactivate.kaldi.sh
+        chmod a+x $VIRTUAL_ENV/bin/extraactivate.kaldi.sh
+    fi
+
+    cd $scrdir
 fi

@@ -209,6 +209,7 @@ ADMINONLY=0
 FORCE=0
 NOPYTHONDEPS=0
 NONINTERACTIVE=0
+MINIMAL=0
 DEV=0
 PRIVATE=0
 BRANCH="master" #LaMachine branch
@@ -220,6 +221,9 @@ if [ ! -z "$VIRTUAL_ENV" ]; then
     fi
     if [ -f "$VIRTUAL_ENV/src/LaMachine/.private" ]; then
         PRIVATE=1 #no not send simple analytics to Nijmegen
+    fi
+    if [ -f "$VIRTUAL_ENV/src/LaMachine/.minimal" ]; then
+        MINIMAL=1
     fi
 fi
 PYTHON="python3"
@@ -256,6 +260,9 @@ do
     fi
     if [[ "$OPT" == "sendinfo" ]]; then
         PRIVATE=0
+    fi
+    if [[ "$OPT" == "minimal" ]]; then
+        MINIMAL=1
     fi
     if [[ "${OPT:0:8}" == "version=" ]]; then
         VERSIONFILE=`realpath ${OPT:8}`
@@ -581,6 +588,9 @@ if [ $DEV -eq 0 ]; then
     rm -f "$VIRTUAL_ENV/src/LaMachine/.dev" 2>/dev/null
 else
     touch "$VIRTUAL_ENV/src/LaMachine/.dev"
+fi
+if [ $MINIMAL -eq 1 ]; then
+    touch "$VIRTUAL_ENV/src/LaMachine/.minimal"
 fi
 
 if [ ! -z "$VERSIONFILE" ]; then
@@ -991,7 +1001,10 @@ python -m pip install --upgrade pip
 pip install --upgrade setuptools
 
 if [ $NOPYTHONDEPS -eq 0 ]; then
-    PYTHONDEPS="cython numpy ipython scipy matplotlib lxml scikit-learn django pycrypto pandas textblob nltk psutil flask requests requests_toolbelt requests_oauthlib theano keras"
+    PYTHONDEPS="cython numpy scipy matplotlib lxml django pycrypto psutil flask requests requests_toolbelt requests_oauthlib"
+    if [ $MINIMAL -eq 0 ]; then
+        PYTHONDEPS="$PYTHONDEPS pandas nltk ipython scikit-learn theano keras tensorflow textblob"
+    fi
     if [ -z "$VERSIONFILE" ]; then
         echo "(Installing latest releases)"
         for PYTHONDEP in $PYTHONDEPS; do

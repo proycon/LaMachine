@@ -1,7 +1,8 @@
 Bootstrap: arch
 
 %post
-    pacman --noconfirm -Syu git
+    echo "Server = http://ftp.nluug.nl/os/Linux/distr/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
+    pacman --noconfirm -Syyu git
     cd /usr/src
     cp /etc/hosts .
     sed -i '/::/d' hosts
