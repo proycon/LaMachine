@@ -16,6 +16,20 @@ GREEN='\033[1;32m'
 RED='\033[1;31m'
 RESET='\033[0m'
 
+if [ ! -z "$VIRTUAL_ENV" ]; then
+    if [ -f "$VIRTUAL_ENV/src/LaMachine/.minimal" ]; then
+        MINIMAL=1
+    else
+        MINIMAL=0
+    fi
+else
+    if [ -f /usr/src/.minimal ]; then
+        MINIMAL=1
+    else
+        MINIMAL=0
+    fi
+fi
+
 
 runtest () {
     EXEC=$1
