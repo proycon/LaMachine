@@ -1286,6 +1286,8 @@ else
     nextflow self-update
 fi
 
+chmod a+rx $VIRTUAL/bin/nextflow
+
 
 echo "--------------------------------------------------------"
 echo "Installing PICCL"
