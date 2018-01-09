@@ -1060,12 +1060,12 @@ echo
 
 if [ $DEV -eq 0 ]; then
     #grab everything from PyPI
-    PYPIPROJECTS="pynlpl FoLiA-tools foliadocserve clam FoLiA-Linguistic-Annotation-Tool"
+    PYPIPROJECTS="pynlpl FoLiA-tools foliadocserve clam FoLiA-Linguistic-Annotation-Tool babelente"
     #not all is in there yet, despite being experimental, we do want it in stable already:
     PYTHONPROJECTS="proycon/clamservices LanguageMachines/LuigiNLP"
 else
     #grab all from github
-    PYTHONPROJECTS="proycon/pynlpl proycon/folia proycon/foliadocserve proycon/flat proycon/clam proycon/clamservices LanguageMachines/LuigiNLP"
+    PYTHONPROJECTS="proycon/pynlpl proycon/folia proycon/foliadocserve proycon/flat proycon/clam proycon/clamservices LanguageMachines/LuigiNLP proycon/babelpy proycon/babelente"
 fi
 
 if [ ! -z "$PYPIPROJECTS" ]; then

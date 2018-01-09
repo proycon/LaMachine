@@ -480,7 +480,7 @@ done
 #echo "--------------------------------------------------------"
 #pip2 install pynlpl FoLiA-tools clam || error "Installation of one or more Python 2 packages failed !!"
 
-PYPIPROJECTS="pynlpl FoLiA-tools python-ucto foliadocserve clam python3-timbl python-frog colibricore FoLiA-Linguistic-Annotation-Tool"
+PYPIPROJECTS="pynlpl FoLiA-tools python-ucto foliadocserve clam python3-timbl python-frog colibricore FoLiA-Linguistic-Annotation-Tool babelente"
 
 if [ ! -z "$PYPIPROJECTS" ]; then
     if [ -z "$VERSIONFILE" ]; then
