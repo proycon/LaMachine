@@ -643,7 +643,7 @@ if [ $PRIVATE -eq 0 ]; then
         STABLEDEV="dev"
     fi
     PYTHONVERSION=`python -c 'import sys; print(".".join(map(str, sys.version_info[:3])))'`
-    wget -O - -q "http://applejack.science.ru.nl/lamachinetracker.php/virtualenv/$MODE/$STABLEDEV/$PYTHONVERSION/$OS/$DISTRIB_ID/$DISTRIB_RELEASE"  >/dev/null
+    wget -O - -q "https://applejack2.science.ru.nl/lamachinetracker.php/virtualenv/$MODE/$STABLEDEV/$PYTHONVERSION/$OS/$DISTRIB_ID/$DISTRIB_RELEASE"  >/dev/null
 else
     touch "$VIRTUAL_ENV/src/LaMachine/.private"
 fi
