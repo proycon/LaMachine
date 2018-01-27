@@ -216,7 +216,7 @@ else
     DEV=0 #install development versions
 fi
 if [ -f .private ]; then
-    PRIVATE=1 #no not send simple analytics to Nijmegen
+    PRIVATE=1 #do not send simple analytics to Nijmegen
 else
     PRIVATE=0 #send simple analytics to Nijmegen
 fi
@@ -308,7 +308,7 @@ pacman --noconfirm -R virtualbox-guest-dkms
 pacman --noconfirm -Sy archlinux-keyring
 echo "Installing base-devel...."
 pacman -Syu --noconfirm --needed base-devel || fatalerror "Unable to install global dependencies"
-PKGS="pkg-config git autoconf-archive icu xml2 zlib libtar boost boost-libs cython python python-pip python-requests python-lxml python-pycurl python-virtualenv python-numpy python-scipy python-matplotlib  wget curl libexttextcat python-flask python-requests python-requests-oauthlib python-requests-toolbelt python-crypto nginx uwsgi uwsgi-plugin-python hunspell aspell hunspell-en aspell-en"
+PKGS="pkg-config git autoconf-archive icu libxml2 zlib libtar boost boost-libs cython python python-pip python-requests python-lxml python-pycurl python-virtualenv python-numpy python-scipy python-matplotlib  wget curl libexttextcat python-flask python-requests python-requests-oauthlib python-requests-toolbelt python-crypto nginx uwsgi uwsgi-plugin-python hunspell aspell hunspell-en aspell-en"
 #poppler provides pdfimages
 if [ $MINIMAL -eq 0 ]; then
     PKGS="$PKGS python-pandas python-nltk python-scikit-learn python-psutil ipython jupyter-notebook"
@@ -388,6 +388,11 @@ cp test.sh /usr/bin/lamachine-test.sh
 cp nginx.mime.types /etc/nginx/
 cp nginx.conf /etc/nginx/
 cp webservices.service /usr/lib/systemd/system/
+#Ensure http user exists (for nginx)
+id http
+if [ $? -ne 0 ]; then
+    useradd --no-create-home http
+fi
 if [ ! -z "$VERSIONFILE" ]; then
     source ./loadversionfile.sh
 fi
