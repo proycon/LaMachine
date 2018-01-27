@@ -1,3 +1,0 @@
-sut:
-  build: .
-  command: /usr/src/LaMachine/docker-test.sh
