@@ -795,9 +795,10 @@ fi
 
 export NXF_HOME="$VIRTUAL_ENV/src/nextflow"
 
-EXTRAACTIVATE=`find $VIRTUAL_ENV/bin -type f -name "extraactivate.*.sh"`
-for f in $EXTRAACTIVATE; do
+for f in $VIRTUAL_ENV/bin/extraactivate.*.sh; do
+  if [[ "$f" != "$VIRTUAL_ENV/bin/extraactivate.*.sh" ]]; then    #we get the literal glob back in case of failure!
     source $f
+  fi
 done
 '
 
