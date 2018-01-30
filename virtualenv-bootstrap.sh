@@ -1324,7 +1324,8 @@ if [ $MINIMAL -eq 0 ]; then
         nextflow self-update
     fi
 
-    chmod a+rx $VIRTUAL/bin/nextflow
+    chmod -R a+r $VIRTUAL_ENV/src/nextflow
+    chmod a+rx $VIRTUAL_ENV/bin/nextflow
 
 
     echo "--------------------------------------------------------"
