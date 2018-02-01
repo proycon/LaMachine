@@ -509,7 +509,7 @@ fi
 echo "--------------------------------------------------------"
 echo "[LaMachine] Installing Gecco dependencies (3rd party)"
 echo "--------------------------------------------------------"
-pip install -U hunspell==0.5.0 python-Levenshtein aspell-python-py3 || error "Installation of one or more Python 3 packages failed !!"
+pip install -U hunspell python-Levenshtein aspell-python-py3 || error "Installation of one or more Python 3 packages failed !!"
 
 
 echo "--------------------------------------------------------"
