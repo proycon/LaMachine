@@ -1244,7 +1244,7 @@ if [ "$OS" != "mac" ]; then
     echo "--------------------------------------------------------"
     echo "Installing extra optional dependencies for Gecco">&2
     echo "--------------------------------------------------------"
-    pip install -U --no-binary :all: hunspell #force source packages, binary may be linked to wrong hunspell version
+    pip install -U --no-binary :all: hunspell==0.5.0 #force source packages, binary may be linked to wrong hunspell version
     pip install -U aspell-python-py3
     project="gecco"
     echo
