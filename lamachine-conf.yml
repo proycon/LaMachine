@@ -1,0 +1,21 @@
+---
+hostname: "lamachine" #(for VM or Docker)
+version: "stable" #set to "stable" or "develop"
+mode: "native" #set to "native", "user", "vagrant" or "docker"
+lamachine_path: "." #LaMachine source path (on host machine)
+source_path: "./src/" #Path to store sources
+data_path: "./data/" #Data path (on host machine)
+webserver: true #include a webserver
+port: 80 #webserver port
+mapped_port: 8080 #mapped webserver port on host system
+vm_memory: 6096 #Reserved memory for VM
+vm_cpus: 2 #Reserved number of CPU cores for VM
+install: #LaMachine packages to install (dependencies are included automatically)
+    - ucto
+    - mbt
+    - frog
+    - timbl
+    - pynlpl
+    - desktop #a desktop environment (X.org), for VM only
+
+

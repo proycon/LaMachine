@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  roles:
+    - role: andrewrothstein.conda-env
+	  conda_env_name: lamachine
+	  conda_env_environment: conda-base-environment.yml
