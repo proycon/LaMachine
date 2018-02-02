@@ -143,7 +143,7 @@ ourselves to more established solutions and to find better cohesion with what va
     * Relates to objective #1
 3) Use **conda** as a package and environment manager instead of the simpler python virualenv and pip; Anaconda has become a good distribution and an established platform in data science.
     * Highly geared towards data science and very popular, people come to expect it nowadays (relates to objective #2)
-    * Good facilities for Jypiter Notebooks
+    * Good facilities for Jupyter Notebooks
     * Tied to a larger ecosystem that facilitates sharing (relates to objective #2)
     * Though Anaconda was initially geared at Python, conda is itself language-independent and there is a good R ecosystem too.
     * Still compatible with the Python Package Index and pip

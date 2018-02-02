@@ -1,4 +1,4 @@
-FROM nfnty/arch-devel:latest
+FROM debian:stable
 EXPOSE 80
 USER root
 MAINTAINER Maarten van Gompel <proycon@anaproy.nl>
