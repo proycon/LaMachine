@@ -86,4 +86,4 @@ echo "Installing ansible-galaxy requirements...">&2
 ansible-galaxy install -r requirements.yml --roles-path roles
 
 
-
+#vagrant plugin install vagrant-vbguest

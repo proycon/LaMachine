@@ -1,4 +1,6 @@
 - name: Installing Ticcutils
   ac_github:
     user: LanguageMachines
+    repo: ticcutils
+
 

@@ -1,6 +1,18 @@
 ---
-- hosts: localhost
+- hosts: all
   roles:
-    - role: andrewrothstein.conda-env
-	  conda_env_name: lamachine
-	  conda_env_environment: conda-base-environment.yml
+      - lamachine_base
+  tasks:
+      - debug:
+            msg: "All"
+
+
+- hosts: languagemachines-basic
+  tasks:
+      - debug:
+            msg: "LanguageMachines Basic"
+
+
+
+
+

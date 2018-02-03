@@ -6,7 +6,7 @@ require 'yaml'
 Vagrant.require_version ">= 1.7.0"
 
 current_dir = File.dirname(File.expand_path(__FILE__))
-lamachine_config = YAML.load_file("#{current_dir}/lamachine-conf.yml")
+lamachine_config = YAML.load_file("#{current_dir}/host_vars/lamachine-vm.yml")
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -19,7 +19,8 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "debian/stretch64"
+  config.vm.box = lamachine_config['vagrant_box']
+  config.vm.define "lamachine-vm"
 
 
   # Disable automatic box update checking. If you disable this, then
@@ -59,6 +60,7 @@ Vagrant.configure(2) do |config|
   #
   config.vm.provider "virtualbox" do |vb|
      # Customize the amount of memory on the VM:
+     vb.name = lamachine_config['hostname']
      vb.memory = lamachine_config['vm_memory'] #you will want to increase the memory limit for many applications!!
      vb.cpus = lamachine_config['vm_cpus']
      vb.customize ["modifyvm", :id, "--nictype1", "Am79C973"]
@@ -66,6 +68,12 @@ Vagrant.configure(2) do |config|
   #
   # View the documentation for the provider you are using for more
   # information on available options.
+
+  # This plugin needs to be installed: vagrant plugin install vagrant-vbguest
+  #
+  # set auto_update to false, if you do NOT want to check the correct
+  # additions version when booting this machine
+  config.vbguest.auto_update = true
 
   # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
   # such as FTP and Heroku are also available. See the documentation at
@@ -77,7 +85,6 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-
   config.vm.provision "ansible" do |ansible|
     ansible.verbose = "v"
     ansible.playbook = "bootstrap.yml"
