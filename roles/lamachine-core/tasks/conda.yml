@@ -1,0 +1,66 @@
+---
+    - name: check for installation of Miniconda
+      stat:
+         path: '{{ansible_env.HOME}}/miniconda'
+      changed_when: false
+      register: miniconda_conda_binary
+
+    - when: not miniconda_conda_binary.stat.exists
+      block:
+           - name: Downloading miniconda installer
+             get_url:
+                url: '{{miniconda_installer_url}}'
+                dest: "{{ansible_env.HOME}}/miniconda-installer.sh"
+                mode: 0755
+
+           - name: Installing miniconda
+             command: bash "{{ansible_env.HOME}}/miniconda-installer.sh" -b -p "{{ansible_env.HOME}}/miniconda"
+             args:
+                creates: '{{ansible_env.HOME}}/bin/conda'
+     #TODO: cleanup installer?
+
+    - name: Adding main miniconda path to the user's .bashrc
+      blockinfile:
+        dest: "{{ ansible_env.HOME }}/.bashrc"
+        block: |
+          if [ -d ~/miniconda/bin ]; then
+              export PATH="~/miniconda/bin/:$PATH"
+          fi
+        marker: '# {mark} LAMACHINE MANAGED BLOCK - conda path'
+        insertafter: EOF
+        create: yes
+
+    - name: Checking whether conda environment exists
+      stat:
+         path: "{{ local_prefix }}"
+      changed_when: false
+      register: conda_env
+
+    - when: conda_env.stat.isdir is not defined or not conda_env.stat.isdir
+      block:
+           - name: Creating bare conda environment for LaMachine
+             shell: "bash -ic conda create -mqy -p {{ local_prefix }}"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

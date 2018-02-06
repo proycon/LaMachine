@@ -1,34 +1,54 @@
 ---
 
 - name: Checking if there is a bootstrap script
-  stat: path={{ pkg_source_dir }}/bootstrap.sh
+  stat:
+    path: "{{ pkg_source_dir }}/bootstrap.sh"
   register: has_bootstrap
-
 
 - name: Invoke bootstrap
   command: bash ./bootstrap.sh
-           chdir={{ pkg_source_dir }}
+  args:
+      chdir: "{{ pkg_source_dir }}"
   when: has_bootstrap.stat.exists == True
   register: bootstrap_result
 
 - name: Checking if there is a configure script
-  stat: path={{ pkg_source_dir }}/configure
+  stat:
+    path: "{{ pkg_source_dir }}/configure"
   register: has_configure
 
-- name: Invoke configure
-  command: ./configure {{ autoconf_configure_args }}
-           chdir={{ pkg_source_dir }}
+- name: Invoke configure (local)
+  command: "./configure --prefix={{ local_prefix }}"
+  args:
+      chdir: "{{ pkg_source_dir }}"
   register: configure_result
-  when: has_configure.stat.exists == True
+  when: has_configure.stat.exists == True and (not root or prefer_local)
+
+- name: Invoke configure (global)
+  command: "./configure --prefix={{ global_prefix }}"
+  args:
+      chdir: "{{ pkg_source_dir }}"
+  register: configure_result
+  when: has_configure.stat.exists == True and (root and not prefer_local)
 
 - name: Invoke make
-  command: make {{ autoconf_make_args }}
-           chdir={{ pkg_source_dir }}
+  command: "make"
+  args:
+       chdir: "{{ pkg_source_dir }}"
   when: configure_result.rc == 0
   register: make_result
 
-- name: Invoke make install
-  command: make {{ autoconf_make_args }} install
-           chdir={{ pkg_source_dir }}
-  when: make_result.rc exists and make_result.rc == 0
+- name: Invoke make install (local)
+  command: "make install"
+  args:
+       chdir: "{{ pkg_source_dir }}"
+  when: (not root and prefer_local) and configure_result.rc == 0 and configure_result.rc == 0
 
+- name: Invoke make install (global)
+  become: "{{ root and not prefer_local }}"
+  become_user: root
+  become_method: sudo
+  command: "make install"
+  args:
+       chdir: "{{ pkg_source_dir }}"
+  when: configure_result.rc == 0 and configure_result.rc == 0

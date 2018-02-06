@@ -1,0 +1,87 @@
+---
+    - name: Installing aptitude (APT) #needed by ansible apt module in next step
+      become: true
+      become_user: root
+      apt:
+        name: aptitude
+        state: latest
+        update-cache: yes
+
+    - name: Updating base system (APT)
+      become: true
+      become_user: root
+      apt:
+        name: '*'
+        state: latest
+        update-cache: yes
+
+
+      #############################################################
+
+    - name: installing common base packages (apt)
+      become: true
+      become_user: root
+      apt:
+        name: "{{item}}"
+        state: installed
+      with_items: [pkg-config, git-core, make, gcc, g++, autoconf, automake, autoconf-archive, libtool, autotools-dev, libicu-dev, libxml2-dev, libxslt1-dev, libbz2-dev, zlib1g-dev, libtar-dev, libaspell-dev, libhunspell-dev, libboost-all-dev, python3, python3-dev, wget, curl, libexttextcat-dev, libcurl4-gnutls-dev, default-jre, poppler-utils, perl] #$pippackage $venvpackage $gnutls libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl tesseract-ocr tesseract-ocr-eng tesseract-ocr-nld tesseract-ocr-deu tesseract-ocr-deu-frak tesseract-ocr-fra poppler-utils djvulibre-bin libdjvulibre-text imagemagick
+
+    - name: Installing python-virtualenv for Ubuntu <= 16.04
+      become: true
+      become_user: root
+      apt:
+        name: "python-virtualenv"
+        state: installed
+      when: (ansible_distribution == 'Ubuntu' and ansible_lsb.major_release|int < 16)
+
+    - name: Installing python3-virtualenv
+      become: true
+      become_user: root
+      apt:
+        name: "python3-virtualenv"
+        state: installed
+      when: not (ansible_distribution == 'Ubuntu' and ansible_lsb.major_release|int < 16)
+
+    - name: Installing libgnutls for Ubuntu
+      become: true
+      become_user: root
+      apt:
+        name: "libgnutls-dev"
+        state: installed
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Installing libgnutls28 for Debian
+      become: true
+      become_user: root
+      apt:
+        name: "libgnutls28-dev"
+        state: installed
+      when: ansible_distribution == 'Debian'
+
+      #############################################################
+      # ANSIBLE installation so we can bootstrap ourselves
+      ############################################################
+
+    - name: Adding key for keyserver.ubuntu.com
+      become: true
+      become_user: root
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: 93C4A3FD7BB9C367
+
+    - name: Adding Ansibile APT repository
+      become: true
+      become_user: root
+      apt_repository:
+        repo: deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main #should work on jessie/stretch as well
+        state: present
+
+    - name: Install Ansible (APT)
+      become: true
+      become_user: root
+      apt:
+          name: ansible
+          state: latest
+          update_cache: yes
+
+

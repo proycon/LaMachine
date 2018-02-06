@@ -1,0 +1,9 @@
+---
+# defaults file for miniconda
+miniconda_mirror : https://repo.continuum.io/miniconda
+miniconda_python_ver : 3
+miniconda_ver: "latest"
+miniconda_platform : '{{ansible_system}}-{{ansible_machine}}'
+miniconda_name : 'Miniconda{{miniconda_python_ver}}-{{miniconda_ver}}-{{miniconda_platform}}'
+miniconda_installer_sh : '{{miniconda_name}}.sh'
+miniconda_installer_url : '{{miniconda_mirror}}/{{miniconda_installer_sh}}'

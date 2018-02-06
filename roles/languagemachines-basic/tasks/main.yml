@@ -1,0 +1,71 @@
+---
+
+    - name: Installing ticcutils
+      import_role:
+        name: ac_github
+      vars:
+        user: LanguageMachines
+        repo: ticcutils
+
+    - name: Installing libfolia
+      import_role:
+        name: ac_github
+      vars:
+        user: LanguageMachines
+        repo: libfolia
+
+    - name: Installing uctodata
+      import_role:
+        name: ac_github
+      vars:
+        user: LanguageMachines
+        repo: uctodata
+
+    - name: Installing ucto
+      import_role:
+        name: ac_github
+      vars:
+        user: LanguageMachines
+        repo: ucto
+
+    - name: Installing timbl
+      import_role:
+        name: ac_github
+      vars:
+        user: LanguageMachines
+        repo: timbl
+
+    - name: Installing timblserver
+      import_role:
+        name: ac_github
+      vars:
+        user: LanguageMachines
+        repo: timblserver
+
+    - name: Installing mbt
+      import_role:
+        name: ac_github
+      vars:
+        user: LanguageMachines
+        repo: mbt
+
+    - name: Installing mbtserver
+      import_role:
+        name: ac_github
+      vars:
+        user: LanguageMachines
+        repo: mbtserver
+
+    - name: Installing frogdata
+      import_role:
+        name: ac_github
+      vars:
+        user: LanguageMachines
+        repo: frogdata
+
+    - name: Installing frog
+      import_role:
+        name: ac_github
+      vars:
+        user: LanguageMachines
+        repo: frog

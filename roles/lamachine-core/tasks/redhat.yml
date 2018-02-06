@@ -1,0 +1,9 @@
+---
+    - name: Updating base system (YUM)
+      become: true
+      become_user: root
+      yum:
+        name: "*"
+        state: latest
+        update_cache: yes
+      when: (ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Fedora') and root == True

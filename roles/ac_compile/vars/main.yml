@@ -1,6 +1,1 @@
 ---
-  # default args for configure
-  autoconf_configure_args: "--prefix {{ prefix_dir }}"
-
-  # default args for make
-  autoconf_make_args: ""

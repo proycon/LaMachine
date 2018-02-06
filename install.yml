@@ -1,0 +1,11 @@
+---
+#Adapt the configurations in host-env/*.yml to change LaMachine parameters
+- hosts: all
+  roles:
+      - lamachine-core #The LaMachine core, you always need this or nothing work
+      - languagemachines-basic #includes basic NLP tools such as timbl, frog, ucto, folia, clam, colibri-core by the Language Machines Research group, Centre of Language and Speech Technology, Radboud University Nijmegen
+
+
+
+
+

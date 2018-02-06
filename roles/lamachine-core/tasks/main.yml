@@ -1,0 +1,44 @@
+---
+    - debug:
+        msg: "LaMachine Core"
+#######################################################
+
+    - import_tasks: debian.yml
+      when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and root == True
+
+    - import_tasks: redhat.yml
+      when: (ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Fedora') and root == True
+
+    - import_tasks: arch.yml
+      when: (ansible_distribution == 'Arch') and root == True
+
+    - import_tasks: macosx.yml
+      when: (ansible_distribution == 'MacOSX') and root == True
+
+    - import_tasks: conda.yml
+      when: (localenv_type == 'conda')
+
+    - name: Set LaMachine environment options
+      blockinfile:
+        dest: "{{ ansible_env.HOME }}/.bashrc"
+        block: |
+          export LM_PREFER_LOCAL={{prefer_local|int}}
+          export LM_PREFER_GLOBAL={{prefer_global|int}}
+          export LM_GLOBAL_PREFIX={{global_prefix}}
+          export LM_LOCAL_PREFIX={{local_prefix}}
+          export LM_SOURCEPATH={{source_path}}
+          export LM_LOCALENV_TYPE={{localenv_type}}
+          if [ $LM_PREFER_LOCAL -eq 1 ]; then
+              source $LM_LOCAL_PREFIX/bin/activate
+              if [[ "$LM_LOCALENV_TYPE" == "conda" ]]; then
+                export VIRTUAL_ENV=$LM_LOCAL_PREFIX #backward compatibility
+              fi
+          fi
+        marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
+        insertafter: EOF
+        create: yes
+
+    - name: Create source directory
+      file:
+          path: "{{ source_path }}"
+          state: directory

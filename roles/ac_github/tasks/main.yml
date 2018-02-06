@@ -1,0 +1,49 @@
+---
+
+- name: Check if repository exists
+  stat:
+    path: "{{ source_path }}/{{ repo }}"
+  register: repo_path
+
+- name: "Git clone {{user}}/{{repo}}"
+  shell: "git clone https://github.com/{{user}}/{{repo}}"
+  args:
+    chdir: "{{ source_path }}"
+  when: not repo_path.stat.exists
+
+- name: Get new git tags from remote
+  shell: "git fetch --tags"
+  args:
+    chdir: "{{ source_path }}/{{repo}}"
+
+- name: Get latest version tag
+  shell: "git tag -l | grep '^v' | sort -V | tail -n 1"
+  args:
+    chdir: "{{ source_path }}/{{repo}}"
+  register: latest_tag
+  when: version == "stable"
+
+- name: "Checkout latest stable version for {{repo}}: {{latest_tag.stdout}}"
+  shell: "git checkout {{latest_tag.stdout}}"
+  args:
+    chdir: "{{ source_path }}/{{repo}}"
+  when: version == "stable"
+
+- name: "Checkout latest master version (development)"
+  shell: "git checkout master && git pull"
+  args:
+    chdir: "{{ source_path }}/{{repo}}"
+  when: version == "development"
+
+- name: "Checkout custom version {{customversion[repo]}}"
+  shell: "git checkout {{customversion[repo]}} && git pull"
+  args:
+    chdir: "{{ source_path }}/{{repo}}"
+  when: version == "custom"
+
+- name: "Compiling {{user/repo}}"
+  import_role:
+    name: ac_compile
+  vars:
+    pkg_source_dir: "{{ source_path }}/{{ repo }}"
+

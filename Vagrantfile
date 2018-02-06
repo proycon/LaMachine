@@ -51,7 +51,7 @@ Vagrant.configure(2) do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder lamachine_config["source_path"], "/lamachine"
+  config.vm.synced_folder lamachine_config["lamachine_path"], "/lamachine"
   config.vm.synced_folder lamachine_config["data_path"], "/data"
 
   # Provider-specific configuration so you can fine-tune various
@@ -73,7 +73,7 @@ Vagrant.configure(2) do |config|
   #
   # set auto_update to false, if you do NOT want to check the correct
   # additions version when booting this machine
-  config.vbguest.auto_update = true
+  #config.vbguest.auto_update = true
 
   # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
   # such as FTP and Heroku are also available. See the documentation at
@@ -87,7 +87,7 @@ Vagrant.configure(2) do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "ansible" do |ansible|
     ansible.verbose = "v"
-    ansible.playbook = "bootstrap.yml"
+    ansible.playbook = "install.yml"
   end
 
   #If you want to install a specific version, copy your LaMachine VERSION file over the

@@ -1,20 +1,21 @@
 ---
-hostname: "lamachine" #(for VM or Docker)
+hostname: "lamachine-vm" #(for VM or Docker)
 version: "stable" #set to "stable" or "develop"
 lamachine_path: "." #LaMachine source path (on host machine)
-source_path: "./src/" #Path to store sources
 data_path: "./data/" #Data path (on host machine)
-vagrant_box: "debian/stretch64" #Base box for vagrant (changing this may break things if packages are not compatible!)
+unix_user: "vagrant"
+source_path: "/home/{{unix_user}}/src/" #Path to store sources (on vm)
+vagrant_box: "debian/contrib-stretch64" #Base box for vagrant (changing this may break things if packages are not compatible!)
 global_prefix: "/usr/local" #Where to install global packages?
-local_prefix: "~/lamachine.env/" #Where to install local packages
+local_prefix: "/home/{{unix_user}}/lamachine.env" #Where to install local packages
 prefer_local: false #Install everything in a local user environment, aside from distribution packages
-localenv: "conda" #Set to conda or virtualenv
 prefer_global: false #Install everything globally
+localenv_type: "conda" #Local environment type, can be conda or virtualenv
 root: true #Do you have root on the target system? (If not, the installation will be limited if certain global dependencies are not available!)
 webserver: true #include a webserver
 port: 80 #webserver port
 mapped_port: 8080 #mapped webserver port on host system
 vm_memory: 6096 #Reserved memory for VM
 vm_cpus: 2 #Reserved number of CPU cores for VM
-
+#Adapt install.yml to select the packages you want to install
 
