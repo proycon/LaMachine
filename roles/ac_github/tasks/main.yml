@@ -17,7 +17,7 @@
     chdir: "{{ source_path }}/{{repo}}"
 
 - name: Get latest version tag
-  shell: "git tag -l | grep '^v' | sort -V | tail -n 1"
+  shell: "git tag -l | grep '^v' | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -n 1"
   args:
     chdir: "{{ source_path }}/{{repo}}"
   register: latest_tag
