@@ -4,8 +4,8 @@
    conda:
        name: "{{item}}"
        state: latest
-       executable: "/home/{{user}}/miniconda/bin/conda"
-       extra_args: "-p {{local_prefix}}"
+       executable: "/home/{{unix_user}}/miniconda/bin/conda"
+       extra_args: "-n {{env_name}}"
    with_items:
        - beautifulsoup4
        - flask
@@ -23,7 +23,6 @@
        - pymysql
        - scikit-learn
        - scipy
-       - seaborne
        - spacy
        - sphinx
        - tensorflow
@@ -55,7 +54,6 @@
        - pymysql
        - scikit-learn
        - scipy
-       - seaborne
        - spacy
        - sphinx
        - tensorflow

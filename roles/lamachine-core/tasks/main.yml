@@ -33,9 +33,11 @@
           export LM_LOCALENV_TYPE={{localenv_type}}
           if [ $LM_PREFER_GLOBAL -eq 0 ]; then
               if [ -d $LM_LOCAL_PREFIX ]; then
-                  source $LM_LOCAL_PREFIX/bin/activate
                   if [[ "$LM_LOCALENV_TYPE" == "conda" ]]; then
-                    export VIRTUAL_ENV=$LM_LOCAL_PREFIX #backward compatibility
+                      source activate {{env_name}}
+                      export VIRTUAL_ENV=$LM_LOCAL_PREFIX #backward compatibility
+                  else
+                      source $LM_LOCAL_PREFIX/bin/activate
                   fi
               fi
           fi
