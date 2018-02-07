@@ -5,7 +5,7 @@
       stat:
         path: "{{ source_path }}/{{ github_repo }}"
       register: repo_path
-    - name: "{{repo}} - Git clone"
+    - name: "{{github_repo}} - Git clone"
       shell: "git clone https://github.com/{{github_user}}/{{github_repo}}"
       args:
         chdir: "{{ source_path }}"

@@ -1,63 +1,100 @@
 ---
+- when: prefer_global and root
+  block:
+      - name: "Installing Python packages globally (Debian/Ubuntu)"
+        apt:
+            name: "{{item}}"
+            state: latest
+        with_items:
+            - python3-cython
+            - python3-numpy
+            - python3-scipy
+            - python3-flask
+            - ipython3
+            - ipython3-notebook
+            - python3-lxml
+            - python3-matplotlib
+            - python3-seaborn
+            - python3-sklearn
+            - python3-pandas
+            - python3-sklearn-pandas
+            - python3-crypto
+            - python3-yaml
+            - python3-requests
+            - python3-requests-oauthlib
+            - python3-pycurl
+            - python3-mysqldb
+            - python3-sphinx
+            - python3-pymongo
+            - python3-nltk
+        when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+        #TODO: other distributions
 
- - name: "Installing generic 3rd party Python Packages via conda"
-   conda:
-       name: "{{item}}"
-       state: latest
-       executable: "/home/{{unix_user}}/miniconda/bin/conda"
-       extra_args: "-n {{env_name}}"
-   with_items:
-       - beautifulsoup4
-       - flask
-       - ipython
-       - jupyter
-       - lxml
-       - matplotlib
-       - nbconvert
-       - nltk
-       - numpy
-       - pandas
-       - pycrypto
-       - pylint
-       - pymongo
-       - pymysql
-       - scikit-learn
-       - scipy
-       - spacy
-       - sphinx
-       - tensorflow
-       - word2vec
-       - xlsxwriter
-       - yaml
-   when: localenv_type == "conda"
 
-
- - name: "Installing {{item}} via pip"
-   pip:
-       name: "{{item}}"
-       state: latest
-       virtualenv: "{{ local_prefix }}"
-   with_items:
-       - beautifulsoup4
-       - flask
-       - ipython
-       - jupyter
-       - lxml
-       - matplotlib
-       - nbconvert
-       - nltk
-       - numpy
-       - pandas
-       - pycrypto
-       - pylint
-       - pymongo
-       - pymysql
-       - scikit-learn
-       - scipy
-       - spacy
-       - sphinx
-       - tensorflow
-       - word2vec
-       - xlsxwriter
-       - yaml
-   when: localenv_type == "virtualenv"
+- when: not prefer_global
+  block:
+     - name: "Installing generic 3rd party Python Packages via conda"
+       conda:
+           name: "{{item}}"
+           state: latest
+           executable: "/home/{{unix_user}}/miniconda/bin/conda"
+           extra_args: "-n {{env_name}}"
+       with_items:
+           - beautifulsoup4
+           - cython
+           - flask
+           - ipython
+           - jupyter
+           - lxml
+           - matplotlib
+           - nbconvert
+           - nltk
+           - numpy
+           - pandas
+           - pycrypto
+           - pylint
+           - pymongo
+           - pymysql
+           - requests
+           - scikit-learn
+           - scipy
+           - seaborn
+           - spacy
+           - sphinx
+           - tensorflow
+           - word2vec
+           - xlsxwriter
+           - yaml
+       when: localenv_type == "conda"
+     - name: "Installing {{item}} via pip"
+       pip:
+           name: "{{item}}"
+           state: latest
+           virtualenv: "{{ local_prefix }}"
+       with_items:
+           - beautifulsoup4
+           - cython
+           - flask
+           - ipython
+           - jupyter
+           - lxml
+           - matplotlib
+           - nbconvert
+           - nltk
+           - numpy
+           - pandas
+           - pycrypto
+           - pylint
+           - pymongo
+           - pymysql
+           - requests
+           - scikit-learn
+           - scipy
+           - seaborn
+           - spacy
+           - sphinx
+           - tensorflow
+           - word2vec
+           - xlsxwriter
+           - yaml
+       when: localenv_type == "virtualenv"

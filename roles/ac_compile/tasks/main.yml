@@ -1,35 +1,34 @@
 ---
 
-- name: "{{pkg_name}} - Checking if there is a bootstrap script"
-  stat:
-    path: "{{ pkg_source_dir }}/bootstrap.sh"
-  register: has_bootstrap
-
-- name: "{{pkg_name}} - Invoke bootstrap"
-  command: bash ./bootstrap.sh
+- name: "{{pkg_name}} - Invoke bootstrap if it exists"
+  shell: |
+    if [ -f ./bootstrap.sh ]; then
+      bash ./bootstrap.sh
+      exit $?
+    elif [ -f ./bootstrap ]; then
+      bash bootstrap
+      exit $?
+    else
+      exit 0 #no bootstrap, should be fine?
+    fi
   args:
       chdir: "{{ pkg_source_dir }}"
-  when: has_bootstrap.stat.exists == True
   register: bootstrap_result
 
-- name: "{{pkg_name}} - Checking if there is a configure script"
-  stat:
-    path: "{{ pkg_source_dir }}/configure"
-  register: has_configure
 
 - name: "{{pkg_name}} - Invoke configure (local)"
   command: "./configure --prefix={{ local_prefix }}"
   args:
       chdir: "{{ pkg_source_dir }}"
   register: configure_result
-  when: has_configure.stat.exists == True and (not root or prefer_local)
+  when: not root or prefer_local
 
 - name: "{{pkg_name}} - Invoke configure (global)"
   command: "./configure --prefix={{ global_prefix }}"
   args:
       chdir: "{{ pkg_source_dir }}"
   register: configure_result
-  when: has_configure.stat.exists == True and (root and not prefer_local)
+  when: root and not prefer_local
 
 - name: "{{pkg_name}} - Invoke make"
   command: "make"

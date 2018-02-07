@@ -17,3 +17,12 @@
         - mbtserver
         - frog
         - foliautils
+
+    - name: Installing from proycon's github
+      include_role:
+        name: ac_github
+      vars:
+        user: proycon
+        repo: "{{ item }}"
+      with_items:
+        - colibri-core

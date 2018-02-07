@@ -2,10 +2,11 @@
 #Adapt the configurations in host-env/*.yml to change LaMachine parameters
 - hosts: all
   roles:
-      - lamachine-core #The LaMachine core, you always need this or nothing works
+      - lamachine-core #The LaMachine core, you always need this or nothing works; includes Python 3
       - languagemachines-basic #includes basic NLP tools written in C++, such as timbl, frog, ucto, folia by the Language Machines Research group, Centre of Language and Speech Technology, Radboud University Nijmegen
       - python-science #Core 3rd party scientific python packages (numpy, scipy, pandas, scikit-learn, nltk, and more)
       - languagemachines-python #contains basic Python-based tools and libraries by the Language Machines Research group, Centre of Language and Speech Technology, Radboud University Nijmegen
+      - r-science #R with core R packages (3rd party)
 
 
 

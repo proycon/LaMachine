@@ -1,0 +1,30 @@
+---
+
+ - name: "Installing R and generic 3rd party r packages via conda"
+   conda:
+       name: "{{item}}"
+       state: latest
+       executable: "/home/{{unix_user}}/miniconda/bin/conda"
+       extra_args: "-n {{env_name}}"
+   with_items:
+       - r
+   when: localenv_type == "conda" and not prefer_global
+
+ - name: "Installing R globally"
+   block:
+       - name: Install R globally (Debian/Ubuntu)
+         apt:
+             name: r-recommended
+             state: latest
+         when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+       - name: Install R globally (RedHat)
+         yum:
+             name: R
+             state: latest
+         when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Fedora"
+       - name: Install R globally (Arch)
+         pacman:
+             name: r
+             state: latest
+         when: ansible_distribution == "Arch"
+   when: root and (prefer_global or localenv_type != "conda")
