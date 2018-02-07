@@ -1,0 +1,63 @@
+---
+
+ - name: "Installing {{item}} via conda"
+   conda:
+       name: "{{item}}"
+       state: latest
+   with_items:
+       - beautifulsoup4
+       - flask
+       - ipython
+       - jupyter
+       - lxml
+       - matplotlib
+       - nbconvert
+       - nltk
+       - numpy
+       - pandas
+       - pycrypto
+       - pylint
+       - pymongo
+       - pymysql
+       - scikit-learn
+       - scipy
+       - seaborne
+       - spacy
+       - sphinx
+       - tensorflow
+       - word2vec
+       - xlsxwriter
+       - yaml
+   when: localenv_type == "conda"
+
+
+ - name: "Installing {{item}} via pip"
+   pip:
+       name: "{{item}}"
+       state: latest
+       virtualenv: "{{ local_prefix }}"
+   with_items:
+       - beautifulsoup4
+       - flask
+       - ipython
+       - jupyter
+       - lxml
+       - matplotlib
+       - nbconvert
+       - nltk
+       - numpy
+       - pandas
+       - pycrypto
+       - pylint
+       - pymongo
+       - pymysql
+       - scikit-learn
+       - scipy
+       - seaborne
+       - spacy
+       - sphinx
+       - tensorflow
+       - word2vec
+       - xlsxwriter
+       - yaml
+   when: localenv_type == "virtualenv"

@@ -1,0 +1,35 @@
+---
+
+- name: "{{github_repo}} - Installing latest version from github (development)"
+   block:
+    - name: "{{github_repo}} - Check if repository exists"
+      stat:
+        path: "{{ source_path }}/{{ github_repo }}"
+      register: repo_path
+    - name: "{{repo}} - Git clone"
+      shell: "git clone https://github.com/{{github_user}}/{{github_repo}}"
+      args:
+        chdir: "{{ source_path }}"
+      when: not repo_path.stat.exists
+    - name: "{{github_repo}} - Checkout latest master version of (development)"
+      shell: "git checkout master && git pull"
+      args:
+        chdir: "{{ source_path }}/{{github_repo}}"
+    - name: "{{github_repo}} - Installing python package"
+      shell: "bash -c python setup.py install"
+      args:
+        chdir: "{{ source_path }}/{{github_repo}}"
+- when: version == "development" and github_user != ""
+
+- name: "{{conda_package}} - Installing latest release from conda (stable)"
+   - conda:
+       name: "{{conda_package}}"
+       state: latest
+- when: (version == "stable" or (version == "development" and github_user == "")) and localenv_type == "conda" and conda_package != ""
+
+- name: "{{pip_package}} - Installing latest release from the Python Package Index (stable)"
+   - pip:
+       name: "{{pip_package}}"
+       state: latest
+       virtualenv: "{{local_prefix}}"
+- when: (version == "stable" or (version == "development" and github_user == "")) and not (localenv_type == "conda" and conda_package != "") and pip_package != ""

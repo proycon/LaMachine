@@ -18,6 +18,9 @@
     - import_tasks: conda.yml
       when: (localenv_type == 'conda')
 
+    - import_tasks: virtualenv.yml
+      when: (localenv_type == 'virtualenv')
+
     - name: Set LaMachine environment options
       blockinfile:
         dest: "{{ ansible_env.HOME }}/.bashrc"
@@ -28,7 +31,7 @@
           export LM_LOCAL_PREFIX={{local_prefix}}
           export LM_SOURCEPATH={{source_path}}
           export LM_LOCALENV_TYPE={{localenv_type}}
-          if [ $LM_PREFER_LOCAL -eq 1 ]; then
+          if [ $LM_PREFER_GLOBAL -eq 0 ]; then
               source $LM_LOCAL_PREFIX/bin/activate
               if [[ "$LM_LOCALENV_TYPE" == "conda" ]]; then
                 export VIRTUAL_ENV=$LM_LOCAL_PREFIX #backward compatibility
