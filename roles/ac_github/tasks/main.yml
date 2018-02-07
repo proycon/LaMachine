@@ -30,7 +30,6 @@
     chdir: "{{ source_path }}/{{repo}}"
   when: version == "stable"
 
-
 - name: "{{repo}} - Checkout latest master version of (development)"
   shell: "git checkout master && git pull"
   args:
@@ -46,7 +45,7 @@
 
 - name: "{{repo}} - Checking whether recompilation is needed"
   shell: |
-      {% if git_updated is defined and git_updated.stdout == 1%}
+      {% if ac_github_updated is defined and ac_github_updated.stdout == 1 %}
       #an earlier compilation was (re)performed so we update everything thereafter as well
       echo 1 && exit 0
       {% endif %}
@@ -60,7 +59,7 @@
       echo 1
   args:
     chdir: "{{ source_path }}/{{repo}}"
-  register: git_updated
+  register: ac_github_updated
 
 - name: "{{repo}} - Compiling"
   import_role:
@@ -68,12 +67,12 @@
   vars:
     pkg_source_dir: "{{ source_path }}/{{ repo }}"
     pkg_name: "{{ repo }}"
-  when: git_updated.stdout == 1
+  when: ac_github_updated.stdout == 1
 
 - name: "{{repo }} - Registering current version"
   shell: "git rev-parse HEAD > .installed-commit.lamachine"
   args:
     chdir: "{{ source_path }}/{{ repo }}"
-  when: git_updated.stdout == 1 and make_install_result is defined and make_install_result.rc == 0
+  when: ac_github_updated.stdout == 1 and make_install_result is defined and make_install_result.rc == 0
 
 

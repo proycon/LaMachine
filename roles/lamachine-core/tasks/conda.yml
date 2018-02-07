@@ -30,16 +30,11 @@
         insertafter: EOF
         create: yes
 
-    - name: Checking whether conda environment exists
-      stat:
-         path: "{{ local_prefix }}"
-      changed_when: false
-      register: conda_env
 
-    - when: conda_env.stat.isdir is not defined or not conda_env.stat.isdir
-      block:
-           - name: Creating bare conda environment for LaMachine
-             shell: "bash -ic conda create -mqy -p {{ local_prefix }}"
+    - name: Creating bare conda environment for LaMachine
+      shell: 'bash -ic "conda create -mqy -p {{ local_prefix }}"'
+      args:
+          creates: "{{ local_prefix }}"
 
 
 

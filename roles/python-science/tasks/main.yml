@@ -1,9 +1,11 @@
 ---
 
- - name: "Installing {{item}} via conda"
+ - name: "Installing generic 3rd party Python Packages via conda"
    conda:
        name: "{{item}}"
        state: latest
+       executable: "/home/{{user}}/miniconda/bin/conda"
+       extra_args: "-p {{local_prefix}}"
    with_items:
        - beautifulsoup4
        - flask
