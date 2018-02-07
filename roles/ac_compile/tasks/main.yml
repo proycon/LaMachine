@@ -1,54 +1,56 @@
 ---
 
-- name: Checking if there is a bootstrap script
+- name: "{{pkg_name}} - Checking if there is a bootstrap script"
   stat:
     path: "{{ pkg_source_dir }}/bootstrap.sh"
   register: has_bootstrap
 
-- name: Invoke bootstrap
+- name: "{{pkg_name}} - Invoke bootstrap"
   command: bash ./bootstrap.sh
   args:
       chdir: "{{ pkg_source_dir }}"
   when: has_bootstrap.stat.exists == True
   register: bootstrap_result
 
-- name: Checking if there is a configure script
+- name: "{{pkg_name}} - Checking if there is a configure script"
   stat:
     path: "{{ pkg_source_dir }}/configure"
   register: has_configure
 
-- name: Invoke configure (local)
+- name: "{{pkg_name}} - Invoke configure (local)"
   command: "./configure --prefix={{ local_prefix }}"
   args:
       chdir: "{{ pkg_source_dir }}"
   register: configure_result
   when: has_configure.stat.exists == True and (not root or prefer_local)
 
-- name: Invoke configure (global)
+- name: "{{pkg_name}} - Invoke configure (global)"
   command: "./configure --prefix={{ global_prefix }}"
   args:
       chdir: "{{ pkg_source_dir }}"
   register: configure_result
   when: has_configure.stat.exists == True and (root and not prefer_local)
 
-- name: Invoke make
+- name: "{{pkg_name}} - Invoke make"
   command: "make"
   args:
        chdir: "{{ pkg_source_dir }}"
   when: configure_result.rc == 0
   register: make_result
 
-- name: Invoke make install (local)
+- name: "{{pkg_name}} - Invoke make install (local)"
   command: "make install"
   args:
        chdir: "{{ pkg_source_dir }}"
+  register: make_install_result
   when: (not root and prefer_local) and configure_result.rc == 0 and configure_result.rc == 0
 
-- name: Invoke make install (global)
+- name: "{{pkg_name}} - Invoke make install (global)"
   become: "{{ root and not prefer_local }}"
   become_user: root
   become_method: sudo
   command: "make install"
   args:
        chdir: "{{ pkg_source_dir }}"
-  when: configure_result.rc == 0 and configure_result.rc == 0
+  register: make_install_result
+  when: configure_result.rc == 0 and configure_result.rc == 0 and make_result.rc == 0
