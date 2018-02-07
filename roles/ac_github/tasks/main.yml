@@ -15,6 +15,7 @@
   shell: "git fetch --tags"
   args:
     chdir: "{{ source_path }}/{{repo}}"
+  when: version == "stable"
 
 - name: "{{repo}} - Get latest version tag"
   shell: "git tag -l | grep '^v' | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -n 1 | tee .latest-release.lamachine"
@@ -23,11 +24,12 @@
   register: latest_tag
   when: version == "stable"
 
-- name: "{{repo}} - Checkout latest stable version for: {{latest_tag.stdout}}"
+- name: "{{repo}} - Checkout latest stable version {{latest_tag.stdout}}"
   shell: "git checkout {{latest_tag.stdout}}"
   args:
     chdir: "{{ source_path }}/{{repo}}"
   when: version == "stable"
+
 
 - name: "{{repo}} - Checkout latest master version of (development)"
   shell: "git checkout master && git pull"
@@ -35,11 +37,30 @@
     chdir: "{{ source_path }}/{{repo}}"
   when: version == "development"
 
+
 - name: "{{repo}} - Checkout custom version: {{customversion[repo]}}"
   shell: "git checkout {{customversion[repo]}} && git pull"
   args:
     chdir: "{{ source_path }}/{{repo}}"
   when: version == "custom"
+
+- name: "{{repo}} - Checking whether recompilation is needed"
+  shell: |
+      {% if git_updated is defined and git_updated.stdout == 1%}
+      #an earlier compilation was (re)performed so we update everything thereafter as well
+      echo 1 && exit 0
+      {% endif %}
+      available=$(git rev-parse HEAD)
+      if [ -f .installed-commit.lamachine ]; then
+        installed=$(cat .installed-commit.lamachine)
+        if [[ "$available" == "$installed" ]]; then
+          echo 0
+        fi
+      fi
+      echo 1
+  args:
+    chdir: "{{ source_path }}/{{repo}}"
+  register: git_updated
 
 - name: "{{repo}} - Compiling"
   import_role:
@@ -47,11 +68,12 @@
   vars:
     pkg_source_dir: "{{ source_path }}/{{ repo }}"
     pkg_name: "{{ repo }}"
+  when: git_updated.stdout == 1
 
 - name: "{{repo }} - Registering current version"
   shell: "git rev-parse HEAD > .installed-commit.lamachine"
   args:
     chdir: "{{ source_path }}/{{ repo }}"
-  when: make_install_result is defined and make_install_result.rc == 0
+  when: git_updated.stdout == 1 and make_install_result is defined and make_install_result.rc == 0
 
 
