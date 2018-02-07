@@ -72,10 +72,22 @@ while [ -h "$SOURCEDIR" ]; do # resolve $SOURCEDIR until the file is no longer a
   SOURCEDIR="$(readlink "$SOURCEDIR")"
   [[ $SOURCEDIR != /* ]] && SOURCEDIR="$DIR/$SOURCEDIR" # if $SOURCEDIR was a relative symlink, we need to resolve it relative to the path where the symlink file was located
 done
+cd $SOURCEDIR
+
 
 while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
+        -n|--name)
+        NAME="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        -c|--config)
+        CONFIGFILE="$2"
+        shift # past argument
+        shift # past value
+        ;;
         -f|--flavour|--flavor)
         FLAVOUR="$2"
         shift # past argument
@@ -139,7 +151,8 @@ if [ -z "$FLAVOUR" ]; then
         echo "  5) On a remote server"
         echo "       modifies the existing remote system!"
         echo "       (uses ansible)"
-        read -p "Your choice [12345]? " choice
+        echo -n "Your choice [12345]? "
+        read choice
         case $choice in
             [1]* ) FLAVOUR=vagrant; break;;
             [2]* ) FLAVOUR=docker; break;;
@@ -163,11 +176,12 @@ if [[ "$FLAVOUR" == "env" ]] || [[ "$FLAVOUR" == "global" ]]; then
             echo "  0) Use none at all - Install everything globally"
         fi
         while true; do
-            read -p "What form of local user environment do you want [12]? " choice
+            echo -n "What form of local user environment do you want [12]? "
+            read choice
             case $choice in
                 [1]* ) LOCALENV_TYPE=conda; break;;
                 [2]* ) LOCALENV_TYPE=virtualenv; break;;
-                [0]* ) PREFER_GLOBAL=1; break;;
+                [0]* ) LOCALENV_TYPE=conda; PREFER_GLOBAL=1; break;;
                 * ) echo "Please answer with the corresponding number of your preference..";;
             esac
         done
@@ -181,7 +195,8 @@ if [ -z "$VERSION" ]; then
     echo " 3) custom version, you decide explicitly what exact versions you want (for reproducibility)."
     echo "    this expects you to provide a LaMachine version file with exact version numbers."
     while true; do
-        read -p "Which version do you want to install?" choice
+        echo -n "Which version do you want to install?"
+        read choice
         case $choice in
             [1]* ) VERSION=stable; break;;
             [2]* ) VERSION=development; break;;
@@ -217,7 +232,8 @@ while true; do
     echo "system. It will be automatically obtained from your distribution's package manager"
     echo "or another official source whenever possible. You need to have sudo permission for this though..."
     echo
-    read -p "Do you have administrative access (root/sudo) on the current system? [yn]" yn
+    echo -n "Do you have administrative access (root/sudo) on the current system? [yn]"
+    read yn
     case $yn in
         [Yy]* ) SUDO=1; break;;
         [Nn]* ) SUDO=0 exit;;
@@ -247,7 +263,8 @@ for package in $NEED; do
         echo "Vagrant and Virtualbox are required for your flavour of LaMachine but are not installed yet. Install automatically?"
         if [ ! -z "$cmd" ]; then
             while true; do
-                read -p "Run: $cmd ? [yn]" yn
+                echo -n "Run: $cmd ? [yn]"
+                read yn
                 case $yn in
                     [Yy]* ) $cmd; break;;
                     [Nn]* ) echo "Please install vagrant manually from https://www.vagrantup.com/downloads.html and VirtualBox from https://www.virtualbox.org/" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
@@ -266,7 +283,8 @@ for package in $NEED; do
     elif [ "$package" = "brew" ]; then
         echo "Homebrew (https://brew.sh) is required on Mac OS X but was not found yet"
         while true; do
-            read -p "Download and install homebrew? [yn]" yn
+            echo -n "Download and install homebrew? [yn]"
+            read yn
             case $yn in
                 [Yy]* ) break;;
                 [Nn]* ) echo "Unable to continue without homebrew, see https://brew.sh/"; exit 2;;
@@ -281,12 +299,60 @@ for package in $NEED; do
     fi
 done
 
+if [ -z "$NAME" ]; then
+    echo "Your LaMachine installation is identified by a name (used as hostname, local env name, VM name) etc.."
+    echo -n "Enter a name for your LaMachine installation: "
+    read NAME
+    NAME="${NAME%\\n}"
+fi
+
+CONFIGFILE="host-vars/$NAME.yml"
+
+if [ ! -f "$CONFIGFILE" ]; then
+    echo "---
+hostname: \"$NAME\" #(for VM or docker, doesn't change hostname on existing systems)
+env_name: \"$NAME\" #(for local user environment)
+version: \"$VERSION\" #stable, development or custom
+lamachine_path: \"$SOURCEDIR\" #LaMachine source path (on host machine)
+localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv), not used when prefer_global is true
+" > $CONFIGFILE
+    if [ $PREFER_GLOBAL -eq 1 ]; then
+        echo "prefer_global: true #Install everything globally" >> $CONFIGFILE
+    else
+        echo "prefer_global: false #Install everything globally" >> $CONFIGFILE
+    fi
+    if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]]; then
+        echo "prefer_local: false #Install everything in a local user environment" >> $CONFIGFILE
+        echo "root: true #Do you have root on the target system?" >> $CONFIGFILE
+    elif [ $SUDO -eq 0 ]; then
+        echo "prefer_local: true #Install everything in a local user environment" >> $CONFIGFILE
+        echo "root: false #Do you have root on the target system?" >> $CONFIGFILE
+    else
+        echo "prefer_local: false #Install everything globally" >> $CONFIGFILE
+        echo "root: true #Do you have root on the target system?" >> $CONFIGFILE
+    fi
+    if [[ $FLAVOUR == "vagrant" ]]; then
+        echo "vm_memory: 6096 #Reserved memory for VM">> $CONFIGFILE
+        echo "vm_cpus: 2 #Reserved number of CPU cores for VM">>$CONFIGFILE
+    fi
+echo "webserver: true #include a webserver
+port: 80 #webserver port (for VM or docker)
+mapped_port: 8080 #mapped webserver port on host system (for VM or docker)
+#Adapt install.yml to select the packages you want to install" >> $CONFIGFILE
+fi
 
 
 
-
-
-
-
+if [[ "$FLAVOUR" == "vagrant" ]]; then
+    echo "Building VM"
+    vagrant up
+else
+    if [ ! -d lamachine.control.env ]; then
+        echo "Setting up control environment..."
+        virtualenv --python=python2.7 lamachine.control.env
+        source lamachine.control.env/bin/activate
+        pip install ansible
+    fi
+fi
 
 
