@@ -15,20 +15,11 @@
       chdir: "{{ pkg_source_dir }}"
   register: bootstrap_result
 
-
-- name: "{{pkg_name}} - Invoke configure (local)"
-  command: "./configure --prefix={{ local_prefix }}"
+- name: "{{pkg_name}} - Invoke configure"
+  command: "./configure --prefix={% if not root or prefer_local %}{{ local_prefix }}{% else %}{{ global_prefix }}{% endif %}"
   args:
       chdir: "{{ pkg_source_dir }}"
   register: configure_result
-  when: not root or prefer_local
-
-- name: "{{pkg_name}} - Invoke configure (global)"
-  command: "./configure --prefix={{ global_prefix }}"
-  args:
-      chdir: "{{ pkg_source_dir }}"
-  register: configure_result
-  when: root and not prefer_local
 
 - name: "{{pkg_name}} - Invoke make"
   command: "make"
@@ -37,14 +28,7 @@
   when: configure_result.rc == 0
   register: make_result
 
-- name: "{{pkg_name}} - Invoke make install (local)"
-  command: "make install"
-  args:
-       chdir: "{{ pkg_source_dir }}"
-  register: make_install_result
-  when: (not root and prefer_local) and configure_result.rc == 0 and configure_result.rc == 0
-
-- name: "{{pkg_name}} - Invoke make install (global)"
+- name: "{{pkg_name}} - Invoke make install"
   become: "{{ root and not prefer_local }}"
   become_user: root
   become_method: sudo
@@ -52,4 +36,4 @@
   args:
        chdir: "{{ pkg_source_dir }}"
   register: make_install_result
-  when: configure_result.rc == 0 and configure_result.rc == 0 and make_result.rc == 0
+  when: configure_result.rc == 0 and make_result.rc == 0
