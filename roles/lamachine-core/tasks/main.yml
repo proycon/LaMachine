@@ -56,7 +56,8 @@
         create: yes
         mode: u+rwx
 
-    - file: Link activation script
+    - name: Link activation script
+      file:
         src: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.activate"
         dest: "/home/{{unix_user}}/bin/lamachine.activate"
         force: true
@@ -92,12 +93,14 @@
         create: yes
         mode: u+rwx
 
-    - file: Link update script
+    - name: Link update script
+      file:
         src: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.update"
         dest: "/home/{{unix_user}}/bin/lamachine.update"
         force: true
 
-    - file: Backward compatibility update script
+    - name: Backward compatibility update script
+      file:
         src: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.update"
         dest: "/home/{{unix_user}}/bin/lamachine-update.sh"
         force: true
