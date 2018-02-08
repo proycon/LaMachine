@@ -5,10 +5,10 @@
 
 LaMachine v2 is to be a redesigned, improved and more modular version of LaMachine. The redesign is motivated in the
 scope of the CLARIAH WP3 Virtual Research Environment (VRE) project. LaMachine is first and foremost a software
-distribution, a way to disseminate NLP software to end-users and hosters (e.g. CLARIN centres) alike. In a way, it
+distribution; a way to disseminate NLP software to end-users and hosters (e.g. CLARIN centres) alike. In a way, it
 already acts as a kind of low-level Virtual Research Environment for technologically capable researchers, though not in
 the sense intended in the CLARIAH WP3 VRE plan. It has been very successful and heavily used by third parties, now
-setting a firm foundation for its next stage of evolution.
+setting a firm foundation for its next stage of evolution, as proposed in this plan.
 
 ## Introduction
 
@@ -57,13 +57,16 @@ We again remain committed this, but will shake up the underlying technologies.
 ### Objective #1. Modularity & Outside participation
 
 * LaMachine grows larger and larger, it already includes 'default' software and 'optional' software, but the user should be given more choice/freedom in the matter.
-* The maintainability of the two rather monolithic shell scripts grows more complicated as more software participates.
+  We want to greatly expand the flexibility for administrators and users to make a more fine-tuned selection and lower
+  the threshold to third party participation in LaMachine.
+* The maintainability of the two rather monolithic shell scripts grows more complicated as more software participates;
 * We want to try to reduce redundancy in LaMachine and have as much overlap as possible between different flavours and branches
 * It should be made easier for third-party participants to participate in LaMachine without relying on a central party (aka me). It need not be a Nijmegen-only endeavour
 
 ### Objective #2. Improved user experience for researchers (the less technical end-user aka the 80%)
 
 * Even in the current LaMachine, there are facilities for the less technically inclined users, in the form of pre-configured webservices. In the VM and Docker flavours, a simple webserver is available, serving a very minimalistic portal to some webservices (Frog, Ucto, and even FLAT). This is one of the areas in which major improvement is possible. A more user friendly portal environment should be deliver.
+* We want to lower the threshold for installation of LaMachine itself; everything should start from a single command and an automated wizard to guide you through.
 * Although LaMachine is initially more geared towards the 20%, and tries to decrease the threshold of installation, we can do more to accommodate the '80%' (with a limit).
 * A huge and important corollary of this goal is **improved interoperability** between the tools in LaMachine:
     * User interface options connecting available web-applications/webservices where possible
@@ -75,36 +78,36 @@ We again remain committed this, but will shake up the underlying technologies.
 
 ### Objective #3: Production deployment & Integration
 
-* The LaMachine everybody can install at home is in principle the same LaMachine as goes to official hosters of production environments, such as CLARIAH centres.
+* The LaMachine everybody can install at home is in principle the same LaMachine as goes to official hosters of production environments, such as CLARIAH centres. We want to make LaMachine more suitable for the demands of production environments.
 * We should investigate what we can include in LaMachine for better integration in a CLARIAH production environment, with respect to authentication (single sign-on)
-* In the development of a larger CLARIAH WP3 VRE, LaMachine will play an important role as tool provider anyway, special facilities may need to be implemented for incorporation in a larger VRE framework
+* In the development of a larger CLARIAH WP3 VRE, LaMachine will play an important role as tool provider anyway, special facilities may need to be implemented for incorporation in a larger VRE framework; LaMachine can take part of this integration burden away from the tools.
 
 ## Relations with other projects
 
 ### Relation with a CLARIAH WP3 VRE
 
-There is a certain intersection between LaMachine and the WP3 VRE plans, but I'm well aware that latter goes much
+There is a certain intersection between LaMachine v2 and the WP3 VRE plans, but I'm well aware that latter goes much
 further and has much higher ambitions than this current plan. This LaMachine v2 plan is motivated by the technologies we
 already have in place and attempts to sketch how LaMachine can 1) act as a kind of much simpler VRE in its own right and
 2) lay the groundwork for integration in a larger VRE, in which it can act as a deployment platform for tools. In other
 words, this plan is an attempt to close the gap in a bottom-up fashion, to keep things relatively simple and practical,
-and to get to demonstrable results in an as time- and resource- efficient manner as possible. I project this all to be
+and to get to demonstrable results in an as time and resource efficient manner as possible. I project this all to be
 realisable well within the time that could be allocated for me in the CLARIAH WP3 VRE.
 
 It is also good to stress the main difference between LaMachine and the WP3 VRE. LaMachine is all about distribution,
 deployment and access to software. It is not, and will never be, an infrastructure deployed online in one static
-location (but may be made to interact with such larger infrastructure as per goals #2 and #3). LaMachine requires the
+location (but may be made to interact with such larger infrastructure as per goals #2 and #3). LaMachine also requires the
 underlying software to be open, publicly available, and adhere to certain common good-practices with regard to in what
 repositories software is deposited.
 
 ### Relation with PICCL (CLARIAH WP2/3)
 
-The vision for PICCL was to be constitute a complete workflow for corpus building, mainly focussing on OCR, OCR-post
+The vision for PICCL was to constitute a complete workflow for corpus building, mainly focussing on OCR, OCR-post
 correction and spelling normalisation. The project proposed a pipeline of interconnected tools and a single encompassing
 webservice with user interface for end-users.
 
 PICCL's current implementation (which is a reimplementation of prior prototype by Martin Reynaert) consists of a series
-of pipelines to accomplishe a certain NLP goal, you could consider these pipelines recipes. The pipeline logic is
+of pipelines to accomplish a certain NLP goal, you could consider these pipelines recipes. The pipeline logic is
 implemented in NextFlow; but the actual work is done by a wide variety of tools. PICCL is intimately tied to LaMachine
 as it relies on these tools which need to be properly installed and available. In other words; LaMachine provides the
 environment with all the tools, and PICCL provides the recipes specifying how these tools are invoked, as well as a
@@ -136,6 +139,7 @@ ourselves to more established solutions and to find better cohesion with what va
 
 1) Make the docker and vagrant flavours less dependent on the host Linux distribution.
     * Switch the base Linux distribution from Arch Linux to **Debian Linux** (stable/stretch), as this makes more sense in production environments (e.g wrt security) and is what more users are accustomed too.
+    * Allow for easy expansion to other distributions
 2) Use **Ansible** as the primary provisioning engine instead of custom shell scripts
     * Supported by Vagrant for provisioning of Virtual Machines
     * Supports Docker (through ansible-container) for provisioning containers
@@ -154,6 +158,11 @@ the ability to build many different LaMachine instances (containers/VMs/environm
 This will be specified in the ansible inventory.
 
 Some common defaults will be provided and made available in the appropriate repositories such as Docker Hub.
+
+Users will be able to bootstrap LaMachine v2 entirely through one boostrap command (a curl ... | bash) combination, which
+will start an automated wizard askins the user for his choices for his LaMachine build. The script will provide a single
+entry point and will install necessary initial dependencies (e.g. Vagrant, Ansible). It is geared for a wide variety of
+unix-like platforms (including Windows 10 with the Linux Subsystem).
 
 ### Collaboration
 
@@ -176,11 +185,13 @@ sustainability, as certain quality demands are a technological prerequisite for 
 
 ## Planning
 
+(This is all still very preliminary)
+
 **Phase 0: Preparation** [2 Weeks?]
 * Write initial plan (this document) and brainstorm
 * Investigate and experiment with proposed technologies
 
-**Phase 1: Redesign**  [2 Months * 0.3 fte]
+**Phase 1: Redesign**  [1 Month * 0.3 fte]
 * Rewrite entire provisioning infrastructure through Ansible
     * Integrate with vagrant
     * Integrate docker
