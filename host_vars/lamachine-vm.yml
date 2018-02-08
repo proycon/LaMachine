@@ -2,12 +2,11 @@
 hostname: "lamachine-vm" #(for VM or Docker)
 version: "stable" #set to "stable" or "develop"
 lamachine_path: "." #LaMachine source path (on host machine)
-data_path: "./data/" #Data path (on host machine)
+host_data_path: "./data/" #Data path (on host machine)
 unix_user: "vagrant"
 source_path: "/home/{{unix_user}}/src/" #Path to store sources (on vm)
 vagrant_box: "debian/contrib-stretch64" #Base box for vagrant (changing this may break things if packages are not compatible!)
 global_prefix: "/usr/local" #Where to install global packages?
-env_name: "lamachine.env"
 local_prefix: "/home/{{unix_user}}/{{env_name}}" #Where to install local packages
 shared: false
 prefer_local: false #Install everything in a local user environment, aside from distribution packages

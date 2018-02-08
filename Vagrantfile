@@ -88,10 +88,4 @@ Vagrant.configure(2) do |config|
     ansible.verbose = "v"
     ansible.playbook = "install.yml"
   end
-
-  #If you want to install a specific version, copy your LaMachine VERSION file over the
-  #dummy file, disable the default shell provisioning line above and enable the
-  #following two lines:
-  #config.vm.provision "file", source: "VERSION", destination: "/tmp/VERSION"
-  #config.vm.provision :shell, path: "bootstrap.sh", args: "version=/tmp/VERSION", keep_color: true;
 end

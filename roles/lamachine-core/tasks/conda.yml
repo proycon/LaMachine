@@ -32,13 +32,13 @@
 
 
     - name: Creating bare conda environment for LaMachine
-      shell: 'bash -ic "conda create -mqy -n {{ env_name }}"'
+      shell: 'bash -ic "conda create -mqy -n lamachine-{{ conf_name }}"'
       args:
-          creates: "{{ansible_env.HOME}}/miniconda/envs/{{env_name}}"
+          creates: "{{ansible_env.HOME}}/miniconda/envs/lamachine-{{conf_name}}"
 
     - name: Linking conda environment
       file:
-          src: "{{ansible_env.HOME}}/miniconda/envs/{{env_name}}"
+          src: "{{ansible_env.HOME}}/miniconda/envs/lamachine-{{conf_name}}"
           dest: "{{local_prefix}}"
           state: link
 

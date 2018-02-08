@@ -397,8 +397,8 @@ INSTALLFILE="$BASEDIR/install-$LM_NAME.yml"
 
 if [ ! -f "$CONFIGFILE" ]; then
     echo "---
-hostname: \"$LM_NAME\" #(for VM or docker, doesn't change hostname on existing systems)
-env_name: \"lamachine-$LM_NAME\" #(for local user environment)
+conf_name: \"$LM_NAME\" #Name of this LaMachine configuration
+hostname: \"lamachine-$LM_NAME\" #Name of the host (for VM or docker), does not change existing hostnames
 version: \"$VERSION\" #stable, development or custom
 localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv), not used when prefer_global is true
 " > $CONFIGFILE

@@ -29,7 +29,7 @@
 
     - name: Set LaMachine activation script
       blockinfile:
-        dest: "/home/{{unix_user}}/bin/lamachine-{{ name }}.activate"
+        dest: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.activate"
         block: |
           #!/bin/bash
           export LM_PREFER_LOCAL={{prefer_local|int}}
@@ -37,12 +37,14 @@
           export LM_SHARED={{shared|int}}
           export LM_GLOBAL_PREFIX={{global_prefix}}
           export LM_LOCAL_PREFIX={{local_prefix}}
-          export LM_SOURCEPATH={{source_path}}
           export LM_LOCALENV_TYPE={{localenv_type}}
+          export LM_DATA_PATH={{data_path}}
+          export LM_PATH={{lamachine_path}}
+          export LM_SOURCEPATH={{source_path}}
           if [ $LM_PREFER_GLOBAL -eq 0 ]; then
               if [ -d $LM_LOCAL_PREFIX ]; then
                   if [[ "$LM_LOCALENV_TYPE" == "conda" ]]; then
-                      source activate {{env_name}}
+                      source activate lamachine-{{conf_name}}
                       export VIRTUAL_ENV=$LM_LOCAL_PREFIX #backward compatibility
                   else
                       source $LM_LOCAL_PREFIX/bin/activate
@@ -55,7 +57,7 @@
         mode: u+rwx
 
     - file: Link activation script
-        src: "/home/{{unix_user}}/bin/lamachine-{{ name }}.activate"
+        src: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.activate"
         dest: "/home/{{unix_user}}/bin/lamachine.activate"
         force: true
 
@@ -63,7 +65,7 @@
       blockinfile:
         dest: "/home/{{unix_user}}/.bashrc"
         block: |
-            source /home/{{unix_user}}/bin/lamachine-{{ name }}.activate
+            source /home/{{unix_user}}/bin/lamachine-{{conf_name}}.activate
         marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
         insertafter: EOF
         create: yes
@@ -73,11 +75,32 @@
       blockinfile:
         dest: "/home/{{unix_user}}/.zshrc"
         block: |
-            source /home/{{unix_user}}/bin/lamachine-{{ name }}.activate
+            source /home/{{unix_user}}/bin/lamachine-{{conf_name}}.activate
         marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
         insertafter: EOF
         create: no
       when: not shared
+
+    - name: Set LaMachine update script
+      blockinfile:
+        dest: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.update"
+        block: |
+          #!/bin/bash
+          TODO
+        marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
+        insertafter: EOF
+        create: yes
+        mode: u+rwx
+
+    - file: Link update script
+        src: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.update"
+        dest: "/home/{{unix_user}}/bin/lamachine.update"
+        force: true
+
+    - file: Backward compatibility update script
+        src: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.update"
+        dest: "/home/{{unix_user}}/bin/lamachine-update.sh"
+        force: true
 
     - name: Create source directory
       file:
