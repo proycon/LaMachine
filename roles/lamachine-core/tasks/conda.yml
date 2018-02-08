@@ -42,7 +42,7 @@
 
     - name: Create .conda directory for user
       file:
-          path: "{{ansible.env.HOME}}/.conda/envs"
+          path: "{{ansible_env.HOME}}/.conda/envs"
           state: directory
 
     - name: Adding conda environment to user's
