@@ -33,7 +33,7 @@ Vagrant.configure(2) do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  config.vm.network "forwarded_port", guest: lamachine_config['port'], host: lamachine_config['mapped_port'] #clam services and main landing page (nginx)
+  config.vm.network "forwarded_port", guest: lamachine_config['http_port'], host: lamachine_config['mapped_http_port'] #clam services and main landing page (nginx)
   #config.vm.network "forwarded_port", guest: 8081, host: 8081 #flat (nginx)
   #config.vm.network "forwarded_port", guest: 8888, host: 8888 #reserved for user defined applications such as jypiter notebooks
   #config.vm.network "forwarded_port", guest: 3030, host: 3030 #foliadocserve
@@ -85,7 +85,7 @@ Vagrant.configure(2) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "ansible" do |ansible|
-    ansible.verbose = "v"
+    #ansible.verbose = "v"
     ansible.playbook = "install.yml"
   end
 end

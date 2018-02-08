@@ -27,6 +27,9 @@ fatalerror () {
     exit 2
 }
 
+#The base directory is the directory where the bootstrap is downloaded/executed
+#It will be the default directory for data sharing, will host some configuration files
+#and will contain a lamachine-controller environment
 BASEDIR=$(pwd)
 
 
@@ -46,7 +49,6 @@ elif [ -f "$REDHAT" ]; then
 else
     if [ ${OSTYPE//[0-9.]/} = "darwin" ]; then
         OS="mac"
-
     else
         OS="unknown"
     fi
@@ -394,11 +396,12 @@ LM_NAME=${LM_NAME/ /} #strip any spaces because users won't listen anyway
 
 CONFIGFILE="$BASEDIR/lamachine-$LM_NAME.yml"
 INSTALLFILE="$BASEDIR/install-$LM_NAME.yml"
+USERNAME=$(whoami)
 
 if [ ! -f "$CONFIGFILE" ]; then
     echo "---
 conf_name: \"$LM_NAME\" #Name of this LaMachine configuration
-hostname: \"lamachine-$LM_NAME\" #Name of the host (for VM or docker), does not change existing hostnames
+hostname: \"lamachine-$LM_NAME\" #Name of the host (for VM or docker), changing this is not supported yet at this stage
 version: \"$VERSION\" #stable, development or custom
 localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv), not used when prefer_global is true
 " > $CONFIGFILE
@@ -408,7 +411,7 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
         echo "prefer_global: false #Install everything globally" >> $CONFIGFILE
     fi
     if [[ $FLAVOUR == "vagrant" ]]; then
-        echo "unix_user: \"vagrant\"" >> $CONFIGFILE
+        echo "unix_user: \"vagrant\" #(don't change this)" >> $CONFIGFILE
         echo "source_path: \"/home/vagrant/src/\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is stored/shared" >> $CONFIGFILE
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
@@ -417,7 +420,8 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
         echo "unix_user: \"lamachine\"" >> $CONFIGFILE
         #TODO lamachine_path + source_path
     else
-        echo "lamachine_path: \"$SOURCEDIR\" #Path where LaMachine source is stored/shared" >> $CONFIGFILE
+        echo "unix_user: \"$USERNAME\"" >> $CONFIGFILE
+        echo "lamachine_path: \"$SOURCEDIR\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
         echo "source_path: \"$SOURCEDIR/src/\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         echo "data_path: \"$BASEDIR\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
     fi
@@ -440,13 +444,13 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
     fi
     if [[ $FLAVOUR == "vagrant" ]]; then
         echo "vagrant_box: \"debian/contrib-stretch64\" #Base box for vagrant (changing this may break things if packages are not compatible!)" >>$CONFIGFILE
-        echo "vm_memory: 6096 #Reserved memory for VM">> $CONFIGFILE
-        echo "vm_cpus: 2 #Reserved number of CPU cores for VM">>$CONFIGFILE
+        echo "vm_memory: 6096 #Memory allocated to the VM; in MB (the more the better! but too high and the VM won't start)">> $CONFIGFILE
+        echo "vm_cpus: 2 #CPU cores allocated to the VM">>$CONFIGFILE
     fi
 echo "
 webserver: true #include a webserver
-port: 80 #webserver port (for VM or docker)
-mapped_port: 8080 #mapped webserver port on host system (for VM or docker)
+http_port: 80 #webserver port (for VM or docker)
+mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
 " >> $CONFIGFILE
 
 echo "Opening configuration file $CONFIGFILE in editor for final configuration..."
@@ -466,10 +470,14 @@ fi
 
 if [ ! -d lamachine-controller ]; then
     echo "Setting up control environment..."
-    virtualenv --python=python2.7 lamachine-controller || "Unable to create LaMachine control environment"
-    cd lamachine-controller
-    source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
-    pip install ansible || fatalerror "Unable to install Ansible"
+    if [[ "$FLAVOUR" != "vagrant" ]]; then
+        virtualenv --python=python2.7 lamachine-controller || "Unable to create LaMachine control environment"
+        cd lamachine-controller
+        source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
+        pip install ansible || fatalerror "Unable to install Ansible"
+    else
+        mkdir lamachine-controller && cd lamachine-controller
+    fi
 else
     echo "Reusing existing control environment..."
     cd lamachine-controller
@@ -505,17 +513,26 @@ fi
 
 if [[ "$FLAVOUR" == "vagrant" ]]; then
     echo "Preparing vagrant..."
+    #Copy and adapt the Vagrantfile file; storing it inside the lamachine-controller
     if [ ! -f $SOURCEDIR/Vagrantfile.$LM_NAME ]; then
         cp $SOURCEDIR/Vagrantfile $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to copy Vagrantfile"
-        sed -i s/lamachine-vm/lamachine-$LM_NAME/g $SOURCEDIR/Vagrantfile.$LM_NAME
-        sed -i s/install.yml/install-$LM_NAME.yml/g $SOURCEDIR/Vagrantfile.$LM_NAME
+        sed -i s/lamachine-vm/lamachine-$LM_NAME/g $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to run sed"
+        sed -i s/install.yml/install-$LM_NAME.yml/g $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to run sed"
     fi
-    echo -e "#!/bin/bash\ncd /vagrant\nansible-playbook -i hosts.vmtest install-$LM_NAME.yml" >
-    echo "Running vagrant..."
-    VAGRANT_CWD=$SOURCEDIR  VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME vagrant up
-    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant up && vagrant ssh\nvagrant halt" > $BASEDIR/lamachine-$LM_NAME.activate
+    #add activation script on the host machine:
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nif vagrant up && vagrant ssh; then\nvagrant halt\nexit 0\nelse\nexit 1\nfi" > $BASEDIR/lamachine-$LM_NAME.activate
     chmod a+x $BASEDIR/lamachine-$LM_NAME.activate
-elif [[ "$FLAVOUR" == "local" ]]; then
-    echo "TODO"
+    #run the activation script (this will do the actual initial provision as well)
+    bash $BASEDIR/lamachine-$LM_NAME.activate
+    rc=$?
+    echo "All done, to run LaMachine next time, just run: bash $BASEDIR/lamachine-$LM_NAME.activate"
+elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
+    echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
+    ansible-playbook -i $SOURCEDIR/hosts.$LM_NAME install-$LM_NAME.yml
+    rc=$?
+    deactivate #deactivate the controller before quitting
+else
+    echo "No bootstrap for $FLAVOUR implemented yet at this stage, sorry!!">&2
+    rc=1
 fi
-echo "All done!"
+exit $rc
