@@ -421,8 +421,8 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
         #TODO lamachine_path + source_path
     else
         echo "unix_user: \"$USERNAME\"" >> $CONFIGFILE
-        echo "lamachine_path: \"$SOURCEDIR\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
-        echo "source_path: \"$SOURCEDIR/src/\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+        echo "lamachine_path: \"$BASEDIR/lamachine-controller/LaMachine\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
+        echo "source_path: \"$BASEDIR/lamachine-controller/LaMachine\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         echo "data_path: \"$BASEDIR\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
     fi
     if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]]; then
