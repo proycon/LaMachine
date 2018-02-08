@@ -18,6 +18,14 @@ echo "           / / /|	        Radboud University Nijmegen "
 echo "====================================================================="
 echo
 
+fatalerror () {
+    echo "================ FATAL ERROR ==============" >&2
+    echo "An error occurred during installation!!" >&2
+    echo "$1" >&2
+    echo "===========================================" >&2
+    echo "$1" > error
+    exit 2
+}
 
 BASEDIR=$(pwd)
 
@@ -67,7 +75,7 @@ fi
 if ! which virtualenv; then
     NEED+=("virtualenv")
 fi
-if [ ! -z "$EDITOR" ]; then
+if [ -z "$EDITOR" ]; then
     if which nano; then
         EDITOR=nano
     else
@@ -89,7 +97,7 @@ while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
         -n|--name)
-        NAME="$2"
+        LM_NAME="$2"
         shift # past argument
         shift # past value
         ;;
@@ -135,6 +143,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+echo
 echo "Welcome to the LaMachine Installation tool, we will ask some questions how"
 echo "you want your LaMachine to be installed."
 echo
@@ -172,6 +181,8 @@ if [ -z "$FLAVOUR" ]; then
     done
 fi
 
+echo
+
 PREFER_GLOBAL=0
 if [[ "$FLAVOUR" == "env" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ -z "$LOCALENV_TYPE" ]; then
@@ -203,7 +214,7 @@ if [ -z "$VERSION" ]; then
     echo " 3) custom version, you decide explicitly what exact versions you want (for reproducibility)."
     echo "    this expects you to provide a LaMachine version file with exact version numbers."
     while true; do
-        echo -n "Which version do you want to install?"
+        echo -n "Which version do you want to install? "
         read choice
         case $choice in
             [1]* ) VERSION=stable; break;;
@@ -252,7 +263,7 @@ while true; do
     read yn
     case $yn in
         [Yy]* ) SUDO=1; break;;
-        [Nn]* ) SUDO=0 exit;;
+        [Nn]* ) SUDO=0; break;;
         * ) echo "Please answer yes or no.";;
     esac
 done
@@ -330,7 +341,7 @@ for package in $NEED; do
                 echo -n "Run: $cmd ? [yn]"
                 read yn
                 case $yn in
-                    [Yy]* ) $cmd; break;;
+                    [Yy]* ) $cmd || fatalerror "Git installation failed!"; break;;
                     [Nn]* ) echo "Please install git manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
                     * ) echo "Please answer yes or no.";;
                 esac
@@ -357,8 +368,8 @@ for package in $NEED; do
                 echo -n "Run: $cmd ? [yn]"
                 read yn
                 case $yn in
-                    [Yy]* ) $cmd; break;;
-                    [Nn]* ) echo "Please install git manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
+                    [Yy]* ) $cmd || fatalerror "Virtualenv installation failed"; break;;
+                    [Nn]* ) echo "Please install virtualenv manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
                     * ) echo "Please answer yes or no.";;
                 esac
             done
@@ -369,20 +380,22 @@ for package in $NEED; do
     fi
 done
 
-if [ -z "$NAME" ]; then
+if [ -z "$LM_NAME" ]; then
     echo "Your LaMachine installation is identified by a name (used as hostname, local env name, VM name) etc.."
     echo -n "Enter a name for your LaMachine installation (no spaces!): "
-    read NAME
-    NAME="${NAME%\\n}"
+    read LM_NAME
+    LM_NAME="${LM_NAME%\\n}"
 fi
 
-CONFIGFILE="$BASEDIR/host-vars/lamachine-$NAME.yml"
-INSTALLFILE="$BASEDIR/install-$NAME.yml"
+LM_NAME=${LM_NAME/ /} #strip any spaces because users won't listen anyway
+
+CONFIGFILE="$BASEDIR/lamachine-$LM_NAME.yml"
+INSTALLFILE="$BASEDIR/install-$LM_NAME.yml"
 
 if [ ! -f "$CONFIGFILE" ]; then
     echo "---
-hostname: \"$NAME\" #(for VM or docker, doesn't change hostname on existing systems)
-env_name: \"lamachine-$NAME\" #(for local user environment)
+hostname: \"$LM_NAME\" #(for VM or docker, doesn't change hostname on existing systems)
+env_name: \"lamachine-$LM_NAME\" #(for local user environment)
 version: \"$VERSION\" #stable, development or custom
 localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv), not used when prefer_global is true
 " > $CONFIGFILE
@@ -405,6 +418,7 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
         echo "vm_memory: 6096 #Reserved memory for VM">> $CONFIGFILE
         echo "vm_cpus: 2 #Reserved number of CPU cores for VM">>$CONFIGFILE
     fi
+echo "data_path: "$BASEDIR" #Data path on the host machine that will be shared with LaMachine"
 echo "webserver: true #include a webserver
 port: 80 #webserver port (for VM or docker)
 mapped_port: 8080 #mapped webserver port on host system (for VM or docker)
@@ -413,6 +427,7 @@ mapped_port: 8080 #mapped webserver port on host system (for VM or docker)
 echo "Opening configuration file $CONFIGFILE in editor for final configuration..."
 sleep 3
 if ! "$EDITOR" "$CONFIGFILE"; then
+    echo "aborted by editor..." >&2
     exit 2
 fi
 fi
@@ -426,18 +441,19 @@ fi
 
 if [ ! -d lamachine-controller ]; then
     echo "Setting up control environment..."
-    virtualenv --python=python2.7 lamachine.control.env
-    source lamachine.control.env/bin/activate
-    pip install ansible
+    virtualenv --python=python2.7 lamachine-controller || "Unable to create LaMachine control environment"
     cd lamachine-controller
+    source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
+    pip install ansible || fatalerror "Unable to install Ansible"
 else
     echo "Reusing existing control environment..."
-    source lamachine-controller/bin/activate
+    cd lamachine-controller
+    source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
 fi
 
 if [ -z "$SOURCEDIR" ]; then
     echo "Cloning LaMachine git repo ($GITREPO $BRANCH)..."
-    git clone $GITREPO -b $BRANCH LaMachine
+    git clone $GITREPO -b $BRANCH LaMachine || fatalerror "Unable to clone LaMachine git repository"
     SOURCEDIR=$BASEDIR/lamachine-controller/LaMachine
     cd $SOURCEDIR
 else
@@ -448,9 +464,11 @@ else
     fi
     git pull #make sure we're up to date
 fi
-ln -s $CONFIGFILE $SOURCEDIR/host-vars/$(basename $CONFIGFILE)
+if [ ! -f $SOURCEDIR/host_vars/$(basename $CONFIGFILE) ]; then
+    ln -s $CONFIGFILE $SOURCEDIR/host_vars/$(basename $CONFIGFILE) || fatalerror "Unable to link $CONFIGFILE"
+fi
 if [ ! -f $INSTALLFILE ]; then
-    cp $SOURCEDIR/install.yml $INSTALLFILE
+    cp $SOURCEDIR/install.yml $INSTALLFILE || fatalerror "Unable to copy $SOURCE/install.yml"
 fi
 echo "Opening installation file $INSTALLFILE in editor for selection of packages to install..."
 sleep 3
@@ -461,14 +479,15 @@ ln -s $INSTALLFILE $SOURCEDIR/$(basename $INSTALLFILE)
 
 if [[ "$FLAVOUR" == "vagrant" ]]; then
     echo "Preparing vagrant..."
-    if [ ! -f $SOURCEDIR/Vagrantfile.$NAME ]; then
-        cp $SOURCEDIR/Vagrantfile $SOURCEDIR/Vagrantfile.$NAME
-        sed -i s/lamachine-vm/$NAME/g $SOURCEDIR/Vagrantfile.$NAME
+    if [ ! -f $SOURCEDIR/Vagrantfile.$LM_NAME ]; then
+        cp $SOURCEDIR/Vagrantfile $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to copy Vagrantfile"
+        sed -i s/lamachine-vm/lamachine-$LM_NAME/g $SOURCEDIR/Vagrantfile.$LM_NAME
+        sed -i s/install.yml/install-$LM_NAME.yml/g $SOURCEDIR/Vagrantfile.$LM_NAME
     fi
     echo "Running vagrant..."
-    VAGRANT_CWD=$SOURCEDIR  VAGRANT_VAGRANTFILE=Vagrantfile.$NAME vagrant up
-    echo -e "#!bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$NAME\nvagrant up\nvagrant ssh\nvagrant halt" > $BASEDIR/lamachine-$NAME.activate
-    chmod a+x $BASEDIR/lamachine-$NAME.activate
+    VAGRANT_CWD=$SOURCEDIR  VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME vagrant up
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant up\nvagrant ssh\nvagrant halt" > $BASEDIR/lamachine-$LM_NAME.activate
+    chmod a+x $BASEDIR/lamachine-$LM_NAME.activate
 elif [[ "$FLAVOUR" == "env" ]]; then
     echo "TODO"
 fi
