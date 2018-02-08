@@ -37,8 +37,8 @@
        conda:
            name: "{{item}}"
            state: latest
-           executable: "/home/{{unix_user}}/miniconda/bin/conda"
-           extra_args: "-n {{env_name}}"
+           executable: "{{local_prefix}}/bin/conda"
+           extra_args: "-p {{local_prefix}}"
        with_items:
            - beautifulsoup4
            - cython
