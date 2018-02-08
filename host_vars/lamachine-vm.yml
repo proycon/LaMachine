@@ -9,6 +9,7 @@ vagrant_box: "debian/contrib-stretch64" #Base box for vagrant (changing this may
 global_prefix: "/usr/local" #Where to install global packages?
 env_name: "lamachine.env"
 local_prefix: "/home/{{unix_user}}/{{env_name}}" #Where to install local packages
+shared: false
 prefer_local: false #Install everything in a local user environment, aside from distribution packages
 prefer_global: false #Install everything globally
 localenv_type: "conda" #Local environment type, can be conda or virtualenv

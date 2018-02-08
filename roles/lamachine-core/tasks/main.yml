@@ -15,18 +15,26 @@
     - import_tasks: macosx.yml
       when: (ansible_distribution == 'MacOSX') and root == True
 
+    - name: Create home bin directory #even on shared systems!
+      file:
+          path: "/home/{{unix_user}}/bin"
+          state: directory
+
     - import_tasks: conda.yml
       when: (localenv_type == 'conda')
 
     - import_tasks: virtualenv.yml
       when: (localenv_type == 'virtualenv')
 
-    - name: Set LaMachine environment options
+
+    - name: Set LaMachine activation script
       blockinfile:
-        dest: "{{ ansible_env.HOME }}/.bashrc"
+        dest: "/home/{{unix_user}}/bin/lamachine-{{ name }}.activate"
         block: |
+          #!/bin/bash
           export LM_PREFER_LOCAL={{prefer_local|int}}
           export LM_PREFER_GLOBAL={{prefer_global|int}}
+          export LM_SHARED={{shared|int}}
           export LM_GLOBAL_PREFIX={{global_prefix}}
           export LM_LOCAL_PREFIX={{local_prefix}}
           export LM_SOURCEPATH={{source_path}}
@@ -44,6 +52,32 @@
         marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
         insertafter: EOF
         create: yes
+        mode: u+rwx
+
+    - file: Link activation script
+        src: "/home/{{unix_user}}/bin/lamachine-{{ name }}.activate"
+        dest: "/home/{{unix_user}}/bin/lamachine.activate"
+        force: true
+
+    - name: Automatic local user environment activation
+      blockinfile:
+        dest: "/home/{{unix_user}}/.bashrc"
+        block: |
+            source /home/{{unix_user}}/bin/lamachine-{{ name }}.activate
+        marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
+        insertafter: EOF
+        create: yes
+      when: not shared
+
+    - name: Automatic local user environment activation (zsh)
+      blockinfile:
+        dest: "/home/{{unix_user}}/.zshrc"
+        block: |
+            source /home/{{unix_user}}/bin/lamachine-{{ name }}.activate
+        marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
+        insertafter: EOF
+        create: no
+      when: not shared
 
     - name: Create source directory
       file:

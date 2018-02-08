@@ -1,5 +1,8 @@
 # LaMachine v2 VRE Plan
-    Maarten van Gompel, Centre for Speech and Technology, Radboud University Nijmegen
+
+     Maarten van Gompel
+     Centre for Language and Speech Technology
+     Radboud University Nijmegen
 
 ## Abstract
 
@@ -46,9 +49,9 @@ Linux, meaning software need to be deposited in the AUR for LaMachine to install
 repository given the software's ecosystem, such as for example the Python Package Index. All Python software needs to be
 deposited in the Python Package Index and is pulled from there. This ensures that:
 
-    * Well established software deployment practice is followed, i.e. the software explicitly made installable and deposited in proper repositories
-    * LaMachine remains just an option for convenience and nobody is forced to use it, people can pull straight from the source if they so desire.
-    * We build on existing work and do not do unnecessary duplicate work
+ * Well established software deployment practice is followed, i.e. the software explicitly made installable and deposited in proper repositories
+ * LaMachine remains just an option for convenience and nobody is forced to use it, people can pull straight from the source if they so desire.
+ * We build on existing work and do not do unnecessary duplicate work
 
 We again remain committed this, but will shake up the underlying technologies.
 
@@ -188,38 +191,44 @@ sustainability, as certain quality demands are a technological prerequisite for 
 (This is all still very preliminary)
 
 **Phase 0: Preparation** [2 Weeks?]
-* Write initial plan (this document) and brainstorm
-* Investigate and experiment with proposed technologies
 
-**Phase 1: Redesign**  [1 Month * 0.3 fte]
-* Rewrite entire provisioning infrastructure through Ansible
+ * Write initial plan (this document) and brainstorm
+ * Investigate and experiment with proposed technologies
+
+**Phase 1: Redesign**  [1.5 Month * 0.3 fte]
+
+ * Rewrite entire provisioning infrastructure through Ansible
     * Integrate with vagrant
     * Integrate docker
     * Integrate conda
-* Write the necessary ansible integration scripts for our software:
+ * Write the necessary ansible integration scripts for our software:
     * Integrate our C++ software stack (Frog, ucto, etc)
-        * Build conda packages
+       * Build conda packages
     * Integrate Python-based software (easy)
     * Integrate CLAM webservices and web applications (FLAT)
-        * Use UWSGI Emperor + nginx
+       * Use UWSGI Emperor + nginx
     * Integrate NextFlow (java) + PICCL
-* Provide a new interactive ``bootstrap.sh`` script as an initial entry point
+ * Provide a new interactive ``bootstrap.sh`` script as an initial entry point
 
 **Phase 2: Initial Release** [2 Weeks * 0.3 fte]
-* Set up automated builds
-* Provide documentation for both end-users, contributors, and hosters
-    * Launch a new and simplified LaMachine website for end-users
-* Provide a new portal site inside LaMachine
-* *At this point, we will have a new LaMachine that is functionally at least as capable as LaMachine v1 and can replace it*
+
+ * Set up automated builds
+ * Provide documentation for both end-users, contributors, and hosters
+     * Launch a new and simplified LaMachine website for end-users
+ * Provide a new portal site inside LaMachine
+ * *At this point, we will have a new LaMachine that is functionally at least as capable as LaMachine v1 and can replace it*
 
 **Phase 3a: Third party integration**
+
 * Help integrate low-level third party tools (CLI) and libraries by CLARIAH partners (VU, INT)
 * This will be an ongoing effort that can run in parallel with the any of next phases
 
 **Phase 3b: Interoperability within LaMachine**
+
 * (TODO)
 
 **Phase 3c: External Interoperability**
+
 * (TODO)
 
 

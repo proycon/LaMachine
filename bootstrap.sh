@@ -171,11 +171,11 @@ if [ -z "$FLAVOUR" ]; then
         echo -n "Your choice [12345]? "
         read choice
         case $choice in
-            [1]* ) FLAVOUR=vagrant; break;;
-            [2]* ) FLAVOUR=docker; break;;
-            [3]* ) FLAVOUR=env; break;;
-            [4]* ) FLAVOUR=global; break;;
-            [5]* ) FLAVOUR=server; break;;
+            [1]* ) FLAVOUR="vagrant"; break;;
+            [2]* ) FLAVOUR="docker"; break;;
+            [3]* ) FLAVOUR="local"; break;;
+            [4]* ) FLAVOUR="global"; break;;
+            [5]* ) FLAVOUR="server"; break;;
             * ) echo "Please answer with the corresponding number of your preference..";;
         esac
     done
@@ -184,14 +184,14 @@ fi
 echo
 
 PREFER_GLOBAL=0
-if [[ "$FLAVOUR" == "env" ]] || [[ "$FLAVOUR" == "global" ]]; then
+if [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ -z "$LOCALENV_TYPE" ]; then
         echo "We support two forms of local user environments:"
         echo "  1) Using conda"
         echo "       provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R)"
         echo "  2) Using virtualenv"
         echo "       A simpler solution (originally for Python but extended by us)"
-        if [ "$FLAVOUR" != "env" ]; then
+        if [ "$FLAVOUR" != "local" ]; then
             echo "  0) Use none at all - Install everything globally"
         fi
         while true; do
@@ -407,22 +407,43 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
     else
         echo "prefer_global: false #Install everything globally" >> $CONFIGFILE
     fi
+    if [[ $FLAVOUR == "vagrant" ]]; then
+        echo "unix_user: \"vagrant\"" >> $CONFIGFILE
+        echo "source_path: \"/home/vagrant/src/\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+        echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is stored/shared" >> $CONFIGFILE
+        echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
+        echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
+    elif [[ $FLAVOUR == "docker" ]]; then
+        echo "unix_user: \"lamachine\"" >> $CONFIGFILE
+        #TODO lamachine_path + source_path
+    else
+        echo "lamachine_path: \"$SOURCEDIR\" #Path where LaMachine source is stored/shared" >> $CONFIGFILE
+        echo "source_path: \"$SOURCEDIR/src/\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+        echo "data_path: \"$BASEDIR\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
+    fi
     if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]]; then
         echo "prefer_local: false #Install everything in a local user environment" >> $CONFIGFILE
         echo "root: true #Do you have root on the target system?" >> $CONFIGFILE
+        echo "shared: false #Is the target machine a shared machine with non-LaMachine applications?" >> $CONFIGFILE
     elif [ $SUDO -eq 0 ]; then
         echo "prefer_local: true #Install everything in a local user environment" >> $CONFIGFILE
         echo "root: false #Do you have root on the target system?" >> $CONFIGFILE
+        echo "shared: true #Is the target machine a shared machine with non-LaMachine applications?" >> $CONFIGFILE
     else
-        echo "prefer_local: false #Install everything globally" >> $CONFIGFILE
+        echo "prefer_local: false #Install everything in a local user environment" >> $CONFIGFILE
         echo "root: true #Do you have root on the target system?" >> $CONFIGFILE
+        if [ $SHARED -eq 0 ]; then
+            echo "shared: false #Is the target machine a shared machine with non-LaMachine applications?" >> $CONFIGFILE
+        else
+            echo "shared: true #Is the target machine a shared machine with non-LaMachine applications?" >> $CONFIGFILE
+        fi
     fi
     if [[ $FLAVOUR == "vagrant" ]]; then
         echo "vagrant_box: \"debian/contrib-stretch64\" #Base box for vagrant (changing this may break things if packages are not compatible!)" >>$CONFIGFILE
         echo "vm_memory: 6096 #Reserved memory for VM">> $CONFIGFILE
         echo "vm_cpus: 2 #Reserved number of CPU cores for VM">>$CONFIGFILE
     fi
-echo "data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine
+echo "
 webserver: true #include a webserver
 port: 80 #webserver port (for VM or docker)
 mapped_port: 8080 #mapped webserver port on host system (for VM or docker)
@@ -492,7 +513,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     VAGRANT_CWD=$SOURCEDIR  VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME vagrant up
     echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant up && vagrant ssh\nvagrant halt" > $BASEDIR/lamachine-$LM_NAME.activate
     chmod a+x $BASEDIR/lamachine-$LM_NAME.activate
-elif [[ "$FLAVOUR" == "env" ]]; then
+elif [[ "$FLAVOUR" == "local" ]]; then
     echo "TODO"
 fi
 echo "All done!"
