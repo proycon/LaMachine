@@ -486,7 +486,9 @@ fi
 
 if [ -z "$SOURCEDIR" ]; then
     echo "Cloning LaMachine git repo ($GITREPO $BRANCH)..."
-    git clone $GITREPO -b $BRANCH LaMachine || fatalerror "Unable to clone LaMachine git repository"
+    if [ ! -d LaMachine ]; then
+        git clone $GITREPO -b $BRANCH LaMachine || fatalerror "Unable to clone LaMachine git repository"
+    fi
     SOURCEDIR=$BASEDIR/lamachine-controller/LaMachine
     cd $SOURCEDIR
 else
@@ -495,8 +497,8 @@ else
     if [ "$SOURCEDIR" != "$BASEDIR" ]; then
         git checkout $BRANCH #only switch branches if we're not already in a git repo the user cloned himself
     fi
-    git pull #make sure we're up to date
 fi
+git pull #make sure we're up to date
 if [ ! -f $SOURCEDIR/host_vars/$(basename $CONFIGFILE) ]; then
     mv $CONFIGFILE $SOURCEDIR/host_vars/$(basename $CONFIGFILE) || fatalerror "Unable to copy $CONFIGFILE"
     ln -sf $SOURCEDIR/host_vars/$(basename $CONFIGFILE) $CONFIGFILE || fatalerror "Unable to link $CONFIGFILE"
