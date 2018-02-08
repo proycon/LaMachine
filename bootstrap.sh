@@ -470,14 +470,10 @@ fi
 
 if [ ! -d lamachine-controller ]; then
     echo "Setting up control environment..."
-    if [[ "$FLAVOUR" != "vagrant" ]]; then
-        virtualenv --python=python2.7 lamachine-controller || "Unable to create LaMachine control environment"
-        cd lamachine-controller
-        source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
-        pip install ansible || fatalerror "Unable to install Ansible"
-    else
-        mkdir lamachine-controller && cd lamachine-controller
-    fi
+    virtualenv --python=python2.7 lamachine-controller || "Unable to create LaMachine control environment"
+    cd lamachine-controller
+    source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
+    pip install ansible || fatalerror "Unable to install Ansible"
 else
     echo "Reusing existing control environment..."
     cd lamachine-controller
