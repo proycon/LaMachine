@@ -510,6 +510,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
         sed -i s/lamachine-vm/lamachine-$LM_NAME/g $SOURCEDIR/Vagrantfile.$LM_NAME
         sed -i s/install.yml/install-$LM_NAME.yml/g $SOURCEDIR/Vagrantfile.$LM_NAME
     fi
+    echo -e "#!/bin/bash\ncd /vagrant\nansible-playbook -i hosts.vmtest install-$LM_NAME.yml" >
     echo "Running vagrant..."
     VAGRANT_CWD=$SOURCEDIR  VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME vagrant up
     echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant up && vagrant ssh\nvagrant halt" > $BASEDIR/lamachine-$LM_NAME.activate

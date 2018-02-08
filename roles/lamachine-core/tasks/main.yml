@@ -58,9 +58,9 @@
 
     - name: Link activation script
       file:
-        src: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.activate"
-        dest: "/home/{{unix_user}}/bin/lamachine.activate"
-        force: true
+         src: "/home/{{unix_user}}/bin/lamachine-{{conf_name}}.activate"
+         dest: "/home/{{unix_user}}/bin/lamachine.activate"
+         state: link
 
     - name: Automatic local user environment activation
       blockinfile:
@@ -82,15 +82,19 @@
         create: no
       when: not shared
 
+    - name: Create local Ansible hosts file
+      copy:
+        dest: "{{lamachine_path}}/hosts.{{ conf_name }}"
+        content: "{{hostname}} ansible_connection=local"
+        force: "no"
+
     - name: Set LaMachine update script
-      blockinfile:
+      copy:
         dest: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.update"
-        block: |
+        content: |
           #!/bin/bash
-          TODO
-        marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
-        insertafter: EOF
-        create: yes
+          cd {{lamachine_path}}
+          ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml
         mode: u+rwx
 
     - name: Link update script
@@ -98,12 +102,14 @@
         src: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.update"
         dest: "/home/{{unix_user}}/bin/lamachine.update"
         force: true
+        state: link
 
     - name: Backward compatibility update script
       file:
         src: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.update"
         dest: "/home/{{unix_user}}/bin/lamachine-update.sh"
         force: true
+        state: link
 
     - name: Create source directory
       file:
