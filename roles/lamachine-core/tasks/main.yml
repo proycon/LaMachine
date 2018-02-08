@@ -72,16 +72,6 @@
         create: yes
       when: not shared
 
-    - name: Automatic local user environment activation (zsh)
-      blockinfile:
-        dest: "/home/{{unix_user}}/.zshrc"
-        block: |
-            source /home/{{unix_user}}/bin/lamachine-{{conf_name}}.activate
-        marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
-        insertafter: EOF
-        create: no
-      when: not shared
-
     - name: Create local Ansible hosts file
       copy:
         dest: "{{lamachine_path}}/hosts.{{ conf_name }}"
@@ -94,6 +84,9 @@
         content: |
           #!/bin/bash
           cd {{lamachine_path}}
+          if [ -d .git ]; then
+            git pull
+          fi
           ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml
         mode: u+rwx
 
