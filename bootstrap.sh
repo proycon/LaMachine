@@ -206,6 +206,9 @@ if [[ "$FLAVOUR" == "env" ]] || [[ "$FLAVOUR" == "global" ]]; then
         done
     fi
 fi
+if [ -z "$LOCALENV_TYPE" ]; then
+    LOCALENV_TYPE="conda"
+fi
 
 if [ -z "$VERSION" ]; then
     echo "LaMachine comes in several versions:"
@@ -415,11 +418,12 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
         echo "root: true #Do you have root on the target system?" >> $CONFIGFILE
     fi
     if [[ $FLAVOUR == "vagrant" ]]; then
+        echo "vagrant_box: \"debian/contrib-stretch64\" #Base box for vagrant (changing this may break things if packages are not compatible!)" >>$CONFIGFILE
         echo "vm_memory: 6096 #Reserved memory for VM">> $CONFIGFILE
         echo "vm_cpus: 2 #Reserved number of CPU cores for VM">>$CONFIGFILE
     fi
-echo "data_path: "$BASEDIR" #Data path on the host machine that will be shared with LaMachine"
-echo "webserver: true #include a webserver
+echo "data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine
+webserver: true #include a webserver
 port: 80 #webserver port (for VM or docker)
 mapped_port: 8080 #mapped webserver port on host system (for VM or docker)
 " >> $CONFIGFILE
