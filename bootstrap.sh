@@ -490,17 +490,18 @@ else
     git pull #make sure we're up to date
 fi
 if [ ! -f $SOURCEDIR/host_vars/$(basename $CONFIGFILE) ]; then
-    ln -s $CONFIGFILE $SOURCEDIR/host_vars/$(basename $CONFIGFILE) || fatalerror "Unable to link $CONFIGFILE"
+    mv $CONFIGFILE $SOURCEDIR/host_vars/$(basename $CONFIGFILE) || fatalerror "Unable to copy $CONFIGFILE"
+    ln -s $SOURCEDIR/host_vars/$(basename $CONFIGFILE) $CONFIGFILE || fatalerror "Unable to link $CONFIGFILE"
 fi
 if [ ! -f $INSTALLFILE ]; then
-    cp $SOURCEDIR/install.yml $INSTALLFILE || fatalerror "Unable to copy $SOURCE/install.yml"
+    cp $SOURCEDIR/install.yml $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to copy $SOURCEDIR/install.yml"
+    ln -s $SOURCEDIR/install-$LM_NAME.yml $INSTALLFILE || fatalerror "Unable to link $CONFIGFILE"
 fi
 echo "Opening installation file $INSTALLFILE in editor for selection of packages to install..."
 sleep 3
 if ! "$EDITOR" "$INSTALLFILE"; then
     exit 2
 fi
-ln -s $INSTALLFILE $SOURCEDIR/$(basename $INSTALLFILE)
 
 if [[ "$FLAVOUR" == "vagrant" ]]; then
     echo "Preparing vagrant..."
