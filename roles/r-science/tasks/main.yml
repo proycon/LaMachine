@@ -4,8 +4,8 @@
    conda:
        name: "{{item}}"
        state: latest
-       executable: "/home/{{unix_user}}/miniconda/bin/conda"
-       extra_args: "-n {{env_name}}"
+       executable: "{{local_prefix}}/bin/conda"
+       extra_args: "-p {{local_prefix}}"
    with_items:
        - r
    when: localenv_type == "conda" and not prefer_global
