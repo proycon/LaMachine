@@ -35,66 +35,14 @@
   block:
      - name: "Installing generic 3rd party Python Packages via conda"
        conda:
-           name: "{{item}}"
+           name: "beautifulsoup4 cython flask ipython jupyter lxml matplotlib nbconvert nltk numpy pandas pycrypto pylint pymongo pymysql requests scikit-learn scipy seaborn spacy sphinx tensorflow word2vec xlsxwriter yaml"
            state: latest
            executable: "{{local_prefix}}/bin/conda"
            extra_args: "-p {{local_prefix}}"
-       with_items:
-           - beautifulsoup4
-           - cython
-           - flask
-           - ipython
-           - jupyter
-           - lxml
-           - matplotlib
-           - nbconvert
-           - nltk
-           - numpy
-           - pandas
-           - pycrypto
-           - pylint
-           - pymongo
-           - pymysql
-           - requests
-           - scikit-learn
-           - scipy
-           - seaborn
-           - spacy
-           - sphinx
-           - tensorflow
-           - word2vec
-           - xlsxwriter
-           - yaml
        when: localenv_type == "conda"
-     - name: "Installing {{item}} via pip"
+     - name: "Installing generic 3rd party Python Packages via pip"
        pip:
-           name: "{{item}}"
+           name: "beautifulsoup4 cython flask ipython jupyter lxml matplotlib nbconvert nltk numpy pandas pycrypto pylint pymongo pymysql requests scikit-learn scipy seaborn spacy sphinx tensorflow word2vec xlsxwriter yaml"
            state: latest
            virtualenv: "{{ local_prefix }}"
-       with_items:
-           - beautifulsoup4
-           - cython
-           - flask
-           - ipython
-           - jupyter
-           - lxml
-           - matplotlib
-           - nbconvert
-           - nltk
-           - numpy
-           - pandas
-           - pycrypto
-           - pylint
-           - pymongo
-           - pymysql
-           - requests
-           - scikit-learn
-           - scipy
-           - seaborn
-           - spacy
-           - sphinx
-           - tensorflow
-           - word2vec
-           - xlsxwriter
-           - yaml
        when: localenv_type == "virtualenv"
