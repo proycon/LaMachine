@@ -1,13 +1,10 @@
 ---
 
  - name: "Installing R and generic 3rd party r packages via conda"
-   conda:
-       name: "{{item}}"
-       state: latest
-       executable: "{{local_prefix}}/bin/conda"
-       extra_args: "-p {{local_prefix}}"
-   with_items:
-       - r
+   command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} r"
+   when: localenv_type == "conda" and not prefer_global
+ - name: "Making sure all conda packages are up to date"
+   command: "{{local_prefix}}/bin/conda update -mqy -p {{local_prefix}} --all"
    when: localenv_type == "conda" and not prefer_global
 
  - name: "Installing R globally"
