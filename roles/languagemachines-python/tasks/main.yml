@@ -15,17 +15,3 @@
           - { github_user: "proycon", github_repo: "babelpy", pip_package: "babelpy", conda_package: "" }
           - { github_user: "proycon", github_repo: "babelente", pip_package: "babelente", conda_package: "" }
 
-    - name: Installing Python bindings
-      include_role:
-        name: python-install
-      vars:
-        github_user: "{{item.github_user}}"
-        github_repo: "{{item.github_repo}}"
-        pip_package: "{{item.pip_package}}"
-        conda_package: "{{item.conda_package}}"
-      with_items:
-          - { github_user: "proycon", github_repo: "python-timbl", pip_package: "python3-timbl", conda_package: "" }
-          - { github_user: "proycon", github_repo: "python-ucto", pip_package: "python-ucto", conda_package: "" }
-          - { github_user: "proycon", github_repo: "python-frog", pip_package: "python-frog", conda_package: "" }
-          - { github_user: "proycon", github_repo: "colibri-core", pip_package: "colibricore", conda_package: "" }
-      when: languagemachines_basic is defined
