@@ -311,11 +311,11 @@ their latest versions.
 Webservices
 ==================
 
-LaMachine comes with several webservices ready out of the box (source:
-https://github.com/proycon/clamservices). These are RESTful webservices served
+LaMachine comes with several webservices ready out of the box
+(source: https://github.com/proycon/clamservices). These are RESTful webservices served
 using CLAM, but also offer a web-interface for human end-users.
 
-In the Virtual Machine variant of LaMachine, these are running and available out-of-the
+In the Virtual Machine variant of LaMachine, these are all running and available out-of-the
 box. In the docker variant, you will need to explicitly start the services
 first, this is done using the following command *from within* the container:
 
@@ -325,22 +325,24 @@ All webservices are then accessible through http://127.0.0.1:8080 (ensure that
 this port is free) *from your host system*. For Docker you have to run the
 container with the ``-p 8080:80`` for the port forward to be active.
 
-Webservices are currently available for the following software:
+Webservices/webapplications are currently available for the following software:
 
  * ucto
  * Frog
  * timbl
  * Colibri Core
+ * PICCL
  * FoLiA Document Server
  * FLAT: FoLiA Linguistic Annotation Tool
 
-For the LaMachine Virtual Environment, however, you have to start and access each
-service individually using CLAM's built-in development server:
+For the LaMachine Virtual Environment, however, you have to start and access each service individually using CLAM's
+built-in development server, only one is set up to run at a time:
 
- * ``clamservice start clam.config.ucto``
- * ``clamservice start clam.config.frog``
- * ``clamservice start clam.config.timbl``
- * ``clamservice start clam.config.colibricore``
+ * ``clamservice start clamservices.config.ucto``
+ * ``clamservice start clamservices.config.frog``
+ * ``clamservice start clamservices.config.timbl``
+ * ``clamservice start clamservices.config.colibricore``
+ * ``clamservice start picclservice.picclservice``
 
 For FLAT in the virtual environment, run the following:
  * ``start-flat.sh``
