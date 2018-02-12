@@ -9,14 +9,18 @@
 # Licensed under GPLv3
 #=====================================
 
-echo "====================================================================="
-echo "           ,              LaMachine v2 - NLP Software distribution"
+bold=$(tput bold)
+normal=$(tput sgr0)
+
+echo "${bold}=====================================================================${normal}"
+echo "           ,              ${bold}LaMachine v2${normal} - NLP Software distribution"
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
 echo "            /| |\         Centre of Language and Speech Technology"
 echo "           / / /|	        Radboud University Nijmegen "
-echo "====================================================================="
+echo "${bold}=====================================================================${normal}"
 echo
+
 
 fatalerror () {
     echo "================ FATAL ERROR ==============" >&2
@@ -153,7 +157,7 @@ echo
 
 if [ -z "$FLAVOUR" ]; then
     while true; do
-        echo "Where do you want to install LaMachine?"
+        echo "${bold}Where do you want to install LaMachine?${normal}"
         echo "  1) in a Virtual Machine"
         echo "       complete separation from the host OS"
         echo "       (uses Vagrant and VirtualBox)"
@@ -170,7 +174,7 @@ if [ -z "$FLAVOUR" ]; then
         echo "  5) On a remote server"
         echo "       modifies the existing remote system!"
         echo "       (uses ansible)"
-        echo -n "Your choice [12345]? "
+        echo -n "${bold}Your choice?${normal} [12345] "
         read choice
         case $choice in
             [1]* ) FLAVOUR="vagrant"; break;;
@@ -188,7 +192,7 @@ echo
 PREFER_GLOBAL=0
 if [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ -z "$LOCALENV_TYPE" ]; then
-        echo "We support two forms of local user environments:"
+        echo "${bold}We support two forms of local user environments:${normal}"
         echo "  1) Using conda"
         echo "       provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R)"
         echo "  2) Using virtualenv"
@@ -197,7 +201,7 @@ if [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
             echo "  0) Use none at all - Install everything globally"
         fi
         while true; do
-            echo -n "What form of local user environment do you want [12]? "
+            echo -n "${bold}What form of local user environment do you want?${normal} [12] "
             read choice
             case $choice in
                 [1]* ) LOCALENV_TYPE=conda; break;;
@@ -213,13 +217,13 @@ if [ -z "$LOCALENV_TYPE" ]; then
 fi
 
 if [ -z "$VERSION" ]; then
-    echo "LaMachine comes in several versions:"
+    echo "${bold}LaMachine comes in several versions:${normal}"
     echo " 1) a stable version, you get the latest releases deemed stable (recommended)"
     echo " 2) a development version, you get the very latest development versions for testing, this may not always work as expected!"
     echo " 3) custom version, you decide explicitly what exact versions you want (for reproducibility)."
     echo "    this expects you to provide a LaMachine version file with exact version numbers."
     while true; do
-        echo -n "Which version do you want to install? "
+        echo -n "${bold}Which version do you want to install?${normal} [123] "
         read choice
         case $choice in
             [1]* ) VERSION=stable; break;;
@@ -264,7 +268,7 @@ while true; do
     echo "system. It will be automatically obtained from your distribution's package manager"
     echo "or another official source whenever possible. You need to have sudo permission for this though..."
     echo
-    echo -n "Do you have administrative access (root/sudo) on the current system? [yn]"
+    echo -n "${bold}Do you have administrative access (root/sudo) on the current system?${normal} [yn]"
     read yn
     case $yn in
         [Yy]* ) SUDO=1; break;;
@@ -292,10 +296,10 @@ for package in $NEED; do
         else
             cmd=""
         fi
-        echo "Vagrant and Virtualbox are required for your flavour of LaMachine but are not installed yet. Install automatically?"
+        echo "Vagrant and Virtualbox are required for your flavour of LaMachine but are not installed yet. ${bold}Install automatically?${normal}"
         if [ ! -z "$cmd" ]; then
             while true; do
-                echo -n "Run: $cmd ? [yn]"
+                echo -n "${bold}Run:${normal} $cmd ? [yn]"
                 read yn
                 case $yn in
                     [Yy]* ) $cmd; break;;
@@ -315,7 +319,7 @@ for package in $NEED; do
     elif [ "$package" = "brew" ]; then
         echo "Homebrew (https://brew.sh) is required on Mac OS X but was not found yet"
         while true; do
-            echo -n "Download and install homebrew? [yn]"
+            echo -n "${bold}Download and install homebrew?${normal} [yn]"
             read yn
             case $yn in
                 [Yy]* ) break;;
@@ -340,10 +344,10 @@ for package in $NEED; do
         else
             cmd=""
         fi
-        echo "Git is required for LaMachine but not installed yet. Install now?"
+        echo "Git is required for LaMachine but not installed yet. ${bold}Install now?${normal}"
         if [ ! -z "$cmd" ]; then
             while true; do
-                echo -n "Run: $cmd ? [yn]"
+                echo -n "${bold}Run:${normal} $cmd ? [yn]"
                 read yn
                 case $yn in
                     [Yy]* ) $cmd || fatalerror "Git installation failed!"; break;;
@@ -367,10 +371,10 @@ for package in $NEED; do
         else
             cmd=""
         fi
-        echo "Virtualenv is required for LaMachine but not installed yet. Install now?"
+        echo "Virtualenv is required for LaMachine but not installed yet. ${bold}Install now?${normal}"
         if [ ! -z "$cmd" ]; then
             while true; do
-                echo -n "Run: $cmd ? [yn]"
+                echo -n "${bold}Run:${normal} $cmd ? [yn]"
                 read yn
                 case $yn in
                     [Yy]* ) $cmd || fatalerror "Virtualenv installation failed"; break;;
@@ -387,7 +391,7 @@ done
 
 if [ -z "$LM_NAME" ]; then
     echo "Your LaMachine installation is identified by a name (used as hostname, local env name, VM name) etc.."
-    echo -n "Enter a name for your LaMachine installation (no spaces!): "
+    echo -n "${bold}Enter a name for your LaMachine installation (no spaces!):${normal} "
     read LM_NAME
     LM_NAME="${LM_NAME%\\n}"
 fi
@@ -453,7 +457,7 @@ http_port: 80 #webserver port (for VM or docker)
 mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
 " >> $CONFIGFILE
 
-echo "Opening configuration file $CONFIGFILE in editor for final configuration..."
+echo "${bold}Opening configuration file $CONFIGFILE in editor for final configuration...${normal}"
 sleep 3
 if ! "$EDITOR" "$CONFIGFILE"; then
     echo "aborted by editor..." >&2
@@ -503,7 +507,7 @@ if [ ! -f $INSTALLFILE ]; then
     cp $SOURCEDIR/install.yml $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to copy $SOURCEDIR/install.yml"
     ln -sf $SOURCEDIR/install-$LM_NAME.yml $INSTALLFILE || fatalerror "Unable to link $CONFIGFILE"
 fi
-echo "Opening installation file $INSTALLFILE in editor for selection of packages to install..."
+echo "${bold}Opening installation file $INSTALLFILE in editor for selection of packages to install...${normal}"
 sleep 3
 if ! "$EDITOR" "$INSTALLFILE"; then
     exit 2
