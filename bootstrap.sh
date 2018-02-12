@@ -478,6 +478,9 @@ if [ ! -d lamachine-controller ]; then
     cd lamachine-controller
     source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
     pip install ansible || fatalerror "Unable to install Ansible"
+    if [[ "$FLAVOUR" == "docker" ]]; then
+        pip install docker==2.7.0 docker-compose ansible-container[docker]
+    fi
 else
     echo "Reusing existing control environment..."
     cd lamachine-controller
@@ -513,6 +516,7 @@ if ! "$EDITOR" "$INSTALLFILE"; then
     exit 2
 fi
 
+rc=0
 if [[ "$FLAVOUR" == "vagrant" ]]; then
     echo "Preparing vagrant..."
     #Copy and adapt the Vagrantfile file; storing it inside the lamachine-controller
@@ -530,11 +534,26 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     echo "All done, to run LaMachine next time, just run: bash $BASEDIR/lamachine-$LM_NAME.activate"
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
-    ansible-playbook -i $SOURCEDIR/hosts.$LM_NAME install-$LM_NAME.yml
-    rc=$?
-    deactivate #deactivate the controller before quitting
+    if ! ansible-playbook -i $SOURCEDIR/hosts.$LM_NAME install-$LM_NAME.yml; then
+        fatal_error "Local provisioning failed!"
+    fi
+elif [[ "$FLAVOUR" == "docker" ]]; then
+    echo "Preparing docker..."
+    sed -e "s/#ROLES PLACEHOLDER/$(sed 's:/:\\/:g' $INSTALLFILE)/" -e "s/LM_NAME/lamachine-$LM_NAME/" container.template.yml > $SOURCEDIR/container.yml
+    echo "${bold}Opening container file $SOURCEDIR/container.yml in editor for final inspection and configuration...${normal}"
+    sleep 3
+    if ! "$EDITOR" "$SOURCEDIR/container.yml"; then
+        exit 2
+    fi
+    if ! ansible-container build; then
+        fatalerror "Container build failed!"
+    fi
+    if ! ansible-container run; then
+        fatalerror "Container run failed!"
+    fi
 else
     echo "No bootstrap for $FLAVOUR implemented yet at this stage, sorry!!">&2
     rc=1
 fi
+deactivate #deactivate the controller before quitting
 exit $rc
