@@ -1,4 +1,7 @@
 ---
+    - name: Checking if a C++ compiler is available
+      import_role:
+        name: check_cc
 
     - name: Installing from LanguageMachines github
       include_role:
