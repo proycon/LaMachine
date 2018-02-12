@@ -338,11 +338,11 @@ Webservices/webapplications are currently available for the following software:
 For the LaMachine Virtual Environment, however, you have to start and access each service individually using CLAM's
 built-in development server, only one is set up to run at a time:
 
- * ``clamservice start clamservices.config.ucto``
- * ``clamservice start clamservices.config.frog``
- * ``clamservice start clamservices.config.timbl``
- * ``clamservice start clamservices.config.colibricore``
- * ``clamservice start picclservice.picclservice``
+ * ``clamservice clamservices.config.ucto``
+ * ``clamservice clamservices.config.frog``
+ * ``clamservice clamservices.config.timbl``
+ * ``clamservice clamservices.config.colibricore``
+ * ``clamservice picclservice.picclservice``
 
 For FLAT in the virtual environment, run the following:
  * ``start-flat.sh``
