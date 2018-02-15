@@ -526,11 +526,15 @@ fi
 git pull #make sure we're up to date
 if [ ! -e $SOURCEDIR/host_vars/$(basename $CONFIGFILE) ]; then
     mv $CONFIGFILE $SOURCEDIR/host_vars/$(basename $CONFIGFILE) || fatalerror "Unable to copy $CONFIGFILE"
-    ln -sf $SOURCEDIR/host_vars/$(basename $CONFIGFILE) $CONFIGFILE || fatalerror "Unable to link $CONFIGFILE"
+    if [ "$SOURCEDIR" != "$BASEDIR" ]; then
+        ln -sf $SOURCEDIR/host_vars/$(basename $CONFIGFILE) $CONFIGFILE || fatalerror "Unable to link $CONFIGFILE"
+    fi
 fi
 if [ ! -e $INSTALLFILE ]; then
     cp $SOURCEDIR/install.yml $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to copy $SOURCEDIR/install.yml"
-    ln -sf $SOURCEDIR/install-$LM_NAME.yml $INSTALLFILE || fatalerror "Unable to link $CONFIGFILE"
+    if [ "$SOURCEDIR" != "$BASEDIR" ]; then
+        ln -sf $SOURCEDIR/install-$LM_NAME.yml $INSTALLFILE || fatalerror "Unable to link $CONFIGFILE"
+    fi
 fi
 if [ $INTERACTIVE -eq 1 ]; then
     echo "${bold}Opening installation file $INSTALLFILE in editor for selection of packages to install...${normal}"
