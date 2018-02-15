@@ -166,6 +166,7 @@ while [[ $# -gt 0 ]]; do
         --extra) #extra ansible parameters
         ANSIBLE_OPTIONS="$ANSIBLE_OPTIONS --extra-vars \"$2\""
         shift
+        shift
         ;;
         --verbose)
         ANSIBLE_OPTIONS="$ANSIBLE_OPTIONS -vv"
