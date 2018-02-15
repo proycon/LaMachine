@@ -35,10 +35,6 @@
 
     - when: not ((ansible_distribution == 'MacOSX' or ansible_distribution == 'Arch') and root == True and not prefer_local and version == "stable")
        block:
-        - name: Checking if a C++ compiler is available
-          import_role:
-            name: check_cc
-
         - name: Installing from LanguageMachines github
           include_role:
             name: ac_github
