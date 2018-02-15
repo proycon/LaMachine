@@ -67,6 +67,7 @@ if [ -f /etc/os-release ]; then
 elif [ -f /etc/lsb-release ]; then
     . /etc/lsb-release
 fi
+INTERACTIVE=1
 
 echo "Detected OS: $OS"
 echo "Detected distribution ID: $DISTRIB_ID"
@@ -141,6 +142,14 @@ while [[ $# -gt 0 ]]; do
         BASEDIR="$2"
         shift # past argument
         shift # past value
+        ;;
+        --noroot|--noadmin) #Script mode
+        SUDO=0
+        shift
+        ;;
+        --noninteractive) #Script mode
+        INTERACTIVE=0
+        shift
         ;;
         *)    # unknown option
         echo "Unknown option: $1">&2
@@ -261,21 +270,26 @@ if [ "$FLAVOUR" == "docker" ]; then
     fi
 fi
 
-SUDO=0
-while true; do
-    echo
-    echo "The installation relies on certain software to be available on your (host)"
-    echo "system. It will be automatically obtained from your distribution's package manager"
-    echo "or another official source whenever possible. You need to have sudo permission for this though..."
-    echo
-    echo -n "${bold}Do you have administrative access (root/sudo) on the current system?${normal} [yn]"
-    read yn
-    case $yn in
-        [Yy]* ) SUDO=1; break;;
-        [Nn]* ) SUDO=0; break;;
-        * ) echo "Please answer yes or no.";;
-    esac
-done
+if [ -z "$SUDO" ]; then
+    if [ $INTERACTIVE -eq 0 ];
+        SUDO=1 #assume root (use --noadmin option otherwise)
+    else
+        while true; do
+            echo
+            echo "The installation relies on certain software to be available on your (host)"
+            echo "system. It will be automatically obtained from your distribution's package manager"
+            echo "or another official source whenever possible. You need to have sudo permission for this though..."
+            echo
+            echo -n "${bold}Do you have administrative access (root/sudo) on the current system?${normal} [yn]"
+            read yn
+            case $yn in
+                [Yy]* ) SUDO=1; break;;
+                [Nn]* ) SUDO=0; break;;
+                * ) echo "Please answer yes or no.";;
+            esac
+        done
+    fi
+fi
 
 if [ $SUDO -eq 0 ]; then
     PREFER_LOCAL=1
@@ -457,12 +471,15 @@ http_port: 80 #webserver port (for VM or docker)
 mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
 " >> $CONFIGFILE
 
-echo "${bold}Opening configuration file $CONFIGFILE in editor for final configuration...${normal}"
-sleep 3
-if ! "$EDITOR" "$CONFIGFILE"; then
-    echo "aborted by editor..." >&2
-    exit 2
+if [ $INTERACTIVE -eq 1 ]; then
+    echo "${bold}Opening configuration file $CONFIGFILE in editor for final configuration...${normal}"
+    sleep 3
+    if ! "$EDITOR" "$CONFIGFILE"; then
+        echo "aborted by editor..." >&2
+        exit 2
+    fi
 fi
+
 fi
 
 
@@ -510,10 +527,12 @@ if [ ! -f $INSTALLFILE ]; then
     cp $SOURCEDIR/install.yml $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to copy $SOURCEDIR/install.yml"
     ln -sf $SOURCEDIR/install-$LM_NAME.yml $INSTALLFILE || fatalerror "Unable to link $CONFIGFILE"
 fi
-echo "${bold}Opening installation file $INSTALLFILE in editor for selection of packages to install...${normal}"
-sleep 3
-if ! "$EDITOR" "$INSTALLFILE"; then
-    exit 2
+if [ $INTERACTIVE -eq 1 ]; then
+    echo "${bold}Opening installation file $INSTALLFILE in editor for selection of packages to install...${normal}"
+    sleep 3
+    if ! "$EDITOR" "$INSTALLFILE"; then
+        exit 2
+    fi
 fi
 
 rc=0
@@ -541,9 +560,11 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
     echo "Preparing docker..."
     sed -e "s/#ROLES PLACEHOLDER/$(sed 's:/:\\/:g' $INSTALLFILE)/" -e "s/LM_NAME/lamachine-$LM_NAME/" container.template.yml > $SOURCEDIR/container.yml
     echo "${bold}Opening container file $SOURCEDIR/container.yml in editor for final inspection and configuration...${normal}"
-    sleep 3
-    if ! "$EDITOR" "$SOURCEDIR/container.yml"; then
-        exit 2
+    if [ $INTERACTIVE -eq 1 ]; then
+        sleep 3
+        if ! "$EDITOR" "$SOURCEDIR/container.yml"; then
+            exit 2
+        fi
     fi
     if ! ansible-container build; then
         fatalerror "Container build failed!"

@@ -9,7 +9,7 @@
       when: whichcc.rc != 0 and (prefer_global or localenv_type == "virtualenv")
 
     - name: "Installing local C++ build environment in conda"
-      command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} m4 gcc autoconf automake make "
+      command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} m4 gcc autoconf automake make icu bzip2 libxml2 libxslt"
       when: whichcc.rc != 0 and (prefer_local or not root) and localenv_type == "conda")
 
 
