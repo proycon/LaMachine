@@ -26,5 +26,5 @@ notifications:
     skip_join: true
 
 script:
-    - bash bootstrap.sh --name $LM_NAME --flavour $FLAVOUR --version $VERSION --env $LOCALENV_TYPE --noninteractive --notshared
+    - bash bootstrap.sh --name $LM_NAME --flavour $FLAVOUR --version $VERSION --env $LOCALENV_TYPE --noninteractive --notshared --extra "nosysupdate=true"
 

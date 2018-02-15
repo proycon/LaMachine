@@ -14,7 +14,7 @@
         name: '*'
         state: latest
         update-cache: yes
-
+      when: nosysupdate is not defined or not nosysupdate
 
       #############################################################
 
@@ -62,19 +62,26 @@
       # ANSIBLE installation so we can bootstrap ourselves
       ############################################################
 
+    - name: Checking whether ansible is already available
+      shell: which ansible
+      register: have_ansible
+      failed_when: have_ansible.rc == 127
+
     - name: Adding key for keyserver.ubuntu.com
       become: true
       become_user: root
       apt_key:
         keyserver: keyserver.ubuntu.com
         id: 93C4A3FD7BB9C367
+      when: have_ansible.rc != 0
 
-    - name: Adding Ansibile APT repository
+    - name: Adding Ansible APT repository
       become: true
       become_user: root
       apt_repository:
         repo: deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main #should work on jessie/stretch as well
         state: present
+      when: have_ansible.rc != 0
 
     - name: Install Ansible (APT)
       become: true
@@ -83,5 +90,6 @@
           name: ansible
           state: latest
           update_cache: yes
+      when: have_ansible.rc != 0
 
 

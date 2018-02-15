@@ -163,8 +163,12 @@ while [[ $# -gt 0 ]]; do
         INTERACTIVE=0
         shift
         ;;
+        --extra) #extra ansible parameters
+        ANSIBLE_OPTIONS="$ANSIBLE_OPTIONS --extra-vars \"$2\""
+        shift
+        ;;
         --verbose)
-        ANSIBLE_OPTIONS="-vv"
+        ANSIBLE_OPTIONS="$ANSIBLE_OPTIONS -vv"
         shift
         ;;
         *)    # unknown option
