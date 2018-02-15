@@ -68,6 +68,7 @@ elif [ -f /etc/lsb-release ]; then
     . /etc/lsb-release
 fi
 INTERACTIVE=1
+SHARED=1
 
 echo "Detected OS: $OS"
 echo "Detected distribution ID: $DISTRIB_ID"
@@ -145,6 +146,10 @@ while [[ $# -gt 0 ]]; do
         ;;
         --noroot|--noadmin) #Script mode
         SUDO=0
+        shift
+        ;;
+        --notshared) #Machine is not shared with other non LaMachine uses
+        SHARED=0
         shift
         ;;
         --noninteractive) #Script mode
