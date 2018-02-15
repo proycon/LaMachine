@@ -25,6 +25,6 @@ notifications:
       - "%{repository_slug}#%{build_number} %{message} --> %{build_url}"
     skip_join: true
 
-install:
+script:
     - bash bootstrap.sh --name $LM_NAME --flavour $FLAVOUR --version $VERSION --env $LOCALENV_TYPE --noninteractive --notshared
 
