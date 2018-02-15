@@ -48,7 +48,7 @@ if [ -f "$ARCH" ]; then
     OS='arch'
 elif [ -f "$DEBIAN" ]; then
     OS='debian' #ubuntu too
-elif [ -f "$REDHAT" ]; then
+elif [ -f"$REDHAT" ]; then
     OS='redhat'
 else
     if [ ${OSTYPE//[0-9.]/} = "darwin" ]; then
@@ -60,11 +60,11 @@ fi
 
 DISTRIB_ID="unknown"
 DISTRIB_RELEASE="unknown"
-if [ -f /etc/os-release ]; then
+if [ -e /etc/os-release ]; then
     . /etc/os-release
     DISTRIB_ID="$ID"
     DISTRIB_RELEASE="$VERSION_ID"
-elif [ -f /etc/lsb-release ]; then
+elif [ -e /etc/lsb-release ]; then
     . /etc/lsb-release
 fi
 INTERACTIVE=1
@@ -421,7 +421,7 @@ CONFIGFILE="$BASEDIR/lamachine-$LM_NAME.yml"
 INSTALLFILE="$BASEDIR/install-$LM_NAME.yml"
 USERNAME=$(whoami)
 
-if [ ! -f "$CONFIGFILE" ]; then
+if [ ! -e "$CONFIGFILE" ]; then
     echo "---
 conf_name: \"$LM_NAME\" #Name of this LaMachine configuration
 hostname: \"lamachine-$LM_NAME\" #Name of the host (for VM or docker), changing this is not supported yet at this stage
@@ -524,11 +524,11 @@ else
     fi
 fi
 git pull #make sure we're up to date
-if [ ! -f $SOURCEDIR/host_vars/$(basename $CONFIGFILE) ]; then
+if [ ! -e $SOURCEDIR/host_vars/$(basename $CONFIGFILE) ]; then
     mv $CONFIGFILE $SOURCEDIR/host_vars/$(basename $CONFIGFILE) || fatalerror "Unable to copy $CONFIGFILE"
     ln -sf $SOURCEDIR/host_vars/$(basename $CONFIGFILE) $CONFIGFILE || fatalerror "Unable to link $CONFIGFILE"
 fi
-if [ ! -f $INSTALLFILE ]; then
+if [ ! -e $INSTALLFILE ]; then
     cp $SOURCEDIR/install.yml $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to copy $SOURCEDIR/install.yml"
     ln -sf $SOURCEDIR/install-$LM_NAME.yml $INSTALLFILE || fatalerror "Unable to link $CONFIGFILE"
 fi
@@ -545,7 +545,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     echo "Preparing vagrant..."
     #Copy and adapt the Vagrantfile file; storing it inside the lamachine-controller
     if [ ! -f $SOURCEDIR/Vagrantfile.$LM_NAME ]; then
-        cp $SOURCEDIR/Vagrantfile $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to copy Vagrantfile"
+        cp -f $SOURCEDIR/Vagrantfile $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to copy Vagrantfile"
         sed -i s/lamachine-vm/lamachine-$LM_NAME/g $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to run sed"
         sed -i s/install.yml/install-$LM_NAME.yml/g $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to run sed"
     fi
