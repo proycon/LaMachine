@@ -271,7 +271,7 @@ if [ "$FLAVOUR" == "docker" ]; then
 fi
 
 if [ -z "$SUDO" ]; then
-    if [ $INTERACTIVE -eq 0 ];
+    if [ $INTERACTIVE -eq 0 ]; then
         SUDO=1 #assume root (use --noadmin option otherwise)
     else
         while true; do
