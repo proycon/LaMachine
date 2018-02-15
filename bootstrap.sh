@@ -163,10 +163,12 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-echo
-echo "Welcome to the LaMachine Installation tool, we will ask some questions how"
-echo "you want your LaMachine to be installed."
-echo
+if [ $INTERACTIVE -eq 1 ]; then
+    echo
+    echo "Welcome to the LaMachine Installation tool, we will ask some questions how"
+    echo "you want your LaMachine to be installed."
+    echo
+fi
 
 
 if [ -z "$FLAVOUR" ]; then
