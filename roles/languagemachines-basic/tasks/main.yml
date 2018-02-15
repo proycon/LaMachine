@@ -1,5 +1,9 @@
 ---
 
+    - name: Checking if a C++ compiler is available
+      import_role:
+        name: check_cc
+
     - when: ansible_distribution == 'MacOSX' and root == True and not prefer_local and version == "stable"
       block:
           - name: Ensuring legacy homebrew/science tap is removed
@@ -53,11 +57,11 @@
             - frog
             - foliautils
 
-        - name: Installing from proycon's github
-          include_role:
-            name: ac_github
-          vars:
-            user: proycon
-            repo: "{{ item }}"
-          with_items:
-            - colibri-core
+    - name: Installing from proycon's github
+      include_role:
+        name: ac_github
+      vars:
+        user: proycon
+        repo: "{{ item }}"
+      with_items:
+        - colibri-core
