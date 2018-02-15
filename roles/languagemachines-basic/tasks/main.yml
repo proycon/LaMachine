@@ -5,17 +5,17 @@
         name: check_cc
 
     - name: Installation on Mac OS X using homebrew
-        block:
+      block:
           - name: Ensuring legacy homebrew/science tap is removed
             shell: brew untap homebrew/science || /usr/bin/true
           - name: Adding homebrew tap
             command: brew tap fbkarsdorp/homebrew-lamachine
           - name: Installing from homebrew
             command: brew install ticcutils libfolia uctodata ucto timbl timblserver mbt frogdata frog  #TODO: add foliautils once merged, and toad
-    - when: ansible_distribution == 'MacOSX' and root == True and not prefer_local and version == "stable"
+      when: ansible_distribution == 'MacOSX' and root == True and not prefer_local and version == "stable"
 
     - name: Installation on Arch Linux
-       block:
+      block:
         - name: Installing packages from Arch User Repository
           include_role:
               name: aur
@@ -34,10 +34,10 @@
             - frog
             - foliautils
             - toad
-    - when: ansible_distribution == 'Arch' and root == True and not prefer_local and version == "stable"
+      when: ansible_distribution == 'Arch' and root == True and not prefer_local and version == "stable"
 
     - name: Generic Installation
-       block:
+      block:
         - name: Installing from LanguageMachines github
           include_role:
             name: ac_github
@@ -57,7 +57,7 @@
             - frog
             - foliautils
             - toad
-    - when: not ((ansible_distribution == 'MacOSX' or ansible_distribution == 'Arch') and root == True and not prefer_local and version == "stable")
+      when: not ((ansible_distribution == 'MacOSX' or ansible_distribution == 'Arch') and root == True and not prefer_local and version == "stable")
 
     - name: Installing from proycon's github
       include_role:

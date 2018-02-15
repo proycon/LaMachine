@@ -35,6 +35,11 @@ fatalerror () {
 #It will be the default directory for data sharing, will host some configuration files
 #and will contain a lamachine-controller environment
 BASEDIR=$(pwd)
+cd $BASEDIR
+if [ -d .git ]; then
+    #we are in a LaMachine git repository already
+    SOURCEDIR=$BASEDIR
+fi
 
 
 ####################################################
@@ -69,6 +74,7 @@ elif [ -e /etc/lsb-release ]; then
 fi
 INTERACTIVE=1
 SHARED=1
+ANSIBLE_OPTIONS=""
 
 echo "Detected OS: $OS"
 echo "Detected distribution ID: $DISTRIB_ID"
@@ -141,6 +147,7 @@ while [[ $# -gt 0 ]]; do
         ;;
         --source) #LaMachine source path
         BASEDIR="$2"
+        SOURCEDIR="$2"
         shift # past argument
         shift # past value
         ;;
@@ -154,6 +161,10 @@ while [[ $# -gt 0 ]]; do
         ;;
         --noninteractive) #Script mode
         INTERACTIVE=0
+        shift
+        ;;
+        --verbose)
+        ANSIBLE_OPTIONS="-vv"
         shift
         ;;
         *)    # unknown option
@@ -423,6 +434,7 @@ CONFIGFILE="$BASEDIR/lamachine-$LM_NAME.yml"
 INSTALLFILE="$BASEDIR/install-$LM_NAME.yml"
 USERNAME=$(whoami)
 
+
 if [ ! -e "$CONFIGFILE" ]; then
     echo "---
 conf_name: \"$LM_NAME\" #Name of this LaMachine configuration
@@ -446,8 +458,13 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
         #TODO lamachine_path + source_path
     else
         echo "unix_user: \"$USERNAME\"" >> $CONFIGFILE
-        echo "lamachine_path: \"$BASEDIR/lamachine-controller/LaMachine\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
-        echo "source_path: \"$BASEDIR/lamachine-controller/LaMachine/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+        if [ ! -z "$SOURCEDIR" ]; then
+            echo "lamachine_path: \"$SOURCEDIR\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
+            echo "source_path: \"$SOURCEDIR/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+        else
+            echo "lamachine_path: \"$BASEDIR/lamachine-controller/LaMachine\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
+            echo "source_path: \"$BASEDIR/lamachine-controller/LaMachine/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+        fi
         echo "data_path: \"$BASEDIR\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
     fi
     if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]]; then
@@ -490,11 +507,6 @@ fi
 fi
 
 
-cd $BASEDIR
-if [ -d .git ]; then
-    #we are in a LaMachine git repository already
-    SOURCEDIR=$BASEDIR
-fi
 
 if [ ! -d lamachine-controller ]; then
     echo "Setting up control environment..."
@@ -564,7 +576,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     echo "All done, to run LaMachine next time, just run: bash $BASEDIR/lamachine-$LM_NAME.activate"
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
-    if ! ansible-playbook -i $SOURCEDIR/hosts.$LM_NAME install-$LM_NAME.yml; then
+    if ! ansible-playbook $ANSIBLE_OPTIONS -i $SOURCEDIR/hosts.$LM_NAME install-$LM_NAME.yml; then
         fatalerror "Local provisioning failed!"
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
