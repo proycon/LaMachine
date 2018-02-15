@@ -1,0 +1,49 @@
+---
+
+- name: "{{package}} - Check if repository exists"
+  stat:
+    path: "{{ source_path }}/{{ package }}"
+  register: repo_path
+
+- name: "{{package}} - Git clone from AUR"
+  shell: "git clone https://aur.archlinux.org/{{package}}.git"
+  args:
+    chdir: "{{ source_path }}"
+  when: not repo_path.stat.exists
+
+- name: "{{package}} - Checking whether rebuild is needed"
+  shell: |
+      cp -f PKGBUILD PKGBUILD.old"
+      git pull
+      {% if not repo_path.stat_exists or (aur_updated is defined and aur_updated.stdout|int == 1) %}
+      #an earlier compilation was (re)performed so we update everything thereafter as well
+      echo 1 && exit 0
+      echo "Compilation required because of earlier updates or first time...">&2
+      {% endif %}
+      build makepkg --nobuild #to get proper version
+      diff PKGBUILD PKGBUILD.old >/dev/null
+      echo $?
+  args:
+    chdir: "{{ source_path }}/{{package}}"
+  register: aur_updated
+
+- name: "{{package}} - Building package"
+  shell: makepkg -s -f --noconfirm --needed --noprogressbar
+  args:
+    chdir: "{{ source_path }}/{{package}}"
+  when: aur_updated.stdout|int != 0
+
+- name: "{{package}} - Installing package"
+  become: yes
+  become_user: root
+  shell: "pacman -U --noconfirm --needed {{package}}*.pkg.tar.xz"
+  args:
+    chdir: "{{ source_path }}/{{package}}"
+  when: aur_updated.stdout|int != 0
+
+- name: "{{package}} - Cleanup"
+  shell: "rm {{package}}*.pkg.tar.xz"
+  args:
+    chdir: "{{ source_path }}/{{package}}"
+  when: aur_updated.stdout|int != 0
+

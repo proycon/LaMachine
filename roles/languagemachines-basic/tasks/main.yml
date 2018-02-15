@@ -9,7 +9,26 @@
           - name: Installing from homebrew
             command: brew install ticcutils libfolia uctodata ucto timbl timblserver mbt frogdata frog  #TODO: add foliautils once merged, add colibri-core
 
-    - when: not (ansible_distribution == 'MacOSX' and root == True and not prefer_local and version == "stable")
+    - when: ansible_distribution == 'Arch' and root == True and not prefer_local and version == "stable"
+      block:
+          include_role:
+              name: aur
+          vars:
+              package: "{{ item }}"
+          with_items:
+            - ticcutils
+            - libfolia
+            - uctodata
+            - ucto
+            - timbl
+            - timblserver
+            - mbt
+            - mbtserver
+            - frogdata
+            - frog
+            - foliautils
+
+    - when: not ((ansible_distribution == 'MacOSX' or ansible_distribution == 'Arch') and root == True and not prefer_local and version == "stable")
       block:
         - name: Checking if a C++ compiler is available
           import_role:
