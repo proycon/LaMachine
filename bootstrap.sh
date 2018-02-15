@@ -559,7 +559,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
     if ! ansible-playbook -i $SOURCEDIR/hosts.$LM_NAME install-$LM_NAME.yml; then
-        fatal_error "Local provisioning failed!"
+        fatalerror "Local provisioning failed!"
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
     echo "Preparing docker..."
