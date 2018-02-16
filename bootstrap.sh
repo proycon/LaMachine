@@ -296,7 +296,7 @@ fi
 if [ -z "$SUDO" ]; then
     if [ $INTERACTIVE -eq 0 ]; then
         SUDO=1 #assume root (use --noadmin option otherwise)
-    else
+    elif [ ${#NEED[@]} -gt 0 ]; then
         while true; do
             echo
             echo "The installation relies on certain software to be available on your (host)"
@@ -311,6 +311,8 @@ if [ -z "$SUDO" ]; then
                 * ) echo "Please answer yes or no.";;
             esac
         done
+    else
+        SUDO=1
     fi
 fi
 
@@ -515,12 +517,14 @@ fi
 
 if [ ! -d lamachine-controller ]; then
     echo "Setting up control environment..."
-    virtualenv --python=python2.7 lamachine-controller || "Unable to create LaMachine control environment"
-    cd lamachine-controller
-    source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
-    pip install ansible || fatalerror "Unable to install Ansible"
-    if [[ "$FLAVOUR" == "docker" ]]; then
-        pip install docker==2.7.0 docker-compose ansible-container[docker]
+    if [[ "$FLAVOUR" != "docker" ]]; then
+        virtualenv --python=python2.7 lamachine-controller || "Unable to create LaMachine control environment"
+        cd lamachine-controller
+        source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
+        pip install ansible || fatalerror "Unable to install Ansible"
+        #pip install docker==2.7.0 docker-compose ansible-container[docker]
+    else
+        mkdir lamachine-controller && cd lamachine-controller #no need for a virtualenv
     fi
 else
     echo "Reusing existing control environment..."
@@ -586,7 +590,7 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
     echo "Preparing docker..."
-    sed -e "s/#ROLES PLACEHOLDER/$(sed 's:/:\\/:g' $INSTALLFILE)/" -e "s/LM_NAME/lamachine-$LM_NAME/" container.template.yml > $SOURCEDIR/container.yml
+    sed -e "s/\#ROLES PLACEHOLDER/$(sed 's:/:\\/:g' $INSTALLFILE)/" -e "s/LM_NAME/lamachine-$LM_NAME/" container.template.yml > $SOURCEDIR/container.yml
     echo "${bold}Opening container file $SOURCEDIR/container.yml in editor for final inspection and configuration...${normal}"
     if [ $INTERACTIVE -eq 1 ]; then
         sleep 3
