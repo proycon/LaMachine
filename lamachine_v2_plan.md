@@ -4,6 +4,8 @@
      Centre for Language and Speech Technology
      Radboud University Nijmegen
 
+     revision 1.1
+
 ## Abstract
 
 LaMachine v2 is to be a redesigned, improved and more modular version of LaMachine. The redesign is motivated in the
@@ -15,8 +17,8 @@ setting a firm foundation for its next stage of evolution, as proposed in this p
 
 ## Introduction
 
-The primary goal of LaMachine is to make our software installable and usable on a variety of platforms. This takes shape
-in the three different flavours in which LaMachine exists, sorted in order of binding with the host OS:
+The primary goal of LaMachine is to make our software installable and usable on a variety of platforms. Currently, this
+takes shape in the three different flavours in which LaMachine exists, sorted in order of binding with the host OS:
 
 * As a virtual machine, the whole OS (linux) is virtualised (built with Vagrant)
     * Good for running on otherwise unsupported OSes like Windows
@@ -37,21 +39,21 @@ The stable branch will install the latest stable releases of all participating s
 will pull and install the latest git versions directly. There is also the option to return to very specific versions
 (for scientific reproducibility).
 
-LaMachine is in its core implemented as a long bootstrap shell script, there is one version for Vagrant and Docker, and
+LaMachine is in its core implemented as a long bootstrap shell script, of which there is one version for Vagrant and Docker, and
 another version for the local environment. The possible software to install and dependencies are hard-coded in this
 single script, for multiple linux distributions in case of the local compilation script. We want to redesign this to be
 less ad-hoc and use other more established technologies.
 
-These bootstrap shell scripts do not perform everything from scratch, we attempt not to reinvent the wheel so the
+These bootstrap shell scripts do not perform everything from scratch. We attempt not to reinvent the wheel so the
 bootstrap process makes extensive use the distribution's native package manager, and established repositories such as
 github, the Python Package Index and the Arch User Repository. For the VM and Docker flavour, we currently build on Arch
 Linux, meaning software need to be deposited in the AUR for LaMachine to install it unless there is a more suitable
 repository given the software's ecosystem, such as for example the Python Package Index. All Python software needs to be
 deposited in the Python Package Index and is pulled from there. This ensures that:
 
- * Well established software deployment practice is followed, i.e. the software explicitly made installable and deposited in proper repositories
- * LaMachine remains just an option for convenience and nobody is forced to use it, people can pull straight from the source if they so desire.
- * We build on existing work and do not do unnecessary duplicate work
+ * Well established software deployment practice is followed, i.e. the software explicitly made installable and deposited in proper repositories;
+ * LaMachine remains just an option for convenience and nobody is forced to use it, people can pull straight from the source if they so desire;
+ * We build on existing work and do not do unnecessary duplicate work.
 
 We again remain committed this, but will shake up the underlying technologies.
 
@@ -59,16 +61,16 @@ We again remain committed this, but will shake up the underlying technologies.
 
 ### Objective #1. Modularity & Outside participation
 
-* LaMachine grows larger and larger, it already includes 'default' software and 'optional' software, but the user should be given more choice/freedom in the matter.
+* LaMachine grows larger, it already includes 'default' software and 'optional' software, but the user should be given more choice/freedom in the matter.
   We want to greatly expand the flexibility for administrators and users to make a more fine-tuned selection and lower
-  the threshold to third party participation in LaMachine.
+  the threshold to third party participation in LaMachine;
 * The maintainability of the two rather monolithic shell scripts grows more complicated as more software participates;
-* We want to try to reduce redundancy in LaMachine and have as much overlap as possible between different flavours and branches
-* It should be made easier for third-party participants to participate in LaMachine without relying on a central party (aka me). It need not be a Nijmegen-only endeavour
+* We want to try to reduce redundancy in LaMachine and have as much overlap as possible between different flavours and branches;
+* It should be made easier for third-party participants to participate in LaMachine without relying on a central party (aka me). It need not be a Nijmegen-only endeavour.
 
 ### Objective #2. Improved user experience for researchers (the less technical end-user aka the 80%)
 
-* Even in the current LaMachine, there are facilities for the less technically inclined users, in the form of pre-configured webservices. In the VM and Docker flavours, a simple webserver is available, serving a very minimalistic portal to some webservices (Frog, Ucto, and even FLAT). This is one of the areas in which major improvement is possible. A more user friendly portal environment should be deliver.
+* Even in the current LaMachine, there are facilities for the less technically inclined users, in the form of pre-configured webservices. In the VM and Docker flavours, a simple webserver is available, serving a very minimalistic portal to some webservices (Frog, Ucto, and even FLAT). This is one of the areas in which major improvement is possible. A more user friendly portal environment should be developed.
 * We want to lower the threshold for installation of LaMachine itself; everything should start from a single command and an automated wizard to guide you through.
 * Although LaMachine is initially more geared towards the 20%, and tries to decrease the threshold of installation, we can do more to accommodate the '80%' (with a limit).
 * A huge and important corollary of this goal is **improved interoperability** between the tools in LaMachine:
@@ -83,7 +85,7 @@ We again remain committed this, but will shake up the underlying technologies.
 
 * The LaMachine everybody can install at home is in principle the same LaMachine as goes to official hosters of production environments, such as CLARIAH centres. We want to make LaMachine more suitable for the demands of production environments.
 * We should investigate what we can include in LaMachine for better integration in a CLARIAH production environment, with respect to authentication (single sign-on)
-* In the development of a larger CLARIAH WP3 VRE, LaMachine will play an important role as tool provider anyway, special facilities may need to be implemented for incorporation in a larger VRE framework; LaMachine can take part of this integration burden away from the tools.
+* In the development of a larger CLARIAH WP3 VRE, LaMachine will play a central role as tool environment anyway. Special facilities may need to be implemented for incorporation in a larger VRE framework; LaMachine can take part of this integration burden away from the tools.
 
 ## Relations with other projects
 
@@ -112,7 +114,7 @@ webservice with user interface for end-users.
 PICCL's current implementation (which is a reimplementation of prior prototype by Martin Reynaert) consists of a series
 of pipelines to accomplish a certain NLP goal, you could consider these pipelines recipes. The pipeline logic is
 implemented in NextFlow; but the actual work is done by a wide variety of tools. PICCL is intimately tied to LaMachine
-as it relies on these tools which need to be properly installed and available. In other words; LaMachine provides the
+as it relies on tools included in LaMachine to be properly installed and available. In other words; LaMachine provides the
 environment with all the tools, and PICCL provides the recipes specifying how these tools are invoked, as well as a
 simple user interface.
 
@@ -126,7 +128,7 @@ researchers.
 ### Relation with Debian
 
 I participate in the Debian Science project, which is a team in which I take care of packaging some of our software for
-inclusion in the Debian distribution. This is however a notoriously slow process. Eventually, debian derivates like
+inclusion in the Debian distribution. This is however a notoriously slow process. Eventually, debian derivatives like
 Ubuntu will also have these packages. I recently applied for Debian Maintainer status to more independently manage our
 packages.
 
@@ -162,10 +164,10 @@ This will be specified in the ansible inventory.
 
 Some common defaults will be provided and made available in the appropriate repositories such as Docker Hub.
 
-Users will be able to bootstrap LaMachine v2 entirely through one boostrap command (a curl ... | bash) combination, which
-will start an automated wizard askins the user for his choices for his LaMachine build. The script will provide a single
-entry point and will install necessary initial dependencies (e.g. Vagrant, Ansible). It is geared for a wide variety of
-unix-like platforms (including Windows 10 with the Linux Subsystem).
+Users will be able to bootstrap LaMachine v2 entirely through one boostrap command (a ``curl ... | bash``) combination,
+which will start an automated wizard askins the user for his choices for his LaMachine build. The script will provide a
+single entry point and will install necessary initial dependencies (e.g. Vagrant, Ansible). It is geared for a wide
+variety of unix-like platforms (including Windows 10 with the Linux Subsystem).
 
 ### Collaboration
 
@@ -177,7 +179,7 @@ for instance a pull request. The playbook in turn references a package in one or
 LaMachine shifts the burden away from tool providers to provide isolated Docker containers or virtual machines of their own
 tools, and delegates this part of the work to LaMachine, and providing shared containers/VMs instead.
 
-A major focus in this plan is to spend time to collaborate more closely with CLARIAH partners (VU, INT, UU) to integrate
+A major focus in this plan is to spend time to collaborate more closely with CLARIAH partners (VU, INT, UU, Meertens) to integrate
 their tools (with emphasis on low-level, i.e. CLI tools). Such efforts are also a continuation of the stalled CLARIAH
 interoperability task between the RU & VU (FoLiA-NAF) and of the, similarly stalled, task on software quality and
 sustainability, as certain quality demands are a technological prerequisite for inclusion in LaMachine.
@@ -230,37 +232,5 @@ sustainability, as certain quality demands are a technological prerequisite for 
 **Phase 3c: External Interoperability**
 
 * (TODO)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
