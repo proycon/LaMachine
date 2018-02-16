@@ -591,7 +591,7 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
     echo "Building docker"
-    sed -i s/hosts: all/hosts: localhost/g $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to run sed"
+    sed -i "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to run sed"
     #echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
     docker build --build-arg LM_NAME=$LM_NAME .
 else
