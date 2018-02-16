@@ -17,20 +17,20 @@
 <body id="home">
    <header>
             <div class="logo"><a href="/">LaMachine</a></div>
-            <a class="btn" href="/docs/">Docs</a>
             <ul class="primary-nav">
                 <li><a class="active" href="/">Get Started</a></li>
-                <li><a href="/about/">About</a></li>
-                <li><a href="/blog/">Blog</a></li>
-                <li><a href="/support/">Support</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#software">Software</a></li>
+                <li><a href="#contribute">Contribute</a></li>
             </ul>
    </header>
+   <div id="sections">
 
    <section class="hero wrap">
     <div class="container">
         <div class="inner">
-            <h1>LaMachine is a software distribution for Natural Language Processing</h1>
-            <h2>We integrate numerous NLP tools, programming libraries and webservices<br> in a single Virtual Research Environment<br> that can be installed on a wide variety of machines</h2>
+            <h1>LaMachine is a unified software distribution for Natural Language Processing</h1>
+            <h2>We integrate numerous open-source NLP tools, programming libraries and webservices<br> in a single Virtual Research Environment<br> that can be installed on a wide variety of machines</h2>
             <a class="btn" href="/about/">Learn More</a>
         </div>
     </div>
@@ -65,6 +65,65 @@
     </div>
    </section>
 
+   <section class="about normalwrap wrap">
+       <div class="container">
+           <h3>About LaMachine</h3>
+           <p>
+            The software included in LaMachine tends to be highly specialised
+            and generally depends on a lot of other interdependent software.
+            Installing all this software can be a daunting task, compiling it
+            from scratch even more so. LaMachine attempts to make this process
+            easier by offering pre-built recipes for a wide variety of systems,
+            whether it is on your home computer or whether you are setting up a
+            dedicated production environment, LaMachine will safe you a lot of
+            work.</p>
+           <p>We address various audiences; the bulk of the software
+            is geared towards data scientists who are not afraid of the command
+            line and some programming. We give you the instruments and it is up
+            to you to yield them. However, we also attempt to accommodate
+            researchers that require more high-level interfaces by incorporating
+            webservices and websites that expose some of the functionality to
+            a larger audience.</p>
+       </div>
+   </section>
+
+   <section class="software normalwrap wrap">
+       <div class="container">
+             <h3>Software</h3>
+             <ul>
+                <li>by the Centre for Language and Speech Technology, Radboud University Nijmegen
+                <ul>
+                    <li><a href="https://languagemachines.github.io/timbl">Timbl</a> - Tilburg Memory Based Learner (previously by TiCC, Tilburg University)</li>
+                    <li><a href="https://languagemachines.github.io/ucto">Ucto</a> - A rule-based tokeniser supporting multiple languages</li>
+                    <li><a href="https://languagemachines.github.io/frog">Frog</a> - Frog is an integration of various memory-based natural language processing (NLP) modules developed for Dutch. It can do Part-of-Speech tagging, lemmatisation, named entity recogniton, shallow parsing, dependency parsing and morphological analysis.</li>
+                    <li><a href="https://languagemachines.github.io/mbt">Mbt</a> - Memory-based Tagger</li>
+                    <li><a href="https://ilk.uvt.nl/wopr">Wopr</a> - Memory-based Word Predictor</li>
+                    <li><a href="http://proycon.github.io/folia">FoLiA-tools</a> - Command line tools for working with the FoLiA format</li>
+                    <li><a href="https://pypi.python.org/pypi/PyNLPl">PyNLPl</a> - Python Natural Language Processing Library</li>
+                    <li><a href="http://proycon.github.io/colibri-core/">Colibri Core</a> - Colibri core is an NLP tool as well as a C++ and Python library for working with basic linguistic constructions such as n-grams and skipgrams (i.e patterns with one or more gaps, either of fixed or dynamic size) in a quick and memory-efficient way. At the core is the tool colibri-patternmodeller which allows you to build, view, manipulate and query pattern models.</li>
+                    <li><em>C++ libraries</em> - <a href="http://ilk.uvt.nl/ticcutils">ticcutils</a>, <a href="http://proycon.github.io/folia">libfolia</a></li>
+                    <li><em>Python bindings</em> - <a href="https://github.com/proycon/python-ucto">python-ucto</a>, <a href="https://github.com/proycon/python-frog">python-frog</a>, <a href="https://github.com/proycon/python-timbl">python-timbl</a></li>
+                    <li><a href="https://proycon.github.io/clam">CLAM</a> - Quickly build RESTful webservices</li>
+                    <li><a href="https://github.com/proycon/gecco">Gecco</a> - Generic Environment for Context-Aware Correction of Orthography</li>
+                    <li><a href="https://github.com/LanguageMachines/toad">Toad</a> - Trainer Of All Data, training tools for Frog</li>
+                    <li><a href="https://github.com/proycon/foliadocserve">foliadocserve</a> - FoLiA Document Server</li>
+                    <li><a href="https://github.com/proycon/flat">FLAT</a> - FoLiA Linguistic Annotation Tool</li>
+                    <li><a href="https://github.com/proycon/valkuil-gecco">Valkuil</a> - A context-aware spelling corrector for Dutch</li>
+                    <li><a href="https://github.com/martinreynaert/TICCL">TICCL</a> - A spelling correction and OCR post-correction system (also by Tilburg University)</li>
+                </ul></li>
+                <li>by the University of Groningen<ul>
+                <li><a href="http://www.let.rug.nl/vannoord/alp/Alpino/">Alpino</a>, a dependency parser and tagger for Dutch</li>
+                </ul></li>
+                <li>by Utrecht University<ul>
+                    <li><a href="https://github.com/proycon/tscan">T-scan</a> - T-scan is a Dutch text analytics tool for readability prediction (initially developed at TiCC, Tilburg University)</li>
+                </ul></li>
+              </ul>
+
+
+       </div>
+   </section>
+
+   </div>
    <script>
        $('#os_posix').click(function(){
            $('div.command div.text').html("curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh | bash");
@@ -96,12 +155,10 @@
         </div>
 
         <ul class="primary-nav">
-            <li><a class="active" href="/">Get Started</a></li>
-            <li><a  href="/about/">About</a></li>
-            <li><a  href="/blog/">Blog</a></li>
-            <li><a  href="/support/">Support</a></li>
-            <li><a  href="http://pytorch.org/tutorials/">Tutorials</a></li>
-            <li><a  href="https://discuss.pytorch.org">Discuss</a></li>
+                <li><a class="active" href="/">Get Started</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#software">Software</a></li>
+                <li><a href="#contribute">Contribute</a></li>
         </ul>
 
    </footer>
