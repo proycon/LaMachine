@@ -59,15 +59,21 @@
             <div class="label">Run this command:</div>
             <div class="text">curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh | bash</div>
         </div>
+        <div class="help">
+            Open a terminal and run the above command to get started!
+        </div>
     </div>
    </section>
 
    <script>
        $('#os_posix').click(function(){
            $('div.command div.text').html("curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh | bash");
+           $('div.help').html("");
        });
        $('#os_win10').click(function(){
-           $('div.command div.text').html("(TODO: documentation not ready yet)");
+           $('div.command div.text').html("curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh | bash");
+           $('div.help').html("You need to run this command in a Linux subsystem in Windows 10, therefore you must first install the Linux Subsystem with a distribution of your choice (we recommend Ubuntu) from the Microsoft Store. Follow the instructions <a href=\"https://msdn.microsoft.com/en-us/commandline/wsl/install_guide\">here</a>.");
+           $('div.help').css('color','red');
        });
        $('#os_win7').click(function(){
            $('div.command div.text').html("(TODO: documentation not ready yet)");
