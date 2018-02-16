@@ -10,7 +10,6 @@ matrix:
             - FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda LM_NAME=travis-global-stable-conda
             - FLAVOUR=local VERSION=development LOCALENV_TYPE=conda LM_NAME=travis-global-dev-conda
         - os: osx
-          osx_image: xcode8.2
           language: generic
           env:
             - FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda LM_NAME=travis-global-stable-conda
