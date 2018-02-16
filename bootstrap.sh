@@ -590,10 +590,14 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
         fatalerror "Local provisioning failed!"
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
-    docker build --build-arg  #TODO..
+    echo "Building docker"
+    echo "localhost ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
+    docker build --build-arg LM_NAME=$LM_NAME .
 else
     echo "No bootstrap for $FLAVOUR implemented yet at this stage, sorry!!">&2
     rc=1
 fi
-deactivate #deactivate the controller before quitting
+if [[ "$FLAVOUR" != "docker" ]]; then
+    deactivate #deactivate the controller before quitting
+fi
 exit $rc
