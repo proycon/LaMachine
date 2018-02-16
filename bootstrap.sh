@@ -460,7 +460,10 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
         echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
     elif [[ $FLAVOUR == "docker" ]]; then
         echo "unix_user: \"lamachine\"" >> $CONFIGFILE
-        #TODO lamachine_path + source_path
+        echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is stored/shared" >> $CONFIGFILE
+        echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
+        echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
+        echo "source_path: \"/lamachine/src/\" #Path where sources will be stored/compiled" >> $CONFIGFILE
     else
         echo "unix_user: \"$USERNAME\"" >> $CONFIGFILE
         if [ ! -z "$SOURCEDIR" ]; then
@@ -584,7 +587,12 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     echo " ANSIBLE_OPTIONS: $ANSIBLE_OPTIONS" >&2
     echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
-    if ! ansible-playbook --ask-become-pass -i $SOURCEDIR/hosts.$LM_NAME install-$LM_NAME.yml $ANSIBLE_OPTIONS; then
+    if [ "$SUDO" -eq 1 ]; then
+        ASKSUDO="--ask-become-pass"
+    else
+        ASKSUDO=""
+    fi
+    if ! ansible-playbook $ASKSUDO -i $SOURCEDIR/hosts.$LM_NAME install-$LM_NAME.yml $ANSIBLE_OPTIONS; then
         fatalerror "Local provisioning failed!"
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
