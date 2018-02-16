@@ -83,7 +83,7 @@ We again remain committed this, but will shake up the underlying technologies.
 
 ### Objective #3: Production deployment & Integration
 
-* The LaMachine everybody can install at home is in principle the same LaMachine as goes to official hosters of production environments, such as CLARIAH centres. We want to make LaMachine more suitable for the demands of production environments.
+* The LaMachine everybody can install at home is in principle the same LaMachine as goes to official hosters of production environments, such as CLARIAH centres. We want to make LaMachine more suitable for the demands of production environments, provisioning through ansible facilitates more complex demands as hosters can more easily add their own tools and dependencies.
 * We should investigate what we can include in LaMachine for better integration in a CLARIAH production environment, with respect to authentication (single sign-on)
 * In the development of a larger CLARIAH WP3 VRE, LaMachine will play a central role as tool environment anyway. Special facilities may need to be implemented for incorporation in a larger VRE framework; LaMachine can take part of this integration burden away from the tools.
 
@@ -208,7 +208,7 @@ sustainability, as certain quality demands are a technological prerequisite for 
        * Build conda packages
     * Integrate Python-based software (easy)
     * Integrate CLAM webservices and web applications (FLAT)
-       * Use UWSGI Emperor + nginx
+       * Use UWSGI Emperor + apache
     * Integrate NextFlow (java) + PICCL
  * Provide a new interactive ``bootstrap.sh`` script as an initial entry point
 
@@ -222,7 +222,7 @@ sustainability, as certain quality demands are a technological prerequisite for 
 
 **Phase 3a: Third party integration**
 
-* Help integrate low-level third party tools (CLI) and libraries by CLARIAH partners (VU, INT)
+* Help integrate low-level third party tools (CLI) and libraries by CLARIAH partners (VU, INT, UU, Meertens)
 * This will be an ongoing effort that can run in parallel with the any of next phases
 
 **Phase 3b: Interoperability within LaMachine**
