@@ -1,6 +1,6 @@
 ---
     - name: Preparing conda for Python bindings
-      command: "{{local_prefix}}/conda install -mqy -p {{local_prefix}} -c meznom boost-python"
+      command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} -c meznom boost-python"
       when: localenv_type == "conda" and not prefer_global
 
     - name: Installing Python bindings
