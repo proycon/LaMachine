@@ -1,8 +1,4 @@
 ---
-    - debug:
-        msg: "LaMachine Core"
-#######################################################
-
     - import_tasks: debian.yml
       when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and root == True
 
