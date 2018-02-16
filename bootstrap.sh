@@ -296,7 +296,7 @@ fi
 if [ -z "$SUDO" ]; then
     if [ $INTERACTIVE -eq 0 ]; then
         SUDO=1 #assume root (use --noadmin option otherwise)
-    elif [ ${#NEED[@]} -gt 0 ]; then
+    else
         while true; do
             echo
             echo "The installation relies on certain software to be available on your (host)"
@@ -311,8 +311,6 @@ if [ -z "$SUDO" ]; then
                 * ) echo "Please answer yes or no.";;
             esac
         done
-    else
-        SUDO=1
     fi
 fi
 
@@ -586,7 +584,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     echo " ANSIBLE_OPTIONS: $ANSIBLE_OPTIONS" >&2
     echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
-    if ! ansible-playbook -i $SOURCEDIR/hosts.$LM_NAME install-$LM_NAME.yml $ANSIBLE_OPTIONS; then
+    if ! ansible-playbook --ask-become-pass -i $SOURCEDIR/hosts.$LM_NAME install-$LM_NAME.yml $ANSIBLE_OPTIONS; then
         fatalerror "Local provisioning failed!"
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
