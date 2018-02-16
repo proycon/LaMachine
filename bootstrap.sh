@@ -589,21 +589,7 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
         fatalerror "Local provisioning failed!"
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
-    echo "Preparing docker..."
-    sed -e "s/\#ROLES PLACEHOLDER/$(sed 's:/:\\/:g' $INSTALLFILE)/" -e "s/LM_NAME/lamachine-$LM_NAME/" container.template.yml > $SOURCEDIR/container.yml
-    echo "${bold}Opening container file $SOURCEDIR/container.yml in editor for final inspection and configuration...${normal}"
-    if [ $INTERACTIVE -eq 1 ]; then
-        sleep 3
-        if ! "$EDITOR" "$SOURCEDIR/container.yml"; then
-            exit 2
-        fi
-    fi
-    if ! ansible-container build; then
-        fatalerror "Container build failed!"
-    fi
-    if ! ansible-container run; then
-        fatalerror "Container run failed!"
-    fi
+    docker build --build-arg  #TODO..
 else
     echo "No bootstrap for $FLAVOUR implemented yet at this stage, sorry!!">&2
     rc=1
