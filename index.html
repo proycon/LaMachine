@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <title>LaMachine</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:200,300,400,600,700">
+    <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="style/main.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<body id="home">
+   <header>
+            <div class="logo"><a href="/">LaMachine</a></div>
+            <a class="btn" href="/docs/">Docs</a>
+            <ul class="primary-nav">
+                <li><a class="active" href="/">Get Started</a></li>
+                <li><a href="/about/">About</a></li>
+                <li><a href="/blog/">Blog</a></li>
+                <li><a href="/support/">Support</a></li>
+            </ul>
+   </header>
+
+   <section class="hero wrap">
+    <div class="container">
+        <div class="inner">
+            <h1>LaMachine is a software distribution for Natural Language Processing</h1>
+            <h2>We integrate numerous NLP tools, programming libraries and webservices<br> in a single Virtual Research Environment<br> that can be installed on a wide variety of machines</h2>
+            <a class="btn" href="/about/">Learn More</a>
+        </div>
+    </div>
+    <a href="https://github.com/proycon/LaMachine"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
+   </section>
+
+   <section class="install-wizard normalwrap wrap">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5 title">
+                <h3>Get Started.</h3>
+                <h4>LaMachine comes in various flavours, it can be installed as a Virtual Machine, a Docker container, or directly on your Linux or Mac OS X system.<br><br> Start the bootstrap procedure by running a single command and let it guide you through your custom build!</h4>
+            </div>
+            <div class="col-md-7 options-sets">
+                <div class="option-row os" data-key="os">
+                    <div class="option-label">Your Operating System?</div>
+                    <div class="option-set">
+                        <div class="btn selected" id="os_posix">Linux, BSD or Mac OS X</div>
+                        <div class="btn" id="os_win10">Windows 10 (or later)</div>
+                        <div class="btn" id="os_win7">Older Windows</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="command">
+            <div class="label">Run this command:</div>
+            <div class="text">curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh | bash</div>
+        </div>
+    </div>
+   </section>
+
+   <script>
+       $('#os_posix').click(function(){
+           $('div.command div.text').html("curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh | bash");
+       });
+       $('#os_win10').click(function(){
+           $('div.command div.text').html("(TODO: documentation not ready yet)");
+       });
+       $('#os_win7').click(function(){
+           $('div.command div.text').html("(TODO: documentation not ready yet)");
+       });
+       $('div.os .btn').click(function(){
+           $('.btn').removeClass("selected");
+           $(this).addClass("selected");
+       });
+   </script>
+
+   <footer>
+
+        <div class="left">
+            <div class="logo"><a href="/"></a></div>
+            <p>
+                Languages Machines Research Group &amp; Centre for Language and Speech Technology<br>
+                Centre for Language Studies<br>
+                Radboud University Nijmegen<br>
+            </p>
+        </div>
+
+        <ul class="primary-nav">
+            <li><a class="active" href="/">Get Started</a></li>
+            <li><a  href="/about/">About</a></li>
+            <li><a  href="/blog/">Blog</a></li>
+            <li><a  href="/support/">Support</a></li>
+            <li><a  href="http://pytorch.org/tutorials/">Tutorials</a></li>
+            <li><a  href="https://discuss.pytorch.org">Discuss</a></li>
+        </ul>
+
+   </footer>
+</body>
+</html>
