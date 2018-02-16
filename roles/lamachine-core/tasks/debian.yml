@@ -15,7 +15,7 @@
         state: latest
         update-cache: yes
         allow-unauthenticated: yes #there may be unauthenticated packages from other sources already present
-      when: nosysupdate is not defined or not nosysupdate == false
+      when: nosysupdate is not defined or nosysupdate == false
 
       #############################################################
 
