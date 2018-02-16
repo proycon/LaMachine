@@ -591,7 +591,7 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
     echo "Building docker"
-    echo "localhost ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
+    echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
     docker build --build-arg LM_NAME=$LM_NAME .
 else
     echo "No bootstrap for $FLAVOUR implemented yet at this stage, sorry!!">&2
