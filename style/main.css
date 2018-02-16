@@ -601,6 +601,7 @@ section.normalwrap .container {
     font-size: 32px;
     line-height: 22px;
     color: #222;
+    margin-bottom: 20px;
 }
 .normalwrap p {
     font-size: 16px;
