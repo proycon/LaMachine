@@ -1,7 +1,5 @@
 ---
     - name: Updating base system (Homebrew)
-      become: true
-      become_user: root
       homebrew:
         update_homebrew: yes
         upgrade_all: yes
