@@ -176,7 +176,7 @@ to be contributed to LaMachine. This is accomplished by simply committing it to 
 for instance a pull request. The playbook in turn references a package in one or more of the supported repositories
 (github/pypi/cran/debian/anaconda/maven). Clear and extensive documentation needs to be provided on how to contribute.
 
-LaMachine shifts the burden away from tool providers to provide isolated Docker containers or virtual machines of their own
+LaMachine shifts the burden away from tool providers to provide isolated Docker containers or virtual machines for their own
 tools, and delegates this part of the work to LaMachine, and providing shared containers/VMs instead.
 
 A major focus in this plan is to spend time to collaborate more closely with CLARIAH partners (VU, INT, UU, Meertens) to integrate
@@ -192,12 +192,12 @@ sustainability, as certain quality demands are a technological prerequisite for 
 
 (This is all still very preliminary)
 
-**Phase 0: Preparation** [2 Weeks?]
+**Phase 0: Preparation** [2 Weeks]
 
  * Write initial plan (this document) and brainstorm
  * Investigate and experiment with proposed technologies
 
-**Phase 1: Redesign**  [1.5 Month * 0.3 fte]
+**Phase 1: Redesign**  [2 Months * 0.3 fte]
 
  * Rewrite entire provisioning infrastructure through Ansible
     * Integrate with vagrant

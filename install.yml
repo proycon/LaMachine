@@ -1,5 +1,5 @@
 ---
-#Adapt the configurations in host-env/*.yml to change LaMachine parameters
+#(Comment or remove packages/roles you do not want to install)
 - hosts: all
   roles:
       - lamachine-core #The LaMachine core, you always need this or nothing works; includes Python 3
