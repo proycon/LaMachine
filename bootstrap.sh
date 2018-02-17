@@ -21,6 +21,7 @@ echo "           / / /|	        Radboud University Nijmegen "
 echo "${bold}=====================================================================${normal}"
 echo
 
+USERNAME=$(whoami)
 
 fatalerror () {
     echo "================ FATAL ERROR ==============" >&2
@@ -30,6 +31,10 @@ fatalerror () {
     echo "$1" > error
     exit 2
 }
+
+if [[ "$USERNAME" == "root" ]]; then
+    fatalerror "Do not run the LaMachine bootstrap process as root!"
+fi
 
 #The base directory is the directory where the bootstrap is downloaded/executed
 #It will be the default directory for data sharing, will host some configuration files
@@ -437,7 +442,6 @@ LM_NAME=${LM_NAME/ /} #strip any spaces because users won't listen anyway
 
 CONFIGFILE="$BASEDIR/lamachine-$LM_NAME.yml"
 INSTALLFILE="$BASEDIR/install-$LM_NAME.yml"
-USERNAME=$(whoami)
 
 
 if [ ! -e "$CONFIGFILE" ]; then
