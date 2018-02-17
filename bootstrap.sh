@@ -454,18 +454,25 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
     fi
     if [[ $FLAVOUR == "vagrant" ]]; then
         echo "unix_user: \"vagrant\" #(don't change this)" >> $CONFIGFILE
+        echo "homedir: \"/home/vagrant\"" >> $CONFIGFILE
         echo "source_path: \"/home/vagrant/src/\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is stored/shared" >> $CONFIGFILE
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
         echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
     elif [[ $FLAVOUR == "docker" ]]; then
         echo "unix_user: \"lamachine\"" >> $CONFIGFILE
+        echo "homedir: \"/home/lamachine\"" >> $CONFIGFILE
         echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is stored/shared" >> $CONFIGFILE
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
         echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
         echo "source_path: \"/lamachine/src/\" #Path where sources will be stored/compiled" >> $CONFIGFILE
     else
         echo "unix_user: \"$USERNAME\"" >> $CONFIGFILE
+        if [[ $OS == "mac" ]]; then
+            echo "homedir: \"/Users/$USERNAME\"" >> $CONFIGFILE
+        else
+            echo "homedir: \"/home/$USERNAME\"" >> $CONFIGFILE
+        fi
         if [ ! -z "$SOURCEDIR" ]; then
             echo "lamachine_path: \"$SOURCEDIR\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
             echo "source_path: \"$SOURCEDIR/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
@@ -474,6 +481,8 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
             echo "source_path: \"$BASEDIR/lamachine-controller/LaMachine/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         fi
         echo "data_path: \"$BASEDIR\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
+        echo "local_prefix: \"$HOMEDIR/lamachine-$LM_NAME\" #Path to the local environment (conda/virtualenv)" >> $CONFIGFILE
+        echo "global_prefix: \"/usr/local/\" #Path for global installations" >> $CONFIGFILE
     fi
     if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]]; then
         echo "prefer_local: false #Install everything in a local user environment" >> $CONFIGFILE
