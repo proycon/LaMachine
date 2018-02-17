@@ -472,11 +472,7 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
         echo "source_path: \"/lamachine/src/\" #Path where sources will be stored/compiled" >> $CONFIGFILE
     else
         echo "unix_user: \"$USERNAME\"" >> $CONFIGFILE
-        if [[ $OS == "mac" ]]; then
-            HOMEDIR="/Users/$USERNAME"
-        else
-            HOMEDIR="/home/$USERNAME"
-        fi
+        HOMEDIR=$(echo ~)
         echo "homedir: \"$HOMEDIR\"" >> $CONFIGFILE
         if [ ! -z "$SOURCEDIR" ]; then
             echo "lamachine_path: \"$SOURCEDIR\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
