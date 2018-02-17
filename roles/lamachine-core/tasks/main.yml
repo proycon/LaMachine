@@ -60,7 +60,7 @@
 
     - name: Automatic local user environment activation
       blockinfile:
-        dest: "{{homedir}/.bashrc"
+        dest: "{{homedir}}/.bashrc"
         block: |
             source {{homedir}}/bin/lamachine-{{conf_name}}.activate
         marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
