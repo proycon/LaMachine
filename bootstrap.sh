@@ -10,6 +10,9 @@
 #=====================================
 
 bold=$(tput bold)
+boldred=${bold}$(tput setaf 1) #  red
+boldgreen=${bold}$(tput setaf 2) #  green
+boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
 echo "${bold}=====================================================================${normal}"
@@ -21,13 +24,42 @@ echo "           / / /|	        Radboud University Nijmegen "
 echo "${bold}=====================================================================${normal}"
 echo
 
+usage () {
+    echo "bootstrap.sh [options]"
+    echo " ${bold}--flavour${normal} [vagrant|docker|local|global|remote] - Determines the type of LaMachine installation"
+    echo "  vagrant = in a Virtual Machine"
+    echo "       complete separation from the host OS"
+    echo "       (uses Vagrant and VirtualBox)"
+    echo "  docker = in a Docker container"
+    echo "       (uses Docker and Ansible)"
+    echo "  local = in a local user environment"
+    echo "       installs as much as possible in a separate directory"
+    echo "       for a particular user, can exists alongside existing"
+    echo "       installations"
+    echo "       (uses conda or virtualenv)"
+    echo "  global = Globally on this machine"
+    echo "       modifies the existing system and may"
+    echo "       interact with existing packages"
+    echo "  remote = On a remote server"
+    echo "       modifies the existing remote system!"
+    echo "       (uses ansible)"
+    echo " ${bold}--version${normal} [stable|development|custom] - Determines the version of software installed"
+    echo "  stable = you get the latest releases deemed stable (recommended)"
+    echo "  development = you get the very latest development versions for testing, this may not always work as expected!"
+    echo "  custom = you decide explicitly what exact versions you want (for reproducibility)."
+    echo "           this expects you to provide a LaMachine version file with exact version numbers."
+    echo " ${bold}--env${normal} [conda|virtualenv] - Local user environment type"
+    echo "  conda = provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R)"
+    echo "  virtualenv = A simpler solution (originally for Python but extended by us)"
+}
+
 USERNAME=$(whoami)
 
 fatalerror () {
-    echo "================ FATAL ERROR ==============" >&2
+    echo "${bold}================ FATAL ERROR ==============${normal}" >&2
     echo "An error occurred during installation!!" >&2
-    echo "$1" >&2
-    echo "===========================================" >&2
+    echo "${boldred}$1${normal}" >&2
+    echo "${bold}===========================================${normal}" >&2
     echo "$1" > error
     exit 2
 }
@@ -177,6 +209,11 @@ while [[ $# -gt 0 ]]; do
         ANSIBLE_OPTIONS="$ANSIBLE_OPTIONS -vv"
         shift
         ;;
+        -h|--help)
+        usage
+        exit 0
+        shift
+        ;;
         *)    # unknown option
         echo "Unknown option: $1">&2
         exit 2
@@ -218,7 +255,7 @@ if [ -z "$FLAVOUR" ]; then
             [2]* ) FLAVOUR="docker"; break;;
             [3]* ) FLAVOUR="local"; break;;
             [4]* ) FLAVOUR="global"; break;;
-            [5]* ) FLAVOUR="server"; break;;
+            [5]* ) FLAVOUR="remote"; break;;
             * ) echo "Please answer with the corresponding number of your preference..";;
         esac
     done
