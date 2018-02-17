@@ -157,6 +157,7 @@ ourselves to more established solutions and to find better cohesion with what va
     * Though Anaconda was initially geared at Python, conda is itself language-independent and there is a good R ecosystem too.
     * Still compatible with the Python Package Index and pip
     * We intend to use this environment manager also in docker/vagrant flavours; offering a more unified experience, less redundancy, and less dependency on the base Linux distribution.
+    * Virtualenv still remains a supported option as well
 
 LaMachine will become more modular allowing users/hosters themselves to select what software they want. This results in
 the ability to build many different LaMachine instances (containers/VMs/environments) with different sets of software.
@@ -165,7 +166,7 @@ This will be specified in the ansible inventory.
 Some common defaults will be provided and made available in the appropriate repositories such as Docker Hub.
 
 Users will be able to bootstrap LaMachine v2 entirely through one boostrap command (a ``curl ... | bash``) combination,
-which will start an automated wizard askins the user for his choices for his LaMachine build. The script will provide a
+which will start an automated wizard asking the user for his choices for his LaMachine build. The script will provide a
 single entry point and will install necessary initial dependencies (e.g. Vagrant, Ansible). It is geared for a wide
 variety of unix-like platforms (including Windows 10 with the Linux Subsystem).
 
@@ -185,6 +186,10 @@ interoperability task between the RU & VU (FoLiA-NAF) and of the, similarly stal
 sustainability, as certain quality demands are a technological prerequisite for inclusion in LaMachine.
 
 ### Front-end
+
+LaMachine will include a webserver with a portal page, this portal page should provide access to *all* web-based
+services and applications included in LaMachine. It is still not a substitute for the command line or the various
+programming interfaces, nor does it intend to expose all such low-level functionality.
 
 (TODO)
 
