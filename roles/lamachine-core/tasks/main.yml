@@ -116,6 +116,9 @@
           virtualenv: "{{ local_prefix }}"
       when: prefer_local and localenv_type == "virtualenv"
 
+    - import_tasks: webserver.yml
+      when: webserver is defined and webserver == true
+
 
 
 

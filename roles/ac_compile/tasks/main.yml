@@ -29,7 +29,7 @@
   register: make_result
 
 - name: "{{pkg_name}} - Invoke make install"
-  become: "{{ root and not prefer_local }}"
+  become: "{% if root and not prefer_local %}true{% else %}false{% endif %}"
   become_user: root
   become_method: sudo
   command: "make install"

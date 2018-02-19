@@ -60,6 +60,14 @@
         state: installed
       when: ansible_distribution == 'Debian'
 
+    - name: Installing webserver
+      become: true
+      become_user: root
+      apt:
+        name: nginx
+        state: installed
+      when: webserver
+
       #############################################################
       # ANSIBLE installation so we can bootstrap ourselves
       ############################################################
