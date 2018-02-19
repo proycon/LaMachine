@@ -67,3 +67,17 @@
         repo: "{{ item }}"
       with_items:
         - colibri-core
+
+    - name: Testing whether tools start
+      script: "bash -ic {{ item }} -h"
+      with_items:
+          - ucto
+          - timbl
+          - timblserver
+          - frog
+          - mbt
+          - folialint
+          - colibri-classencode
+          - colibri-patternmodeller
+
+

@@ -15,3 +15,22 @@
           - { github_user: "proycon", github_repo: "babelpy", pip_package: "babelpy", conda_package: "" }
           - { github_user: "proycon", github_repo: "babelente", pip_package: "babelente", conda_package: "" }
 
+    - name: Testing whether python-based tools start
+      script: "bash -ic {{ item }} -h"
+      with_items:
+          - foliavalidator
+          - clamservice
+          - folia2html
+          - folia2txt
+          - foliaquery
+
+    - name: Testing Python packages
+      script: "bash -ic python -c \"import {{ item }}\""
+      with_items:
+          - pynlpl
+          - pynlpl.formats.folia
+          - pynlpl.formats.fql
+          - ucto
+          - timbl
+          - frog
+          - colibricore
