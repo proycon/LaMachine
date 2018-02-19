@@ -19,7 +19,7 @@
           - { github_user: "proycon", github_repo: "colibri-core", pip_package: "colibricore", conda_package: ""}
 
     - name: Testing Python bindings
-      shell: "bash -ic python -c \"import {{ item }}\""
+      shell: "source {{homedir}}/bin/lamachine-{{ conf_name }}.activate && python -c 'import {{ item }}'"
       with_items:
           - ucto
           - timbl
