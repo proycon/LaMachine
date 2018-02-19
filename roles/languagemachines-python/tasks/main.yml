@@ -16,7 +16,7 @@
           - { github_user: "proycon", github_repo: "babelente", pip_package: "babelente", conda_package: "" }
 
     - name: Testing whether python-based tools start
-      script: "bash -ic {{ item }} -h"
+      shell: "bash -ic {{ item }} -h"
       with_items:
           - foliavalidator
           - clamservice
@@ -26,11 +26,8 @@
           - babelente
 
     - name: Testing Python packages
-      script: "bash -ic python -c \"import {{ item }}\""
+      shell: "bash -ic python -c \"import {{ item }}\""
       with_items:
-          - pynlpl
-          - pynlpl.formats.folia
-          - pynlpl.formats.fql
           - ucto
           - timbl
           - frog

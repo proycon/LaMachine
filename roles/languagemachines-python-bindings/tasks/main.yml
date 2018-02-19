@@ -17,3 +17,11 @@
           - { github_user: "proycon", github_repo: "python-ucto", pip_package: "python-ucto", conda_package: ""}
           - { github_user: "proycon", github_repo: "python-frog", pip_package: "python-frog", conda_package: ""}
           - { github_user: "proycon", github_repo: "colibri-core", pip_package: "colibricore", conda_package: ""}
+
+    - name: Testing Python bindings
+      shell: "bash -ic python -c \"import {{ item }}\""
+      with_items:
+          - ucto
+          - timbl
+          - frog
+          - colibricore
