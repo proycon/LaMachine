@@ -8,7 +8,16 @@ matrix:
           language: generic
           env:
             - FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda LM_NAME=travis-global-stable-conda
+        - os: linux
+          dist: trusty
+          sudo: required
+          language: generic
+          env:
             - FLAVOUR=local VERSION=development LOCALENV_TYPE=conda LM_NAME=travis-global-dev-conda
+        - os: osx
+          language: generic
+          env:
+            - FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda LM_NAME=travis-global-stable-conda
         - os: osx
           language: generic
           env:
