@@ -1,8 +1,6 @@
 ---
     - name: Updating base system (Homebrew)
-      become: true
-      become_user: root
-      yum:
-        name: "*"
-        state: latest
+      homebrew:
+        update_homebrew: yes
+        upgrade_all: yes
       when: (ansible_distribution == 'MacOSX') and root == True

@@ -83,7 +83,7 @@ We again remain committed this, but will shake up the underlying technologies.
 
 ### Objective #3: Production deployment & Integration
 
-* The LaMachine everybody can install at home is in principle the same LaMachine as goes to official hosters of production environments, such as CLARIAH centres. We want to make LaMachine more suitable for the demands of production environments.
+* The LaMachine everybody can install at home is in principle the same LaMachine as goes to official hosters of production environments, such as CLARIAH centres. We want to make LaMachine more suitable for the demands of production environments, provisioning through ansible facilitates more complex demands as hosters can more easily add their own tools and dependencies.
 * We should investigate what we can include in LaMachine for better integration in a CLARIAH production environment, with respect to authentication (single sign-on)
 * In the development of a larger CLARIAH WP3 VRE, LaMachine will play a central role as tool environment anyway. Special facilities may need to be implemented for incorporation in a larger VRE framework; LaMachine can take part of this integration burden away from the tools.
 
@@ -157,6 +157,7 @@ ourselves to more established solutions and to find better cohesion with what va
     * Though Anaconda was initially geared at Python, conda is itself language-independent and there is a good R ecosystem too.
     * Still compatible with the Python Package Index and pip
     * We intend to use this environment manager also in docker/vagrant flavours; offering a more unified experience, less redundancy, and less dependency on the base Linux distribution.
+    * Virtualenv still remains a supported option as well
 
 LaMachine will become more modular allowing users/hosters themselves to select what software they want. This results in
 the ability to build many different LaMachine instances (containers/VMs/environments) with different sets of software.
@@ -165,7 +166,7 @@ This will be specified in the ansible inventory.
 Some common defaults will be provided and made available in the appropriate repositories such as Docker Hub.
 
 Users will be able to bootstrap LaMachine v2 entirely through one boostrap command (a ``curl ... | bash``) combination,
-which will start an automated wizard askins the user for his choices for his LaMachine build. The script will provide a
+which will start an automated wizard asking the user for his choices for his LaMachine build. The script will provide a
 single entry point and will install necessary initial dependencies (e.g. Vagrant, Ansible). It is geared for a wide
 variety of unix-like platforms (including Windows 10 with the Linux Subsystem).
 
@@ -176,7 +177,7 @@ to be contributed to LaMachine. This is accomplished by simply committing it to 
 for instance a pull request. The playbook in turn references a package in one or more of the supported repositories
 (github/pypi/cran/debian/anaconda/maven). Clear and extensive documentation needs to be provided on how to contribute.
 
-LaMachine shifts the burden away from tool providers to provide isolated Docker containers or virtual machines of their own
+LaMachine shifts the burden away from tool providers to provide isolated Docker containers or virtual machines for their own
 tools, and delegates this part of the work to LaMachine, and providing shared containers/VMs instead.
 
 A major focus in this plan is to spend time to collaborate more closely with CLARIAH partners (VU, INT, UU, Meertens) to integrate
@@ -186,18 +187,22 @@ sustainability, as certain quality demands are a technological prerequisite for 
 
 ### Front-end
 
+LaMachine will include a webserver with a portal page, this portal page should provide access to *all* web-based
+services and applications included in LaMachine. It is still not a substitute for the command line or the various
+programming interfaces, nor does it intend to expose all such low-level functionality.
+
 (TODO)
 
 ## Planning
 
 (This is all still very preliminary)
 
-**Phase 0: Preparation** [2 Weeks?]
+**Phase 0: Preparation** [2 Weeks]
 
  * Write initial plan (this document) and brainstorm
  * Investigate and experiment with proposed technologies
 
-**Phase 1: Redesign**  [1.5 Month * 0.3 fte]
+**Phase 1: Redesign**  [2 Months * 0.3 fte]
 
  * Rewrite entire provisioning infrastructure through Ansible
     * Integrate with vagrant
@@ -208,7 +213,7 @@ sustainability, as certain quality demands are a technological prerequisite for 
        * Build conda packages
     * Integrate Python-based software (easy)
     * Integrate CLAM webservices and web applications (FLAT)
-       * Use UWSGI Emperor + nginx
+       * Use UWSGI Emperor + apache
     * Integrate NextFlow (java) + PICCL
  * Provide a new interactive ``bootstrap.sh`` script as an initial entry point
 
@@ -222,7 +227,7 @@ sustainability, as certain quality demands are a technological prerequisite for 
 
 **Phase 3a: Third party integration**
 
-* Help integrate low-level third party tools (CLI) and libraries by CLARIAH partners (VU, INT)
+* Help integrate low-level third party tools (CLI) and libraries by CLARIAH partners (VU, INT, UU, Meertens)
 * This will be an ongoing effort that can run in parallel with the any of next phases
 
 **Phase 3b: Interoperability within LaMachine**

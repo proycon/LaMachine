@@ -10,6 +10,9 @@
 #=====================================
 
 bold=$(tput bold)
+boldred=${bold}$(tput setaf 1) #  red
+boldgreen=${bold}$(tput setaf 2) #  green
+boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
 echo "${bold}=====================================================================${normal}"
@@ -21,15 +24,49 @@ echo "           / / /|	        Radboud University Nijmegen "
 echo "${bold}=====================================================================${normal}"
 echo
 
+usage () {
+    echo "bootstrap.sh [options]"
+    echo " ${bold}--flavour${normal} [vagrant|docker|local|global|remote] - Determines the type of LaMachine installation"
+    echo "  vagrant = in a Virtual Machine"
+    echo "       complete separation from the host OS"
+    echo "       (uses Vagrant and VirtualBox)"
+    echo "  docker = in a Docker container"
+    echo "       (uses Docker and Ansible)"
+    echo "  local = in a local user environment"
+    echo "       installs as much as possible in a separate directory"
+    echo "       for a particular user, can exists alongside existing"
+    echo "       installations"
+    echo "       (uses conda or virtualenv)"
+    echo "  global = Globally on this machine"
+    echo "       modifies the existing system and may"
+    echo "       interact with existing packages"
+    echo "  remote = On a remote server"
+    echo "       modifies the existing remote system!"
+    echo "       (uses ansible)"
+    echo " ${bold}--version${normal} [stable|development|custom] - Determines the version of software installed"
+    echo "  stable = you get the latest releases deemed stable (recommended)"
+    echo "  development = you get the very latest development versions for testing, this may not always work as expected!"
+    echo "  custom = you decide explicitly what exact versions you want (for reproducibility)."
+    echo "           this expects you to provide a LaMachine version file with exact version numbers."
+    echo " ${bold}--env${normal} [conda|virtualenv] - Local user environment type"
+    echo "  conda = provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R)"
+    echo "  virtualenv = A simpler solution (originally for Python but extended by us)"
+}
+
+USERNAME=$(whoami)
 
 fatalerror () {
-    echo "================ FATAL ERROR ==============" >&2
+    echo "${bold}================ FATAL ERROR ==============${normal}" >&2
     echo "An error occurred during installation!!" >&2
-    echo "$1" >&2
-    echo "===========================================" >&2
+    echo "${boldred}$1${normal}" >&2
+    echo "${bold}===========================================${normal}" >&2
     echo "$1" > error
     exit 2
 }
+
+if [[ "$USERNAME" == "root" ]]; then
+    fatalerror "Do not run the LaMachine bootstrap process as root!"
+fi
 
 #The base directory is the directory where the bootstrap is downloaded/executed
 #It will be the default directory for data sharing, will host some configuration files
@@ -172,6 +209,11 @@ while [[ $# -gt 0 ]]; do
         ANSIBLE_OPTIONS="$ANSIBLE_OPTIONS -vv"
         shift
         ;;
+        -h|--help)
+        usage
+        exit 0
+        shift
+        ;;
         *)    # unknown option
         echo "Unknown option: $1">&2
         exit 2
@@ -213,7 +255,7 @@ if [ -z "$FLAVOUR" ]; then
             [2]* ) FLAVOUR="docker"; break;;
             [3]* ) FLAVOUR="local"; break;;
             [4]* ) FLAVOUR="global"; break;;
-            [5]* ) FLAVOUR="server"; break;;
+            [5]* ) FLAVOUR="remote"; break;;
             * ) echo "Please answer with the corresponding number of your preference..";;
         esac
     done
@@ -437,7 +479,6 @@ LM_NAME=${LM_NAME/ /} #strip any spaces because users won't listen anyway
 
 CONFIGFILE="$BASEDIR/lamachine-$LM_NAME.yml"
 INSTALLFILE="$BASEDIR/install-$LM_NAME.yml"
-USERNAME=$(whoami)
 
 
 if [ ! -e "$CONFIGFILE" ]; then
@@ -454,15 +495,22 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
     fi
     if [[ $FLAVOUR == "vagrant" ]]; then
         echo "unix_user: \"vagrant\" #(don't change this)" >> $CONFIGFILE
+        echo "homedir: \"/home/vagrant\"" >> $CONFIGFILE
         echo "source_path: \"/home/vagrant/src/\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is stored/shared" >> $CONFIGFILE
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
         echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
     elif [[ $FLAVOUR == "docker" ]]; then
         echo "unix_user: \"lamachine\"" >> $CONFIGFILE
-        #TODO lamachine_path + source_path
+        echo "homedir: \"/home/lamachine\"" >> $CONFIGFILE
+        echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is stored/shared" >> $CONFIGFILE
+        echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
+        echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
+        echo "source_path: \"/lamachine/src/\" #Path where sources will be stored/compiled" >> $CONFIGFILE
     else
         echo "unix_user: \"$USERNAME\"" >> $CONFIGFILE
+        HOMEDIR=$(echo ~)
+        echo "homedir: \"$HOMEDIR\"" >> $CONFIGFILE
         if [ ! -z "$SOURCEDIR" ]; then
             echo "lamachine_path: \"$SOURCEDIR\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
             echo "source_path: \"$SOURCEDIR/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
@@ -471,6 +519,8 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
             echo "source_path: \"$BASEDIR/lamachine-controller/LaMachine/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         fi
         echo "data_path: \"$BASEDIR\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
+        echo "local_prefix: \"$HOMEDIR/lamachine-$LM_NAME\" #Path to the local environment (conda/virtualenv)" >> $CONFIGFILE
+        echo "global_prefix: \"/usr/local/\" #Path for global installations" >> $CONFIGFILE
     fi
     if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]]; then
         echo "prefer_local: false #Install everything in a local user environment" >> $CONFIGFILE
@@ -515,12 +565,14 @@ fi
 
 if [ ! -d lamachine-controller ]; then
     echo "Setting up control environment..."
-    virtualenv --python=python2.7 lamachine-controller || "Unable to create LaMachine control environment"
-    cd lamachine-controller
-    source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
-    pip install ansible || fatalerror "Unable to install Ansible"
-    if [[ "$FLAVOUR" == "docker" ]]; then
-        pip install docker==2.7.0 docker-compose ansible-container[docker]
+    if [[ "$FLAVOUR" != "docker" ]]; then
+        virtualenv --python=python2.7 lamachine-controller || "Unable to create LaMachine control environment"
+        cd lamachine-controller
+        source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
+        pip install ansible || fatalerror "Unable to install Ansible"
+        #pip install docker==2.7.0 docker-compose ansible-container[docker]
+    else
+        mkdir lamachine-controller && cd lamachine-controller #no need for a virtualenv
     fi
 else
     echo "Reusing existing control environment..."
@@ -582,28 +634,24 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     echo " ANSIBLE_OPTIONS: $ANSIBLE_OPTIONS" >&2
     echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
-    if ! ansible-playbook -i $SOURCEDIR/hosts.$LM_NAME install-$LM_NAME.yml $ANSIBLE_OPTIONS; then
+    if [ "$SUDO" -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
+        ASKSUDO="--ask-become-pass"
+    else
+        ASKSUDO=""
+    fi
+    if ! ansible-playbook $ASKSUDO -i $SOURCEDIR/hosts.$LM_NAME install-$LM_NAME.yml $ANSIBLE_OPTIONS; then
         fatalerror "Local provisioning failed!"
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
-    echo "Preparing docker..."
-    sed -e "s/#ROLES PLACEHOLDER/$(sed 's:/:\\/:g' $INSTALLFILE)/" -e "s/LM_NAME/lamachine-$LM_NAME/" container.template.yml > $SOURCEDIR/container.yml
-    echo "${bold}Opening container file $SOURCEDIR/container.yml in editor for final inspection and configuration...${normal}"
-    if [ $INTERACTIVE -eq 1 ]; then
-        sleep 3
-        if ! "$EDITOR" "$SOURCEDIR/container.yml"; then
-            exit 2
-        fi
-    fi
-    if ! ansible-container build; then
-        fatalerror "Container build failed!"
-    fi
-    if ! ansible-container run; then
-        fatalerror "Container run failed!"
-    fi
+    echo "Building docker"
+    sed -i "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to run sed"
+    #echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
+    docker build --build-arg LM_NAME=$LM_NAME .
 else
     echo "No bootstrap for $FLAVOUR implemented yet at this stage, sorry!!">&2
     rc=1
 fi
-deactivate #deactivate the controller before quitting
+if [[ "$FLAVOUR" != "docker" ]]; then
+    deactivate #deactivate the controller before quitting
+fi
 exit $rc

@@ -15,7 +15,8 @@
         state: latest
         update-cache: yes
         allow-unauthenticated: yes #there may be unauthenticated packages from other sources already present
-      when: nosysupdate is not defined or not nosysupdate == false
+      ignore_errors: yes #bit unelegant but sometimes the system is too messy and fails on something (like travis)
+      when: nosysupdate is not defined or nosysupdate == false
 
       #############################################################
 

@@ -1,8 +1,4 @@
 ---
-    - debug:
-        msg: "LaMachine Core"
-#######################################################
-
     - import_tasks: debian.yml
       when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and root == True
 
@@ -17,7 +13,7 @@
 
     - name: Create home bin directory #even on shared systems!
       file:
-          path: "/home/{{unix_user}}/bin"
+          path: "{{homedir}}/bin"
           state: directory
 
     - import_tasks: conda.yml
@@ -29,7 +25,7 @@
 
     - name: Set LaMachine activation script
       blockinfile:
-        dest: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.activate"
+        dest: "{{homedir}}/bin/lamachine-{{ conf_name }}.activate"
         block: |
           #!/bin/bash
           export LM_PREFER_LOCAL={{prefer_local|int}}
@@ -58,15 +54,15 @@
 
     - name: Link activation script
       file:
-         src: "/home/{{unix_user}}/bin/lamachine-{{conf_name}}.activate"
-         dest: "/home/{{unix_user}}/bin/lamachine.activate"
+         src: "{{homedir}}/bin/lamachine-{{conf_name}}.activate"
+         dest: "{{homedir}}/bin/lamachine.activate"
          state: link
 
     - name: Automatic local user environment activation
       blockinfile:
-        dest: "/home/{{unix_user}}/.bashrc"
+        dest: "{{homedir}}/.bashrc"
         block: |
-            source /home/{{unix_user}}/bin/lamachine-{{conf_name}}.activate
+            source {{homedir}}/bin/lamachine-{{conf_name}}.activate
         marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
         insertafter: EOF
         create: yes
@@ -80,7 +76,7 @@
 
     - name: Set LaMachine update script
       copy:
-        dest: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.update"
+        dest: "{{homedir}}/bin/lamachine-{{ conf_name }}.update"
         content: |
           #!/bin/bash
           cd {{lamachine_path}}
@@ -92,15 +88,15 @@
 
     - name: Link update script
       file:
-        src: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.update"
-        dest: "/home/{{unix_user}}/bin/lamachine.update"
+        src: "{{homedir}}/bin/lamachine-{{ conf_name }}.update"
+        dest: "{{homedir}}/bin/lamachine.update"
         force: true
         state: link
 
     - name: Backward compatibility update script
       file:
-        src: "/home/{{unix_user}}/bin/lamachine-{{ conf_name }}.update"
-        dest: "/home/{{unix_user}}/bin/lamachine-update.sh"
+        src: "{{homedir}}/bin/lamachine-{{ conf_name }}.update"
+        dest: "{{homedir}}/bin/lamachine-update.sh"
         force: true
         state: link
 

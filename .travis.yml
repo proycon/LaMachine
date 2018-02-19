@@ -10,7 +10,6 @@ matrix:
             - FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda LM_NAME=travis-global-stable-conda
             - FLAVOUR=local VERSION=development LOCALENV_TYPE=conda LM_NAME=travis-global-dev-conda
         - os: osx
-          osx_image: xcode8.2
           language: generic
           env:
             - FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda LM_NAME=travis-global-stable-conda
@@ -25,6 +24,8 @@ notifications:
       - "%{repository_slug}#%{build_number} %{message} --> %{build_url}"
     skip_join: true
 
+install:
+    - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo /etc/init.d/postgresql stop; sudo apt remove postgresql-9.3 postgresql-9.4 postgresql-9.5 postgresql-9.6 postgresql-contrib-9.3 postgresql-contrib-9.4 postgresql-contrib-9.5 postgresql-contrib-9.6 ; fi #this is in the way and breaks apt updates for some reason
 script:
     - bash bootstrap.sh --name $LM_NAME --flavour $FLAVOUR --version $VERSION --env $LOCALENV_TYPE --noninteractive --notshared --extra "nosysupdate=true"
 
