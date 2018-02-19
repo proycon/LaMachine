@@ -69,7 +69,7 @@
         - colibri-core
 
     - name: Testing whether tools start
-      script: "bash -ic {{ item }} -h"
+      shell: "bash -ic {{ item }} -h"
       with_items:
           - ucto
           - timbl
