@@ -20,6 +20,7 @@
         - libxslt
         - icu4c
         - libtextcat
+        - libtar
         - wget
         - ansible
       when: (nosysupdate is not defined or nosysupdate == false) and not prefer_local
