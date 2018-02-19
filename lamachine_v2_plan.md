@@ -67,12 +67,14 @@ We again remain committed this, but will shake up the underlying technologies.
 * The maintainability of the two rather monolithic shell scripts grows more complicated as more software participates;
 * We want to try to reduce redundancy in LaMachine and have as much overlap as possible between different flavours and branches;
 * It should be made easier for third-party participants to participate in LaMachine without relying on a central party (aka me). It need not be a Nijmegen-only endeavour.
+* LaMachine builds on common and well-established software distribution channels and repositories, leverages their power and does not seek to replace them, but merely to combine them to make things easier and more
+accessible for the user.
 
 ### Objective #2. Improved user experience for researchers (the less technical end-user aka the 80%)
 
 * Even in the current LaMachine, there are facilities for the less technically inclined users, in the form of pre-configured webservices. In the VM and Docker flavours, a simple webserver is available, serving a very minimalistic portal to some webservices (Frog, Ucto, and even FLAT). This is one of the areas in which major improvement is possible. A more user friendly portal environment should be developed.
 * We want to lower the threshold for installation of LaMachine itself; everything should start from a single command and an automated wizard to guide you through.
-* Although LaMachine is initially more geared towards the 20%, and tries to decrease the threshold of installation, we can do more to accommodate the '80%' (with a limit).
+* Although LaMachine is initially more geared towards the 20%, by decreasing the threshold of installation, we can do more to accommodate the '80%' (with a limit) by providing higher-level interfaces.
 * A huge and important corollary of this goal is **improved interoperability** between the tools in LaMachine:
     * User interface options connecting available web-applications/webservices where possible
     * Connections to external online services NOT in LaMachine
@@ -91,19 +93,22 @@ We again remain committed this, but will shake up the underlying technologies.
 
 ### Relation with a CLARIAH WP3 VRE
 
-There is a certain intersection between LaMachine v2 and the WP3 VRE plans, but I'm well aware that latter goes much
+There is a certain intersection between LaMachine v2 and the WP3 VRE plans, but I'm well aware that the latter goes much
 further and has much higher ambitions than this current plan. This LaMachine v2 plan is motivated by the technologies we
 already have in place and attempts to sketch how LaMachine can 1) act as a kind of much simpler VRE in its own right and
-2) lay the groundwork for integration in a larger VRE, in which it can act as a deployment platform for tools. In other
-words, this plan is an attempt to close the gap in a bottom-up fashion, to keep things relatively simple and practical,
-and to get to demonstrable results in an as time and resource efficient manner as possible. I project this all to be
-realisable well within the time that could be allocated for me in the CLARIAH WP3 VRE.
+2) lay the groundwork for integration in a larger VRE, in which LaMachine can act as a deployment platform for NLP tools
+as well as for the VRE components themselves. This plan is an attempt to close the gap in a bottom-up fashion, to keep
+things relatively simple and practical, and to get to demonstrable results in an as time and resource efficient manner
+as possible. I project this all to be realisable within the time that could be allocated for me in the CLARIAH WP3 VRE.
 
 It is also good to stress the main difference between LaMachine and the WP3 VRE. LaMachine is all about distribution,
-deployment and access to software. It is not, and will never be, an infrastructure deployed online in one static
-location (but may be made to interact with such larger infrastructure as per goals #2 and #3). LaMachine also requires the
-underlying software to be open, publicly available, and adhere to certain common good-practices with regard to in what
-repositories software is deposited.
+deployment and access to software tools in any form it is available; from low-level interfaces to high-level interfaces.
+The WP3 VRE plan is more about building an infrastructure for serving various tools (without necessarily providing the actual
+software), providing interfaces to and around these tools, as well as providing access to data and search facilities for
+both.
+
+In this LaMachine v2 plan, we start with what we have, collaborate with CLARIAH partners, and attempt to work towards higher
+interoperability within a single distribution. I believe this lays a good foundation for further work as envisioned in the VRE plan.
 
 ### Relation with PICCL (CLARIAH WP2/3)
 
@@ -157,18 +162,15 @@ ourselves to more established solutions and to find better cohesion with what va
     * Though Anaconda was initially geared at Python, conda is itself language-independent and there is a good R ecosystem too.
     * Still compatible with the Python Package Index and pip
     * We intend to use this environment manager also in docker/vagrant flavours; offering a more unified experience, less redundancy, and less dependency on the base Linux distribution.
-    * Virtualenv still remains a supported option as well
+    * Virtualenv still remains a supported option as well!
+4) Single bootstrap command as an entry point to all possible installations
+    * Users will be able to bootstrap LaMachine v2 entirely through one bootstrap command (``curl ... | bash``), which will start an automated wizard asking the user for his choices for his LaMachine build. The script will provide a single entry point and will install necessary initial dependencies (e.g. Vagrant, Ansible). It is geared for a wide variety of unix-like platforms (including Windows 10 with the Linux Subsystem).
 
 LaMachine will become more modular allowing users/hosters themselves to select what software they want. This results in
 the ability to build many different LaMachine instances (containers/VMs/environments) with different sets of software.
 This will be specified in the ansible inventory.
 
 Some common defaults will be provided and made available in the appropriate repositories such as Docker Hub.
-
-Users will be able to bootstrap LaMachine v2 entirely through one boostrap command (a ``curl ... | bash``) combination,
-which will start an automated wizard asking the user for his choices for his LaMachine build. The script will provide a
-single entry point and will install necessary initial dependencies (e.g. Vagrant, Ansible). It is geared for a wide
-variety of unix-like platforms (including Windows 10 with the Linux Subsystem).
 
 ### Collaboration
 
@@ -177,25 +179,54 @@ to be contributed to LaMachine. This is accomplished by simply committing it to 
 for instance a pull request. The playbook in turn references a package in one or more of the supported repositories
 (github/pypi/cran/debian/anaconda/maven). Clear and extensive documentation needs to be provided on how to contribute.
 
-LaMachine shifts the burden away from tool providers to provide isolated Docker containers or virtual machines for their own
-tools, and delegates this part of the work to LaMachine, and providing shared containers/VMs instead.
+LaMachine shifts the burden away from tool providers to provide isolated Docker containers or virtual machines for their
+own tools, and delegates this part of the work to LaMachine, and providing shared containers/VMs instead. Users will
+have the freedom to install only the parts of LaMachine they actually need and are able to instantiate LaMachine
+installations for different purposes on multiple machines/containers.
 
-A major focus in this plan is to spend time to collaborate more closely with CLARIAH partners (VU, INT, UU, Meertens) to integrate
-their tools (with emphasis on low-level, i.e. CLI tools). Such efforts are also a continuation of the stalled CLARIAH
-interoperability task between the RU & VU (FoLiA-NAF) and of the, similarly stalled, task on software quality and
-sustainability, as certain quality demands are a technological prerequisite for inclusion in LaMachine.
+A major focus in this plan is to spend time to collaborate more closely with CLARIAH partners (VU, INT, UU, Meertens) to
+integrate their tools (with emphasis on low-level, i.e. CLI tools). This means extensive support will be provided to
+upstream developers so they can write the necessary recipes and for us to adapt and extend the LaMachine framework where
+necessary. We will not, however, adapt any upstream software ourselves.
 
-### Front-end
+These efforts would constitute a logical continuation of the stalled CLARIAH interoperability task between the RU & VU
+(FoLiA-NAF) and of the, similarly stalled, task on software quality and sustainability, as certain quality demands are a
+technological prerequisite for inclusion in LaMachine.
 
-LaMachine will include a webserver with a portal page, this portal page should provide access to *all* web-based
-services and applications included in LaMachine. It is still not a substitute for the command line or the various
-programming interfaces, nor does it intend to expose all such low-level functionality.
+### User interface & Data
 
-(TODO)
+LaMachine v2 will include a webserver with a portal page, this portal page should provide access to *all* web-based
+services and applications installed in LaMachine. Initially it will be a fairly simple page, but this is where there is
+a lot of room for expansion to accomplish the aforementioned objective #2. This portal page and the services it exploses
+is still not a substitute for the command line or the various programming interfaces, it does not intend to expose all
+such low-level functionality, but it is an access point for the high-level interfaces which will have more appeal to the
+less-technical researcher.
+
+The virtual machine and docker flavour will mount a data directory that is shared with the host system. This data
+directory can also be made accessible from the webserver front-end, along with upload/download facilities. It provides a
+simple and possibly shared workspace. Special provisions will be added to also make it suitable for multiuser production
+environments.
+
+Note that most webservices/web-applications included in LaMachine (e.g. CLAM, FLAT) necessarily provide their own
+upload/download and workspace facilities (they need to be able to do their own data validation, conversion, bookkeeping
+etc). A LaMachine shared data space will need to be made explicitly interoperable with the various tools. This
+could be done in two ways (push vs pull):
+1) by uploading input from the shared workspace to the tool-specific workspace and downloading output from the tool
+2) by having the tool download its input from the shared workspace and upload its output to the shared workspace
+
+One of my recommendations for the larger VRE plan was that the burden of integration rests mostly on the VRE, and
+not the upstream tools, so adhering to this principle, option one is generally preferred.
+
+The CLARIAH Switchboard provides this kind of functionality, whether it is suitable for this role in LaMachine v2
+or whether a new solution has to be implemented remains to be investigated.
+
+The WP3 VRE plan envisions an OwnCloud component for file transfer, this is something that could be integrated and
+tested at this level already. Note that many of the other WP3 VRE (meta)data components are well beyond the scope of the
+LaMachine v2 plan and not included, but as the VRE project progresses these could be integrated.
 
 ## Planning
 
-(This is all still very preliminary)
+(This is all still preliminary)
 
 **Phase 0: Preparation** [2 Weeks]
 
@@ -217,7 +248,7 @@ programming interfaces, nor does it intend to expose all such low-level function
     * Integrate NextFlow (java) + PICCL
  * Provide a new interactive ``bootstrap.sh`` script as an initial entry point
 
-**Phase 2: Initial Release** [2 Weeks * 0.3 fte]
+**Phase 2: Initial Release** [3 Weeks * 0.3 fte]
 
  * Set up automated builds
  * Provide documentation for both end-users, contributors, and hosters
@@ -225,17 +256,26 @@ programming interfaces, nor does it intend to expose all such low-level function
  * Provide a new portal site inside LaMachine
  * *At this point, we will have a new LaMachine that is functionally at least as capable as LaMachine v1 and can replace it*
 
-**Phase 3a: Third party integration**
+**Phase 3: Third party integration**
 
-* Help integrate low-level third party tools (CLI) and libraries by CLARIAH partners (VU, INT, UU, Meertens)
+* Help integrate tools by CLARIAH partners (VU, INT, UU, Meertens)
 * This will be an ongoing effort that can run in parallel with the any of next phases
+    * Initial focus will be on low-level tools (CLI & Libraries)
+    * Higher-level tools may require more progression in phase 4 first
 
-**Phase 3b: Interoperability within LaMachine**
+**Phase 4: Interoperability within LaMachine**
 
-* (TODO)
+* Work on a (web) interface with shared dataspace
+    * Enhances/replaces the simple portal site from phase 2.
+    * the proposed WP3 VRE OwnCloud module could play a role here as an upload mechanism.
+    * Might be based on/derived from/inspired by CLARIN Switchboard (to be investigated) or CLAMopener
+    * This will live as a separate project from LaMachine
+    * Implement file transfer support for CLAM and FLAT
+    * Make OAuth2 compatible for production environments
 
-**Phase 3c: External Interoperability**
+**Phase 5: External Interoperability & VRE Interoperability**
 
-* (TODO)
-
+* This phase is still pretty much a tabula rasa as it depends a lot on the direction and progress of the larger WP3 VRE
+  project, which itself is in early stages of planning.
+    * Integration of various VRE components as they become available
 
