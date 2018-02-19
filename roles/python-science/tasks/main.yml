@@ -34,14 +34,14 @@
 - when: not prefer_global
   block:
      - name: "Installing generic 3rd party Python Packages via conda"
-       command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} beautifulsoup4 cython flask ipython jupyter lxml matplotlib nbconvert nltk numpy pandas pycrypto pylint pymongo pymysql requests scikit-learn scipy seaborn spacy sphinx tensorflow word2vec xlsxwriter yaml"
+       command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} beautifulsoup4 cython flask ipython jupyter lxml matplotlib nbconvert nltk numpy pandas pycrypto pylint pymongo pymysql requests scikit-learn scipy seaborn spacy sphinx tensorflow word2vec xlsxwriter yaml gensim pillow keras"
        when: localenv_type == "conda"
      - name: "Making sure all conda packages are up to date"
        command: "{{local_prefix}}/bin/conda update -mqy -p {{local_prefix}} --all"
        when: localenv_type == "conda"
      - name: "Installing generic 3rd party Python Packages via pip"
        pip:
-           name: "beautifulsoup4 cython flask ipython jupyter lxml matplotlib nbconvert nltk numpy pandas pycrypto pylint pymongo pymysql requests scikit-learn scipy seaborn spacy sphinx tensorflow word2vec xlsxwriter yaml"
+           name: "beautifulsoup4 cython flask ipython jupyter lxml matplotlib nbconvert nltk numpy pandas pycrypto pylint pymongo pymysql requests scikit-learn scipy seaborn spacy sphinx tensorflow word2vec xlsxwriter yaml gensim pillow keras"
            state: latest
            virtualenv: "{{ local_prefix }}"
        when: localenv_type == "virtualenv"
