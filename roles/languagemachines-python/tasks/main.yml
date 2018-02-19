@@ -23,6 +23,7 @@
           - folia2html
           - folia2txt
           - foliaquery
+          - babelente
 
     - name: Testing Python packages
       script: "bash -ic python -c \"import {{ item }}\""
