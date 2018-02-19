@@ -4,3 +4,31 @@
         update_homebrew: yes
         upgrade_all: yes
       when: (ansible_distribution == 'MacOSX') and root == True
+
+
+    - name: Installing common base packages (Homebrew)
+      homebrew:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - pkg-config
+        - autoconf
+        - automake
+        - libtool
+        - autoconf-archive
+        - xml2
+        - libxslt
+        - icu4c
+        - libtextcat
+        - wget
+      when: nosysupdate is not defined or nosysupdate == false
+
+    - name: Boost with Python 3
+      command: brew install boost --with-python3 boost-python
+      when: nosysupdate is not defined or nosysupdate == false
+
+    - name: Checking whether ansible is already available
+      shell: which ansible
+      register: have_ansible
+      failed_when: have_ansible.rc == 127
+
