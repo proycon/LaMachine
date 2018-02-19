@@ -105,3 +105,17 @@
           path: "{{ source_path }}"
           state: directory
 
+    - name: Installing ansible locally (conda)
+      command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} -c conda-forge ansible"
+      when: prefer_local and localenv_type == "conda"
+
+    - name: Installing ansible locally (virtualenv)
+      pip:
+          name: "ansible"
+          state: latest
+          virtualenv: "{{ local_prefix }}"
+      when: prefer_local and localenv_type == "virtualenv"
+
+
+
+

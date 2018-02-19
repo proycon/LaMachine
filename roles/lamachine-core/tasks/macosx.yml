@@ -21,14 +21,10 @@
         - icu4c
         - libtextcat
         - wget
-      when: nosysupdate is not defined or nosysupdate == false
+        - ansible
+      when: (nosysupdate is not defined or nosysupdate == false) and not prefer_local
 
     - name: Boost with Python 3
       command: brew install boost --with-python3 boost-python
-      when: nosysupdate is not defined or nosysupdate == false
-
-    - name: Checking whether ansible is already available
-      shell: which ansible
-      register: have_ansible
-      failed_when: have_ansible.rc == 127
+      when: (nosysupdate is not defined or nosysupdate == false) and not prefer_local
 
