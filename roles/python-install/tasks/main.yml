@@ -24,9 +24,16 @@
   command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} {{conda_package}}"
   when: (version == "stable" or (version == "development" and github_user == "")) and localenv_type == "conda" and conda_package != ""
 
-- name: "{{pip_package}} - Installing latest release from the Python Package Index (stable)"
+- name: "{{pip_package}} - Installing latest release from the Python Package Index (stable, virtualenv)"
   pip:
        name: "{{pip_package}}"
        state: latest
        virtualenv: "{{local_prefix}}"
-  when: (version == "stable" or (version == "development" and github_user == "")) and not (localenv_type == "conda" and conda_package != "") and pip_package != ""
+  when: (version == "stable" or (version == "development" and github_user == "")) and localenv_type != "conda" and conda_package != "" and pip_package != ""
+
+- name: "{{pip_package}} - Installing latest release from the Python Package Index (stable, conda)"
+  pip:
+       name: "{{pip_package}}"
+       state: latest
+       executable: "{{local_prefix}}/bin/pip"
+  when: (version == "stable" or (version == "development" and github_user == "")) and localenv_type == "conda"  and conda_package != "" and pip_package != ""
