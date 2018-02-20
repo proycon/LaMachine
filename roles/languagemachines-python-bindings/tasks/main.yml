@@ -19,9 +19,19 @@
           - { github_user: "proycon", github_repo: "colibri-core", pip_package: "colibricore", conda_package: ""}
 
     - name: Testing Python bindings
-      shell: "source {{homedir}}/bin/lamachine-{{ conf_name }}.activate && python -c 'import {{ item }}'"
+      shell: |
+          if [ {{prefer_global|int}} -ne 1 ]; then
+              source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
+          fi
+          hash -r  #clear cache
+          echo "PATH=$PATH">&2
+          echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH">&2
+          echo "VIRTUAL_ENV=$VIRTUAL_ENV">&2
+          echo "PYTHONPATH=$PYTHONPATH">&2
+          python -c "import {{ item }}"
       args:
           executable: /bin/bash
+      with_items:
       with_items:
           - ucto
           - timbl

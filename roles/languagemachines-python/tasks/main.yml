@@ -15,6 +15,23 @@
           - { github_user: "proycon", github_repo: "babelpy", pip_package: "babelpy", conda_package: "" }
           - { github_user: "proycon", github_repo: "babelente", pip_package: "babelente", conda_package: "" }
 
+    - name: Testing Python packages
+      shell: |
+          if [ {{prefer_global|int}} -ne 1 ]; then
+              source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
+          fi
+          hash -r  #clear cache
+          echo "PATH=$PATH">&2
+          echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH">&2
+          echo "VIRTUAL_ENV=$VIRTUAL_ENV">&2
+          echo "PYTHONPATH=$PYTHONPATH">&2
+          python -c "import {{ item }}"
+      args:
+          executable: /bin/bash
+      with_items:
+          - pynlpl.formats.folia
+          - pynlpl
+
     - name: Testing whether python-based tools start
       shell: |
           if [ {{prefer_global|int}} -ne 1 ]; then
@@ -37,21 +54,3 @@
           - foliaquery
           - babelente
 
-    - name: Testing Python packages
-      shell: |
-          if [ {{prefer_global|int}} -ne 1 ]; then
-              source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
-          fi
-          hash -r  #clear cache
-          echo "PATH=$PATH">&2
-          echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH">&2
-          echo "VIRTUAL_ENV=$VIRTUAL_ENV">&2
-          echo "PYTHONPATH=$PYTHONPATH">&2
-          python -c "{{ item }}"
-      args:
-          executable: /bin/bash
-      with_items:
-          - ucto
-          - timbl
-          - frog
-          - colibricore
