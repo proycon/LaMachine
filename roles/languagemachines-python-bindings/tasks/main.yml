@@ -22,7 +22,7 @@
           if [ {{prefer_global|int}} -ne 1 ]; then
               source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
           fi
-          {{local_prefix}}/python setup.py install --prefix={{local_prefix}}
+          {{local_prefix}}/bin/python setup.py install --prefix={{local_prefix}}
       args:
           executable: /bin/bash
           chdir: "{{source_path}}/colibri-core" #always installed from source
