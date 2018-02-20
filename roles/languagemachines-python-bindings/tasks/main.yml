@@ -18,12 +18,13 @@
           - { github_user: "proycon", github_repo: "python-frog", pip_package: "python-frog", conda_package: ""}
 
     - name: Installing Colibri Core Python Binding
-      shell:|
+      shell: |
           if [ {{prefer_global|int}} -ne 1 ]; then
               source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
           fi
           {{local_prefix}}/python setup.py install --prefix={{local_prefix}}
       args:
+          executable: /bin/bash
           chdir: "{{source_path}}/colibri-core" #always installed from source
 
     - name: Testing Python bindings
