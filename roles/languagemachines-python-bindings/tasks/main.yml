@@ -42,7 +42,6 @@
       args:
           executable: /bin/bash
       with_items:
-      with_items:
           - ucto
           - timbl
           - frog
