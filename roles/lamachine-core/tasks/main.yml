@@ -106,8 +106,12 @@
           state: directory
 
     - name: Installing ansible locally (conda)
-      command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} -c conda-forge ansible"
+      pip:
+          name: "ansible"
+          state: latest
+          executable: "{{ local_prefix }}/bin/pip"
       when: prefer_local and localenv_type == "conda"
+      #command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} -c conda-forge ansible" #conda version is too old!
 
     - name: Installing ansible locally (virtualenv)
       pip:
