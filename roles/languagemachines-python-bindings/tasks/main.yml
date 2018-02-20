@@ -51,6 +51,6 @@
           changed_when: test.rc != 0
       rescue:
          - debug: msg="Package list at time of failure..."
-         - shell: "{{local_prefix}}/conda list"
+         - shell: "{{local_prefix}}/bin/conda list"
            when: localenv_type == "conda" and not prefer_global
 
