@@ -15,9 +15,9 @@
           - { github_user: "proycon", github_repo: "babelpy", pip_package: "babelpy", conda_package: "" }
           - { github_user: "proycon", github_repo: "babelente", pip_package: "babelente", conda_package: "" }
 
-    - name: Testing Python packages
-      block:
-        - shell: |
+    - block:
+        - name: Testing Python packages
+          shell: |
               if [ {{prefer_global|int}} -ne 1 ]; then
                   source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
               fi
@@ -42,8 +42,8 @@
         - shell: "{{local_prefix}}/bin/conda list"
           when: localenv_type == "conda" and not prefer_global
 
-    - name: Testing whether python-based tools start
-      block:
+    - block:
+        - name: Testing whether python-based tools start
         - shell: |
               if [ {{prefer_global|int}} -ne 1 ]; then
                   source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
