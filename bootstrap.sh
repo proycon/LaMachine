@@ -632,14 +632,16 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     rc=$?
     echo "All done, to run LaMachine next time, just run: bash $BASEDIR/lamachine-$LM_NAME.activate"
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
-    echo " ANSIBLE_OPTIONS: $ANSIBLE_OPTIONS" >&2
-    echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
     if [ "$SUDO" -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
         ASKSUDO="--ask-become-pass"
     else
         ASKSUDO=""
     fi
-    if ! ansible-playbook $ASKSUDO -i $SOURCEDIR/hosts.$LM_NAME install-$LM_NAME.yml $ANSIBLE_OPTIONS; then
+    cmd="ansible-playbook $ASKSUDO -i $SOURCEDIR/hosts.$LM_NAME install-$LM_NAME.yml $ANSIBLE_OPTIONS"
+    cwd=$(pwd)
+    echo "Running ansible command from $cwd: $cmd" >&2
+    echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
+    if ! $cmd; then
         fatalerror "Local provisioning failed!"
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
