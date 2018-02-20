@@ -35,12 +35,12 @@
           with_items:
               - pynlpl
               - pynlpl.formats.folia
+          register: test
+          changed_when: test.rc != 0
       rescue:
         - debug: msg="Package list at time of failure..."
         - shell: "{{local_prefix}}/conda list"
           when: localenv_type == "conda" and not prefer_global
-      register: test
-      changed_when: test.rc != 0
 
     - name: Testing whether python-based tools start
       block:
@@ -66,10 +66,10 @@
               - folia2txt
               - foliaquery
               - babelente
+          register: test
+          changed_when: test.rc != 0
       rescue:
         - debug: msg="Package list at time of failure..."
         - shell: "{{local_prefix}}/conda list"
           when: localenv_type == "conda" and not prefer_global
-      register: test
-      changed_when: test.rc != 0
 
