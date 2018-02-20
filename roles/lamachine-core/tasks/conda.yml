@@ -51,6 +51,12 @@
           dest: "{{ansible_env.HOME}}/.conda/envs/lamachine-{{conf_name}}"
           state: link
 
+    - name: Creating conda activation directory
+      file:
+          path: "{{local_prefix}}/etc/conda/activate.d"
+          state: directory
+          recurse: yes
+
     - name: Adapting activation script for conda
       blockinfile:
         dest: "{{local_prefix}}/etc/conda/activate.d/lamachine-{{ conf_name }}.sh"
