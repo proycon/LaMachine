@@ -25,12 +25,13 @@
           echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH">&2
           echo "VIRTUAL_ENV=$VIRTUAL_ENV">&2
           echo "PYTHONPATH=$PYTHONPATH">&2
+          which python || true >&2
           python -c "import {{ item }}"
       args:
           executable: /bin/bash
       with_items:
-          - pynlpl.formats.folia
           - pynlpl
+          - pynlpl.formats.folia
 
     - name: Testing whether python-based tools start
       shell: |

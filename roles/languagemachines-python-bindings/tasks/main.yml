@@ -16,7 +16,15 @@
           - { github_user: "proycon", github_repo: "python-timbl", pip_package: "python3-timbl", conda_package: ""}
           - { github_user: "proycon", github_repo: "python-ucto", pip_package: "python-ucto", conda_package: ""}
           - { github_user: "proycon", github_repo: "python-frog", pip_package: "python-frog", conda_package: ""}
-          - { github_user: "proycon", github_repo: "colibri-core", pip_package: "colibricore", conda_package: ""}
+
+    - name: Installing Colibri Core Python Binding
+      shell:|
+          if [ {{prefer_global|int}} -ne 1 ]; then
+              source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
+          fi
+          {{local_prefix}}/python setup.py install --prefix={{local_prefix}}
+      args:
+          chdir: "{{source_path}}/colibri-core" #always installed from source
 
     - name: Testing Python bindings
       shell: |
@@ -28,6 +36,7 @@
           echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH">&2
           echo "VIRTUAL_ENV=$VIRTUAL_ENV">&2
           echo "PYTHONPATH=$PYTHONPATH">&2
+          which python || true >&2
           python -c "import {{ item }}"
       args:
           executable: /bin/bash
