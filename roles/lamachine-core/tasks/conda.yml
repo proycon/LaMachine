@@ -51,9 +51,9 @@
           dest: "{{ansible_env.HOME}}/.conda/envs/lamachine-{{conf_name}}"
           state: link
 
-     - name: "Installing Python via conda"
-       command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} python pip"
-       when: localenv_type == "conda"
+    - name: "Installing Python via conda"
+      command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} python pip"
+      when: localenv_type == "conda"
 
 
 
