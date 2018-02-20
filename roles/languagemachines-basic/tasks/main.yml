@@ -70,6 +70,8 @@
 
     - name: Testing whether tools start
       shell: "source {{homedir}}/bin/lamachine-{{ conf_name }}.activate && {{ item }} -h"
+      args:
+          executable: /bin/bash
       with_items:
           - ucto
           - timbl

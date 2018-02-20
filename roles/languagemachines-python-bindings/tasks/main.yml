@@ -20,6 +20,8 @@
 
     - name: Testing Python bindings
       shell: "source {{homedir}}/bin/lamachine-{{ conf_name }}.activate && python -c 'import {{ item }}'"
+      args:
+          executable: /bin/bash
       with_items:
           - ucto
           - timbl

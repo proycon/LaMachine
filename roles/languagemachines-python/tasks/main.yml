@@ -17,6 +17,8 @@
 
     - name: Testing whether python-based tools start
       shell: "source {{homedir}}/bin/lamachine-{{ conf_name }}.activate && {{ item }} -h"
+      args:
+          executable: /bin/bash
       with_items:
           - foliavalidator
           - clamservice
@@ -27,6 +29,8 @@
 
     - name: Testing Python packages
       shell: "source {{homedir}}/bin/lamachine-{{ conf_name }}.activate && python -c 'import {{ item }}'"
+      args:
+          executable: /bin/bash
       with_items:
           - ucto
           - timbl

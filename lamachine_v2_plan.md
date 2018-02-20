@@ -164,7 +164,7 @@ ourselves to more established solutions and to find better cohesion with what va
     * We intend to use this environment manager also in docker/vagrant flavours; offering a more unified experience, less redundancy, and less dependency on the base Linux distribution.
     * Virtualenv still remains a supported option as well!
 4) Single bootstrap command as an entry point to all possible installations
-    * Users will be able to bootstrap LaMachine v2 entirely through one bootstrap command (``curl ... | bash``), which will start an automated wizard asking the user for his choices for his LaMachine build. The script will provide a single entry point and will install necessary initial dependencies (e.g. Vagrant, Ansible). It is geared for a wide variety of unix-like platforms (including Windows 10 with the Linux Subsystem).
+    * Users will be able to bootstrap LaMachine v2 entirely through one command (``curl ... | bash``), which will start an automated wizard asking the user for his choices for his LaMachine build. The script will provide a single entry point and will install necessary initial dependencies (e.g. Vagrant, Ansible). It is geared for a wide variety of unix-like platforms (including Windows 10 with the Linux Subsystem).
 
 LaMachine will become more modular allowing users/hosters themselves to select what software they want. This results in
 the ability to build many different LaMachine instances (containers/VMs/environments) with different sets of software.
