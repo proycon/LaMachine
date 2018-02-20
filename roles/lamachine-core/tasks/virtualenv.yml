@@ -10,3 +10,13 @@
       block:
            - name: Creating bare virtualenv environment for LaMachine
              shell: "virtualenv --python=python3 {{ local_prefix }}"
+
+    - name: Adapting activation script for virtualenv
+      blockinfile:
+        dest: "{{local_prefix}}/bin/activate"
+        block: |
+          export LD_LIBRARY_PATH={{local_prefix}}/lib/
+        marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
+        insertafter: EOF
+        create: yes
+        mode: u+rwx
