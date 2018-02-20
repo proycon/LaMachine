@@ -94,5 +94,5 @@
           - folialint
           - colibri-classencode
           - colibri-patternmodeller
-
-
+      register: test
+      changed_when: test.rc != 0

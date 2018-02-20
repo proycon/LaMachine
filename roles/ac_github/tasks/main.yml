@@ -15,6 +15,7 @@
   shell: "git fetch --tags"
   args:
     chdir: "{{ source_path }}/{{repo}}"
+  changed_when: False
   when: version == "stable"
 
 - name: "{{repo}} - Get latest version tag"
@@ -22,18 +23,22 @@
   args:
     chdir: "{{ source_path }}/{{repo}}"
   register: latest_tag
+  changed_when: False
   when: version == "stable"
 
 - name: "{{repo}} - Checkout latest stable version {{latest_tag.stdout}}"
   shell: "git checkout {{latest_tag.stdout}}"
   args:
     chdir: "{{ source_path }}/{{repo}}"
+  register: gitcheckout
+  changed_when: '"Switched to branch" in gitcheckout.stdout'
   when: version == "stable"
 
 - name: "{{repo}} - Checkout latest master version of (development)"
   shell: "git checkout master && git pull"
   args:
     chdir: "{{ source_path }}/{{repo}}"
+  changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
   when: version == "development"
 
 
@@ -41,6 +46,7 @@
   shell: "git checkout {{customversion[repo]}} && git pull"
   args:
     chdir: "{{ source_path }}/{{repo}}"
+  changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
   when: version == "custom"
 
 - name: "{{repo}} - Checking whether recompilation is needed"
@@ -65,6 +71,7 @@
   args:
     chdir: "{{ source_path }}/{{repo}}"
   register: ac_github_updated
+  changed_when: ac_github_updated.stdout|int == 1
 
 - name: "{{repo}} - Compiling"
   import_role:

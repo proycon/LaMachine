@@ -38,7 +38,9 @@
       rescue:
         - debug: msg="Package list at time of failure..."
         - shell: "{{local_prefix}}/conda list"
-          when: localenv_type == "conda" and not global_env
+          when: localenv_type == "conda" and not prefer_global
+      register: test
+      changed_when: test.rc != 0
 
     - name: Testing whether python-based tools start
       block:
@@ -67,5 +69,7 @@
       rescue:
         - debug: msg="Package list at time of failure..."
         - shell: "{{local_prefix}}/conda list"
-          when: localenv_type == "conda" and not global_env
+          when: localenv_type == "conda" and not prefer_global
+      register: test
+      changed_when: test.rc != 0
 
