@@ -49,7 +49,7 @@
        when: localenv_type == "virtualenv"
      - name: "Installing generic 3rd party Python Packages via pip"
        pip:
-           name: "beautifulsoup4 flask ipython jupyter lxml matplotlib nbconvert nltk numpy pandas pycrypto pylint pymongo pymysql requests scikit-learn scipy seaborn spacy sphinx tensorflow word2vec xlsxwriter yaml gensim pillow keras"
+           name: "beautifulsoup4 flask ipython jupyter lxml matplotlib nbconvert nltk numpy pandas pycrypto pylint pymongo pymysql requests scikit-learn scipy seaborn spacy sphinx tensorflow word2vec xlsxwriter pyyaml gensim pillow keras"
            state: latest
            virtualenv: "{{ local_prefix }}"
        when: localenv_type == "virtualenv"
