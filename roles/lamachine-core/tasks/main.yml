@@ -37,6 +37,7 @@
           export LM_DATA_PATH={{data_path}}
           export LM_PATH={{lamachine_path}}
           export LM_SOURCEPATH={{source_path}}
+          unset PYTHONPATH #would most likely mess thing up otherwise
           if [ $LM_PREFER_GLOBAL -eq 0 ]; then
               if [ -d $LM_LOCAL_PREFIX ]; then
                   if [[ "$LM_LOCALENV_TYPE" == "conda" ]]; then
