@@ -3,6 +3,7 @@
       shell: which gcc || which clang
       register: whichcc
       failed_when: whichcc.rc == 127
+      changed_when: False
 
     - fail:
         msg: "No C++ compiler found! (looked for gcc or clang)"

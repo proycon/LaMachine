@@ -36,5 +36,5 @@ notifications:
 install:
     - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo /etc/init.d/postgresql stop; sudo apt remove postgresql-9.3 postgresql-9.4 postgresql-9.5 postgresql-9.6 postgresql-contrib-9.3 postgresql-contrib-9.4 postgresql-contrib-9.5 postgresql-contrib-9.6 ; fi #this is in the way and breaks apt updates for some reason
 script:
-    - bash bootstrap.sh --name $LM_NAME --flavour $FLAVOUR --version $VERSION --env $LOCALENV_TYPE --noninteractive --notshared --extra "nosysupdate=true"
+    - bash bootstrap.sh --name $LM_NAME --flavour $FLAVOUR --version $VERSION --env $LOCALENV_TYPE --noninteractive --notshared --extra "nosysupdate=true" --verbose
 
