@@ -16,7 +16,7 @@
           - { github_user: "proycon", github_repo: "babelente", pip_package: "babelente", conda_package: "" }
 
     - name: Testing Python packages
-       block:
+      block:
         - shell: |
               if [ {{prefer_global|int}} -ne 1 ]; then
                   source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
@@ -35,13 +35,13 @@
           with_items:
               - pynlpl
               - pynlpl.formats.folia
-       rescue:
+      rescue:
         - debug: msg="Package list at time of failure..."
         - shell: "{{local_prefix}}/conda list"
           when: localenv_type == "conda" and not global_env
 
     - name: Testing whether python-based tools start
-       block:
+      block:
           shell: |
               if [ {{prefer_global|int}} -ne 1 ]; then
                   source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
@@ -64,7 +64,7 @@
               - folia2txt
               - foliaquery
               - babelente
-       rescue:
+      rescue:
         - debug: msg="Package list at time of failure..."
         - shell: "{{local_prefix}}/conda list"
           when: localenv_type == "conda" and not global_env
