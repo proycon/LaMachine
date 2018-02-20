@@ -44,7 +44,7 @@
 
     - block:
         - name: Testing whether python-based tools start
-        - shell: |
+          shell: |
               if [ {{prefer_global|int}} -ne 1 ]; then
                   source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
               fi
