@@ -68,8 +68,8 @@
         create: yes
         mode: u+rwx
 
-    - name: "Installing Python via conda"
-      command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} python pip"
+    - name: Installing Python via conda
+      shell: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} python pip"
 
 
 
