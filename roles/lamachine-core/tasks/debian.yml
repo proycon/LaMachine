@@ -26,7 +26,7 @@
       apt:
         name: "{{item}}"
         state: installed
-      with_items: [pkg-config, git-core, make, gcc, g++, autoconf, automake, autoconf-archive, libtool, autotools-dev, libicu-dev, libxml2-dev, libxslt1-dev, libbz2-dev, zlib1g-dev, libtar-dev, libaspell-dev, libhunspell-dev, libboost-all-dev, python3, python3-dev, wget, curl, libexttextcat-dev, libcurl4-gnutls-dev, default-jre, poppler-utils, perl] #$pippackage $venvpackage $gnutls libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl tesseract-ocr tesseract-ocr-eng tesseract-ocr-nld tesseract-ocr-deu tesseract-ocr-deu-frak tesseract-ocr-fra poppler-utils djvulibre-bin libdjvulibre-text imagemagick
+      with_items: [pkg-config, git-core, make, gcc, g++, autoconf, automake, autoconf-archive, libtool, autotools-dev, libicu-dev, libxml2-dev, libxslt1-dev, libbz2-dev, zlib1g-dev, libtar-dev, libaspell-dev, libhunspell-dev,  python3, python3-dev, libboost-all-dev, libboost-python-dev, wget, curl, libexttextcat-dev, libcurl4-gnutls-dev, default-jre, poppler-utils, perl] #$pippackage $venvpackage $gnutls libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl tesseract-ocr tesseract-ocr-eng tesseract-ocr-nld tesseract-ocr-deu tesseract-ocr-deu-frak tesseract-ocr-fra poppler-utils djvulibre-bin libdjvulibre-text imagemagick
 
     - name: Installing python-virtualenv for Ubuntu <= 16.04
       become: true

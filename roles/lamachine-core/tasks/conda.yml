@@ -35,8 +35,8 @@
             insertafter: EOF
             create: yes
 
-    - name: Creating bare conda environment for LaMachine
-      shell: 'bash -ic "conda create -mqy -p {{local_prefix}}"'
+    - name: Creating conda environment for LaMachine
+      shell: 'bash -ic "conda install -mqy -p {{local_prefix}} python pip"'
       args:
           creates: "{{local_prefix}}"
 
@@ -67,9 +67,6 @@
         insertafter: EOF
         create: yes
         mode: u+rwx
-
-    - name: Installing Python via conda
-      shell: 'bash -ic "conda install -mqy -p {{local_prefix}} python pip"'
 
 
 
