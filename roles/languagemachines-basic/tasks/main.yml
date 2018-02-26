@@ -71,7 +71,7 @@
     - name: Running ldconfig
       become: yes
       command: ldconfig
-      when: root and not prefer_local
+      when: root and not prefer_local and ansible_distribution != 'MacOSX'
 
     - name: Testing whether tools start
       shell: |
