@@ -5,6 +5,7 @@
      Radboud University Nijmegen
 
      revision 1.1
+     https://proycon.github.io/LaMachine/
 
 ## Abstract
 
@@ -51,7 +52,7 @@ Linux, meaning software needs to be deposited in the AUR for LaMachine to instal
 repository given the software's ecosystem such as for example the Python Package Index. All Python software needs to be
 deposited in the Python Package Index and is pulled from there. This ensures that:
 
- * Well established software deployment practice is followed, i.e. the software explicitly made installable and deposited in proper repositories;
+ * Well established software deployment practice is followed, i.e. the software is explicitly made installable and deposited in proper repositories;
  * LaMachine remains just an option for convenience and nobody is forced to use it, people can pull straight from the source if they so desire;
  * We build on existing work and do not do unnecessary duplicate work.
 
@@ -62,11 +63,11 @@ We again remain committed this, but will shake up the underlying technologies in
 ### Objective #1. Modularity & Outside participation
 
 * LaMachine grows larger, it already includes 'default' software and 'optional' software, but the user should be given more choice/freedom in the matter.
-  We want to greatly expand the flexibility for administrators and users to make a more fine-tuned selection and lower
-  the threshold to third party participation in LaMachine;
-* The maintainability of the two rather monolithic shell scripts grows more complicated as more software participates;
+  We want to greatly expand the flexibility for administrators and users to make a more fine-tuned selection of software
+  to install and to lower the threshold for third party participation in LaMachine;
+* The maintainability of the two rather monolithic shell scripts grows more complicated as more software participates, they need to be replaced;
 * We want to try to reduce redundancy in LaMachine and have as much overlap as possible between different flavours and branches;
-* It should be made easier for third-party participants to participate in LaMachine without relying on a central party (aka me). It need not be a Nijmegen-only endeavour.
+* It should be made easier for third-party participants to participate in LaMachine without relying too much on a central party (aka me). It need not be a Nijmegen-only endeavour.
 * LaMachine builds on common and well-established software distribution channels and repositories, leverages their power and does not seek to replace them, but merely to combine them to make things easier and more
 accessible for the user.
 
