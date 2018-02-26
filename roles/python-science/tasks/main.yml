@@ -41,15 +41,38 @@
      - name: "Making sure all conda packages are up to date"
        command: "{{local_prefix}}/bin/conda update -mqy -p {{local_prefix}} --all"
        when: localenv_type == "conda"
-     - name: "Installing cython via pip" #has to be done before the rest cause pip is not so good at solving the dependency at build time
-       pip:
-           name: "cython"
-           state: latest
-           virtualenv: "{{ local_prefix }}"
-       when: localenv_type == "virtualenv"
      - name: "Installing generic 3rd party Python Packages via pip"
        pip:
-           name: "beautifulsoup4 flask ipython jupyter lxml matplotlib nbconvert nltk numpy pandas pycrypto pylint pymongo pymysql requests scikit-learn scipy seaborn spacy sphinx tensorflow word2vec xlsxwriter pyyaml gensim pillow keras"
+           name: "{{item}}"
            state: latest
            virtualenv: "{{ local_prefix }}"
+       with_items: #more or less in dependency order
+           - cython
+           - lxml
+           - pyyaml
+           - numpy
+           - scipy
+           - matplotlib
+           - scikit-learn
+           - beautifulsoup4
+           - flask
+           - pandas
+           - ipython
+           - jupyter
+           - nbconvert
+           - nltk
+           - pycrypto
+           - pylint
+           - pymongo
+           - pymysql
+           - requests
+           - seaborn
+           - spacy
+           - sphinx
+           - tensorflow
+           - word2vec
+           - xlsxwriter
+           - gensim
+           - pillow
+           - keras
        when: localenv_type == "virtualenv"
