@@ -46,5 +46,5 @@ install:
     - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo /etc/init.d/postgresql stop; sudo apt remove postgresql-9.3 postgresql-9.4 postgresql-9.5 postgresql-9.6 postgresql-contrib-9.3 postgresql-contrib-9.4 postgresql-contrib-9.5 postgresql-contrib-9.6 ; fi #this is in the way and breaks apt updates for some reason
     - if [[ "$EXTRAOPT" == "--noroot" ]]; then sudo apt-get install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev libgnutls-dev python3 python-virtualenv python3-dev; fi #install global dependencies manually because we pretend not to have root
 script:
-    - travis_wait 30 bash bootstrap.sh --name $LM_NAME --flavour $FLAVOUR --version $VERSION --env $LOCALENV_TYPE --noninteractive --notshared --extra "nosysupdate=true" $EXTRAOPT --verbose
+    - bash bootstrap.sh --name $LM_NAME --flavour $FLAVOUR --version $VERSION --env $LOCALENV_TYPE --noninteractive --notshared --extra "nosysupdate=true" $EXTRAOPT --verbose
 
