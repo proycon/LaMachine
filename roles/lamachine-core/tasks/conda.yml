@@ -69,7 +69,7 @@
         mode: u+rwx
 
     - name: Installing Python via conda
-      shell: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} python pip"
+      shell: 'bash -ic "conda install -mqy -p {{local_prefix}} python pip"'
 
 
 
