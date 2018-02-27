@@ -68,6 +68,16 @@
         create: yes
         mode: u+rwx
 
+    - name: Conda sanity check
+      shell: |
+          #/usr/bin/env bash
+          if [ ! -e {{local_prefix}}/bin/conda ]; then
+            echo "{{local_prefix}}/bin/conda not found">&2
+            exit 2
+          fi
+          {{local_prefix}}/bin/conda info || exit 3
+          {{local_prefix}}/bin/conda list -p {{local_prefix}} || exit 4
+      changed_when: False
 
 
 
