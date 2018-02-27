@@ -17,21 +17,10 @@
 
     - block:
         - name: Testing Python packages
-          shell: |
-              if [ {{prefer_global|int}} -ne 1 ]; then
-                  source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
-              fi
-              hash -r  #clear cache
-              echo "PATH=$PATH">&2
-              echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH">&2
-              echo "VIRTUAL_ENV=$VIRTUAL_ENV">&2
-              echo "PYTHONPATH=$PYTHONPATH">&2
-              which python >&2 || true
-              echo "PWD=$(pwd)">&2
-              echo "LM_NAME=$LM_NAME">&2
-              python -c "import {{ item }}"
+          include_role:
+              name: lamachine_run
           args:
-              executable: /bin/bash
+              command: "python -c 'import {{ item }}'"
           with_items:
               - pynlpl
               - pynlpl.formats.folia
@@ -44,21 +33,10 @@
 
     - block:
         - name: Testing whether python-based tools start
-          shell: |
-              if [ {{prefer_global|int}} -ne 1 ]; then
-                  source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
-              fi
-              hash -r  #clear cache
-              echo "PATH=$PATH">&2
-              echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH">&2
-              echo "VIRTUAL_ENV=$VIRTUAL_ENV">&2
-              echo "PYTHONPATH=$PYTHONPATH">&2
-              echo "PWD=$(pwd)">&2
-              which python >&2 || true
-              which {{item}}>&2 || true
-              {{ item }} -h
+          include_role:
+              name: lamachine_run
           args:
-              executable: /bin/bash
+              command: "{{ item }} -h"
           with_items:
               - foliavalidator
               - clamservice

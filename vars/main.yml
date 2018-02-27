@@ -1,0 +1,7 @@
+---
+- localenv:
+       VIRTUAL_ENV: "{{local_prefix}}"
+       PATH: "{{local_prefix}}/bin:{{ansible_env.PATH}}"
+       LD_LIBRARY_PATH: "{{local_prefix}}/lib:{{ansible_env.LD_LIBRARY_PATH}}"
+
+

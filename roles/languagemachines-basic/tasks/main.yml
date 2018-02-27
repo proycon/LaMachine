@@ -74,17 +74,10 @@
       when: root and not prefer_local and ansible_distribution != 'MacOSX'
 
     - name: Testing whether tools start
-      shell: |
-          if [ {{prefer_global|int}} -ne 1 ]; then
-              source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
-          fi
-          hash -r  #clear cache
-          echo "PATH=$PATH">&2
-          echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH">&2
-          echo "VIRTUAL_ENV=$VIRTUAL_ENV">&2
-          {{ item }} -h
-      args:
-          executable: /bin/bash
+      include_role:
+          name: lamachine_run
+      vars:
+          command: "{{item}} -h"
       with_items:
           - ucto
           - timbl

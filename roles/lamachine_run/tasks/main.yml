@@ -1,0 +1,27 @@
+---
+    - name: "Running {{command}}"
+      shell: |
+          if [ {{prefer_global|int}} -ne 1 ]; then
+              if [ -e {{homedir}}/bin/lamachine-{{ conf_name }}.activate ]; then
+                  echo "Activation script {{homedir}}/bin/lamachine-{{ conf_name }}.activate not found! ">&2
+                  exit 2
+              else
+                  source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
+              fi
+          fi
+          hash -r  #clear cache
+          echo "Running: {{command}}">&2
+          echo "Run environment:">&2
+          echo "    LM_NAME=$LM_NAME">&2
+          echo "    PATH=$PATH">&2
+          echo "    LD_LIBRARY_PATH=$LD_LIBRARY_PATH">&2
+          echo "    VIRTUAL_ENV=$VIRTUAL_ENV">&2
+          echo "    PYTHONPATH=$PYTHONPATH">&2
+          {{command}}
+      args:
+          executable: /bin/bash
+          chdir: "{% if chdir is defined %}{{ chdir }}{% else %}{{homedir}}{% endif %}"
+
+
+
+

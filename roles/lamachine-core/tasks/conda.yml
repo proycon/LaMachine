@@ -23,20 +23,9 @@
                  command: bash "{{ansible_env.HOME}}/miniconda-installer.sh" -b -p "{{ansible_env.HOME}}/miniconda"
                  args:
                     creates: '{{ansible_env.HOME}}/bin/conda'
-         #TODO: cleanup installer?
-        - name: Adding main miniconda path to the user's .bashrc
-          blockinfile:
-            dest: "{{ ansible_env.HOME }}/.bashrc"
-            block: |
-              if [ -d ~/miniconda/bin ]; then
-                  export PATH="~/miniconda/bin/:$PATH"
-              fi
-            marker: '# {mark} LAMACHINE MANAGED BLOCK - conda path'
-            insertafter: EOF
-            create: yes
 
     - name: Creating conda environment for LaMachine
-      shell: 'bash -ic "conda install -mqy -p {{local_prefix}} python pip"'
+      shell: 'PATH="~/bin:$PATH" conda install -mqy -p {{local_prefix}} python pip"'
       args:
           creates: "{{local_prefix}}"
 
@@ -71,12 +60,15 @@
     - name: Conda sanity check
       shell: |
           #/usr/bin/env bash
+          hash -r #clear cache
           if [ ! -e {{local_prefix}}/bin/conda ]; then
-            echo "{{local_prefix}}/bin/conda not found">&2
+            du -ah {{local_prefix}}>&2
+            echo "ERROR: {{local_prefix}}/bin/conda not found .. Debug listing above">&2
             exit 2
           fi
           {{local_prefix}}/bin/conda info || exit 3
           {{local_prefix}}/bin/conda list -p {{local_prefix}} || exit 4
+      environment: "{{localenv}}"
       changed_when: False
 
 
