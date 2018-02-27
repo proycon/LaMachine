@@ -21,6 +21,8 @@
       args:
           executable: /bin/bash
           chdir: "{% if chdir is defined %}{{ chdir }}{% else %}{{homedir}}{% endif %}"
+      register: lamachine_run
+      changed_when: 'sideeffects is defined and sideeffects == True'
 
 
 
