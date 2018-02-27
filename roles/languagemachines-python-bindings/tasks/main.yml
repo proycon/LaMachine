@@ -23,6 +23,7 @@
       vars:
           command: "python setup.py install --prefix={{local_prefix}}"
           chdir: "{{source_path}}/colibri-core" #always installed from source
+          sideeffects: True
 
     - block:
         - name: Testing Python bindings
