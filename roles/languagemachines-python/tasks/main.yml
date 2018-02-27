@@ -19,7 +19,7 @@
         - name: Testing Python packages
           include_role:
               name: lamachine_run
-          args:
+          vars:
               command: "python -c 'import {{ item }}'"
           with_items:
               - pynlpl
@@ -35,7 +35,7 @@
         - name: Testing whether python-based tools start
           include_role:
               name: lamachine_run
-          args:
+          vars:
               command: "{{ item }} -h"
           with_items:
               - foliavalidator
