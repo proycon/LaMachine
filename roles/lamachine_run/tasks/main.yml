@@ -3,10 +3,10 @@
       shell: |
           if [ {{prefer_global|int}} -ne 1 ]; then
               if [ -e {{homedir}}/bin/lamachine-{{ conf_name }}.activate ]; then
+                  source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
+              else
                   echo "Activation script {{homedir}}/bin/lamachine-{{ conf_name }}.activate not found! ">&2
                   exit 2
-              else
-                  source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
               fi
           fi
           hash -r  #clear cache
