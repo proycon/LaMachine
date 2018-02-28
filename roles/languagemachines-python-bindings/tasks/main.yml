@@ -18,6 +18,13 @@
           - { github_user: "proycon", github_repo: "python-ucto", pip_package: "python-ucto"}
           - { github_user: "proycon", github_repo: "python-frog", pip_package: "python-frog"}
 
+
+    - name: Triggering manual mode for Colibri Core #otherwise setup.py will attempt to recompile c++ sources (and fail on a permission issue)
+      file:
+        path: "{{source_path}}/colibri-core/manual"
+        state: touch
+      changed_when: False
+
     - name: Installing Colibri Core Python Binding
       include_role:
           name: lamachine_run
