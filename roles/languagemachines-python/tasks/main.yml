@@ -15,39 +15,29 @@
           - { github_user: "proycon", github_repo: "babelpy", pip_package: "babelpy", conda_package: "" }
           - { github_user: "proycon", github_repo: "babelente", pip_package: "babelente", conda_package: "" }
 
-    - block:
-        - name: Testing Python packages
-          include_role:
-              name: lamachine_run
-          vars:
-              command: "python -c 'import {{ item }}'"
-          with_items:
-              - pynlpl
-              - pynlpl.formats.folia
-          register: test
-          changed_when: test.rc != 0
-      rescue:
-        - name: "Package list at time of failure"
-          shell: "{{local_prefix}}/bin/conda -p {{local_prefix}} list"
-          when: localenv_type == "conda" and not prefer_global
+    - name: Testing Python packages
+      include_role:
+          name: lamachine_run
+      vars:
+          command: "python -c 'import {{ item }}'"
+      with_items:
+          - pynlpl
+          - pynlpl.formats.folia
+      register: test
+      changed_when: test.rc != 0
 
-    - block:
-        - name: Testing whether python-based tools start
-          include_role:
-              name: lamachine_run
-          vars:
-              command: "{{ item }} -h"
-          with_items:
-              - foliavalidator
-              - clamservice
-              - folia2html
-              - folia2txt
-              - foliaquery
-              - babelente
-          register: test
-          changed_when: test.rc != 0
-      rescue:
-        - name: "Package list at time of failure"
-          shell: "{{local_prefix}}/bin/conda -p {{local_prefix}} list"
-          when: localenv_type == "conda" and not prefer_global
+    - name: Testing whether python-based tools start
+      include_role:
+          name: lamachine_run
+      vars:
+          command: "{{ item }} -h"
+      with_items:
+          - foliavalidator
+          - clamservice
+          - folia2html
+          - folia2txt
+          - foliaquery
+          - babelente
+      register: test
+      changed_when: test.rc != 0
 
