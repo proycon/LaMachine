@@ -2,6 +2,6 @@
 localenv:
      VIRTUAL_ENV: "{{local_prefix}}"
      PATH: "{{local_prefix}}/bin:{{ansible_env.PATH}}"
-     LD_LIBRARY_PATH: "{{local_prefix}}/lib:{{ansible_env.LD_LIBRARY_PATH}}"
+     LD_LIBRARY_PATH: "{{local_prefix}}/lib:{% if 'LD_LIBRARY_PATH' in ansible_env %}{{ansible_env.LD_LIBRARY_PATH}}{% else %}/usr/lib{% endif %}"
 
 
