@@ -29,7 +29,7 @@
           #!/bin/bash
           echo "PATH=$PATH">&2
           which conda>&2
-          conda create -mqy -p {{local_prefix}} python pip
+          conda create -mqy -p {{local_prefix}} conda python pip
       args:
           creates: "{{local_prefix}}"
       environment:
