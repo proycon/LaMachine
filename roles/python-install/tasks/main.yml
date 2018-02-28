@@ -15,7 +15,7 @@
       args:
         chdir: "{{ source_path }}/{{github_repo}}"
     - name: "{{github_repo}} - Installing python package"
-      shell: "python setup.py install"
+      shell: "python {{setuppy}} install"
       args:
         chdir: "{{ source_path }}/{{github_repo}}"
   environment: "{{localenv}}"

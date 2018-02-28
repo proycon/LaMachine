@@ -11,11 +11,12 @@
         github_user: "{{item.github_user}}"
         github_repo: "{{item.github_repo}}"
         pip_package: "{{item.pip_package}}"
-        conda_package: "{{item.conda_package}}"
+        conda_package: "{% if 'conda_package' in item %}{{item.conda_package}}{% else %}{% endif %}"
+        setuppy: "{% if 'setuppy' in item %}{{ item.setuppy }}{% else %}setup.py{% endif %}"
       with_items:
-          - { github_user: "proycon", github_repo: "python-timbl", pip_package: "python3-timbl", conda_package: ""}
-          - { github_user: "proycon", github_repo: "python-ucto", pip_package: "python-ucto", conda_package: ""}
-          - { github_user: "proycon", github_repo: "python-frog", pip_package: "python-frog", conda_package: ""}
+          - { github_user: "proycon", github_repo: "python-timbl", pip_package: "python3-timbl", setuppy: "setup3.py" }
+          - { github_user: "proycon", github_repo: "python-ucto", pip_package: "python-ucto"}
+          - { github_user: "proycon", github_repo: "python-frog", pip_package: "python-frog"}
 
     - name: Installing Colibri Core Python Binding
       include_role:
