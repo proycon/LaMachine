@@ -1,7 +1,14 @@
----
+
     - block:
         - name: "Running {{command}}"
           shell: |
+              if [[ "$VIRTUAL_ENV" == *"lamachine-controller"* ]]; then
+                  echo "(Deactivating LaMachine controller)">&2
+                  deactivate
+              fi
+              if [[ "$PATH" == *"lamachine-controller"* ]]; then
+                    export PATH=${PATH/%:lamachine-controller/DISABLED/} #extra fallback to ensure the controller environment is not active
+              fi
               if [ {{prefer_global|int}} -ne 1 ]; then
                   if [ -e {{homedir}}/bin/lamachine-{{ conf_name }}.activate ]; then
                       source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
