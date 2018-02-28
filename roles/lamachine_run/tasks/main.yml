@@ -31,6 +31,8 @@
         - name: "Package list at time of failure when running {{command}}"
           shell: "{{local_prefix}}/bin/conda list -p {{local_prefix}}"
           when: localenv_type == "conda" and not prefer_global
+        - fail:
+             msg: "Delayed failure after running {{command}}"
 
 
 
