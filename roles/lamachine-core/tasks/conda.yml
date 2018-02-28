@@ -25,9 +25,15 @@
                     creates: '{{ansible_env.HOME}}/bin/conda'
 
     - name: Creating conda environment for LaMachine
-      shell: 'PATH="~/bin:~/miniconda/bin:$PATH" conda install -mqy -p {{local_prefix}} python pip'
+      shell: |
+          #!/bin/bash
+          echo "PATH=$PATH">&2
+          which conda>&2
+          conda install -mqy -p {{local_prefix}} python pip
       args:
           creates: "{{local_prefix}}"
+      environment:
+          PATH: "{{ansible_env.HOME}}/bin:{{ansible_env.HOME}}/miniconda/bin:{{local_prefix}}/bin:{{ansible_env.PATH}}"
 
     - name: Create .conda directory for user
       file:
