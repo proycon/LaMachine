@@ -10,16 +10,22 @@
  - name: "Installing R globally"
    block:
        - name: Install R globally (Debian/Ubuntu)
+         become: yes
+         become_user: root
          apt:
              name: r-recommended
              state: latest
          when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
        - name: Install R globally (RedHat)
+         become: yes
+         become_user: root
          yum:
              name: R
              state: latest
          when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Fedora"
        - name: Install R globally (Arch)
+         become: yes
+         become_user: root
          pacman:
              name: r
              state: latest
