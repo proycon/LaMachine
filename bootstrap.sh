@@ -137,6 +137,9 @@ echo "Looking for dependencies..."
 if ! which git; then
     NEED+=("git")
 fi
+if ! which pip; then
+    NEED+=("pip")
+fi
 if ! which virtualenv; then
     NEED+=("virtualenv")
 fi
@@ -452,6 +455,31 @@ for package in $NEED; do
             echo "No automated installation possible on your OS."
             echo "Please install git manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
         fi
+    elif [ "$package" = "pip" ]; then
+        if [ "$OS" = "debian" ]; then
+            cmd="sudo apt install python-pip"
+        elif [ "$OS" = "redhat" ]; then
+            cmd="sudo yum install python-pip"
+        elif [ "$OS" = "arch" ]; then
+            cmd="sudo pacman -Sy python-pip"
+        elif [ "$OS" = "mac" ]; then
+            cmd="sudo easy_install pip"
+        fi
+        echo "Pip is required for LaMachine but not installed yet. ${bold}Install now?${normal}"
+        if [ ! -z "$cmd" ]; then
+            while true; do
+                echo -n "${bold}Run:${normal} $cmd ? [yn]"
+                read yn
+                case $yn in
+                    [Yy]* ) $cmd || fatalerror "Pip installation failed"; break;;
+                    [Nn]* ) echo "Please install pip manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
+                    * ) echo "Please answer yes or no.";;
+                esac
+            done
+        else
+            echo "No automated installation possible on your OS."
+            echo "Please install pip manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
+        fi
     elif [ "$package" = "virtualenv" ]; then
         if [ "$OS" = "debian" ]; then
             cmd="sudo apt install python-virtualenv"
@@ -460,7 +488,7 @@ for package in $NEED; do
         elif [ "$OS" = "arch" ]; then
             cmd="sudo pacman -Sy python-virtualenv"
         elif [ "$OS" = "mac" ]; then
-            cmd="sudo easy_install pip && sudo pip install virtualenv"
+            cmd="sudo pip install virtualenv"
         else
             cmd=""
         fi
