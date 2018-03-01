@@ -16,6 +16,18 @@
           path: "{{homedir}}/bin"
           state: directory
 
+    - name: Ensure home/bin is in $PATH by default
+      blockinfile:
+        dest: "{{homedir}}/.bashrc"
+        block: |
+          if [[ "$PATH" == *"{{homedir}}/bin"* ]]; then
+              export PATH=~/bin:$PATH #extra fallback to ensure the controller environment is not active
+          fi
+        marker: '# {mark} LAMACHINE MANAGED BLOCK - path'
+        insertafter: EOF
+        create: yes
+        mode: u+rwx
+
     - import_tasks: conda.yml
       when: (localenv_type == 'conda')
 
