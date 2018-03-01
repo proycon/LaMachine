@@ -85,6 +85,12 @@ fi
 NEED=() #list of needed packages
 if [ "${OSTYPE//[0-9.]/}" = "darwin" ]; then
     OS="mac"
+    if which xcode-select; then
+        echo -n "${bold}LaMachine requires XCode, please follow the instructions in the pop-up dialog and press ENTER here when that installation is completed${normal}"
+        if xcode-select --install; then
+            read choice
+        fi
+    fi
 else
     OS="unknown"
 fi
