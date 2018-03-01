@@ -30,7 +30,10 @@
           #!/bin/bash
           if [[ ! -z "$VIRTUAL_ENV" ]] && [[ "$VIRTUAL_ENV" != "$LM_LOCAL_PREFIX" ]]; then
               #We seem to already be in a virtualenv (possibly the LaMachine controller!) deactivate it first
-              deactivate
+              if which deactivate >/dev/null; then
+                  echo "(Deactivating $VIRTUAL_ENV first)"
+                  deactivate
+              fi
           fi
           if [[ "$PATH" == *"lamachine-controller"* ]]; then
               export PATH=${PATH/lamachine-controller/DISABLED} #extra fallback to ensure the controller environment is not active
