@@ -34,7 +34,7 @@
       apt:
         name: "python-virtualenv"
         state: installed
-      when: (ansible_distribution == 'Ubuntu' and ansible_lsb.major_release|int < 16)
+      when: ((ansible_distribution|lower == 'ubuntu' or ansible_distribution|lower == 'linuxmint') and ansible_lsb.major_release|int < 16)
 
     - name: Installing python3-virtualenv
       become: true
@@ -42,7 +42,7 @@
       apt:
         name: "python3-virtualenv"
         state: installed
-      when: not (ansible_distribution == 'Ubuntu' and ansible_lsb.major_release|int < 16)
+      when: not ((ansible_distribution|lower == 'ubuntu' or ansible_distribution|lower == 'linuxmint') and ansible_lsb.major_release|int < 16)
 
     - name: Installing libgnutls for Ubuntu
       become: true
@@ -50,7 +50,7 @@
       apt:
         name: "libgnutls-dev"
         state: installed
-      when: ansible_distribution == 'Ubuntu'
+      when: ansible_distribution|lower == 'ubuntu' or ansible_distribution|lower == 'linuxmint'
 
     - name: Installing libgnutls28 for Debian
       become: true
@@ -58,7 +58,7 @@
       apt:
         name: "libgnutls28-dev"
         state: installed
-      when: ansible_distribution == 'Debian'
+      when: ansible_distribution|lower == 'debian'
 
     - name: Installing webserver
       become: true

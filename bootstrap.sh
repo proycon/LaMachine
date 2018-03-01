@@ -104,10 +104,11 @@ if [ -e /etc/os-release ]; then
 elif [ -e /etc/lsb-release ]; then
     . /etc/lsb-release
 fi
+DISTRIB_ID=$(echo "$DISTRIB_ID" | tr '[:upper:]' '[:lower:]')
 if [ "$OS" = "unknown" ]; then
     if [ "$DISTRIB_ID" = "arch" ] || [ "$DISTRIB_ID" = "debian" ] || [ "$DISTRIB_ID" = "redhat" ]; then #first class
         OS=$DISTRIB_ID
-    elif [ "$DISTRIB_ID" = "ubuntu" ] || [ "$DISTRIB_ID" = "mint" ]; then
+    elif [ "$DISTRIB_ID" = "ubuntu" ] || [ "$DISTRIB_ID" = "linuxmint" ]; then
         OS="debian"
     elif [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "fedora" ] || [ "$DISTRIB_ID" = "rhel" ]; then
         OS="redhat"

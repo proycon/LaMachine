@@ -5,4 +5,4 @@
       pacman:
          update_cache: yes
          upgrade: yes
-      when: (ansible_distribution == 'Arch') and root == True
+      when: root == True

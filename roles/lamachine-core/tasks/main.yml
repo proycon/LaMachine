@@ -1,22 +1,22 @@
 ---
     - import_tasks: debian.yml
-      when: (ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu') and root == True
+      when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distributioni|lower == "linuxmint"
 
     - import_tasks: redhat.yml
-      when: (ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS' or ansible_distribution == 'Fedora') and root == True
+      when: (ansible_distribution|lower == 'redhat' or ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'fedora') and root == True
 
     - import_tasks: arch.yml
-      when: (ansible_distribution == 'Arch') and root == True
+      when: (ansible_distribution|lower == 'arch') and root == True
 
     - import_tasks: macosx.yml
-      when: (ansible_distribution == 'MacOSX') and root == True
+      when: (ansible_distribution|lower == 'macosx') and root == True
 
     - name: Create home bin directory #even on shared systems!
       file:
           path: "{{homedir}}/bin"
           state: directory
 
-    - name: Ensure home/bin is in $PATH by default
+    - name: Ensure home/bin is in $PATH by default #necessary because this is where our activation script will reside
       blockinfile:
         dest: "{{homedir}}/.bashrc"
         block: |
