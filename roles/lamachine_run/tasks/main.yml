@@ -25,6 +25,8 @@
           args:
               executable: /bin/bash
               chdir: "{% if chdir is defined %}{{ chdir }}{% else %}{{homedir}}{% endif %}"
+          environment:
+              PATH: "{{ansible_env.HOME}}/bin:{{ansible_env.PATH}}"
           register: lamachine_run
           changed_when: 'sideeffects is defined and sideeffects == True'
       rescue:

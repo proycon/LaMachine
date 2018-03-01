@@ -46,6 +46,7 @@
           dest: "{{ansible_env.HOME}}/.conda/envs/lamachine-{{conf_name}}"
           state: link
 
+
     - name: Creating conda activation directory
       file:
           path: "{{local_prefix}}/etc/conda/activate.d"
@@ -62,6 +63,12 @@
         insertafter: EOF
         create: yes
         mode: u+rwx
+
+    - name: Linking conda activate script
+      file:
+          src: "{{local_prefix}}/bin/activate"
+          dest: "{{ansible_env.HOME}}/bin/activate"
+          state: link
 
     - name: Conda sanity check
       shell: |
