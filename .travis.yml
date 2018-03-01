@@ -25,6 +25,12 @@ matrix:
           sudo: required
           language: generic
           env:
+            - LM_NAME=travis-stable-venv-noroot FLAVOUR=local VERSION=stable LOCALENV_TYPE=virtualenv EXTRAOPT="--noroot"
+        - os: linux
+          dist: trusty
+          sudo: required
+          language: generic
+          env:
             - LM_NAME=travis-dev-conda FLAVOUR=local VERSION=development LOCALENV_TYPE=conda EXTRAOPT=""
         - os: linux
           dist: trusty
