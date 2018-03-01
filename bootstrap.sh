@@ -83,21 +83,10 @@ fi
 #               Platform Detection
 ####################################################
 NEED=() #list of needed packages
-ARCH=$(which pacman 2> /dev/null)
-DEBIAN=$(which apt 2> /dev/null)
-REDHAT=$(which yum 2> /dev/null)
-if [ -f "$ARCH" ]; then
-    OS='arch'
-elif [ -f "$DEBIAN" ]; then
-    OS='debian' #ubuntu too
-elif [ -f"$REDHAT" ]; then
-    OS='redhat'
+if [ "${OSTYPE//[0-9.]/}" = "darwin" ]; then
+    OS="mac"
 else
-    if [ ${OSTYPE//[0-9.]/} = "darwin" ]; then
-        OS="mac"
-    else
-        OS="unknown"
-    fi
+    OS="unknown"
 fi
 
 DISTRIB_ID="unknown"
@@ -108,6 +97,31 @@ if [ -e /etc/os-release ]; then
     DISTRIB_RELEASE="$VERSION_ID"
 elif [ -e /etc/lsb-release ]; then
     . /etc/lsb-release
+fi
+if [ "$OS" = "unknown" ]; then
+    if [ "$DISTRIB_ID" = "arch" ] || [ "$DISTRIB_ID" = "debian" ] || [ "$DISTRIB_ID" = "redhat" ]; then #first class
+        OS=$DISTRIB_ID
+    elif [ "$DISTRIB_ID" = "ubuntu" ] || [ "$DISTRIB_ID" = "mint" ]; then
+        OS="debian"
+    elif [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "fedora" ] || [ "$DISTRIB_ID" = "rhel" ]; then
+        OS="redhat"
+    fi
+fi
+if [ "$OS" = "unknown" ]; then
+    echo "(Fallback: Detecting OS by finding installed package manager...)">&2
+    ARCH=$(which pacman 2> /dev/null)
+    DEBIAN=$(which apt 2> /dev/null)
+    REDHAT=$(which yum 2> /dev/null)
+    if [ -e "$ARCH" ]; then
+        OS='arch'
+    elif [ -e "$DEBIAN" ]; then
+        OS='debian' #ubuntu too
+    elif [ -e "$REDHAT" ]; then
+        OS='redhat'
+    else
+        echo "Unable to detect a supported OS! Perhaps your distribution is not yet supported by LaMachine? Please contact us!">&2
+        exit 2
+    fi
 fi
 INTERACTIVE=1
 SHARED=1
