@@ -132,7 +132,7 @@ if [ "$OS" = "unknown" ]; then
 fi
 INTERACTIVE=1
 SHARED=1
-ANSIBLE_OPTIONS=""
+ANSIBLE_OPTIONS="-vv"
 
 echo "Detected OS: $OS"
 echo "Detected distribution ID: $DISTRIB_ID"
@@ -229,8 +229,11 @@ while [[ $# -gt 0 ]]; do
         shift
         shift
         ;;
-        --verbose)
-        ANSIBLE_OPTIONS="$ANSIBLE_OPTIONS -vv"
+        --quiet)
+        ANSIBLE_OPTIONS=""
+        shift
+        ;;
+        --verbose) #is default now
         shift
         ;;
         -h|--help)
