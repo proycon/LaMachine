@@ -7,11 +7,12 @@
     - name: Installing Python bindings
       include_role:
         name: python-install
-      vars: "{{item}}"
       with_items:
-          - { github_user: "proycon", github_repo: "python-timbl", pip_package: "python3-timbl", setuppy: "setup3.py" }
-          - { github_user: "proycon", github_repo: "python-ucto", pip_package: "python-ucto"}
-          - { github_user: "proycon", github_repo: "python-frog", pip_package: "python-frog"}
+          - { github_user: "proycon", github_repo: "python-timbl", pip: "python3-timbl", setup: "setup3.py" }
+          - { github_user: "proycon", github_repo: "python-ucto", pip: "python-ucto"}
+          - { github_user: "proycon", github_repo: "python-frog", pip: "python-frog"}
+      loop_control:
+          loop_var: package
 
 
     - name: Triggering manual mode for Colibri Core #otherwise setup.py will attempt to recompile c++ sources (and fail on a permission issue)

@@ -3,17 +3,14 @@
     - name: Installing Python packages
       include_role:
         name: python-install
-      vars:
-        github_user: "{{item.github_user}}"
-        github_repo: "{{item.github_repo}}"
-        pip_package: "{{item.pip_package}}"
-        conda_package: "{{item.conda_package}}"
       with_items:
-          - { github_user: "proycon", github_repo: "pynlpl", pip_package: "pynlpl", conda_package: "" }
-          - { github_user: "proycon", github_repo: "clam", pip_package: "clam", conda_package: "" }
-          - { github_user: "proycon", github_repo: "folia", pip_package: "folia-tools", conda_package: "" }
-          - { github_user: "proycon", github_repo: "babelpy", pip_package: "babelpy", conda_package: "" }
-          - { github_user: "proycon", github_repo: "babelente", pip_package: "babelente", conda_package: "" }
+          - { github_user: "proycon", github_repo: "pynlpl", pip: "pynlpl"}
+          - { github_user: "proycon", github_repo: "clam", pip: "clam"}
+          - { github_user: "proycon", github_repo: "folia", pip: "folia-tools"}
+          - { github_user: "proycon", github_repo: "babelpy", pip: "babelpy"}
+          - { github_user: "proycon", github_repo: "babelente", pip: "babelente"}
+      loop_control:
+           loop_var: package
 
     - name: Testing Python packages
       include_role:

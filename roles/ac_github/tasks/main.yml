@@ -1,56 +1,56 @@
 ---
 
-- name: "{{repo}} - Check if repository exists"
+- name: "{{package.repo}} - Check if repository exists"
   stat:
-    path: "{{ source_path }}/{{ repo }}"
+    path: "{{ source_path }}/{{package.repo}}"
   register: repo_path
 
-- name: "{{repo}} - Git clone"
-  shell: "git clone https://github.com/{{user}}/{{repo}}"
+- name: "{{package.repo}} - Git clone"
+  shell: "git clone https://package.com/{{package.user}}/{{package.repo}}"
   args:
     chdir: "{{ source_path }}"
   when: not repo_path.stat.exists
 
-- name: "{{repo}} - Get new git tags from remote"
+- name: "{{package.repo}} - Get new git tags from remote"
   shell: "git fetch --tags"
   args:
-    chdir: "{{ source_path }}/{{repo}}"
+    chdir: "{{ source_path }}/{{package.repo}}"
   changed_when: False
   when: version == "stable"
 
-- name: "{{repo}} - Get latest version tag"
+- name: "{{package.repo}} - Get latest version tag"
   shell: "git tag -l | grep '^v' | sort -t. -k 1.2,1n -k 2,2n -k 3,3n -k 4,4n | tail -n 1 | tee .latest-release.lamachine"
   args:
-    chdir: "{{ source_path }}/{{repo}}"
+    chdir: "{{ source_path }}/{{package.repo}}"
   register: latest_tag
   changed_when: False
   when: version == "stable"
 
-- name: "{{repo}} - Checkout latest stable version {{latest_tag.stdout}}"
+- name: "{{package.repo}} - Checkout latest stable version {{latest_tag.stdout}}"
   shell: "git checkout {{latest_tag.stdout}}"
   args:
-    chdir: "{{ source_path }}/{{repo}}"
+    chdir: "{{ source_path }}/{{package.repo}}"
   register: gitcheckout
   changed_when: '"Switched to branch" in gitcheckout.stdout'
   when: version == "stable"
 
-- name: "{{repo}} - Checkout latest master version of (development)"
+- name: "{{package.repo}} - Checkout latest master version of (development)"
   shell: "git checkout master && git pull"
   args:
-    chdir: "{{ source_path }}/{{repo}}"
+    chdir: "{{ source_path }}/{{package.repo}}"
   register: gitcheckout
   changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
   when: version == "development"
 
 
-- name: "{{repo}} - Checkout custom version: {{customversion[repo]}}"
-  shell: "git checkout {{customversion[repo]}} && git pull"
+- name: "{{package.repo}} - Checkout custom version: {{customversion[package.repo]}}"
+  shell: "git checkout {{customversion[package.repo]}} && git pull"
   args:
-    chdir: "{{ source_path }}/{{repo}}"
+    chdir: "{{ source_path }}/{{package.repo}}"
   changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
   when: version == "custom"
 
-- name: "{{repo}} - Checking whether recompilation is needed"
+- name: "{{package.repo}} - Checking whether recompilation is needed"
   shell: |
       {% if ac_github_updated is defined and ac_github_updated.stdout|int == 1 %}
       #an earlier compilation was (re)performed so we update everything thereafter as well
@@ -70,22 +70,22 @@
       echo "Scheduling compilation...">&2
       echo 1
   args:
-    chdir: "{{ source_path }}/{{repo}}"
+    chdir: "{{ source_path }}/{{package.repo}}"
   register: ac_github_updated
   changed_when: ac_github_updated.stdout|int == 1
 
-- name: "{{repo}} - Compiling"
+- name: "{{package.repo}} - Compiling"
   import_role:
     name: ac_compile
   vars:
-    pkg_source_dir: "{{ source_path }}/{{ repo }}"
-    pkg_name: "{{ repo }}"
+    pkg_source_dir: "{{ source_path }}/{{package.repo}}"
+    pkg_name: "{{package.repo}}"
   when: ac_github_updated.stdout|int == 1
 
-- name: "{{repo }} - Registering current version"
+- name: "{{package.repo}} - Registering current version"
   shell: "git rev-parse HEAD > .installed-commit.lamachine"
   args:
-    chdir: "{{ source_path }}/{{ repo }}"
+    chdir: "{{ source_path }}/{{package.repo}}"
   when: ac_github_updated.stdout|int == 1 and make_install_result is defined and make_install_result.rc == 0
 
 

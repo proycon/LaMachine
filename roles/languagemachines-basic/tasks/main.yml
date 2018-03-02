@@ -41,7 +41,6 @@
         - name: Installing from LanguageMachines github
           include_role:
             name: ac_github
-          vars: "{{item}}"
           with_items:
             - repo: ticcutils
               user: LanguageMachines
@@ -70,6 +69,8 @@
               user: LanguageMachines
             - repo: toad
               user: LanguageMachines
+          loop_control:
+              loop_var: package
       when: not ((ansible_distributioni|lower == 'macosx' or ansible_distribution|lower == 'arch') and root == True and not prefer_local and version == "stable")
 
     - name: Installing Colibri Core from github
