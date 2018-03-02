@@ -1,6 +1,6 @@
 ---
 
-    - name: "Configuration Overview - Value for {{item}}"
+    - name: "Configuration Overview"
       debug:
           var: "{{item}}"
       with_items:
@@ -131,7 +131,7 @@
           if [ -d .git ]; then
             git pull
           fi
-          ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v --extra-vars "\"$@\""
+          ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v --extra-vars "$*"
         mode: u+rwx
 
     - name: Link update script

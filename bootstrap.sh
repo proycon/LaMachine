@@ -225,7 +225,7 @@ while [[ $# -gt 0 ]]; do
         shift
         ;;
         --extra) #extra ansible parameters
-        ANSIBLE_OPTIONS="$ANSIBLE_OPTIONS --extra-vars \"$2\""
+        ANSIBLE_OPTIONS="$ANSIBLE_OPTIONS --extra-vars $2"
         shift
         shift
         ;;
