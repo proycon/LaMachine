@@ -67,6 +67,9 @@
               user: LanguageMachines
             - repo: foliautils
               user: LanguageMachines
+              build_environment:
+                 TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
+                 TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/{% endif %}"
             - repo: toad
               user: LanguageMachines
           loop_control:

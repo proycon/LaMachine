@@ -1,6 +1,6 @@
 ---
 
-    - name: "Preamble - Value of parameter {{item}}"
+    - name: "Configuration Overview - Value for {{item}}"
       debug:
           var: "{{item}}"
       with_items:
