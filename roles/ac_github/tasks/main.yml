@@ -52,7 +52,7 @@
 
 - name: "{{package.repo}} - Checking whether recompilation is needed"
   shell: |
-      {% if ac_github_updated is defined and ac_github_updated.stdout|int == 1 %}
+      {% if (force is defined or ac_github_updated) is defined and ac_github_updated.stdout|int == 1 %}
       #an earlier compilation was (re)performed so we update everything thereafter as well
       echo 1 && exit 0
       echo "Compilation required because of earlier updates...">&2
@@ -68,6 +68,10 @@
         fi
       fi
       echo "Scheduling compilation...">&2
+      if [ -e Makefile ]; then
+        echo "Cleaning up old version first">&2
+        make distclean
+      fi
       echo 1
   args:
     chdir: "{{ source_path }}/{{package.repo}}"

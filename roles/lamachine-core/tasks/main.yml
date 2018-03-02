@@ -1,4 +1,29 @@
 ---
+
+    - name: "Preamble - Value of parameter {{item}}"
+      debug:
+          var: "{{item}}"
+      with_items:
+          - conf_name
+          - ansible_distribution
+          - hostname
+          - version
+          - lamachine_path
+          - localenv_type
+          - local_prefix
+          - global_prefix
+          - source_path
+          - prefer_local
+          - prefer_global
+          - root
+          - unix_user
+          - homedir
+
+    - name: Checking force option
+      debug:
+          msg: Forcing recompilation of all packages
+      when: force is defined
+
     - import_tasks: debian.yml
       when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
 
@@ -106,7 +131,7 @@
           if [ -d .git ]; then
             git pull
           fi
-          ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -vv
+          ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v --extra-vars "\"$@\""
         mode: u+rwx
 
     - name: Link update script
