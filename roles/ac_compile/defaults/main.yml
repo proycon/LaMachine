@@ -1,4 +1,3 @@
 ---
-package:
-    build_environment:
-        LM_BUILD: 1 #just a dummy
+default_environment: #just a dummy really
+    LM_BUILD: 1
