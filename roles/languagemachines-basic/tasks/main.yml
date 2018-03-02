@@ -80,8 +80,9 @@
       include_role:
         name: ac_github
       vars:
-        user: proycon
-        repo: colibri-core
+        package:
+            user: proycon
+            repo: colibri-core
 
     - name: Running ldconfig
       become: yes

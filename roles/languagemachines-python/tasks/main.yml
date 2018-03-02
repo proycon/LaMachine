@@ -4,11 +4,11 @@
       include_role:
         name: python-install
       with_items:
-          - { github_user: "proycon", github_repo: "pynlpl", pip: "pynlpl"}
-          - { github_user: "proycon", github_repo: "clam", pip: "clam"}
-          - { github_user: "proycon", github_repo: "folia", pip: "folia-tools"}
-          - { github_user: "proycon", github_repo: "babelpy", pip: "babelpy"}
-          - { github_user: "proycon", github_repo: "babelente", pip: "babelente"}
+          - { github_user: "proycon", github_repo: "pynlpl", pip: "pynlpl", conda:""}
+          - { github_user: "proycon", github_repo: "clam", pip: "clam", conda:""}
+          - { github_user: "proycon", github_repo: "folia", pip: "folia-tools", conda:""}
+          - { github_user: "proycon", github_repo: "babelpy", pip: "babelpy", conda:""}
+          - { github_user: "proycon", github_repo: "babelente", pip: "babelente", conda:""}
       loop_control:
            loop_var: package
 

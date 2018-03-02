@@ -15,7 +15,7 @@
       args:
         chdir: "{{ source_path }}/{{package.github_repo}}"
     - name: "{{package.github_repo}} - Installing python package"
-      shell: "python {{package.setup}} install"
+      shell: "python {% if 'setup' in package %}{{package.setup}}{% else %}setup.py{% endif %} install"
       args:
         chdir: "{{ source_path }}/{{package.github_repo}}"
   environment: "{{localenv}}"

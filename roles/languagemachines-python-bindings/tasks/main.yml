@@ -8,9 +8,9 @@
       include_role:
         name: python-install
       with_items:
-          - { github_user: "proycon", github_repo: "python-timbl", pip: "python3-timbl", setup: "setup3.py" }
-          - { github_user: "proycon", github_repo: "python-ucto", pip: "python-ucto"}
-          - { github_user: "proycon", github_repo: "python-frog", pip: "python-frog"}
+          - { github_user: "proycon", github_repo: "python-timbl", pip: "python3-timbl", conda: "", setup: "setup3.py" }
+          - { github_user: "proycon", github_repo: "python-ucto", pip: "python-ucto", conda: ""}
+          - { github_user: "proycon", github_repo: "python-frog", pip: "python-frog", conda: ""}
       loop_control:
           loop_var: package
 
