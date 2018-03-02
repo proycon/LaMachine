@@ -6,7 +6,7 @@
   register: repo_path
 
 - name: "{{package.repo}} - Git clone"
-  shell: "git clone https://package.com/{{package.user}}/{{package.repo}}"
+  shell: "git clone https://github.com/{{package.user}}/{{package.repo}}"
   args:
     chdir: "{{ source_path }}"
   when: not repo_path.stat.exists
