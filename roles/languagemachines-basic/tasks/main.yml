@@ -41,37 +41,48 @@
         - name: Installing from LanguageMachines github
           include_role:
             name: ac_github
-          vars:
-            user: LanguageMachines
-            repo: "{{ item }}"
+          vars: "{{item}}"
           with_items:
-            - ticcutils
-            - libfolia
-            - uctodata
-            - ucto
-            - timbl
-            - timblserver
-            - mbt
-            - mbtserver
-            - frogdata
-            - frog
-            - foliautils
-            - toad
-      when: not ((ansible_distribution == 'MacOSX' or ansible_distribution == 'Arch') and root == True and not prefer_local and version == "stable")
+            - repo: ticcutils
+              user: LanguageMachines
+            - repo: libfolia
+              user: LanguageMachines
+            - repo: uctodata
+              user: LanguageMachines
+            - repo: ucto
+              user: LanguageMachines
+              build_environment:
+                 TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
+                 TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/{% endif %}"
+            - repo: timbl
+              user: LanguageMachines
+            - repo: timblserver
+              user: LanguageMachines
+            - repo: mbt
+              user: LanguageMachines
+            - repo: mbtserver
+              user: LanguageMachines
+            - repo: frogdata
+              user: LanguageMachines
+            - repo: frog
+              user: LanguageMachines
+            - repo: foliautils
+              user: LanguageMachines
+            - repo: toad
+              user: LanguageMachines
+      when: not ((ansible_distributioni|lower == 'macosx' or ansible_distribution|lower == 'arch') and root == True and not prefer_local and version == "stable")
 
-    - name: Installing from proycon's github
+    - name: Installing Colibri Core from github
       include_role:
         name: ac_github
       vars:
         user: proycon
-        repo: "{{ item }}"
-      with_items:
-        - colibri-core
+        repo: colibri-core
 
     - name: Running ldconfig
       become: yes
       command: ldconfig
-      when: root and not prefer_local and ansible_distribution != 'MacOSX'
+      when: root and not prefer_local and ansible_distribution|lower != 'macosx'
 
     - name: Testing whether tools start
       include_role:

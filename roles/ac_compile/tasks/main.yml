@@ -16,15 +16,17 @@
   register: bootstrap_result
 
 - name: "{{pkg_name}} - Invoke configure"
-  command: "./configure --prefix={% if not root or prefer_local %}{{ local_prefix }}{% else %}{{ global_prefix }}{% endif %}"
+  command: "./configure --prefix={% if not root or prefer_local %}{{ local_prefix }}{% else %}{{ global_prefix }}{% endif %} {% if configure_opts is defined %}{{configure_opts}}{% endif %}"
   args:
       chdir: "{{ pkg_source_dir }}"
+  environment: "{{ build_environment }}"
   register: configure_result
 
 - name: "{{pkg_name}} - Invoke make"
-  command: "make"
+  command: "make {% if make_opts is defined %}{{make_opts}}{% endif %}"
   args:
        chdir: "{{ pkg_source_dir }}"
+  environment: "{{ build_environment }}"
   when: configure_result.rc == 0
   register: make_result
 
@@ -32,8 +34,9 @@
   become: "{% if root and not prefer_local %}true{% else %}false{% endif %}"
   become_user: root
   become_method: sudo
-  command: "make install"
+  command: "make install {% if make_install_opts is defined %}{{make_install_opts}}{% endif %}"
   args:
        chdir: "{{ pkg_source_dir }}"
+  environment: "{{ build_environment }}"
   register: make_install_result
   when: configure_result.rc == 0 and make_result.rc == 0
