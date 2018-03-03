@@ -1,43 +1,45 @@
 ---
-- name: "{{package.github_repo}} - Installing latest version from github (development)"
+- when: "'exclude_when' not in package or not package.exclude_when"
   block:
-    - name: "{{package.github_repo}} - Check if repository exists"
-      stat:
-        path: "{{ source_path }}/{{ package.github_repo }}"
-      register: repo_path
-    - name: "{{package.github_repo}} - Git clone"
-      shell: "git clone https://github.com/{{package.github_user}}/{{package.github_repo}}"
-      args:
-        chdir: "{{ source_path }}"
-      when: not repo_path.stat.exists
-    - name: "{{package.github_repo}} - Checkout latest master version of (development)"
-      shell: "git checkout master && git pull"
-      args:
-        chdir: "{{ source_path }}/{{package.github_repo}}"
-    - name: "{{package.github_repo}} - Installing python package"
-      shell: "python {% if 'setup' in package %}{{package.setup}}{% else %}setup.py{% endif %} install"
-      args:
-        chdir: "{{ source_path }}/{{package.github_repo}}"
-  environment: "{{localenv}}"
-  when: version == "development" and package.github_user != ""
+    - name: "{{package.github_repo}} - Installing latest version from github (development)"
+      block:
+        - name: "{{package.github_repo}} - Check if repository exists"
+          stat:
+            path: "{{ source_path }}/{{ package.github_repo }}"
+          register: repo_path
+        - name: "{{package.github_repo}} - Git clone"
+          shell: "git clone https://github.com/{{package.github_user}}/{{package.github_repo}}"
+          args:
+            chdir: "{{ source_path }}"
+          when: not repo_path.stat.exists
+        - name: "{{package.github_repo}} - Checkout latest master version of (development)"
+          shell: "git checkout master && git pull"
+          args:
+            chdir: "{{ source_path }}/{{package.github_repo}}"
+        - name: "{{package.github_repo}} - Installing python package"
+          shell: "python {% if 'setup' in package %}{{package.setup}}{% else %}setup.py{% endif %} install"
+          args:
+            chdir: "{{ source_path }}/{{package.github_repo}}"
+      environment: "{{localenv}}"
+      when: version == "development" and package.github_user != ""
 
-- name: "{{package.conda}} - Installing latest release from conda (stable)"
-  command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} {{package.conda}}"
-  environment: "{{localenv}}"
-  when: (version == "stable" or (version == "development" and package.github_user == "")) and localenv_type == "conda" and package.conda != ""
+    - name: "{{package.conda}} - Installing latest release from conda (stable)"
+      command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} {{package.conda}}"
+      environment: "{{localenv}}"
+      when: (version == "stable" or (version == "development" and package.github_user == "")) and localenv_type == "conda" and package.conda != ""
 
-- name: "{{package.pip}} - Installing latest release from the Python Package Index (stable, virtualenv)"
-  pip:
-       name: "{{package.pip}}"
-       state: latest
-       virtualenv: "{{local_prefix}}"
-  environment: "{{localenv}}"
-  when: (version == "stable" or (version == "development" and package.github_user == "")) and localenv_type != "conda" and package.pip != ""
+    - name: "{{package.pip}} - Installing latest release from the Python Package Index (stable, virtualenv)"
+      pip:
+           name: "{{package.pip}}"
+           state: latest
+           virtualenv: "{{local_prefix}}"
+      environment: "{{localenv}}"
+      when: (version == "stable" or (version == "development" and package.github_user == "")) and localenv_type != "conda" and package.pip != ""
 
-- name: "{{package.pip}} - Installing latest release from the Python Package Index (stable, conda)"
-  pip:
-       name: "{{package.pip}}"
-       state: latest
-       executable: "{{local_prefix}}/bin/pip"
-  environment: "{{localenv}}"
-  when: (version == "stable" or (version == "development" and package.github_user == "")) and localenv_type == "conda" and package.conda == "" and package.pip != ""
+    - name: "{{package.pip}} - Installing latest release from the Python Package Index (stable, conda)"
+      pip:
+           name: "{{package.pip}}"
+           state: latest
+           executable: "{{local_prefix}}/bin/pip"
+      environment: "{{localenv}}"
+      when: (version == "stable" or (version == "development" and package.github_user == "")) and localenv_type == "conda" and package.conda == "" and package.pip != ""

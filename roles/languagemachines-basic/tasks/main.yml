@@ -72,6 +72,7 @@
                  TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/{% endif %}"
             - repo: toad
               user: LanguageMachines
+              exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
           loop_control:
               loop_var: package
       when: not ((ansible_distribution|lower == 'macosx' or ansible_distribution|lower == 'arch') and root == True and not prefer_local and version == "stable")

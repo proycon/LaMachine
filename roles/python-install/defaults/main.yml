@@ -1,7 +1,0 @@
-package:
-    github_user: ""
-    github_repo: ""
-    pip: ""
-    conda: ""
-    setup: setup.py
-
