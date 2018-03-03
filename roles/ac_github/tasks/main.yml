@@ -53,7 +53,7 @@
 
     - name: "{{package.repo}} - Checking whether recompilation is needed"
       shell: |
-          {% if (force is defined) or (ac_github_updated is defined and 'stdout' in ac_github-updated and ac_github_updated.stdout|int == 1) %}
+          {% if (force is defined) or (ac_github_updated is defined and 'stdout' in ac_github_updated and ac_github_updated.stdout|int == 1) %}
           #an earlier compilation was (re)performed so we update everything thereafter as well
           echo 1 && exit 0
           echo "Compilation required because of earlier updates...">&2
