@@ -74,7 +74,7 @@
               user: LanguageMachines
           loop_control:
               loop_var: package
-      when: not ((ansible_distributioni|lower == 'macosx' or ansible_distribution|lower == 'arch') and root == True and not prefer_local and version == "stable")
+      when: not ((ansible_distribution|lower == 'macosx' or ansible_distribution|lower == 'arch') and root == True and not prefer_local and version == "stable")
 
     - name: Installing Colibri Core from github
       include_role:
