@@ -85,6 +85,10 @@
           export LM_PATH={{lamachine_path}}
           export LM_SOURCEPATH={{source_path}}
           unset PYTHONPATH #would most likely mess thing up otherwise
+          if [[ "{{ ansible_distribution|lower }}" == "macosx" ]]; then
+             export CLANG_CXX_LIBRARY="libc++" #needed for python bindings in python-install
+             export MACOSX_DEPLOYMENT_TARGET="{{ ansible_distribution_version }}"
+          fi
           if [ $LM_PREFER_GLOBAL -eq 0 ]; then
               if [ -d $LM_LOCAL_PREFIX ]; then
                   if [[ "$LM_LOCALENV_TYPE" == "conda" ]]; then
