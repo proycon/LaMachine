@@ -35,7 +35,7 @@
             - frog
             - foliautils
             - toad
-      register: arch
+          register: arch
       when: ansible_distribution == 'Arch' and root == True and locality == "global" and version == "stable" #mimicks old LaMachine v1 behaviour
 
     - name: Installation from Github
@@ -77,7 +77,7 @@
               exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
           loop_control:
               loop_var: package
-      when: arch.skipped and (macosx is not defined or macosx.skipped)
+      when: (arch is not defined or arch.skipped) and (macosx is not defined or macosx.skipped)
 
     - name: Installing Colibri Core from github
       include_role:

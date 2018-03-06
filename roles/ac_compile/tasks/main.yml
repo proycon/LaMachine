@@ -31,7 +31,7 @@
   register: make_result
 
 - name: "{{pkg_name}} - Invoke make install"
-  become: "{% if root and locality == \"global\" }true{% else %}false{% endif %}"
+  become: "{% if root and locality == \"global\" %}true{% else %}false{% endif %}"
   become_user: root
   become_method: sudo
   command: "make install {% if 'make_install_opts' in package %}{{package.make_install_opts}}{% endif %}"
