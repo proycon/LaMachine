@@ -11,7 +11,6 @@
             - python3-scipy
             - python3-flask
             - ipython3
-            - ipython3-notebook
             - python3-lxml
             - python3-matplotlib
             - python3-pandas
@@ -37,6 +36,12 @@
             - python3-mysqldb
         when: (ansible_distribution|lower == "debian" and ansible_distribution_version >= 9) or (ansible_distribution|lower == "ubuntu" and ansible_distribution_version >= 16.04) or ansible_distribution|lower == "linuxmint"
         #TODO: other distributions
+      - name: "Installing Python Notebook globally (Debian)"
+            - python3-notebook
+        when: (ansible_distribution|lower == "debian" and ansible_distribution_version >= 9)
+      - name: "Installing Python Notebook globally (Ubuntu)"
+            - ipython3-notebook
+        when: ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
 
 
 - when: locality == "local"
