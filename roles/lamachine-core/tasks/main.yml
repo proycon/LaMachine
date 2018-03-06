@@ -124,7 +124,12 @@
           if [ -d .git ]; then
             git pull
           fi
-          ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v --extra-vars "$*"
+          if [ {{root|int}} -eq 1 ]; then
+             OPTS="--ask-sudo-pass"
+          else
+             OPTS=""
+          fi
+          ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v $OPTS --extra-vars "$*"
         mode: u+rwx
 
     - name: Link update script
