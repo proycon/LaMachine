@@ -6,6 +6,7 @@
       with_items:
           - conf_name
           - ansible_distribution
+          - ansible_distribution_version
           - hostname
           - version
           - lamachine_path

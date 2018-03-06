@@ -14,15 +14,12 @@
             - ipython3-notebook
             - python3-lxml
             - python3-matplotlib
-            - python3-sklearn
             - python3-pandas
-            - python3-sklearn-pandas
             - python3-crypto
             - python3-yaml
             - python3-requests
             - python3-requests-oauthlib
             - python3-pycurl
-            - python3-mysqldb
             - python3-sphinx
             - python3-pymongo
             - python3-nltk
@@ -35,6 +32,9 @@
         with_items:
             - python3-seaborn
             - python3-keras
+            - python3-sklearn
+            - python3-sklearn-pandas
+            - python3-mysqldb
         when: (ansible_distribution|lower == "debian" and ansible_distribution_version >= 9) or (ansible_distribution|lower == "ubuntu" and ansible_distribution_version >= 16.04) or ansible_distribution|lower == "linuxmint"
         #TODO: other distributions
 
