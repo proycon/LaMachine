@@ -1,10 +1,19 @@
 ---
+    - name: Verifying if can get root
+      fail:
+          msg: "Mac OS X installation is not supported without root/sudo permission."
+      when: not root
+
+    - name: Verifying global installation is not preferred
+      fail:
+          msg: "Mac OS X installation is not supported with prefer_global"
+      when: prefer_global
+
     - name: Updating base system (Homebrew)
       homebrew:
         update_homebrew: yes
         upgrade_all: yes
       when: root == True
-
 
     - name: Installing common base packages (Homebrew)
       homebrew:
