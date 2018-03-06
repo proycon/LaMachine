@@ -131,7 +131,7 @@ if [ "$OS" = "unknown" ]; then
     fi
 fi
 INTERACTIVE=1
-LOCALITY=global
+LOCALITY=""
 ANSIBLE_OPTIONS="-v"
 
 echo "Detected OS: $OS"
@@ -217,10 +217,6 @@ while [[ $# -gt 0 ]]; do
         SUDO=0
         shift
         ;;
-        --notshared) #Machine is not shared with other non LaMachine uses
-        SHARED=0
-        shift
-        ;;
         --noninteractive) #Script mode
         INTERACTIVE=0
         shift
@@ -280,17 +276,24 @@ if [ -z "$FLAVOUR" ]; then
         echo -n "${bold}Your choice?${normal} [12345] "
         read choice
         case $choice in
-            [1]* ) FLAVOUR="local"; LOCALITY="local"; break;;
-            [2]* ) FLAVOUR="vagrant"; LOCALITY="global"; break;;
-            [3]* ) FLAVOUR="docker"; LOCALITY="global"; break;;
-            [4]* ) FLAVOUR="global"; LOCALITY="global"; break;;
-            [5]* ) FLAVOUR="remote"; LOCALITY="global"; break;;
+            [1]* ) FLAVOUR="local"; break;;
+            [2]* ) FLAVOUR="vagrant";  break;;
+            [3]* ) FLAVOUR="docker";  break;;
+            [4]* ) FLAVOUR="global";  break;;
+            [5]* ) FLAVOUR="remote"; break;;
             * ) echo "Please answer with the corresponding number of your preference..";;
         esac
     done
 fi
 
-echo
+if [ -z "$LOCALITY" ]; then
+    if [[ "$FLAVOUR" == "local" ]]; then
+        LOCALITY="local"
+    else
+        LOCALITY="global"
+    fi
+fi
+
 
 if [[ "$LOCALITY" == "local" ]]; then
     if [ -z "$LOCALENV_TYPE" ]; then
