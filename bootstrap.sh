@@ -569,8 +569,8 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
             echo "lamachine_path: \"$SOURCEDIR\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
             echo "source_path: \"$SOURCEDIR/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         else
-            echo "lamachine_path: \"$BASEDIR/lamachine-controller/LaMachine\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
-            echo "source_path: \"$BASEDIR/lamachine-controller/LaMachine/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+            echo "lamachine_path: \"$BASEDIR/lamachine-controller/$LM_NAME/LaMachine\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
+            echo "source_path: \"$BASEDIR/lamachine-controller/$LM_NAME/LaMachine/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         fi
         echo "data_path: \"$BASEDIR\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
         echo "local_prefix: \"$HOMEDIR/lamachine-$LM_NAME\" #Path to the local environment (conda/virtualenv)" >> $CONFIGFILE
@@ -616,21 +616,24 @@ fi
 fi
 
 
-
 if [ ! -d lamachine-controller ]; then
+    mkdir lamachine-controller
+fi
+
+if [ ! -d lamachine-controller/$LM_NAME ]; then
     echo "Setting up control environment..."
     if [[ "$FLAVOUR" != "docker" ]]; then
-        virtualenv --python=python2.7 lamachine-controller || "Unable to create LaMachine control environment"
-        cd lamachine-controller
+        virtualenv --python=python2.7 lamachine-controller/$LM_NAME || "Unable to create LaMachine control environment"
+        cd lamachine-controller/$LM_NAME
         source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
         pip install ansible || fatalerror "Unable to install Ansible"
         #pip install docker==2.7.0 docker-compose ansible-container[docker]
     else
-        mkdir lamachine-controller && cd lamachine-controller #no need for a virtualenv
+        mkdir lamachine-controller/$LM_NAME && cd lamachine-controller/$LM_NAME #no need for a virtualenv
     fi
 else
     echo "Reusing existing control environment..."
-    cd lamachine-controller
+    cd lamachine-controller/$LM_NAME
     source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
 fi
 
@@ -639,7 +642,7 @@ if [ -z "$SOURCEDIR" ]; then
     if [ ! -d LaMachine ]; then
         git clone $GITREPO -b $BRANCH LaMachine || fatalerror "Unable to clone LaMachine git repository"
     fi
-    SOURCEDIR=$BASEDIR/lamachine-controller/LaMachine
+    SOURCEDIR=$BASEDIR/lamachine-controller/$LM_NAME/LaMachine
     cd $SOURCEDIR
 else
     echo "Updating LaMachine git..."
