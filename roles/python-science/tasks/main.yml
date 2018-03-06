@@ -37,9 +37,17 @@
         when: (ansible_distribution|lower == "debian" and ansible_distribution_version >= 9) or (ansible_distribution|lower == "ubuntu" and ansible_distribution_version >= 16.04) or ansible_distribution|lower == "linuxmint"
         #TODO: other distributions
       - name: "Installing Python Notebook globally (Debian)"
+        apt:
+            name: "{{item}}"
+            state: latest
+        with_items:
             - python3-notebook
         when: (ansible_distribution|lower == "debian" and ansible_distribution_version >= 9)
       - name: "Installing Python Notebook globally (Ubuntu)"
+        apt:
+            name: "{{item}}"
+            state: latest
+        with_items:
             - ipython3-notebook
         when: ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
 
