@@ -24,18 +24,6 @@
           msg: Forcing recompilation of all packages
       when: force is defined
 
-    - import_tasks: debian.yml
-      when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
-
-    - import_tasks: redhat.yml
-      when: (ansible_distribution|lower == 'redhat' or ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'fedora') and root == True
-
-    - import_tasks: arch.yml
-      when: (ansible_distribution|lower == 'arch') and root == True
-
-    - import_tasks: macosx.yml
-      when: (ansible_distribution|lower == 'macosx') and root == True
-
     - name: Create home bin directory
       file:
           path: "{{homedir}}/bin"
@@ -52,6 +40,44 @@
         insertafter: EOF
         create: yes
         mode: u+rwx
+
+    - name: Set LaMachine update script
+      copy:
+        dest: "{{homedir}}/bin/lamachine-{{ conf_name }}.update"
+        content: |
+          #!/bin/bash
+          cd {{lamachine_path}}
+          if [ -d .git ]; then
+            git pull
+          fi
+          if [ {{root|int}} -eq 1 ]; then
+             OPTS="--ask-sudo-pass"
+          else
+             OPTS=""
+          fi
+          ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v $OPTS --extra-vars "$*"
+        mode: u+rwx
+
+    - name: Link update script
+      file:
+        src: "{{homedir}}/bin/lamachine-{{ conf_name }}.update"
+        dest: "{{homedir}}/bin/lamachine.update"
+        force: true
+        state: link
+
+
+    - import_tasks: debian.yml
+      when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
+
+    - import_tasks: redhat.yml
+      when: (ansible_distribution|lower == 'redhat' or ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'fedora') and root == True
+
+    - import_tasks: arch.yml
+      when: (ansible_distribution|lower == 'arch') and root == True
+
+    - import_tasks: macosx.yml
+      when: (ansible_distribution|lower == 'macosx') and root == True
+
 
     - import_tasks: conda.yml
       when: (localenv_type == 'conda')
@@ -115,29 +141,6 @@
         content: "{{hostname}} ansible_connection=local"
         force: "no"
 
-    - name: Set LaMachine update script
-      copy:
-        dest: "{{homedir}}/bin/lamachine-{{ conf_name }}.update"
-        content: |
-          #!/bin/bash
-          cd {{lamachine_path}}
-          if [ -d .git ]; then
-            git pull
-          fi
-          if [ {{root|int}} -eq 1 ]; then
-             OPTS="--ask-sudo-pass"
-          else
-             OPTS=""
-          fi
-          ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v $OPTS --extra-vars "$*"
-        mode: u+rwx
-
-    - name: Link update script
-      file:
-        src: "{{homedir}}/bin/lamachine-{{ conf_name }}.update"
-        dest: "{{homedir}}/bin/lamachine.update"
-        force: true
-        state: link
 
     - name: Backward compatibility update script
       file:
