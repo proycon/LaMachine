@@ -9,6 +9,7 @@
           msg: "Mac OS X installation is not supported with global locality, use local instead"
       when: locality == "global"
 
+
     - name: Updating base system (Homebrew)
       homebrew:
         update_homebrew: yes
@@ -30,6 +31,7 @@
         - icu4c
         - libtextcat
         - libtar
+        - python
         - wget
         - ansible
       when: nosysupdate is not defined or nosysupdate == false
@@ -38,3 +40,8 @@
       command: brew install boost --with-python3 boost-python
       when: nosysupdate is not defined or nosysupdate == false
 
+    - name: (Re)install virtualenv
+      become: yes
+      become_user: root
+      command: pip3 install virtualenv
+      when: localenv_type == "virtualenv"
