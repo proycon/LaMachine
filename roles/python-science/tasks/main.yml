@@ -1,7 +1,7 @@
 ---
 - when: locality == "global" and root
   block:
-      - name: "Installing Python packages globally (Debian/Ubuntu)"
+      - name: "Installing Python packages globally (1) (Debian/Ubuntu)"
         apt:
             name: "{{item}}"
             state: latest
@@ -14,7 +14,6 @@
             - ipython3-notebook
             - python3-lxml
             - python3-matplotlib
-            - python3-seaborn
             - python3-sklearn
             - python3-pandas
             - python3-sklearn-pandas
@@ -27,9 +26,16 @@
             - python3-sphinx
             - python3-pymongo
             - python3-nltk
-            - python3-keras
             - python3-pil
-        when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distributioni|lower == "linuxmint"
+        when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
+      - name: "Installing Python packages globally (2) (Debian/Ubuntu)" #this includes packages that may be missing from older distributions
+        apt:
+            name: "{{item}}"
+            state: latest
+        with_items:
+            - python3-seaborn
+            - python3-keras
+        when: (ansible_distribution|lower == "debian" and ansible_distribution_version >= 9) or (ansible_distribution|lower == "ubuntu" and ansible_distribution_version >= 16.04) or ansible_distribution|lower == "linuxmint"
         #TODO: other distributions
 
 
