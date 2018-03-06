@@ -1,11 +1,11 @@
 ---
 
-     - name: Installing boost-python for anaconda
-       command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} install -c meznom boost-python"
-       when: localenv_type == "conda" and locality == "local"
+    - name: Installing boost-python for anaconda
+      command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} install -c meznom boost-python"
+      when: localenv_type == "conda" and locality == "local"
 
       #command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} -c anaconda boost" #This installs all of boost, but also pulls in icu4c and causes conflicts with the homebrew version
-      #
+
     - name: Installing Python bindings
       include_role:
         name: python-install
