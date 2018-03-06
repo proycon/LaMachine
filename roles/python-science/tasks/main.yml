@@ -6,7 +6,7 @@
             name: "{{item}}"
             state: latest
         with_items:
-            - python3-cython
+            - cython3
             - python3-numpy
             - python3-scipy
             - python3-flask
