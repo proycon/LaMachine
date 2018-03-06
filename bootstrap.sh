@@ -617,13 +617,13 @@ fi
 
 
 if [ ! -d lamachine-controller ]; then
-    mkdir lamachine-controller
+    mkdir lamachine-controller || fatalerror "Unable to create directory for LaMachine control environment"
 fi
 
 if [ ! -d lamachine-controller/$LM_NAME ]; then
     echo "Setting up control environment..."
     if [[ "$FLAVOUR" != "docker" ]]; then
-        virtualenv --python=python2.7 lamachine-controller/$LM_NAME || "Unable to create LaMachine control environment"
+        virtualenv --python=python2.7 lamachine-controller/$LM_NAME || fatalerror "Unable to create LaMachine control environment"
         cd lamachine-controller/$LM_NAME
         source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
         pip install ansible || fatalerror "Unable to install Ansible"
