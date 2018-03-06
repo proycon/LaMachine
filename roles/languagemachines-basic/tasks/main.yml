@@ -54,7 +54,8 @@
               user: LanguageMachines
               build_environment:
                  TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
-                 TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/{% endif %}"
+                 TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/ -ltextcat{% endif %}"
+                 CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D HAVE_OLD_TEXTCAT{% endif %}"
             - repo: timbl
               user: LanguageMachines
             - repo: timblserver
@@ -71,7 +72,8 @@
               user: LanguageMachines
               build_environment:
                  TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
-                 TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/{% endif %}"
+                 TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/ -ltextcat{% endif %}"
+                 CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D HAVE_OLD_TEXTCAT{% endif %}"
             - repo: toad
               user: LanguageMachines
               exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
