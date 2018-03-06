@@ -131,7 +131,7 @@ if [ "$OS" = "unknown" ]; then
     fi
 fi
 INTERACTIVE=1
-SHARED=1
+LOCALITY=global
 ANSIBLE_OPTIONS="-v"
 
 echo "Detected OS: $OS"
@@ -213,6 +213,7 @@ while [[ $# -gt 0 ]]; do
         shift # past value
         ;;
         --noroot|--noadmin) #Script mode
+        LOCALITY=local
         SUDO=0
         shift
         ;;
@@ -256,7 +257,6 @@ if [ $INTERACTIVE -eq 1 ]; then
     echo
 fi
 
-LOCALITY=global
 
 if [ -z "$FLAVOUR" ]; then
     while true; do
@@ -281,10 +281,10 @@ if [ -z "$FLAVOUR" ]; then
         read choice
         case $choice in
             [1]* ) FLAVOUR="local"; LOCALITY="local"; break;;
-            [2]* ) FLAVOUR="vagrant"; break;;
-            [3]* ) FLAVOUR="docker"; break;;
-            [4]* ) FLAVOUR="global"; break;;
-            [5]* ) FLAVOUR="remote"; break;;
+            [2]* ) FLAVOUR="vagrant"; LOCALITY="global"; break;;
+            [3]* ) FLAVOUR="docker"; LOCALITY="global"; break;;
+            [4]* ) FLAVOUR="global"; LOCALITY="global"; break;;
+            [5]* ) FLAVOUR="remote"; LOCALITY="global"; break;;
             * ) echo "Please answer with the corresponding number of your preference..";;
         esac
     done
@@ -295,23 +295,23 @@ echo
 if [[ "$LOCALITY" == "local" ]]; then
     if [ -z "$LOCALENV_TYPE" ]; then
         echo "${bold}We support two forms of local user environments:${normal}"
-        echo "  1) Using conda"
+        echo "  1) Using virtualenv"
+        echo "       (originally for Python but extended by us)"
+        echo "  2) Using conda"
         echo "       provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R)"
-        echo "  2) Using virtualenv"
-        echo "       A simpler solution (originally for Python but extended by us)"
         while true; do
             echo -n "${bold}What form of local user environment do you want?${normal} [12] "
             read choice
             case $choice in
-                [1]* ) LOCALENV_TYPE=conda; break;;
-                [2]* ) LOCALENV_TYPE=virtualenv; break;;
+                [1]* ) LOCALENV_TYPE=virtualenv; break;;
+                [2]* ) LOCALENV_TYPE=conda; break;;
                 * ) echo "Please answer with the corresponding number of your preference..";;
             esac
         done
     fi
 fi
 if [ -z "$LOCALENV_TYPE" ]; then
-    LOCALENV_TYPE="conda"
+    LOCALENV_TYPE="virtualenv"
 fi
 
 if [ -z "$VERSION" ]; then
