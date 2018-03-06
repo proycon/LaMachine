@@ -2,10 +2,10 @@
 
  - name: "Installing R and generic 3rd party r packages via conda"
    command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} r"
-   when: localenv_type == "conda" and not prefer_global
+   when: localenv_type == "conda" and locality == "local"
  - name: "Making sure all conda packages are up to date"
    command: "{{local_prefix}}/bin/conda update -mqy -p {{local_prefix}} --all"
-   when: localenv_type == "conda" and not prefer_global
+   when: localenv_type == "conda" and locality == "local"
 
  - name: "Installing R globally"
    block:
@@ -30,4 +30,4 @@
              name: r
              state: latest
          when: ansible_distribution == "Arch"
-   when: root and (prefer_global or localenv_type != "conda")
+   when: root and locality == "global"

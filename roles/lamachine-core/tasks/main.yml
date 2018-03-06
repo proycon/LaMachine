@@ -13,8 +13,7 @@
           - local_prefix
           - global_prefix
           - source_path
-          - prefer_local
-          - prefer_global
+          - locality
           - root
           - unix_user
           - homedir
@@ -36,7 +35,7 @@
     - import_tasks: macosx.yml
       when: (ansible_distribution|lower == 'macosx') and root == True
 
-    - name: Create home bin directory #even on shared systems!
+    - name: Create home bin directory
       file:
           path: "{{homedir}}/bin"
           state: directory
@@ -75,11 +74,8 @@
           if [[ "$PATH" == *"lamachine-controller"* ]]; then
               export PATH=${PATH/lamachine-controller/DISABLED} #extra fallback to ensure the controller environment is not active
           fi
-          export LM_PREFER_LOCAL={{prefer_local|int}}
-          export LM_PREFER_GLOBAL={{prefer_global|int}}
-          export LM_SHARED={{shared|int}}
+          export LM_LOCALITY={{locality}}
           export LM_GLOBAL_PREFIX={{global_prefix}}
-          export LM_LOCAL_PREFIX={{local_prefix}}
           export LM_LOCALENV_TYPE={{localenv_type}}
           export LM_DATA_PATH={{data_path}}
           export LM_PATH={{lamachine_path}}
@@ -89,7 +85,8 @@
              export CLANG_CXX_LIBRARY="libc++" #needed for python bindings in python-install
              export MACOSX_DEPLOYMENT_TARGET="{{ ansible_distribution_version }}"
           fi
-          if [ $LM_PREFER_GLOBAL -eq 0 ]; then
+          if [[ "$LM_LOCALITY" == "local" ]]; then
+              export LM_LOCAL_PREFIX={{local_prefix}}
               if [ -d $LM_LOCAL_PREFIX ]; then
                   if [[ "$LM_LOCALENV_TYPE" == "conda" ]]; then
                       source activate lamachine-{{conf_name}}
@@ -110,15 +107,6 @@
          dest: "{{homedir}}/bin/lamachine.activate"
          state: link
 
-    - name: Automatic local user environment activation
-      blockinfile:
-        dest: "{{homedir}}/.bashrc"
-        block: |
-            source {{homedir}}/bin/lamachine-{{conf_name}}.activate
-        marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
-        insertafter: EOF
-        create: yes
-      when: not shared
 
     - name: Create local Ansible hosts file
       copy:
@@ -162,14 +150,14 @@
           name: "ansible"
           state: latest
           executable: "{{ local_prefix }}/bin/pip"
-      when: not prefer_global and localenv_type == "conda"
+      when: locality == "local" and localenv_type == "conda"
 
     - name: Installing ansible locally (virtualenv)
       pip:
           name: "ansible"
           state: latest
           virtualenv: "{{ local_prefix }}"
-      when: not prefer_global and localenv_type == "virtualenv"
+      when: locality == "local" and localenv_type == "virtualenv"
 
     - import_tasks: webserver.yml
       when: webserver is defined and webserver == true

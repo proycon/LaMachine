@@ -12,7 +12,8 @@
             command: brew tap fbkarsdorp/homebrew-lamachine
           - name: Installing from homebrew
             command: brew install ticcutils libfolia uctodata ucto timbl timblserver mbt frogdata frog  #TODO: add foliautils once merged, and toad
-      when: ansible_distribution == 'MacOSX' and root == True and not prefer_local and version == "stable"
+      register: macosx
+      when: ansible_distribution == 'MacOSX' and root == True and version == "stable" #note: no locality check here, we use homebrew even in local mode
 
     - name: Installation on Arch Linux
       block:
@@ -34,9 +35,10 @@
             - frog
             - foliautils
             - toad
-      when: ansible_distribution == 'Arch' and root == True and not prefer_local and version == "stable"
+      register: arch
+      when: ansible_distribution == 'Arch' and root == True and locality == "global" and version == "stable" #mimicks old LaMachine v1 behaviour
 
-    - name: Generic Installation
+    - name: Installation from Github
       block:
         - name: Installing from LanguageMachines github
           include_role:
@@ -75,7 +77,7 @@
               exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
           loop_control:
               loop_var: package
-      when: not ((ansible_distribution|lower == 'macosx' or ansible_distribution|lower == 'arch') and root == True and not prefer_local and version == "stable")
+      when: arch.skipped and macosx.skipped
 
     - name: Installing Colibri Core from github
       include_role:
@@ -88,7 +90,7 @@
     - name: Running ldconfig
       become: yes
       command: ldconfig
-      when: root and not prefer_local and ansible_distribution|lower != 'macosx'
+      when: root and locality == "global" and ansible_distribution|lower != 'macosx'
 
     - name: Testing whether tools start
       include_role:

@@ -256,6 +256,7 @@ if [ $INTERACTIVE -eq 1 ]; then
     echo
 fi
 
+LOCALITY=global
 
 if [ -z "$FLAVOUR" ]; then
     while true; do
@@ -279,7 +280,7 @@ if [ -z "$FLAVOUR" ]; then
         echo -n "${bold}Your choice?${normal} [12345] "
         read choice
         case $choice in
-            [1]* ) FLAVOUR="local"; break;;
+            [1]* ) FLAVOUR="local"; LOCALITY="local"; break;;
             [2]* ) FLAVOUR="vagrant"; break;;
             [3]* ) FLAVOUR="docker"; break;;
             [4]* ) FLAVOUR="global"; break;;
@@ -291,24 +292,19 @@ fi
 
 echo
 
-PREFER_GLOBAL=0
-if [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
+if [[ "$LOCALITY" == "local" ]]; then
     if [ -z "$LOCALENV_TYPE" ]; then
         echo "${bold}We support two forms of local user environments:${normal}"
         echo "  1) Using conda"
         echo "       provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R)"
         echo "  2) Using virtualenv"
         echo "       A simpler solution (originally for Python but extended by us)"
-        if [ "$FLAVOUR" != "local" ]; then
-            echo "  0) Use none at all - Install everything globally"
-        fi
         while true; do
             echo -n "${bold}What form of local user environment do you want?${normal} [12] "
             read choice
             case $choice in
                 [1]* ) LOCALENV_TYPE=conda; break;;
                 [2]* ) LOCALENV_TYPE=virtualenv; break;;
-                [0]* ) LOCALENV_TYPE=conda; PREFER_GLOBAL=1; break;;
                 * ) echo "Please answer with the corresponding number of your preference..";;
             esac
         done
@@ -385,9 +381,6 @@ if [ -z "$SUDO" ]; then
     fi
 fi
 
-if [ $SUDO -eq 0 ]; then
-    PREFER_LOCAL=1
-fi
 
 
 
@@ -540,13 +533,9 @@ if [ ! -e "$CONFIGFILE" ]; then
 conf_name: \"$LM_NAME\" #Name of this LaMachine configuration
 hostname: \"lamachine-$LM_NAME\" #Name of the host (for VM or docker), changing this is not supported yet at this stage
 version: \"$VERSION\" #stable, development or custom
-localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv), not used when prefer_global is true
+localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv), only used when locality == local
+locality: \"$LOCALITY\" #local or global?
 " > $CONFIGFILE
-    if [ $PREFER_GLOBAL -eq 1 ]; then
-        echo "prefer_global: true #Install everything globally" >> $CONFIGFILE
-    else
-        echo "prefer_global: false #Install everything globally" >> $CONFIGFILE
-    fi
     if [[ $FLAVOUR == "vagrant" ]]; then
         echo "unix_user: \"vagrant\" #(don't change this)" >> $CONFIGFILE
         echo "homedir: \"/home/vagrant\"" >> $CONFIGFILE
@@ -554,6 +543,7 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
         echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is stored/shared" >> $CONFIGFILE
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
         echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
+        echo "global_prefix: \"/usr/local/\" #Path for global installations" >> $CONFIGFILE
     elif [[ $FLAVOUR == "docker" ]]; then
         echo "unix_user: \"lamachine\"" >> $CONFIGFILE
         echo "homedir: \"/home/lamachine\"" >> $CONFIGFILE
@@ -561,6 +551,7 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
         echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
         echo "source_path: \"/lamachine/src/\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+        echo "global_prefix: \"/usr/local/\" #Path for global installations" >> $CONFIGFILE
     else
         echo "unix_user: \"$USERNAME\"" >> $CONFIGFILE
         HOMEDIR=$(echo ~)
@@ -577,21 +568,11 @@ localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv),
         echo "global_prefix: \"/usr/local/\" #Path for global installations" >> $CONFIGFILE
     fi
     if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]]; then
-        echo "prefer_local: false #Install everything in a local user environment" >> $CONFIGFILE
         echo "root: true #Do you have root on the target system?" >> $CONFIGFILE
-        echo "shared: false #Is the target machine a shared machine with non-LaMachine applications?" >> $CONFIGFILE
+    elif [ $SUDO -eq 1 ]; then
+        echo "root: true #Do you have root on the target system?" >> $CONFIGFILE
     elif [ $SUDO -eq 0 ]; then
-        echo "prefer_local: true #Install everything in a local user environment" >> $CONFIGFILE
         echo "root: false #Do you have root on the target system?" >> $CONFIGFILE
-        echo "shared: true #Is the target machine a shared machine with non-LaMachine applications?" >> $CONFIGFILE
-    else
-        echo "prefer_local: false #Install everything in a local user environment" >> $CONFIGFILE
-        echo "root: true #Do you have root on the target system?" >> $CONFIGFILE
-        if [ $SHARED -eq 0 ]; then
-            echo "shared: false #Is the target machine a shared machine with non-LaMachine applications?" >> $CONFIGFILE
-        else
-            echo "shared: true #Is the target machine a shared machine with non-LaMachine applications?" >> $CONFIGFILE
-        fi
     fi
     if [[ $FLAVOUR == "vagrant" ]]; then
         echo "vagrant_box: \"debian/contrib-stretch64\" #Base box for vagrant (changing this may break things if packages are not compatible!)" >>$CONFIGFILE

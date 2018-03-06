@@ -1,5 +1,5 @@
 ---
-- when: prefer_global and root
+- when: locality == "global" and root
   block:
       - name: "Installing Python packages globally (Debian/Ubuntu)"
         apt:
@@ -27,11 +27,13 @@
             - python3-sphinx
             - python3-pymongo
             - python3-nltk
+            - python3-keras
+            - python3-pil
         when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distributioni|lower == "linuxmint"
         #TODO: other distributions
 
 
-- when: not prefer_global
+- when: locality == "local"
   block:
      - name: "Installing generic 3rd party Python Packages via conda"
        shell: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} beautifulsoup4 cython flask ipython jupyter lxml matplotlib nbconvert nltk numpy pandas pycrypto pylint pymongo pymysql requests scikit-learn scipy seaborn spacy sphinx tensorflow word2vec xlsxwriter yaml gensim pillow keras"

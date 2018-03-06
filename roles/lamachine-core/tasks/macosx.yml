@@ -6,8 +6,8 @@
 
     - name: Verifying global installation is not preferred
       fail:
-          msg: "Mac OS X installation is not supported with prefer_global"
-      when: prefer_global
+          msg: "Mac OS X installation is not supported with global locality, use local instead"
+      when: locality == "global"
 
     - name: Updating base system (Homebrew)
       homebrew:
@@ -32,9 +32,9 @@
         - libtar
         - wget
         - ansible
-      when: (nosysupdate is not defined or nosysupdate == false) and not prefer_local
+      when: nosysupdate is not defined or nosysupdate == false
 
     - name: Boost with Python 3
       command: brew install boost --with-python3 boost-python
-      when: (nosysupdate is not defined or nosysupdate == false) and not prefer_local
+      when: nosysupdate is not defined or nosysupdate == false
 
