@@ -260,16 +260,16 @@ fi
 if [ -z "$FLAVOUR" ]; then
     while true; do
         echo "${bold}Where do you want to install LaMachine?${normal}"
-        echo "  1) in a Virtual Machine"
-        echo "       complete separation from the host OS"
-        echo "       (uses Vagrant and VirtualBox)"
-        echo "  2) in a Docker container"
-        echo "       (uses Docker and Ansible)"
-        echo "  3) in a local user environment"
+        echo "  1) in a local user environment"
         echo "       installs as much as possible in a separate directory"
-        echo "       for a particular user, can exists alongside existing"
+        echo "       for a particular user; can exists alongside existing"
         echo "       installations"
         echo "       (uses conda or virtualenv)"
+        echo "  2) in a Virtual Machine"
+        echo "       complete separation from the host OS"
+        echo "       (uses Vagrant and VirtualBox)"
+        echo "  3) in a Docker container"
+        echo "       (uses Docker and Ansible)"
         echo "  4) Globally on this machine"
         echo "       modifies the existing system and may"
         echo "       interact with existing packages"
@@ -279,9 +279,9 @@ if [ -z "$FLAVOUR" ]; then
         echo -n "${bold}Your choice?${normal} [12345] "
         read choice
         case $choice in
-            [1]* ) FLAVOUR="vagrant"; break;;
-            [2]* ) FLAVOUR="docker"; break;;
-            [3]* ) FLAVOUR="local"; break;;
+            [1]* ) FLAVOUR="local"; break;;
+            [2]* ) FLAVOUR="vagrant"; break;;
+            [3]* ) FLAVOUR="docker"; break;;
             [4]* ) FLAVOUR="global"; break;;
             [5]* ) FLAVOUR="remote"; break;;
             * ) echo "Please answer with the corresponding number of your preference..";;
@@ -372,6 +372,7 @@ if [ -z "$SUDO" ]; then
             echo "The installation relies on certain software to be available on your (host)"
             echo "system. It will be automatically obtained from your distribution's package manager"
             echo "or another official source whenever possible. You need to have sudo permission for this though..."
+            echo "Answering 'no' to this question may make installation on your system impossible!"
             echo
             echo -n "${bold}Do you have administrative access (root/sudo) on the current system?${normal} [yn]"
             read yn
