@@ -2,6 +2,8 @@
 - when: locality == "global" and root
   block:
       - name: "Installing Python packages globally (1) (Debian/Ubuntu)"
+        become: yes
+        become_user: root
         apt:
             name: "{{item}}"
             state: latest
@@ -11,7 +13,6 @@
             - python3-scipy
             - python3-flask
             - ipython3
-            - ipython3-notebook
             - python3-lxml
             - python3-matplotlib
             - python3-pandas
@@ -26,6 +27,8 @@
             - python3-pil
         when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
       - name: "Installing Python packages globally (2) (Debian/Ubuntu)" #this includes packages that may be missing from older distributions
+        become: yes
+        become_user: root
         apt:
             name: "{{item}}"
             state: latest
@@ -37,6 +40,24 @@
             - python3-mysqldb
         when: (ansible_distribution|lower == "debian" and ansible_distribution_version >= 9) or (ansible_distribution|lower == "ubuntu" and ansible_distribution_version >= 16.04) or ansible_distribution|lower == "linuxmint"
         #TODO: other distributions
+      - name: "Installing Python Notebook globally (Debian)"
+        become: yes
+        become_user: root
+        apt:
+            name: "{{item}}"
+            state: latest
+        with_items:
+            - python3-notebook
+        when: (ansible_distribution|lower == "debian" and ansible_distribution_version >= 9)
+      - name: "Installing Python Notebook globally (Ubuntu)"
+        become: yes
+        become_user: root
+        apt:
+            name: "{{item}}"
+            state: latest
+        with_items:
+            - ipython3-notebook
+        when: ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
 
 
 - when: locality == "local"
