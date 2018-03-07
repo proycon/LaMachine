@@ -46,6 +46,10 @@ matrix:
           language: generic
           env:
             - LM_NAME=travis-stable-venv FLAVOUR=local VERSION=stable LOCALENV_TYPE=virtualenv EXTRAOPT=""
+        - os: osx
+          language: generic
+          env:
+            - LM_NAME=travis-dev-venv FLAVOUR=local VERSION=development LOCALENV_TYPE=virtualenv EXTRAOPT=""
         #- os: osx
         #  language: generic
         #  env:
