@@ -44,7 +44,7 @@
 
     - name: Set LaMachine update script
       copy:
-        dest: "{{homedir}}/bin/lamachine-{{ conf_name }}.update"
+        dest: "{{homedir}}/bin/lamachine-{{ conf_name }}-update"
         content: |
           #!/bin/bash
           cd {{lamachine_path}}
@@ -52,7 +52,7 @@
             git pull
           fi
           if [ {{root|int}} -eq 1 ]; then
-             OPTS="--ask-sudo-pass"
+             OPTS="--ask-become-pass"
           else
              OPTS=""
           fi
@@ -61,8 +61,8 @@
 
     - name: Link update script
       file:
-        src: "{{homedir}}/bin/lamachine-{{ conf_name }}.update"
-        dest: "{{homedir}}/bin/lamachine.update"
+        src: "{{homedir}}/bin/lamachine-{{ conf_name }}-update"
+        dest: "{{homedir}}/bin/lamachine-update"
         force: true
         state: link
 
@@ -71,13 +71,13 @@
       when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
 
     - import_tasks: redhat.yml
-      when: (ansible_distribution|lower == 'redhat' or ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'fedora') and root == True
+      when: (ansible_distribution|lower == 'redhat' or ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'fedora') and root
 
     - import_tasks: arch.yml
-      when: (ansible_distribution|lower == 'arch') and root == True
+      when: (ansible_distribution|lower == 'arch') and root
 
     - import_tasks: macosx.yml
-      when: (ansible_distribution|lower == 'macosx') and root == True
+      when: (ansible_distribution|lower == 'macosx')
 
 
     - import_tasks: conda.yml
@@ -225,7 +225,7 @@
           wget --timeout 10 -O - -q "http://applejack.science.ru.nl/lamachinetracker.php/{{ locality }}{% if locality == 'local' %}-{{ localenv_type }}{% else %}-{{ flavour }}{% endif %}/$MODE/{{ version }}/$PYTHONVERSION/{{ ansible_distribution|lower }}/{{ ansible_distribution|lower }}/{{ ansible_distribution_version }}"  > .reply
       args:
           chdir: "{{sourcepath}}"
-      when: not private
+      when: private is not defined or not private
 
     - import_tasks: webserver.yml
       when: webserver is defined and webserver == true
