@@ -24,12 +24,11 @@
       changed_when: False
 
     - name: Installing Colibri Core Python Binding
-      include_role:
           name: lamachine_run
-      vars:
-          command: "python3 setup.py install --prefix={{local_prefix}}"
-          chdir: "{{source_path}}/colibri-core" #always installed from source
-          sideeffects: True
+      include_role:
+          name: python-install
+      with_items:
+          - { github_user: "proycon", github_repo: "colibri-core", pip: "", conda: "" } #always installed from source, will reuse same sourcedir as C++ lib
 
     - name: Testing Python bindings
       include_role:
