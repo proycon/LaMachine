@@ -153,9 +153,12 @@
         state: link
 
     - name: Create source directory
+      become: "{% if locality == 'global' %}yes{% else %}no{% endif %}"
+      become_user: root
       file:
           path: "{{ source_path }}"
           state: directory
+          owner: "{{unix_user}}"
 
     - name: Link to LaMachine controller from local prefix
       file:
@@ -166,6 +169,8 @@
       when: locality == "local"
 
     - name: Link to LaMachine controller from global prefix
+      become: yes
+      become: user_root
       file:
         src: "{{lamachine_path}}"
         dest: "/usr/local/LaMachine"
