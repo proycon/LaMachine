@@ -667,6 +667,14 @@ if [ $INTERACTIVE -eq 1 ]; then
     fi
 fi
 
+HOMEDIR=$(echo ~)
+if [[ "$FLAVOUR" == "vagrant" ]] || [[ "$FLAVOUR" == "docker" ]]; then
+    if [[ ! -e $HOMEDIR/bin ]]; then
+        echo "Creating $HOMEDIR/bin on host machine..."
+        mkdir -p $HOMEDIR/bin
+    fi
+fi
+
 rc=0
 if [[ "$FLAVOUR" == "vagrant" ]]; then
     echo "Preparing vagrant..."
@@ -678,11 +686,26 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     fi
     #add activation script on the host machine:
     echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nif vagrant up && vagrant ssh; then\nvagrant halt\nexit 0\nelse\nexit 1\nfi" > $BASEDIR/lamachine-$LM_NAME-activate
-    chmod a+x $BASEDIR/lamachine-$LM_NAME-activate
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant halt; exit \$?" > $BASEDIR/lamachine-$LM_NAME-stop
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant up; exit \$?" > $BASEDIR/lamachine-$LM_NAME-start
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant ssh; exit \$?" > $BASEDIR/lamachine-$LM_NAME-connect
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant ssh -c 'lamachine-update'; exit \$?" > $BASEDIR/lamachine-$LM_NAME-update
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant destroy; exit \$?" > $BASEDIR/lamachine-$LM_NAME-destroy
+    chmod a+x $BASEDIR/lamachine-$LM_NAME-*
+    ln -sf $BASEDIR/lamachine-$LM_NAME-activate $HOMEDIR/bin/
+    ln -sf $BASEDIR/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate
     #run the activation script (this will do the actual initial provision as well)
     bash $BASEDIR/lamachine-$LM_NAME-activate
     rc=$?
-    echo "All done, to run LaMachine next time, just run: bash $BASEDIR/lamachine-$LM_NAME-activate"
+    if [ $rc -eq 0 ]; then
+        echo "All done, to run LaMachine next time, just run: lamachine-$LM_NAME-activate   (or: bash ~/bin/lamachine-$LM_NAME-activate)"
+    else
+        echo "The LaMachine VM bootstrap has failed unfortunately. You have several options:"
+        echo " - Start from scratch again with a new bootstrap, possibly tweaking configuration options"
+        echo " - Enter the LaMachine VM in its uncompleted state, run: bash ~/bin/lamachine-$LM_NAME-activate"
+        echo " - Force the LaMachine VM to update itself, run: bash ~/bin/lamachine-$LM_NAME-update"
+        echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
+    fi
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ "$SUDO" -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
         ASKSUDO="--ask-become-pass"
