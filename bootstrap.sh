@@ -677,12 +677,12 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
         sed -i s/install.yml/install-$LM_NAME.yml/g $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to run sed"
     fi
     #add activation script on the host machine:
-    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nif vagrant up && vagrant ssh; then\nvagrant halt\nexit 0\nelse\nexit 1\nfi" > $BASEDIR/lamachine-$LM_NAME.activate
-    chmod a+x $BASEDIR/lamachine-$LM_NAME.activate
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nif vagrant up && vagrant ssh; then\nvagrant halt\nexit 0\nelse\nexit 1\nfi" > $BASEDIR/lamachine-$LM_NAME-activate
+    chmod a+x $BASEDIR/lamachine-$LM_NAME-activate
     #run the activation script (this will do the actual initial provision as well)
-    bash $BASEDIR/lamachine-$LM_NAME.activate
+    bash $BASEDIR/lamachine-$LM_NAME-activate
     rc=$?
-    echo "All done, to run LaMachine next time, just run: bash $BASEDIR/lamachine-$LM_NAME.activate"
+    echo "All done, to run LaMachine next time, just run: bash $BASEDIR/lamachine-$LM_NAME-activate"
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ "$SUDO" -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
         ASKSUDO="--ask-become-pass"
