@@ -90,10 +90,10 @@
 
 
     - import_tasks: conda.yml
-      when: (localenv_type == 'conda')
+      when: localenv_type == 'conda' and locality == "local"
 
     - import_tasks: virtualenv.yml
-      when: (localenv_type == 'virtualenv')
+      when: localenv_type == 'virtualenv' and locality == "local"
 
 
     - name: Set LaMachine activation script
