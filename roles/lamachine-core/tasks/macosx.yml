@@ -14,6 +14,8 @@
       homebrew:
         update_homebrew: yes
         upgrade_all: yes
+      register: homebrew
+      changed_when: '"Homebrew packages already upgraded" not in homebrew.stdout'
 
     - name: Installing common base packages (Homebrew)
       homebrew:

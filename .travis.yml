@@ -54,6 +54,18 @@ matrix:
         #  language: generic
         #  env:
         #    - LM_NAME=travis-dev-conda FLAVOUR=local VERSION=development LOCALENV_TYPE=conda EXTRAOPT=""
+         - os: linux
+           dist: trusty
+           sudo: required
+           language: generic
+           env:
+            - LM_NAME=travis-stable-global FLAVOUR=global VERSION=stable
+         - os: linux
+           dist: trusty
+           sudo: required
+           language: generic
+           env:
+            - LM_NAME=travis-dev-global FLAVOUR=global VERSION=development
 notifications:
   irc:
     channels:
