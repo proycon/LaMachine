@@ -1,32 +1,32 @@
 ---
-#- when: locality == "global" and root
-#  block:
-#      - name: "Installing major Python packages globally (1) (Debian/Ubuntu)"
-#        become: yes
-#        become_user: root
-#        apt:
-#            name: "{{item}}"
-#            state: latest
-#       with_items:
-#            - cython3
-#            - python3-numpy
-#            - python3-scipy
-#            - python3-crypto
-#            - python3-yaml
-#            - python3-requests
-#            - python3-requests-oauthlib
-#            - python3-nltk
-#            - python3-pil
-#        when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
-#      - name: "Installing major Python packages globally (2) (Debian/Ubuntu)" #this includes packages that may be missing from older distributions
-#        become: yes
-#        become_user: root
-#        apt:
-#            name: "{{item}}"
-#            state: latest
-#        with_items:
-#            - python3-mysqldb
-#        when: (ansible_distribution|lower == "debian" and ansible_distribution_version >= 9) or (ansible_distribution|lower == "ubuntu" and ansible_distribution_version >= 16.04) or ansible_distribution|lower == "linuxmint"
+ - when: locality == "global" and root and prefer_distro is defined and prefer_distro
+   block:
+       - name: "Installing Python packages from distribution instead of pip if preferred (Debian/Ubuntu)"
+         become: yes
+         become_user: root
+         apt:
+             name: "{{item}}"
+             state: latest
+        with_items:
+             - cython3
+             - python3-numpy
+             - python3-scipy
+             - python3-crypto
+             - python3-yaml
+             - python3-requests
+             - python3-requests-oauthlib
+             - python3-nltk
+             - python3-pil
+         when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
+       - name: "Installing Python packages from distribution as explicitly preferred (Debian/Ubuntu)"
+         become: yes
+         become_user: root
+         apt:
+             name: "{{item}}"
+             state: latest
+         with_items:
+             - python3-mysqldb
+         when: (ansible_distribution|lower == "debian" and ansible_distribution_version >= 9) or (ansible_distribution|lower == "ubuntu" and ansible_distribution_version >= 16.04) or ansible_distribution|lower == "linuxmint"
 
 
  - name: "Finding global pip3"
@@ -70,7 +70,7 @@
        - gensim
        - pillow
        - keras
-   when: localenv_type != "conda"
+   when: localenv_type != "conda" and (prefer_distro is not defined or not prefer_distro)
 
 #############################################################
 #currently experimental/unused conda related stuff:
