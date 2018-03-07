@@ -27,7 +27,7 @@
       include_role:
           name: lamachine_run
       vars:
-          command: "python setup.py install --prefix={{local_prefix}}"
+          command: "python3 setup.py install --prefix={{local_prefix}}"
           chdir: "{{source_path}}/colibri-core" #always installed from source
           sideeffects: True
 
@@ -35,7 +35,7 @@
       include_role:
           name: lamachine_run
       vars:
-          command: "python -c 'import {{ item }}'"
+          command: "python3 -c 'import {{ item }}'"
       with_items:
           - ucto
           - timbl

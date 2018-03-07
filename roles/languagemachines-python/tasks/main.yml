@@ -16,7 +16,7 @@
       include_role:
           name: lamachine_run
       vars:
-          command: "python -c 'import {{ item }}'"
+          command: "python3 -c 'import {{ item }}'"
       with_items:
           - pynlpl
           - pynlpl.formats.folia

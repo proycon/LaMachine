@@ -17,8 +17,8 @@
               echo "    LD_LIBRARY_PATH=$LD_LIBRARY_PATH">&2
               echo "    VIRTUAL_ENV=$VIRTUAL_ENV">&2
               echo "    PYTHONPATH=$PYTHONPATH">&2
-              echo "    PYTHON=$(which python)">&2
-              echo "    PIP=$(which pip)">&2
+              echo "    PYTHON=$(which python3)">&2
+              echo "    PIP=$(which pip3)">&2
               echo "    CONDA=$(which conda)">&2
               echo "Running: {{command}}">&2
               {{command}}

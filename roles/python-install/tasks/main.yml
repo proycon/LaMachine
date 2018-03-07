@@ -19,7 +19,7 @@
         - name: "{{package.github_repo}} - Installing python package"
           become: "{% if locality == 'global' %}yes{% else %}no{% endif %}"
           become_user: root
-          shell: "python {% if 'setup' in package %}{{package.setup}}{% else %}setup.py{% endif %} install"
+          shell: "python3 {% if 'setup' in package %}{{package.setup}}{% else %}setup.py{% endif %} install"
           args:
             chdir: "{{ source_path }}/{{package.github_repo}}"
       environment: "{% if locality == \"local\" %}{{localenv}}{% else %}{{globalenv}}{% endif %}"
