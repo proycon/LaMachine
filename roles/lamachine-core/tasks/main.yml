@@ -51,10 +51,15 @@
           if [ -d .git ]; then
             git pull
           fi
+          OPTS-""
           if [ {{root|int}} -eq 1 ]; then
              OPTS="--ask-become-pass"
-          else
-             OPTS=""
+          fi
+          if [ {{prefer_distro|int}} -eq 1 ]; then
+             OPTS="$OPTS --prefer-distro"
+          fi
+          if [ {{minimal|int}} -eq 1 ]; then
+             OPTS="$OPTS --minimal"
           fi
           ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v $OPTS --extra-vars "$*"
         mode: u+rwx

@@ -11,12 +11,12 @@
              - cython3
              - python3-numpy
              - python3-scipy
+             - python3-matplotlib
              - python3-crypto
              - python3-yaml
              - python3-requests
              - python3-requests-oauthlib
-             - python3-nltk
-             - python3-pil
+             - python3-flask
          when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
        - name: "Installing Python packages from distribution as explicitly preferred (Debian/Ubuntu)"
          become: yes
@@ -34,43 +34,53 @@
    register: pip
    when: locality == "global"
 
- - name: "Installing generic 3rd party Python Packages via pip"
-   become: "{% if root and locality == \"global\" %}yes{% else %}no{% endif %}"
-   become_user: root
-   pip:
-       name: "{{item}}"
-       state: latest
-       executable: "{% if locality == \"local\" %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
-   with_items: #more or less in dependency order
-       - cython
-       - lxml
-       - pyyaml
-       - numpy
-       - scipy
-       - matplotlib
-       - scikit-learn
-       - beautifulsoup4
-       - flask
-       - pandas
-       - ipython
-       - jupyter
-       - nbconvert
-       - nltk
-       - pycrypto
-       - pylint
-       - pymongo
-       - pymysql
-       - requests
-       - seaborn
-       - spacy
-       - sphinx
-       - tensorflow
-       - word2vec
-       - xlsxwriter
-       - gensim
-       - pillow
-       - keras
-   when: localenv_type != "conda" and (prefer_distro is not defined or not prefer_distro)
+ - when: localenv_type == "virtualenv"
+   block:
+     - name: "Installing generic 3rd party Python Packages via pip (1)"
+       become: "{% if root and locality == \"global\" %}yes{% else %}no{% endif %}"
+       become_user: root
+       pip:
+           name: "{{item}}"
+           state: "{% if prefer_distro %}present{% else %}latest{% end %}"
+           executable: "{% if locality == \"local\" %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
+       with_items: #more or less in dependency order
+           - cython
+           - lxml
+           - pyyaml
+           - numpy
+           - matplotlib
+           - requests
+           - flask
+     - name: "Installing generic 3rd party Python Packages via pip (2)"
+       become: "{% if root and locality == \"global\" %}yes{% else %}no{% endif %}"
+       become_user: root
+       pip:
+           name: "{{item}}"
+           state: "{% if prefer_distro %}present{% else %}latest{% end %}"
+           executable: "{% if locality == \"local\" %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
+       with_items: #more or less in dependency order
+           - scipy
+           - scikit-learn
+           - beautifulsoup4
+           - pandas
+           - ipython
+           - jupyter
+           - nbconvert
+           - nltk
+           - pycrypto
+           - pylint
+           - pymongo
+           - pymysql
+           - seaborn
+           - spacy
+           - sphinx
+           - tensorflow
+           - word2vec
+           - xlsxwriter
+           - gensim
+           - pillow
+           - keras
+       when: minimal is not defined or not minimal
 
 #############################################################
 #currently experimental/unused conda related stuff:

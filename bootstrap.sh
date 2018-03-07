@@ -51,6 +51,9 @@ usage () {
     echo " ${bold}--env${normal} [virtualenv|conda] - Local user environment type"
     echo "  virtualenv = A simple virtual environment"
     echo "  conda = provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R). EXPERIMENTAL!!"
+    echo " ${bold}--private${normal} - Do not transmit anonymous analytics on this LaMachine build"
+    echo " ${bold}--minimal${normal} - Attempt to install less than normal, leaving out extra options. This may break things."
+    echo " ${bold}--prefer_distro${normal} - Prefer distribution packages over other channels (such as pip). This generally installs more conserative versions, and less, but might break things."
 }
 
 USERNAME=$(whoami)
@@ -134,6 +137,8 @@ INTERACTIVE=1
 LOCALITY=""
 PRIVATE=0
 ANSIBLE_OPTIONS="-v"
+MINIMAL=0
+PREFER_DISTRO=0
 VAGRANTBOX="debian/contrib-stretch64" #base distribution for VM
 
 echo "Detected OS: $OS"
@@ -230,6 +235,14 @@ while [[ $# -gt 0 ]]; do
         ;;
         --private) #private, do not send LaMachine build analytics
         PRIVATE=1
+        shift
+        ;;
+        --minimal)
+        MINIMAL=1
+        shift
+        ;;
+        --prefer-distro)
+        PREFER_DISTRO=1
         shift
         ;;
         --extra) #extra ansible parameters
@@ -603,6 +616,16 @@ locality: \"$LOCALITY\" #local or global?
         echo "private: true #opt-out of sending back anonymous analytics regarding your LaMachine build " >> $CONFIGFILE
     else
         echo "private: false #when false, allows sending back anonymous analytics regarding your LaMachine build (recommended)" >> $CONFIGFILE
+    fi
+    if [ $MINIMAL -eq 1 ]; then
+        echo "minimal: true #install less than normal for certain categories (this might break things)" >> $CONFIGFILE
+    else
+        echo "minimal: false #install less than normal for certain categories (this might break things)" >> $CONFIGFILE
+    fi
+    if [ $PREFER_DISTRO -eq 1 ]; then
+        echo "prefer_distro: true #prefer using the distribution's packages as much as possible rather than distribution channels such as pip (this will install more conservative versions but may break certain things)" >> $CONFIGFILE
+    else
+        echo "prefer_distro: false #prefer using the distribution's packages as much as possible rather than distribution channels such as pip (this will install more conservative versions but may break certain things)" >> $CONFIGFILE
     fi
 echo "
 webserver: true #include a webserver
