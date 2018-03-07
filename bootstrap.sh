@@ -133,6 +133,7 @@ fi
 INTERACTIVE=1
 LOCALITY=""
 ANSIBLE_OPTIONS="-v"
+VAGRANTBOX="debian/contrib-stretch64" #base distribution for VM
 
 echo "Detected OS: $OS"
 echo "Detected distribution ID: $DISTRIB_ID"
@@ -217,6 +218,11 @@ while [[ $# -gt 0 ]]; do
         SUDO=0
         shift
         ;;
+        --vagrantbox) #LaMachine source path
+        VAGRANTBOX="$2"
+        shift # past argument
+        shift # past value
+        ;;
         --noninteractive) #Script mode
         INTERACTIVE=0
         shift
@@ -284,6 +290,10 @@ if [ -z "$FLAVOUR" ]; then
             * ) echo "Please answer with the corresponding number of your preference..";;
         esac
     done
+fi
+
+if [[ "$FLAVOUR" == "vm" ]]; then
+    FLAVOUR="vagrant"
 fi
 
 if [ -z "$LOCALITY" ]; then
@@ -579,7 +589,7 @@ locality: \"$LOCALITY\" #local or global?
         echo "root: false #Do you have root on the target system?" >> $CONFIGFILE
     fi
     if [[ $FLAVOUR == "vagrant" ]]; then
-        echo "vagrant_box: \"debian/contrib-stretch64\" #Base box for vagrant (changing this may break things if packages are not compatible!)" >>$CONFIGFILE
+        echo "vagrant_box: \"$VAGRANTBOX\" #Base box for vagrant (changing this may break things if packages are not compatible!)" >>$CONFIGFILE
         echo "vm_memory: 6096 #Memory allocated to the VM; in MB (the more the better! but too high and the VM won't start)">> $CONFIGFILE
         echo "vm_cpus: 2 #CPU cores allocated to the VM">>$CONFIGFILE
     fi

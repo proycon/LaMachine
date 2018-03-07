@@ -125,7 +125,7 @@
             git pull
           fi
           if [ {{root|int}} -eq 1 ]; then
-             OPTS="--ask-sudo-pass"
+             OPTS="--ask-become-pass"
           else
              OPTS=""
           fi
@@ -150,6 +150,28 @@
       file:
           path: "{{ source_path }}"
           state: directory
+
+    - name: Link to source directory from local prefix
+      file:
+        src: "{{source_path}}"
+        dest: "{{local_prefix}}/src"
+        force: true
+        state: link
+      when: locality == "local" and local_prefix not in source_path
+
+
+    - name: Checking if controller is on same machine
+      stat:
+          path: "{{lamachine_path}}"
+      register: controller
+
+    - name: Link to controller
+      file:
+        src: "{{lamachine_path}}"
+        dest: "{{local_prefix}}/controller"
+        force: true
+        state: link
+      when: controller.stat.exists and locality == "local" and local_prefix not in source_path
 
     - name: Installing ansible locally (conda)
       pip:
