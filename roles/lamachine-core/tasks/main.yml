@@ -222,7 +222,7 @@
           else
             MODE=update
           fi
-          wget --timeout 10 -O - -q "http://applejack.science.ru.nl/lamachinetracker.php/{{ locality }}{% if locality == 'local' %}-{{ localenv_type }}{% else %}-{{ flavour }}{% endif %}/$MODE/{{ version }}/$PYTHONVERSION/{{ ansible_distribution|lower }}/{{ ansible_distribution|lower }}/{{ ansible_distribution_version }}"  > .reply
+          wget --timeout 10 -O - -q "http://applejack.science.ru.nl/lamachinetracker.php/{{ locality }}{% if locality == 'local' %}-{{ localenv_type }}{% else %}{% if flavour is defined %}-{{ flavour }}{% endif %}{% endif %}/$MODE/{{ version }}/$PYTHONVERSION/{{ ansible_distribution|lower }}/{{ ansible_distribution|lower }}/{{ ansible_distribution_version }}"  > .reply
       args:
           chdir: "{{sourcepath}}"
       when: private is not defined or not private
