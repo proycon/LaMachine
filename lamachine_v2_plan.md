@@ -4,7 +4,7 @@
      Centre for Language and Speech Technology
      Radboud University Nijmegen
 
-     revision 1.1
+     revision 1.2
      https://proycon.github.io/LaMachine/
 
 ## Abstract
@@ -156,15 +156,7 @@ ourselves to more established solutions and to find better cohesion with what va
     * Supports Docker for provisioning containers
     * Makes deployment in production environments easier; allows setting up multiple hosts/containers/vms at once (cf. Docker Compose)
     * Relates to objective #1
-3) Use **conda** as a package and environment manager instead of the simpler python virualenv and pip; Anaconda has become a good distribution and an established platform in data science.
-    * Highly geared towards data science and very popular, people come to expect it nowadays (relates to objective #2)
-    * Good facilities for Jupyter Notebooks
-    * Tied to a larger ecosystem that facilitates sharing (relates to objective #2)
-    * Though Anaconda was initially geared at Python, conda is itself language-independent and there is a good R ecosystem too.
-    * Still compatible with the Python Package Index and pip
-    * We intend to use this environment manager also in docker/vagrant flavours; offering a more unified experience, less redundancy, and less dependency on the base Linux distribution.
-    * Virtualenv still remains a supported option as well!
-4) Single bootstrap command as an entry point to all possible installations
+3) Single bootstrap command as an entry point to all possible installations
     * Users will be able to bootstrap LaMachine v2 entirely through one command (``curl ... | bash``), which will start an automated wizard asking the user for his choices for his LaMachine build. The script will provide a single entry point and will install necessary initial dependencies (e.g. Vagrant, Ansible). It is geared for a wide variety of unix-like platforms (including Windows 10 with the Linux Subsystem).
 
 LaMachine will become more modular allowing users/hosters themselves to select what software they want. This results in
@@ -179,7 +171,7 @@ To include software in LaMachine (by CLARIAH partners and others), a small Ansib
 to be contributed to LaMachine. These are in essence installation recipe, and can in turn invoke other installation
 recipes already included in LaMachine. Participants may contribute by committing their installation recipes to the
 LaMachine github repository, through for instance a pull request. The playbook in turn references a package in one or
-more of the supported repositories (github/pypi/cran/debian/anaconda/maven). Clear and extensive documentation needs to
+more of the supported repositories (github/pypi/cran/debian/maven). Clear and extensive documentation needs to
 be provided on how to contribute.
 
 LaMachine shifts the burden away from tool providers to provide isolated Docker containers or virtual machines for their
@@ -241,7 +233,7 @@ LaMachine v2 plan and not included, but as the VRE project progresses these coul
  * Rewrite entire provisioning infrastructure through Ansible
     * Integrate with vagrant
     * Integrate docker
-    * Integrate conda
+    * Integrate conda?
  * Write the necessary ansible integration scripts for our software:
     * Integrate our C++ software stack (Frog, ucto, etc)
     * Integrate Python-based software (easy)
