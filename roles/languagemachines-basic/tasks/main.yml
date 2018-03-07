@@ -79,7 +79,7 @@
               exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
           loop_control:
               loop_var: package
-      when: (arch is not defined or arch.skipped) and (macosx is not defined or macosx.skipped)
+      when: (arch is not defined or not arch.skipped) and (macosx is not defined or not macosx.skipped)
 
     - name: Installing Colibri Core from github
       include_role:
