@@ -132,6 +132,7 @@ if [ "$OS" = "unknown" ]; then
 fi
 INTERACTIVE=1
 LOCALITY=""
+PRIVATE=0
 ANSIBLE_OPTIONS="-v"
 VAGRANTBOX="debian/contrib-stretch64" #base distribution for VM
 
@@ -225,6 +226,10 @@ while [[ $# -gt 0 ]]; do
         ;;
         --noninteractive) #Script mode
         INTERACTIVE=0
+        shift
+        ;;
+        --private) #private, do not send LaMachine build analytics
+        PRIVATE=1
         shift
         ;;
         --extra) #extra ansible parameters
@@ -545,6 +550,7 @@ INSTALLFILE="$BASEDIR/install-$LM_NAME.yml"
 if [ ! -e "$CONFIGFILE" ]; then
     echo "---
 conf_name: \"$LM_NAME\" #Name of this LaMachine configuration
+flavour: \"$FLAVOUR\" #LaMachine flavour
 hostname: \"lamachine-$LM_NAME\" #Name of the host (for VM or docker), changing this is not supported yet at this stage
 version: \"$VERSION\" #stable, development or custom
 localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv), only used when locality == local
@@ -592,6 +598,11 @@ locality: \"$LOCALITY\" #local or global?
         echo "vagrant_box: \"$VAGRANTBOX\" #Base box for vagrant (changing this may break things if packages are not compatible!)" >>$CONFIGFILE
         echo "vm_memory: 6096 #Memory allocated to the VM; in MB (the more the better! but too high and the VM won't start)">> $CONFIGFILE
         echo "vm_cpus: 2 #CPU cores allocated to the VM">>$CONFIGFILE
+    fi
+    if [ $PRIVATE -eq 1 ]; then
+        echo "private: true #opt-out of sending back anonymous analytics regarding your LaMachine build " >> $CONFIGFILE
+    else
+        echo "private: false #when false, allows sending back anonymous analytics regarding your LaMachine build (recommended)" >> $CONFIGFILE
     fi
 echo "
 webserver: true #include a webserver

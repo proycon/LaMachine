@@ -24,6 +24,7 @@
           msg: Forcing recompilation of all packages
       when: force is defined
 
+
     - name: Create home bin directory
       file:
           path: "{{homedir}}/bin"
@@ -199,6 +200,32 @@
           state: latest
           virtualenv: "{{ local_prefix }}"
       when: locality == "local" and localenv_type == "virtualenv"
+
+    - name: Sending anonymous usage analytics to LaMachine creators
+      shell: |
+          #!/bin/bash
+          #Sending some statistics to us so we know how often and on what systems LaMachine is used
+          #recipient: Language Machines, Centre for Language Studies, Radboud University Nijmegen
+          #
+          #Transmitted are:
+          # - The form in which you run LaMachine (vagrant/virtualenv/docker)
+          # - Is it a new LaMachine installation or an update
+          # - Stable or Development?
+          # - The OS you are running on and its version
+          # - Your Python version
+          #
+          #This information will never be used for any form of advertising
+          #Your IP will only be used to compute country of origin, resulting reports will never contain personally identifiable information
+          PYTHONVERSION=`python3 -c 'import sys; print(".".join(map(str, sys.version_info[:3])))'`
+          if [ ! -e .reply ]; then
+            MODE=new
+          else
+            MODE=update
+          fi
+          wget --timeout 10 -O - -q "http://applejack.science.ru.nl/lamachinetracker.php/{{ locality }}{% if locality == 'local' %}-{{ localenv_type }}{% else %}-{{ flavour }}{% endif %}/$MODE/{{ version }}/$PYTHONVERSION/{{ ansible_distribution|lower }}/{{ ansible_distribution|lower }}/{{ ansible_distribution_version }}"  > .reply
+      args:
+          chdir: "{{sourcepath}}"
+      when: not private
 
     - import_tasks: webserver.yml
       when: webserver is defined and webserver == true
