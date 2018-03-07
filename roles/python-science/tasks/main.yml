@@ -7,7 +7,7 @@
          apt:
              name: "{{item}}"
              state: latest
-        with_items:
+         with_items:
              - cython3
              - python3-numpy
              - python3-scipy
