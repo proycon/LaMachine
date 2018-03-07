@@ -75,8 +75,8 @@
 #############################################################
 #currently experimental/unused conda related stuff:
 #
-- when: locality == "local"
-  block:
+ - when: locality == "local"
+   block:
      - name: "Installing generic 3rd party Python Packages via conda"
        shell: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} beautifulsoup4 cython flask ipython jupyter lxml matplotlib nbconvert nltk numpy pandas pycrypto pylint pymongo pymysql requests scikit-learn scipy seaborn spacy sphinx tensorflow word2vec xlsxwriter yaml gensim pillow keras"
        when: localenv_type == "conda"
