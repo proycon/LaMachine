@@ -34,7 +34,6 @@
             state: latest
         with_items:
             - python3-seaborn
-            - python3-keras
             - python3-sklearn
             - python3-sklearn-pandas
             - python3-mysqldb
