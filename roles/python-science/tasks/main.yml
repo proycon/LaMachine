@@ -29,10 +29,6 @@
          when: (ansible_distribution|lower == "debian" and ansible_distribution_version >= 9) or (ansible_distribution|lower == "ubuntu" and ansible_distribution_version >= 16.04) or ansible_distribution|lower == "linuxmint"
 
 
- - name: "Finding global pip3"
-   shell: which pip3
-   register: pip
-   when: locality == "global"
 
  - when: localenv_type == "virtualenv"
    block:

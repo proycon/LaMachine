@@ -232,6 +232,11 @@
           chdir: "{{source_path}}"
       when: private is not defined or not private
 
+    - name: "Finding global pip3"
+      shell: which pip3
+      register: pip
+      when: locality == "global"
+
     - import_tasks: webserver.yml
       when: webserver is defined and webserver == true
 
