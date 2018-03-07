@@ -130,7 +130,7 @@
              OPTS=""
           fi
           ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v $OPTS --extra-vars "$*"
-        mode: u+rwx
+        mode: a+rwx
 
     - name: Link update script
       file:

@@ -48,9 +48,9 @@ usage () {
     echo "  development = you get the very latest development versions for testing, this may not always work as expected!"
     echo "  custom = you decide explicitly what exact versions you want (for reproducibility)."
     echo "           this expects you to provide a LaMachine version file with exact version numbers."
-    echo " ${bold}--env${normal} [conda|virtualenv] - Local user environment type"
-    echo "  conda = provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R)"
-    echo "  virtualenv = A simpler solution (originally for Python but extended by us)"
+    echo " ${bold}--env${normal} [virtualenv|conda] - Local user environment type"
+    echo "  virtualenv = A simple virtual environment"
+    echo "  conda = provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R). EXPERIMENTAL!!"
 }
 
 USERNAME=$(whoami)
@@ -297,20 +297,21 @@ fi
 
 if [[ "$LOCALITY" == "local" ]]; then
     if [ -z "$LOCALENV_TYPE" ]; then
-        echo "${bold}We support two forms of local user environments:${normal}"
-        echo "  1) Using virtualenv"
-        echo "       (originally for Python but extended by us)"
-        echo "  2) Using conda"
-        echo "       provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R)"
-        while true; do
-            echo -n "${bold}What form of local user environment do you want?${normal} [12] "
-            read choice
-            case $choice in
-                [1]* ) LOCALENV_TYPE=virtualenv; break;;
-                [2]* ) LOCALENV_TYPE=conda; break;;
-                * ) echo "Please answer with the corresponding number of your preference..";;
-            esac
-        done
+        LOCALENV_TYPE="virtualenv"
+        #echo "${bold}We support two forms of local user environments:${normal}"
+        #echo "  1) Using virtualenv"
+        #echo "       (originally for Python but extended by us)"
+        #echo "  2) Using conda"
+        #echo "       provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R)"
+        #while true; do
+        #    echo -n "${bold}What form of local user environment do you want?${normal} [12] "
+        #    read choice
+        #    case $choice in
+        #        [1]* ) LOCALENV_TYPE=virtualenv; break;;
+        #        [2]* ) LOCALENV_TYPE=conda; break;;
+        #        * ) echo "Please answer with the corresponding number of your preference..";;
+        #    esac
+        #done
     fi
 fi
 if [ -z "$LOCALENV_TYPE" ]; then
