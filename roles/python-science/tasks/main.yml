@@ -37,7 +37,7 @@
        become_user: root
        pip:
            name: "{{item}}"
-           state: "{% if prefer_distro %}present{% else %}latest{% end %}"
+           state: "{% if prefer_distro %}present{% else %}latest{% endif %}"
            executable: "{% if locality == \"local\" %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
        with_items: #more or less in dependency order
            - cython
@@ -52,7 +52,7 @@
        become_user: root
        pip:
            name: "{{item}}"
-           state: "{% if prefer_distro %}present{% else %}latest{% end %}"
+           state: "{% if prefer_distro %}present{% else %}latest{% endif %}"
            executable: "{% if locality == \"local\" %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
        with_items: #more or less in dependency order
            - scipy
