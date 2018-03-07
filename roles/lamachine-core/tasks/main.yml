@@ -170,7 +170,7 @@
 
     - name: Link to LaMachine controller from global prefix
       become: yes
-      become: user_root
+      become_user: root
       file:
         src: "{{lamachine_path}}"
         dest: "/usr/local/LaMachine"
