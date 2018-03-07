@@ -24,7 +24,6 @@
       changed_when: False
 
     - name: Installing Colibri Core Python Binding
-          name: lamachine_run
       include_role:
           name: python-install
       with_items:
