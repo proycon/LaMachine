@@ -132,7 +132,7 @@ if [ "$OS" = "unknown" ]; then
 fi
 INTERACTIVE=1
 LOCALITY=""
-ANSIBLE_OPTIONS="-v"
+ANSIBLE_OPTIONS="-vv"
 VAGRANTBOX="debian/contrib-stretch64" #base distribution for VM
 
 echo "Detected OS: $OS"
