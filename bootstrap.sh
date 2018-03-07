@@ -48,9 +48,9 @@ usage () {
     echo "  development = you get the very latest development versions for testing, this may not always work as expected!"
     echo "  custom = you decide explicitly what exact versions you want (for reproducibility)."
     echo "           this expects you to provide a LaMachine version file with exact version numbers."
-    echo " ${bold}--env${normal} [conda|virtualenv] - Local user environment type"
-    echo "  conda = provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R)"
-    echo "  virtualenv = A simpler solution (originally for Python but extended by us)"
+    echo " ${bold}--env${normal} [virtualenv|conda] - Local user environment type"
+    echo "  virtualenv = A simple virtual environment"
+    echo "  conda = provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R). EXPERIMENTAL!!"
 }
 
 USERNAME=$(whoami)
@@ -132,7 +132,8 @@ if [ "$OS" = "unknown" ]; then
 fi
 INTERACTIVE=1
 LOCALITY=""
-ANSIBLE_OPTIONS="-v"
+ANSIBLE_OPTIONS="-vv"
+VAGRANTBOX="debian/contrib-stretch64" #base distribution for VM
 
 echo "Detected OS: $OS"
 echo "Detected distribution ID: $DISTRIB_ID"
@@ -217,6 +218,11 @@ while [[ $# -gt 0 ]]; do
         SUDO=0
         shift
         ;;
+        --vagrantbox) #LaMachine source path
+        VAGRANTBOX="$2"
+        shift # past argument
+        shift # past value
+        ;;
         --noninteractive) #Script mode
         INTERACTIVE=0
         shift
@@ -286,6 +292,10 @@ if [ -z "$FLAVOUR" ]; then
     done
 fi
 
+if [[ "$FLAVOUR" == "vm" ]]; then
+    FLAVOUR="vagrant"
+fi
+
 if [ -z "$LOCALITY" ]; then
     if [[ "$FLAVOUR" == "local" ]]; then
         LOCALITY="local"
@@ -297,20 +307,21 @@ fi
 
 if [[ "$LOCALITY" == "local" ]]; then
     if [ -z "$LOCALENV_TYPE" ]; then
-        echo "${bold}We support two forms of local user environments:${normal}"
-        echo "  1) Using virtualenv"
-        echo "       (originally for Python but extended by us)"
-        echo "  2) Using conda"
-        echo "       provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R)"
-        while true; do
-            echo -n "${bold}What form of local user environment do you want?${normal} [12] "
-            read choice
-            case $choice in
-                [1]* ) LOCALENV_TYPE=virtualenv; break;;
-                [2]* ) LOCALENV_TYPE=conda; break;;
-                * ) echo "Please answer with the corresponding number of your preference..";;
-            esac
-        done
+        LOCALENV_TYPE="virtualenv"
+        #echo "${bold}We support two forms of local user environments:${normal}"
+        #echo "  1) Using virtualenv"
+        #echo "       (originally for Python but extended by us)"
+        #echo "  2) Using conda"
+        #echo "       provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R)"
+        #while true; do
+        #    echo -n "${bold}What form of local user environment do you want?${normal} [12] "
+        #    read choice
+        #    case $choice in
+        #        [1]* ) LOCALENV_TYPE=virtualenv; break;;
+        #        [2]* ) LOCALENV_TYPE=conda; break;;
+        #        * ) echo "Please answer with the corresponding number of your preference..";;
+        #    esac
+        #done
     fi
 fi
 if [ -z "$LOCALENV_TYPE" ]; then
@@ -578,7 +589,7 @@ locality: \"$LOCALITY\" #local or global?
         echo "root: false #Do you have root on the target system?" >> $CONFIGFILE
     fi
     if [[ $FLAVOUR == "vagrant" ]]; then
-        echo "vagrant_box: \"debian/contrib-stretch64\" #Base box for vagrant (changing this may break things if packages are not compatible!)" >>$CONFIGFILE
+        echo "vagrant_box: \"$VAGRANTBOX\" #Base box for vagrant (changing this may break things if packages are not compatible!)" >>$CONFIGFILE
         echo "vm_memory: 6096 #Memory allocated to the VM; in MB (the more the better! but too high and the VM won't start)">> $CONFIGFILE
         echo "vm_cpus: 2 #CPU cores allocated to the VM">>$CONFIGFILE
     fi
@@ -656,6 +667,14 @@ if [ $INTERACTIVE -eq 1 ]; then
     fi
 fi
 
+HOMEDIR=$(echo ~)
+if [[ "$FLAVOUR" == "vagrant" ]] || [[ "$FLAVOUR" == "docker" ]]; then
+    if [[ ! -e $HOMEDIR/bin ]]; then
+        echo "Creating $HOMEDIR/bin on host machine..."
+        mkdir -p $HOMEDIR/bin
+    fi
+fi
+
 rc=0
 if [[ "$FLAVOUR" == "vagrant" ]]; then
     echo "Preparing vagrant..."
@@ -666,12 +685,31 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
         sed -i s/install.yml/install-$LM_NAME.yml/g $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to run sed"
     fi
     #add activation script on the host machine:
-    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nif vagrant up && vagrant ssh; then\nvagrant halt\nexit 0\nelse\nexit 1\nfi" > $BASEDIR/lamachine-$LM_NAME.activate
-    chmod a+x $BASEDIR/lamachine-$LM_NAME.activate
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nif vagrant up && vagrant ssh; then\nvagrant halt\nexit 0\nelse\nexit 1\nfi" > $BASEDIR/lamachine-$LM_NAME-activate
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant halt; exit \$?" > $BASEDIR/lamachine-$LM_NAME-stop
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant up; exit \$?" > $BASEDIR/lamachine-$LM_NAME-start
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant ssh; exit \$?" > $BASEDIR/lamachine-$LM_NAME-connect
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant ssh -c 'lamachine-update'; exit \$?" > $BASEDIR/lamachine-$LM_NAME-update
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant destroy; exit \$?" > $BASEDIR/lamachine-$LM_NAME-destroy
+    chmod a+x $BASEDIR/lamachine-$LM_NAME-*
+    ln -sf $BASEDIR/lamachine-$LM_NAME-activate $HOMEDIR/bin/
+    ln -sf $BASEDIR/lamachine-$LM_NAME-start $HOMEDIR/bin/
+    ln -sf $BASEDIR/lamachine-$LM_NAME-stop $HOMEDIR/bin/
+    ln -sf $BASEDIR/lamachine-$LM_NAME-connect $HOMEDIR/bin/
+    ln -sf $BASEDIR/lamachine-$LM_NAME-update $HOMEDIR/bin/
+    ln -sf $BASEDIR/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
     #run the activation script (this will do the actual initial provision as well)
-    bash $BASEDIR/lamachine-$LM_NAME.activate
+    bash $BASEDIR/lamachine-$LM_NAME-activate
     rc=$?
-    echo "All done, to run LaMachine next time, just run: bash $BASEDIR/lamachine-$LM_NAME.activate"
+    if [ $rc -eq 0 ]; then
+        echo "All done, to run LaMachine next time, just run: lamachine-$LM_NAME-activate   (or: bash ~/bin/lamachine-$LM_NAME-activate)"
+    else
+        echo "The LaMachine VM bootstrap has failed unfortunately. You have several options:"
+        echo " - Start from scratch again with a new bootstrap, possibly tweaking configuration options"
+        echo " - Enter the LaMachine VM in its uncompleted state, run: bash ~/bin/lamachine-$LM_NAME-activate"
+        echo " - Force the LaMachine VM to update itself, run: bash ~/bin/lamachine-$LM_NAME-update"
+        echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
+    fi
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ "$SUDO" -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
         ASKSUDO="--ask-become-pass"

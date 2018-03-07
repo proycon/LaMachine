@@ -88,7 +88,7 @@
 
     - name: Set LaMachine activation script
       blockinfile:
-        dest: "{{homedir}}/bin/lamachine-{{ conf_name }}.activate"
+        dest: "{{homedir}}/bin/lamachine-{{ conf_name }}-activate"
         block: |
           #!/bin/bash
           if [[ ! -z "$VIRTUAL_ENV" ]] && [[ "$VIRTUAL_ENV" != "$LM_LOCAL_PREFIX" ]]; then
@@ -114,6 +114,7 @@
           fi
           if [[ "$LM_LOCALITY" == "local" ]]; then
               export LM_LOCAL_PREFIX={{local_prefix}}
+              export LM_PREFIX={{local_prefix}}
               if [ -d $LM_LOCAL_PREFIX ]; then
                   if [[ "$LM_LOCALENV_TYPE" == "conda" ]]; then
                       source activate lamachine-{{conf_name}}
@@ -122,6 +123,8 @@
                       source $LM_LOCAL_PREFIX/bin/activate
                   fi
               fi
+          else
+              export LM_PREFIX={{global_prefix}}
           fi
         marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
         insertafter: EOF
@@ -130,8 +133,8 @@
 
     - name: Link activation script
       file:
-         src: "{{homedir}}/bin/lamachine-{{conf_name}}.activate"
-         dest: "{{homedir}}/bin/lamachine.activate"
+         src: "{{homedir}}/bin/lamachine-{{conf_name}}-activate"
+         dest: "{{homedir}}/bin/lamachine-activate"
          state: link
 
 
@@ -144,7 +147,7 @@
 
     - name: Backward compatibility update script
       file:
-        src: "{{homedir}}/bin/lamachine-{{ conf_name }}.update"
+        src: "{{homedir}}/bin/lamachine-{{ conf_name }}-update"
         dest: "{{homedir}}/bin/lamachine-update.sh"
         force: true
         state: link
@@ -153,6 +156,30 @@
       file:
           path: "{{ source_path }}"
           state: directory
+
+    - name: Link to LaMachine controller from local prefix
+      file:
+        src: "{{lamachine_path}}"
+        dest: "{{local_prefix}}/LaMachine"
+        force: true
+        state: link
+      when: locality == "local"
+
+    - name: Link to LaMachine controller from global prefix
+      file:
+        src: "{{lamachine_path}}"
+        dest: "/usr/local/LaMachine"
+        force: true
+        state: link
+      when: locality == "global"
+
+    - name: Link to source directory from local prefix
+      file:
+        src: "{{local_prefix}}/LaMachine/src"
+        dest: "{{local_prefix}}/src"
+        force: true
+        state: link
+      when: locality == "local" and local_prefix not in source_path
 
     - name: Installing ansible locally (conda)
       pip:

@@ -3,10 +3,10 @@
         - name: "Running {{command}}"
           shell: |
               if [[ {{locality}} == "local" ]]; then
-                  if [ -e {{homedir}}/bin/lamachine-{{ conf_name }}.activate ]; then
-                      source {{homedir}}/bin/lamachine-{{ conf_name }}.activate
+                  if [ -e {{homedir}}/bin/lamachine-{{ conf_name }}-activate ]; then
+                      source {{homedir}}/bin/lamachine-{{ conf_name }}-activate
                   else
-                      echo "Activation script {{homedir}}/bin/lamachine-{{ conf_name }}.activate not found! ">&2
+                      echo "Activation script {{homedir}}/bin/lamachine-{{ conf_name }}-activate not found! ">&2
                       exit 2
                   fi
               fi

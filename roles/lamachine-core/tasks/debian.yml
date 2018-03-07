@@ -46,7 +46,7 @@
       apt:
         name: "{{item}}"
         state: installed
-      with_items: [pkg-config, git-core, make, gcc, g++, autoconf, automake, autoconf-archive, libtool, autotools-dev, libicu-dev, libxml2-dev, libxslt1-dev, libbz2-dev, zlib1g-dev, libtar-dev, libaspell-dev, libhunspell-dev,  python3, python3-dev, libboost-all-dev, libboost-python-dev, wget, curl, libexttextcat-dev, libcurl4-gnutls-dev, default-jre, poppler-utils, perl] #$pippackage $venvpackage $gnutls libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl tesseract-ocr tesseract-ocr-eng tesseract-ocr-nld tesseract-ocr-deu tesseract-ocr-deu-frak tesseract-ocr-fra poppler-utils djvulibre-bin libdjvulibre-text imagemagick
+      with_items: [pkg-config, git-core, make, gcc, g++, autoconf, automake, autoconf-archive, libtool, autotools-dev, libicu-dev, libxml2-dev, libxslt1-dev, libbz2-dev, zlib1g-dev, libtar-dev, libaspell-dev, libhunspell-dev,  python3, python3-pip, python3-dev, libboost-all-dev, libboost-python-dev, wget, curl, libexttextcat-dev, libcurl4-gnutls-dev, default-jre, poppler-utils, perl] #$pippackage $venvpackage $gnutls libatlas-dev libblas-dev gfortran libsuitesparse-dev libfreetype6-dev myspell-nl tesseract-ocr tesseract-ocr-eng tesseract-ocr-nld tesseract-ocr-deu tesseract-ocr-deu-frak tesseract-ocr-fra poppler-utils djvulibre-bin libdjvulibre-text imagemagick
 
     - name: Installing python-virtualenv for Ubuntu <= 16.04
       become: true
@@ -54,7 +54,7 @@
       apt:
         name: "python-virtualenv"
         state: installed
-      when: ((ansible_distribution|lower == 'ubuntu' or ansible_distribution|lower == 'linuxmint') and ansible_lsb.major_release|int < 16)
+      when: ansible_distribution|lower == 'ubuntu' and ansible_lsb.major_release|int < 16 #(needed for travis)
 
     - name: Installing python3-virtualenv
       become: true
@@ -62,7 +62,8 @@
       apt:
         name: "python3-virtualenv"
         state: installed
-      when: not ((ansible_distribution|lower == 'ubuntu' or ansible_distribution|lower == 'linuxmint') and ansible_lsb.major_release|int < 16)
+      when: (ansible_distribution|lower == 'ubuntu' and ansible_lsb.major_release|int >= 16) or (ansible_distribution|lower == 'debian' and ansible_lsb.major_release|int >= 8) or (ansible_distribution|lower == "linuxmint")
+
 
     - name: Installing libgnutls for Ubuntu
       become: true

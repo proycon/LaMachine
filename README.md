@@ -5,67 +5,115 @@
 LaMachine
 ===========
 
-LaMachine is a software distribution of NLP software developed by the Language
-Machines research group and Centre for Language and Speech Technology (Radboud
-University Nijmegen), as well as TiCC (Tilburg University).
+LaMachine is a unified software distribution for Natural Language Processing.  We integrate numerous open-source NLP
+tools, programming libraries, web-services, and web-applications in a single Virtual Research Environment that can be
+installed on a wide variety of machines.
 
-Our software is highly specialised and generally depends on a lot of other
-software. Installing all this software can be a daunting task, compiling it
-from scratch even more so.  Ideally software is installed through your
-distribution's package manager, but we do not always have packages available
-for all platforms, or they may be out of date. LaMachine ensures you can always
-use all of our software at the very latest stable versions by bundling
-them all and offering them in three distinct forms or flavours:
+The software included in LaMachine tends to be highly specialised and generally depends on a lot of other interdependent
+software.  Installing all this software can be a daunting task, compiling it from scratch even more so. LaMachine
+attempts to make this process easier by offering pre-built recipes for a wide variety of systems, whether it is on your
+home computer or whether you are setting up a dedicated production environment, LaMachine will safe you a lot of work.
 
- * As a **Virtual Machine** - Easiest, allows you to run our software on any host OS.
- * As a **Docker application**
- * As a compilation/installation script in a **virtual environment** - This is the option with least overhead and most
-   tightly bound with the OS.
+We address various audiences; the bulk of the software is geared towards data scientists who are not afraid of the
+command line and some programming. We give you the instruments and it is up to you to yield them. However, we also
+attempt to accommodate researchers that require more high-level interfaces by incorporating webservices and websites
+that expose some of the functionality to a larger audience.
 
-LaMachine is suitable for both end-users and developers. It has to be noted,
-however, that running the latest development versions always comes with the
-risk of decreased stability due to undiscovered bugs.
+Installation
+---------------
 
-Our pre-installed software:
-- [Timbl](https://languagemachines.github.io/timbl) - Tilburg Memory Based Learner
-- [Ucto](https://languagemachines.github.io/ucto) - Tokenizer
-- [Frog](https://languagemachines.github.io/frog) - Frog is an integration of memory-based natural language processing (NLP) modules developed for Dutch.
-- [Mbt](https://languagemachines.github.io/mbt) - Memory-based Tagger
-- [Wopr](http://ilk.uvt.nl/wopr) - Memory-based Word Predictor
-- [FoLiA-tools](http://proycon.github.io/folia) - Command line tools for working with the FoLiA format
-- [PyNLPl](https://pypi.python.org/pypi/PyNLPl) - Python Natural Language Processing Library
-- [Colibri Core](http://proycon.github.io/colibri-core/) - Colibri core is an NLP tool as well as a C++ and Python library for working
-  with basic linguistic constructions such as n-grams and skipgrams (i.e patterns
-  with one or more gaps, either of fixed or dynamic size) in a quick and
-  memory-efficient way. At the core is the tool colibri-patternmodeller which
-  allows you to build, view, manipulate and query pattern models.
-- *C++ libraries* - [ticcutils](https://github.com/LanguageMachines/ticcutils), [libfolia](https://github.com/LanguageMachines/libfolia)
-- *Python bindings* - [python-ucto](https://github.com/proycon/python-ucto), [python-frog](https://github.com/proycon/python-frog), [python-timbl](https://github.com/proycon/python-timbl)
-- [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices
-- [Gecco](https://github.com/proycon/gecco) - Generic Environment for Context-Aware Correction of Orthography
-- [Toad](https://github.com/LanguageMachines/toad) - Trainer Of All Data, training tools for Frog
-- [foliadocserve](https://github.com/proycon/foliadocserve) - FoLiA Document Server
-- [FLAT](https://github.com/proycon/flat) - FoLiA Linguistic Annotation Tool
-- [PICCL](https://github.com/LanguageMachines/PICCL) - PICCL: A set of workflows for corpus building through OCR, post-correction (using TICCL) and Natural Language Processing.
+Open a terminal on your Linux, BSD or Mac OS X system and run the following command:
 
-Our optional additional software:
-- [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction.
-- [Valkuil](https://github.com/proycon/valkuil-gecco) - A context-aware spelling corrector for Dutch
-- [FoliaEntity](https://github.com/ErwinKomen/FoliaEntity) - A named entity linker
-- [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/), a dependency parser and tagger for Dutch (about 1GB)
+```
+bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh)
+```
 
-Notable pre-installed *third party* software (not exhaustive):
-- [NumPy](http://www.numpy.org/) and [SciPy](http://www.numpy.org/) - Python libraries for scientific computing
-- [Matplotlib](http://matplotlib.org) - A Python 2D plotting library producing publication quality figures
-- [Scikit-learn](http://matplotlib.org) - Machine learning in Python
-- [Tesseract](https://github.com/tesseract-ocr/tesseract) - Open Source Optical Character Recognition (OCR)
-- [IPython](http://ipython.org/) and [Jupyter](https://jupyter.org/) - A rich architecture for interactive computing.
-- [Pandas](http://pandas.pydata.org/) - Python Data Analysis Library
-- [NLTK](http://www.nltk.org) - Natural Language Toolkit for Python
-- [Hunspell](http://hunspell.github.io) - A spell checker
-- [NextFlow](http://www.nextflow.io) - A system and language for writing parallel and scalable pipelines in a portable manner.
+This will prompt you for some questions on how you would like your LaMachine build.
 
-The Python bindings and libraries all use Python 3. Both the VM image as well as the docker image are based on Arch Linux.
+Are you on Windows 10? Then you need to run this command in a Linux subsystem in Windows 10; to do this you must first
+install the Linux Subsystem with a distribution of your choice (we recommend Ubuntu) from the Microsoft Store. Follow
+the instructions [here](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide).
+
+Included Software
+---------------------
+
+LaMachine includes a wide variety of open-source NLP software. You can select which software you want to include during
+the installation procedure.
+
+* by the Centre of Language and Speech Technology, Radboud University Nijmegen
+    * [Timbl](https://languagemachines.github.io/timbl) - Tilburg Memory Based Learner
+    * [Ucto](https://languagemachines.github.io/ucto) - Tokenizer
+    * [Frog](https://languagemachines.github.io/frog) - Frog is an integration of various memory-based natural language processing (NLP) modules developed for Dutch. It can do Part-of-Speech tagging, lemmatisation, named entity recogniton, shallow parsing, dependency parsing and morphological analysis.
+    * [Mbt](https://languagemachines.github.io/mbt) - Memory-based Tagger
+    * [Wopr](http://ilk.uvt.nl/wopr) - Memory-based Word Predictor
+    * [FoLiA-tools](http://proycon.github.io/folia) - Command line tools for working with the FoLiA format
+    * [PyNLPl](https://pypi.python.org/pypi/PyNLPl) - Python Natural Language Processing Library
+    * [Colibri Core](http://proycon.github.io/colibri-core/) - Colibri core is an NLP tool as well as a C++ and Python library for working with basic linguistic constructions such as n-grams and skipgrams (i.e patterns with one or more gaps, either of fixed or dynamic size) in a quick and memory-efficient way.
+    * *C++ libraries* - [ticcutils](https://github.com/LanguageMachines/ticcutils), [libfolia](https://github.com/LanguageMachines/libfolia)
+    * *Python bindings* - [python-ucto](https://github.com/proycon/python-ucto), [python-frog](https://github.com/proycon/python-frog), [python-timbl](https://github.com/proycon/python-timbl)
+    * [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices
+    * [Gecco](https://github.com/proycon/gecco) - Generic Environment for Context-Aware Correction of Orthography
+    * [Valkuil](https://github.com/proycon/valkuil-gecco) - A context-aware spelling corrector for Dutch
+    * [Toad](https://github.com/LanguageMachines/toad) - Trainer Of All Data, training tools for Frog
+    * [foliadocserve](https://github.com/proycon/foliadocserve) - FoLiA Document Server
+    * [FLAT](https://github.com/proycon/flat) - FoLiA Linguistic Annotation Tool
+    * [TICCLTools](https://github.com/LanguageMachines/ticcltools) - Tools that together constitute the bulk of TICCL: Text Induced Corpus-Cleanup.
+    * [PICCL](https://github.com/LanguageMachines/PICCL) - PICCL: A set of workflows for corpus building through OCR, post-correction (using TICCL) and Natural Language Processing.
+* by the University of Groningen
+    * [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/), a dependency parser and tagger for Dutch
+* by Utrecht University
+    * [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction (initially developed at TiCC, Tilburg University).
+* Major third party software (not exhaustive!):
+    * [Python](https://python.org)
+    * [NumPy](http://www.numpy.org/) and [SciPy](http://www.numpy.org/) - Python libraries for scientific computing
+    * [Matplotlib](http://matplotlib.org) - A Python 2D plotting library producing publication quality figures
+    * [Scikit-learn](http://matplotlib.org) - Machine learning in Python
+    * [Tesseract](https://github.com/tesseract-ocr/tesseract) - Open Source Optical Character Recognition (OCR)
+    * [IPython](http://ipython.org/) and [Jupyter](https://jupyter.org/) - A rich architecture for interactive computing.
+    * [Pandas](http://pandas.pydata.org/) - Python Data Analysis Library
+    * [NLTK](http://www.nltk.org) - Natural Language Toolkit for Python
+    * [Hunspell](http://hunspell.github.io) - A spell checker
+    * [NextFlow](http://www.nextflow.io) - A system and language for writing parallel and scalable pipelines in a portable manner.
+    * [R](https://r-project.org)
+
+Architecture
+-------------------
+
+LaMachine can be installed in multiple *flavours*:
+
+ * **Global installation** - Installs LaMachine globally on a Linux/BSD machine.
+ * **Local installation** - Installs LaMachine locally in a user environment on a Linux/BSD or Mac OS X machine
+ * **Docker container** - Installs LaMachine in a docker container
+ * **Virtual Machine** - Installs LaMachine in a Virtual Machine
+
+In all cases, the installation is mediated through [Ansible](https://www.ansible.com). Containerisation uses
+[Docker](https://docker.com). Virtualisation is made possible through [Vagrant](https://vagrantup.com) and
+[VirtualBox](https://virtualbox.org). The local installation variant uses virtualenv with some custom extensions.
+
+LaMachine uses [Debian](https://www.debian.org) as primary Linux distribution (for virtualisation and containerisation), but
+derivatives like Ubuntu and certain other distributions such as RHEL, CentOS, Fedora and Arch Linux are also supported
+(though may be unsupported by a minority of participating software).
+
+Initially, the user executes a ``bootstrap.sh`` script that acts as a single point of entry for all flavours. It will
+automatically download LaMachine and create the necessary configuration files for your LaMachine build, guiding you
+through all the options. It will eventually invoke a so-called ansible playbook that executes installation steps for all
+of the individual software projects included in LaMachine, depending on your distribution and flavour.
+
+In addition to a flavour, users can opt for one of three versions of LaMachine:
+ * **stable** - Installs the latest official releases of all participating software
+ * **development** - Installs the latest development versions of participating software, this often means they are
+   installed straight from the latest git version.
+ * **custom** - Installs explicitly defined versions for all software (for e.g. scientific reproducibility).
+
+
+Usage
+------------
+
+
+TODO
+
+
+
 
 Installation & Usage as Virtual Machine (for Linux, BSD, MacOS X, Windows)
 =========================================================================
