@@ -25,16 +25,16 @@
       when: force is defined
 
     - import_tasks: debian.yml
-      when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
+      when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint" and root
 
     - import_tasks: redhat.yml
-      when: (ansible_distribution|lower == 'redhat' or ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'fedora') and root == True
+      when: (ansible_distribution|lower == 'redhat' or ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'fedora') and root
 
     - import_tasks: arch.yml
-      when: (ansible_distribution|lower == 'arch') and root == True
+      when: (ansible_distribution|lower == 'arch') and root
 
     - import_tasks: macosx.yml
-      when: (ansible_distribution|lower == 'macosx') and root == True
+      when: (ansible_distribution|lower == 'macosx')
 
     - name: Create home bin directory
       file:

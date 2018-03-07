@@ -14,7 +14,6 @@
       homebrew:
         update_homebrew: yes
         upgrade_all: yes
-      when: root == True
 
     - name: Installing common base packages (Homebrew)
       homebrew:
