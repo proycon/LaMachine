@@ -24,49 +24,45 @@
  - when: localenv_type == "virtualenv"
    block:
      - name: "Installing generic 3rd party Python Packages via pip (1)"
-       become: "{% if root and locality == \"global\" %}yes{% else %}no{% endif %}"
-       become_user: root
-       pip:
-           name: "{{item}}"
-           state: "{% if prefer_distro %}present{% else %}latest{% endif %}"
-           executable: "{% if locality == \"local\" %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
+       include_role:
+           name: python-install
        with_items: #more or less in dependency order
-           - cython
-           - lxml
-           - pyyaml
-           - numpy
-           - matplotlib
-           - requests
-           - flask
+         - { "pip": cython, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": lxml, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": pyyaml, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": numpy, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": matplotlib, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": requests, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": flask, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+       loop_control:
+           loop_var: package
      - name: "Installing generic 3rd party Python Packages via pip (2)"
-       become: "{% if root and locality == \"global\" %}yes{% else %}no{% endif %}"
-       become_user: root
-       pip:
-           name: "{{item}}"
-           state: "{% if prefer_distro %}present{% else %}latest{% endif %}"
-           executable: "{% if locality == \"local\" %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
+       include_role:
+           name: python-install
        with_items: #more or less in dependency order
-           - scipy
-           - scikit-learn
-           - beautifulsoup4
-           - pandas
-           - ipython
-           - jupyter
-           - nbconvert
-           - nltk
-           - pycrypto
-           - pylint
-           - pymongo
-           - pymysql
-           - seaborn
-           - spacy
-           - sphinx
-           - tensorflow
-           - word2vec
-           - xlsxwriter
-           - gensim
-           - pillow
-           - keras
+         - { "pip": scipy }
+         - { "pip": scikit-learn }
+         - { "pip": beautifulsoup4 }
+         - { "pip": pandas }
+         - { "pip": ipython }
+         - { "pip": jupyter }
+         - { "pip": nbconvert }
+         - { "pip": nltk }
+         - { "pip": pycrypto }
+         - { "pip": pylint }
+         - { "pip": pymongo }
+         - { "pip": pymysql }
+         - { "pip": seaborn }
+         - { "pip": spacy }
+         - { "pip": sphinx }
+         - { "pip": tensorflow }
+         - { "pip": word2vec }
+         - { "pip": xlsxwriter }
+         - { "pip": gensim }
+         - { "pip": pillow }
+         - { "pip": keras }
+       loop_control:
+           loop_var: package
        when: minimal is not defined or not minimal
 
 #############################################################
