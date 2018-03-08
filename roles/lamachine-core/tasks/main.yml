@@ -175,7 +175,7 @@
         dest: "/etc/profile.d/lamachine-activate.sh"
         content: |
           #!/bin/bash
-          export PATH={{global_prefix}}/bin:$PATH #extra fallback to ensure the controller environment is not active
+          export PATH={{global_prefix}}/bin:$PATH
           source {{global_prefix}}/bin/lamachine-{{conf_name}}-activate
         mode: a+rx
       when: locality == "global"
