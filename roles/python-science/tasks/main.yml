@@ -18,15 +18,6 @@
              - python3-requests-oauthlib
              - python3-flask
          when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
-       - name: "Installing Python packages from distribution as explicitly preferred (Debian/Ubuntu)"
-         become: yes
-         become_user: root
-         apt:
-             name: "{{item}}"
-             state: latest
-         with_items:
-             - python3-mysqldb
-         when: (ansible_distribution|lower == "debian" and ansible_distribution_version >= 9) or (ansible_distribution|lower == "ubuntu" and ansible_distribution_version >= 16.04) or ansible_distribution|lower == "linuxmint"
 
 
 
