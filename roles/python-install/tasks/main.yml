@@ -22,7 +22,7 @@
           shell: "python3 {% if 'setup' in package %}{{package.setup}}{% else %}setup.py{% endif %} install"
           args:
             chdir: "{{ source_path }}/{{package.github_repo}}"
-      environment: "{% if locality == \"local\" %}{{localenv}}{% else %}{{globalenv}}{% endif %}"
+      environment: "{% if locality == 'local' %}{{localenv}}{% else %}{{globalenv}}{% endif %}"
       when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and (version == "development" or ("pip" not in package or package.pip == ""))'
 
 
@@ -32,19 +32,19 @@
       pip:
            name: "{{package.pip}}"
            state: "{% if 'state' in package %}{{package.state}}{% else %}latest{% endif %}"
-           executable: "{% if locality == \"local\" %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
-      environment: "{% if locality == \"local\" %}{{localenv}}{% else %}{{globalenv}}{% endif %}"
+           executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
+      environment: "{% if locality == 'local' %}{{localenv}}{% else %}{{globalenv}}{% endif %}"
       when: (version == "stable" or (version == "development" and "github_user" in package and package.github_user == "")) and localenv_type != "conda" and "pip" in package and package.pip != ""
 
     - name: "{% if 'conda' in package %}{{package.conda}}{% endif %} - Installing latest release from conda (stable)"
       command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} {{package.conda}}"
-      environment: "{% if locality == \"local\" %}{{localenv}}{% else %}{{globalenv}}{% endif %}"
+      environment: "{% if locality == 'local' %}{{localenv}}{% else %}{{globalenv}}{% endif %}"
       when: (version == "stable" or (version == "development" and "github_user" in package and package.github_user == "")) and localenv_type == "conda" and "conda" in package and package.conda != ""
 
     - name: "{% if 'pip' in package %}{{package.pip}}{% endif %} - Installing latest release from the Python Package Index (stable, conda)"
       pip:
            name: "{{package.pip}}"
            state: latest
-           executable: "{% if locality == \"local\" %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
-      environment: "{% if locality == \"local\" %}{{localenv}}{% else %}{{globalenv}}{% endif %}"
+           executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
+      environment: "{% if locality == 'local' %}{{localenv}}{% else %}{{globalenv}}{% endif %}"
       when: (version == "stable" or (version == "development" and "github_user" in package and package.github_user == "")) and localenv_type == "conda" and ("conda" not in package or package.conda == "") and "pip" in package and package.pip != ""

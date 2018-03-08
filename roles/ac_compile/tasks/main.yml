@@ -2,6 +2,7 @@
 
 - name: "{{pkg_name}} - Invoke bootstrap if it exists"
   shell: |
+    #!/bin/bash
     if [ -f ./bootstrap.sh ]; then
       bash ./bootstrap.sh
       exit $?
@@ -16,7 +17,7 @@
   register: bootstrap_result
 
 - name: "{{pkg_name}} - Invoke configure"
-  command: "./configure --prefix={% if locality == \"local\" %}{{ local_prefix }}{% else %}{{ global_prefix }}{% endif %} {% if 'configure_opts' in package %}{{package.configure_opts}}{% endif %}"
+  command: "./configure --prefix={% if locality == 'local' %}{{ local_prefix }}{% else %}{{ global_prefix }}{% endif %} {% if 'configure_opts' in package %}{{package.configure_opts}}{% endif %}"
   args:
       chdir: "{{ pkg_source_dir }}"
   environment: "{% if 'build_environment' in package %}{{ package.build_environment }}{% else %}{{default_environment}}{% endif %}"
@@ -31,7 +32,7 @@
   register: make_result
 
 - name: "{{pkg_name}} - Invoke make install"
-  become: "{% if root and locality == \"global\" %}true{% else %}false{% endif %}"
+  become: "{% if root and locality == 'global' %}true{% else %}false{% endif %}"
   become_user: root
   become_method: sudo
   command: "make install {% if 'make_install_opts' in package %}{{package.make_install_opts}}{% endif %}"
