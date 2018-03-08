@@ -1,19 +1,12 @@
 ==============================================================================
-           ,              LaMachine - NLP Software distribution 
+           ,              LaMachine v2 - Unified NLP Software distribution
           ~)                     (https://proycon.github.io/LaMachine)
-           (----í         Language Machines research group
-            /| |\         & Centre for Language and Speech Technology
-           / / /|	        Radboud University Nijmegen 
+           (----í
+            /| |\         Centre for Language and Speech Technology
+           / / /|	             Radboud University Nijmegen
 ==============================================================================
 
-Available software: CLAM (clamservice), Colibri Core (colibri-patternmodeller),
-                    FoLiA Tools (foliavalidator, folia2txt, folia2html, foliaquery etc), 
-                    foliadocserve, foliautils (folialint etc),
-                    frog, gecco, mbt, mbtserver, ticcltools, timbl, toad (froggen),
-                    ucto, wopr
-
-Python libraries:   pynlpl ucto frog timbl clam colibricore
-
-Run lamachine-test.sh to test your installation, run lamachine-update.sh to
-update everything (with sudo only if you use Vagrant or Docker).
+Welcome to LaMachine!
+  - run lamachine-list to see a list of installed software
+  - run lamachine-update to update and test your LaMachine installation
 

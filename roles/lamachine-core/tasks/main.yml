@@ -68,38 +68,27 @@
           ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v $OPTS --extra-vars "$*"
         mode: u+rwx
 
-    - name: Link update script
-      file:
-        src: "{{homedir}}/bin/lamachine-{{ conf_name }}-update"
+    - name: Set generic update script
+      copy:
         dest: "{{homedir}}/bin/lamachine-update"
-        force: true
-        state: link
-
-
-    - import_tasks: debian.yml
-      when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
-
-    - import_tasks: redhat.yml
-      when: (ansible_distribution|lower == 'redhat' or ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'fedora') and root
-
-    - import_tasks: arch.yml
-      when: (ansible_distribution|lower == 'arch') and root
-
-    - import_tasks: macosx.yml
-      when: (ansible_distribution|lower == 'macosx')
-
-
-    - import_tasks: conda.yml
-      when: localenv_type == 'conda' and locality == "local"
-
-    - import_tasks: virtualenv.yml
-      when: localenv_type == 'virtualenv' and locality == "local"
-
+        content: |
+            #!/bin/bash
+            if [ ! -z "$LM_NAME" ]; then
+                echo "You are not in a LaMachine environment! Unable to update, activate one first!">&2
+                exit 2
+            else
+               if which lamachine-$LM_NAME-update; then
+                    lamachine-$LM_NAME-update
+               else
+                    echo "Unable to find update script lamachine-$LM_NAME-update!">&2
+                    exit 3
+               fi
+            fi
 
     - name: Set LaMachine activation script
-      blockinfile:
+      copy:
         dest: "{{homedir}}/bin/lamachine-{{ conf_name }}-activate"
-        block: |
+        content: |
           #!/bin/bash
           if [[ ! -z "$VIRTUAL_ENV" ]] && [[ "$VIRTUAL_ENV" != "$LM_LOCAL_PREFIX" ]]; then
               #We seem to already be in a virtualenv (possibly the LaMachine controller!) deactivate it first
@@ -122,6 +111,9 @@
              export CLANG_CXX_LIBRARY="libc++" #needed for python bindings in python-install
              export MACOSX_DEPLOYMENT_TARGET="{{ ansible_distribution_version }}"
           fi
+          if [[ "$LAMACHINE_QUIET" != "1" ]]; then
+            cat $LM_PATH/motd
+          fi
           if [[ "$LM_LOCALITY" == "local" ]]; then
               export LM_LOCAL_PREFIX={{local_prefix}}
               export LM_PREFIX={{local_prefix}}
@@ -136,17 +128,70 @@
           else
               export LM_PREFIX={{global_prefix}}
           fi
-        marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
-        insertafter: EOF
-        create: yes
         mode: u+rwx
 
-    - name: Link activation script
+    - name: Copy activation script to global environment
+      copy:
+        src: "{{homedir}}/bin/lamachine-{{conf_name}}-activate"
+        dest: "{{global_prefix}}/bin/lamachine-{{conf_name}}-activate"
+        mode: a+rx
+      when: locality == "global"
+
+    - name: Copy update script to global environment
+      copy:
+        src: "{{homedir}}/bin/lamachine-{{conf_name}}-update"
+        dest: "{{global_prefix}}/bin/lamachine-{{conf_name}}-update"
+        mode: a+rx
+      when: locality == "global"
+
+    - name: Copy generic update script to global environment
+      copy:
+        src: "{{homedir}}/bin/lamachine-update"
+        dest: "{{global_prefix}}/bin/lamachine-update"
+        mode: a+rx
+      when: locality == "global"
+
+    - import_tasks: debian.yml
+      when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
+
+    - import_tasks: redhat.yml
+      when: (ansible_distribution|lower == 'redhat' or ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'fedora') and root
+
+    - import_tasks: arch.yml
+      when: (ansible_distribution|lower == 'arch') and root
+
+    - import_tasks: macosx.yml
+      when: (ansible_distribution|lower == 'macosx')
+
+    - import_tasks: conda.yml
+      when: localenv_type == 'conda' and locality == "local"
+
+    - import_tasks: virtualenv.yml
+      when: localenv_type == 'virtualenv' and locality == "local"
+
+
+    - name: Enable activation script globally
+      copy:
+        dest: "/etc/profile.d/lamachine-activate.sh"
+        content: |
+          #!/bin/bash
+          export PATH={{global_prefix}}/bin:$PATH #extra fallback to ensure the controller environment is not active
+          source {{global_prefix}}/bin/lamachine-{{conf_name}}-activate
+        mode: a+rx
+      when: locality == "global"
+
+    - name: Link default activation script (local)
       file:
          src: "{{homedir}}/bin/lamachine-{{conf_name}}-activate"
          dest: "{{homedir}}/bin/lamachine-activate"
          state: link
 
+    - name: Link default activation script (global)
+      file:
+         src: "{{homedir}}/bin/lamachine-{{conf_name}}-activate"
+         dest: "{{global_prefix}}/bin/lamachine-activate"
+         state: link
+      when: locality == "global"
 
     - name: Create local Ansible hosts file
       copy:
@@ -183,7 +228,7 @@
       become_user: root
       file:
         src: "{{lamachine_path}}"
-        dest: "/usr/local/LaMachine"
+        dest: "{{global_prefix}}/LaMachine"
         force: true
         state: link
       when: locality == "global"
