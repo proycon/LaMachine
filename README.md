@@ -81,8 +81,8 @@ Architecture
 
 LaMachine can be installed in multiple *flavours*:
 
- * **Global installation** - Installs LaMachine globally on a Linux/BSD machine.
- * **Local installation** - Installs LaMachine locally in a user environment on a Linux/BSD or Mac OS X machine
+ * **Global installation** - Installs LaMachine globally on a Linux/BSD machine. (only one per machine)
+ * **Local installation** - Installs LaMachine locally in a user environment on a Linux/BSD or Mac OS X machine (multiple per machine possible)
  * **Docker container** - Installs LaMachine in a docker container
  * **Virtual Machine** - Installs LaMachine in a Virtual Machine
 

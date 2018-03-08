@@ -18,6 +18,8 @@
           - root
           - unix_user
           - homedir
+          - prefer_distro
+          - minimal
 
     - name: Checking force option
       debug:
