@@ -131,6 +131,8 @@
         mode: u+rwx
 
     - name: Copy activation script to global environment
+      become: yes
+      become_user: root
       copy:
         src: "{{homedir}}/bin/lamachine-{{conf_name}}-activate"
         dest: "{{global_prefix}}/bin/lamachine-{{conf_name}}-activate"
@@ -138,6 +140,8 @@
       when: locality == "global"
 
     - name: Copy update script to global environment
+      become: yes
+      become_user: root
       copy:
         src: "{{homedir}}/bin/lamachine-{{conf_name}}-update"
         dest: "{{global_prefix}}/bin/lamachine-{{conf_name}}-update"
@@ -145,6 +149,8 @@
       when: locality == "global"
 
     - name: Copy generic update script to global environment
+      become: yes
+      become_user: root
       copy:
         src: "{{homedir}}/bin/lamachine-update"
         dest: "{{global_prefix}}/bin/lamachine-update"
