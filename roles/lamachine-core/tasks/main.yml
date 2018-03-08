@@ -85,9 +85,10 @@
                fi
             fi
 
-    - name: Set LaMachine activation script
+    - name: Create LaMachine activation script
       copy:
         dest: "{{homedir}}/bin/lamachine-{{ conf_name }}-activate"
+        unsafe_writes: yes
         content: |
           #!/bin/bash
           if [[ ! -z "$VIRTUAL_ENV" ]] && [[ "$VIRTUAL_ENV" != "$LM_LOCAL_PREFIX" ]]; then
