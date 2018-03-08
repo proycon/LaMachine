@@ -23,7 +23,7 @@
           args:
             chdir: "{{ source_path }}/{{package.github_repo}}"
       environment: "{% if locality == \"local\" %}{{localenv}}{% else %}{{globalenv}}{% endif %}"
-      when: "github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and (version == "development" or ("pip" not in package or package.pip == ""))
+      when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and (version == "development" or ("pip" not in package or package.pip == ""))'
 
 
     - name: "{% if 'pip' in package %}{{package.pip}}{% endif %} - Installing latest release from the Python Package Index (stable, virtualenv)"

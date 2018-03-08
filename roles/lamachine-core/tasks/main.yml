@@ -177,6 +177,8 @@
 
 
     - name: Enable activation script globally
+      become: yes
+      become_user: root
       copy:
         dest: "/etc/profile.d/lamachine-activate.sh"
         content: |
@@ -193,6 +195,8 @@
          state: link
 
     - name: Link default activation script (global)
+      become: yes
+      become_user: root
       file:
          src: "{{homedir}}/bin/lamachine-{{conf_name}}-activate"
          dest: "{{global_prefix}}/bin/lamachine-activate"
