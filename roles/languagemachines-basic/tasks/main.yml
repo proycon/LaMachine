@@ -11,7 +11,7 @@
           - name: Adding homebrew tap
             command: brew tap fbkarsdorp/homebrew-lamachine
           - name: Installing from homebrew
-            command: brew install ticcutils libfolia uctodata ucto timbl timblserver mbt frogdata frog  #TODO: add foliautils once merged, and toad
+            command: brew install ticcutils libfolia uctodata ucto timbl timblserver mbt frogdata frog foliautils #TODO: toad still missing cause it failed to compile earlier
             register: macosx
       when: ansible_distribution == 'MacOSX' and root == True and version == "stable" #note: no locality check here, we use homebrew even in local mode
 
@@ -77,6 +77,8 @@
             - repo: toad
               user: LanguageMachines
               exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
+            - repo: wopr
+              user: LanguageMachines
           loop_control:
               loop_var: package
       when: (arch is not defined or not arch.skipped) and (macosx is not defined or not macosx.skipped)
