@@ -36,6 +36,15 @@
         - ImageMagick
       when: root and (ansible_distribution|lower == "redhat" or ansible_distribution|lower == "centos" or  ansible_distribution|lower == "fedora" or ansible_distribution|lower == "rhel")
 
+
+    - name: Installing TICCLtools
+      include_role:
+        name: lamachine-git-autoconf
+      vars:
+        package:
+          repo: ticcltools
+          user: LanguageMachines
+
     - name: Create nextflow home
       become: "{{lm_become}}"
       become_user: root
