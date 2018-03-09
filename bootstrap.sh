@@ -58,6 +58,7 @@ usage () {
     echo " ${bold}--minimal${normal} - Attempt to install less than normal, leaving out extra options. This may break things."
     echo " ${bold}--prefer_distro${normal} - Prefer distribution packages over other channels (such as pip). This generally installs more conserative versions, and less, but might break things."
     echo " ${bold}--dockerrepo${normal} - Docker repository name (default: proycon/lamachine)"
+    echo " ${bold}--install${normal} - Provide an explicit comma separated list of LaMachine roles to install (instead of querying interactively or just taking the default)"
 }
 
 USERNAME=$(whoami)
@@ -231,6 +232,16 @@ while [[ $# -gt 0 ]]; do
         ;;
         --vagrantbox) #LaMachine source path
         VAGRANTBOX="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --dockerrepo) #Docker repo (proycon/lamachine)
+        DOCKERREPO="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        --install)
+        INSTALL="$2"
         shift # past argument
         shift # past value
         ;;
@@ -695,12 +706,20 @@ if [ ! -e $SOURCEDIR/host_vars/$(basename $CONFIGFILE) ]; then
     fi
 fi
 if [ ! -e $INSTALLFILE ]; then
-    cp $SOURCEDIR/install.yml $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to copy $SOURCEDIR/install.yml"
+    if [ ! -z "$INSTALL" ]; then
+        #use the explicitly provided list
+        echo "- hosts: all" > $SOURCEDIR/install-$LM_NAME.yml
+        echo "  roles: [ lamachine-core, $INSTALL ]" >> $SOURCEDIR/install-$LM_NAME.yml
+    else
+        #use the template
+        cp $SOURCEDIR/install.yml $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to copy $SOURCEDIR/install.yml"
+    fi
     if [ "$SOURCEDIR" != "$BASEDIR" ]; then
         ln -sf $SOURCEDIR/install-$LM_NAME.yml $INSTALLFILE || fatalerror "Unable to link $CONFIGFILE"
     fi
 fi
-if [ $INTERACTIVE -eq 1 ]; then
+
+if [ $INTERACTIVE -eq 1 ] && [ -z "$INSTALL" ]; then
     echo "${bold}Opening installation file $INSTALLFILE in editor for selection of packages to install...${normal}"
     sleep 3
     if ! "$EDITOR" "$INSTALLFILE"; then
