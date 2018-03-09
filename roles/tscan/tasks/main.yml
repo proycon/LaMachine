@@ -1,0 +1,8 @@
+---
+    - name: Installing T-scan
+      include_role:
+        name: lamachine-git-autoconf
+      vars:
+          package:
+            repo: tscan
+            user: proycon
