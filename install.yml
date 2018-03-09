@@ -1,13 +1,16 @@
 ---
-#(Comment or remove packages/roles you do not want to install)
+#(Comment or remove categories/roles you do not want to install)
 - hosts: all
   roles:
-      - lamachine-core #The LaMachine core, you always need this or nothing works; includes Python 3
+      - lamachine-core #The LaMachine core, you always need this or nothing works; already includes Python 3
       - languagemachines-basic #includes basic NLP tools written in C++, such as timbl, frog, ucto, folia by the Language Machines Research group, Centre of Language and Speech Technology, Radboud University Nijmegen
       - python-science #Core 3rd party scientific python packages (numpy, scipy, pandas, scikit-learn, nltk, and more)
       - languagemachines-python #contains basic Python-based tools and libraries by the Language Machines Research group, Centre of Language and Speech Technology, Radboud University Nijmegen
-      - languagemachines-python-bindings #contains python-ucto, python-frog, python-timbl
+      - languagemachines-python-bindings #contains python-ucto, python-frog, python-timbl (requires the above)
       - r-science #R with core R packages (3rd party)
+     #- piccl #Workflows for Post-OCR correction and normalisation and pseudo-modernisation of historical text. Includes TICCL. Requires languagemachines-* (Radboud University & Tilburg University)
+     #- alpino #a dependency parser for dutch (University of Groningen)
+     #- tscan  #Software for feature extraction for readability prediction  (Utrecht University, Tilburg University & Radboud University), requires alpino and languagemachines-*
 
 
 
