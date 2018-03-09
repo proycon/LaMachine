@@ -42,7 +42,7 @@
       block:
         - name: Installing from LanguageMachines github
           include_role:
-            name: autoconf_git
+            name: lamachine-git-autoconf
           with_items:
             - repo: ticcutils
               user: LanguageMachines
