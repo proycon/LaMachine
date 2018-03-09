@@ -1,0 +1,79 @@
+---
+    - name: Check for unsupported OS for Alpino
+      debug:
+        msg: "Alpino is only on supported Debian/Ubuntu for now, it may not work on your OS !!!"
+      when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linuxmint")
+
+    - name: Installing global dependencies for Alpino (Debian/Ubuntu)
+      become: true
+      become_user: root
+      apt:
+        name: "{{item}}"
+        state: installed
+      with_items:
+        - libtcl8.6
+        - libtk8.6
+        - libwww-perl
+        - libxslt1.1
+        - tk
+        - unzip
+      when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linuxmint")
+
+    - name: Make Alpino source directory
+      shell: wget http://www.let.rug.nl/vannoord/alp/Alpino/versions/binary/ -O alpino_index
+      file:
+          path: "{{source_path}}/alpino"
+          state: directory
+          owner: "{{unix_user}}"
+
+    - name: "Alpino - Download and install"
+      shell: |
+          #!/bin/bash
+          wget http://www.let.rug.nl/vannoord/alp/Alpino/versions/binary/ -O alpino_index
+          {% if (force is defined) %}
+          INSTALL=1
+          {% else %}
+          if [ -e alpino_index_old ]; then
+            if [ "$(sha256sum alpino_index)" = "$(sha256sum alpino_index_old") ]; then
+              INSTALL=0
+            else
+              INSTALL=1
+            fi
+          else
+            INSTALL=1
+          fi
+          {% endif %}
+          if [ $INSTALL -eq 0 ]; then
+            echo "Alpino already up to date..."
+            exit 123
+          fi
+          rm latest.tar.gz 2>/dev/null
+          curl -s http://www.let.rug.nl/vannoord/alp/Alpino/versions/binary/latest.tar.gz #this contains binaries!!!
+          tar -xvzf latest.tar.gz
+          mv alpino_index alpino_index_old
+          exit 0
+      args:
+        chdir: "{{ source_path }}/alpino"
+      register: install_alpino
+      changed_when: install_alpino.rc != 123
+      failed_when: install_alpino.rc != 0 and install_alpino.rc != 123
+
+
+    - name: "Linking to alpino"
+      become: "{{lm_become}}"
+      become_user: root
+      file:
+        src: "{{source_path}}/alpino/Alpino"
+        dest: "{{lm_prefix}}/opt/Alpino"
+        state: link
+        force: yes
+
+    - name: "Adding activation script for Alpino"
+      become: "{{lm_become}}"
+      become_user: root
+      copy:
+        dest: "{{lm_prefix}}/activate.d/alpino.sh"
+        contents: |
+          export ALPINO_HOME={{lm_prefix}}/opt
+
+
