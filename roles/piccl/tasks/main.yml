@@ -56,6 +56,14 @@
         find {{ lm_prefix }}/opt/nextflow -type f | xargs chmod 0644
         find {{ lm_prefix }}/opt/nextflow -type d | xargs chmod 0755
 
+    - name: "Adding activation script for Nextflow"
+      become: "{{lm_become}}"
+      become_user: root
+      copy:
+        dest: "{{lm_prefix}}/activate.d/nextflow.sh"
+        contents: |
+          export NXF_HOME={{lm_prefix}}/opt/nextflow
+
     - name: Install PICCL
       include_role:
         name: lamachine-git
