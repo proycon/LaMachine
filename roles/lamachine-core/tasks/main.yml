@@ -33,6 +33,13 @@
           mode: u+rwx,a+rx
           state: directory
 
+    - name: Create global prefix directory
+      file:
+          path: "{{global_prefix}}"
+          mode: u+rwx,a+rx
+          state: directory
+      when: locality == "global"
+
     - name: Ensure home directory is world-traversable
       file:
           path: "{{homedir}}"
@@ -189,12 +196,6 @@
     - import_tasks: virtualenv.yml
       when: localenv_type == 'virtualenv' and locality == "local"
 
-    - name: Adding activate.d directory for extra activation scripts (global)
-      file:
-        path: "{{global_prefix}}/bin/activate.d"
-        state: directory
-      when: locality == "global"
-
     - name: Enable activation script globally
       become: yes
       become_user: root
@@ -261,6 +262,7 @@
           mode: u+rwx,a+rx
       with_items:
           - bin
+          - "bin/activate.d"
           - lib
           - share
           - opt
