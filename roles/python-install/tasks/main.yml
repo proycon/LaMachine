@@ -39,7 +39,7 @@
     - name: "{% if 'conda' in package %}{{package.conda}}{% endif %} - Installing latest release from conda (stable)"
       command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} {{package.conda}}"
       environment: "{% if locality == 'local' %}{{localenv}}{% else %}{{globalenv}}{% endif %}"
-      when: (version == "stable" or (version == "development" and ("github_user" in not package or package.github_user == ""))) and localenv_type == "conda" and "conda" in package and package.conda != ""
+      when: (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == ""))) and localenv_type == "conda" and "conda" in package and package.conda != ""
 
     - name: "{% if 'pip' in package %}{{package.pip}}{% endif %} - Installing latest release from the Python Package Index (stable, conda)"
       pip:
