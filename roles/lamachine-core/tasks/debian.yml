@@ -61,7 +61,7 @@
       apt:
         name: "python3-virtualenv"
         state: installed
-      when: (ansible_distribution|lower == 'ubuntu' and ansible_lsb.major_release|int >= 16) or (ansible_distribution|lower == 'debian' and ansible_lsb.major_release|int >= 8) or (ansible_distribution|lower == "linuxmint")
+      when: (ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version|int >= 16) or (ansible_distribution|lower == 'debian' and ansible_distribution_major_version|int >= 8) or (ansible_distribution|lower == "linuxmint")
 
     - name: Installing libgnutls28
       become: true
