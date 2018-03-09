@@ -47,4 +47,4 @@
            state: latest
            executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
       environment: "{% if locality == 'local' %}{{localenv}}{% else %}{{globalenv}}{% endif %}"
-      when: (version == "stable" or (version == "development" and ("github_user" not package or package.github_user == ""))) and localenv_type == "conda" and ("conda" not in package or package.conda == "") and "pip" in package and package.pip != ""
+      when: (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == ""))) and localenv_type == "conda" and ("conda" not in package or package.conda == "") and "pip" in package and package.pip != ""
