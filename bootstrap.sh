@@ -746,11 +746,11 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     fi
     #add activation script on the host machine:
     echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nif vagrant up && vagrant ssh; then\nvagrant halt\nexit 0\nelse\nexit 1\nfi" > $BASEDIR/lamachine-$LM_NAME-activate
-    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant halt; exit \$?" > $BASEDIR/lamachine-$LM_NAME-stop
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant halt \$@; exit \$?" > $BASEDIR/lamachine-$LM_NAME-stop
     echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant up; exit \$?" > $BASEDIR/lamachine-$LM_NAME-start
     echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant ssh; exit \$?" > $BASEDIR/lamachine-$LM_NAME-connect
     echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant ssh -c 'lamachine-update'; exit \$?" > $BASEDIR/lamachine-$LM_NAME-update
-    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant destroy; exit \$?" > $BASEDIR/lamachine-$LM_NAME-destroy
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant destroy \$@; exit \$?" > $BASEDIR/lamachine-$LM_NAME-destroy
     chmod a+x $BASEDIR/lamachine-$LM_NAME-*
     ln -sf $BASEDIR/lamachine-$LM_NAME-activate $HOMEDIR/bin/
     ln -sf $BASEDIR/lamachine-$LM_NAME-start $HOMEDIR/bin/
