@@ -770,6 +770,7 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
     sed -i "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to run sed"
     #echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
     docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME .
+    rc=$?
     if [ $rc -eq 0 ]; then
         echo "All done, a docker image has been build!"
         echo "- to create and run a *new* interactive container using this image, run: docker run -p 8080:80 -t -i $DOCKERREPO:$LM_NAME"
