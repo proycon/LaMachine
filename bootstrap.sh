@@ -666,7 +666,9 @@ if [ ! -d lamachine-controller/$LM_NAME ]; then
 else
     echo "Reusing existing control environment..."
     cd lamachine-controller/$LM_NAME
-    source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
+    if [[ "$FLAVOUR" != "docker" ]]; then
+        source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
+    fi
 fi
 
 if [ -z "$SOURCEDIR" ]; then
