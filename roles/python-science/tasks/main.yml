@@ -36,6 +36,8 @@
          - { "pip": matplotlib, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
          - { "pip": requests, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
          - { "pip": flask, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": cherrypy, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": jinja2, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
        loop_control:
            loop_var: package
      - name: "Installing generic 3rd party Python Packages via pip (2)"
