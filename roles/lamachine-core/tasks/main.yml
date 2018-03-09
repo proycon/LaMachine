@@ -257,6 +257,7 @@
       file:
           path: "{{ global_prefix }}/opt"
           state: directory
+          owner: "{{unix_user}}"
           mode: u+rwx,a+rx
       when: locality == "global"
 
