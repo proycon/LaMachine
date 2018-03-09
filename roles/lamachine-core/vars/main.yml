@@ -1,5 +1,5 @@
 ---
-lm_prefix: "{% if locality = 'global' %}{{global_prefix}}{% else %}{{local_prefix}}{%endif%}"
+lm_prefix: "{% if locality == 'global' %}{{global_prefix}}{% else %}{{local_prefix}}{%endif%}"
 lm_become: "{% if locality == 'global' and root %}yes{% else %}no{% endif %}"
 localenv:
      VIRTUAL_ENV: "{{local_prefix}}"
