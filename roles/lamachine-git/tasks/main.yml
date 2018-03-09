@@ -46,6 +46,6 @@
       shell: "git checkout {{customversion[package.repo]}} && git pull"
       args:
         chdir: "{{ source_path }}/{{package.repo}}"
-      changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)')
+      changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
       when: version == "custom"
 
