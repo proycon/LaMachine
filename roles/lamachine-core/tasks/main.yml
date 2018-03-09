@@ -75,7 +75,7 @@
           fi
           {% endif %}
           ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v $OPTS --extra-vars "$*"
-        mode: u+rwx
+        mode: u+rwx,a+rx
 
     - name: Set generic update script
       copy:
@@ -93,6 +93,7 @@
                     exit 3
                fi
             fi
+        mode: u+rwx,a+rx
 
     - name: Create LaMachine activation script
       copy:
