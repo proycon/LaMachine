@@ -60,7 +60,7 @@
           if [ -d .git ]; then
             git pull
           fi
-          OPTS-""
+          OPTS=""
           if [ {{root|int}} -eq 1 ]; then
              OPTS="--ask-become-pass"
           fi
