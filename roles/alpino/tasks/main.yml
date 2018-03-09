@@ -19,13 +19,6 @@
         - unzip
       when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linuxmint")
 
-    - name: Make Alpino source directory
-      shell: wget http://www.let.rug.nl/vannoord/alp/Alpino/versions/binary/ -O alpino_index
-      file:
-          path: "{{source_path}}/alpino"
-          state: directory
-          owner: "{{unix_user}}"
-
     - name: "Alpino - Download and install"
       shell: |
           #!/bin/bash
@@ -48,25 +41,13 @@
             exit 123
           fi
           rm latest.tar.gz 2>/dev/null
-          curl -s http://www.let.rug.nl/vannoord/alp/Alpino/versions/binary/latest.tar.gz #this contains binaries!!!
-          tar -xvzf latest.tar.gz
-          mv alpino_index alpino_index_old
-          exit 0
+          curl -s http://www.let.rug.nl/vannoord/alp/Alpino/versions/binary/latest.tar.gz && tar -xvzf latest.tar.gz -C {{lm_prefix}}/opt/ && mv alpino_index alpino_index_old
+          exit $?
       args:
         chdir: "{{ source_path }}/alpino"
       register: install_alpino
       changed_when: install_alpino.rc != 123
       failed_when: install_alpino.rc != 0 and install_alpino.rc != 123
-
-
-    - name: "Linking to alpino"
-      become: "{{lm_become}}"
-      become_user: root
-      file:
-        src: "{{source_path}}/alpino/Alpino"
-        dest: "{{lm_prefix}}/opt/Alpino"
-        state: link
-        force: yes
 
     - name: "Adding activation script for Alpino"
       become: "{{lm_become}}"
@@ -74,6 +55,6 @@
       copy:
         dest: "{{lm_prefix}}/activate.d/alpino.sh"
         contents: |
-          export ALPINO_HOME={{lm_prefix}}/opt
+          export ALPINO_HOME={{lm_prefix}}/opt/Alpino
 
 
