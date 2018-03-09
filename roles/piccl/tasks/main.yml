@@ -1,0 +1,78 @@
+---
+
+    - name: Installing global dependencies for PICCL (Debian/Ubuntu)
+      become: true
+      become_user: root
+      apt:
+        name: "{{item}}"
+        state: installed
+      with_items:
+        - tesseract-ocr
+        - tesseract-ocr-eng
+        - tesseract-ocr-nld
+        - tesseract-ocr-deu
+        - tesseract-ocr-deu-frak
+        - tesseract-ocr-fra
+        - poppler-utils
+        - djvulibre-bin
+        - libdjvulibre-text
+        - imagemagick
+        - default-jre
+        - perl
+      when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linuxmint")
+
+    - name: Installing global dependencies for PICCL (RedHat)
+      become: true
+      become_user: root
+      yum:
+        name: "{{item}}"
+        state: installed
+      with_items:
+        - perl
+        - java-1.8.0-openjdk
+        - tesseract-langpack-*
+        - poppler
+        - djvulibre
+        - ImageMagick
+      when: root and (ansible_distribution|lower == "redhat" or ansible_distribution|lower == "centos" or  ansible_distribution|lower == "fedora" or ansible_distribution|lower == "rhel")
+
+    - name: Create nextflow home
+      become: "{{lm_become}}"
+      become_user: root
+      file:
+        path: "{{lm_prefix}}/opt/nextflow"
+        state: directory
+
+    - name: Install Nextflow
+      shell: curl -fsSL https://get.nextflow.io | bash
+      args:
+        chdir: "{{lm_prefix}}/bin" #this is where the nextflow binary will be written
+      environment:
+        NXF_HOME: "{{lm_prefix}}/opt/nextflow"
+
+    - name: Ensure nextflow script permissions are sane
+      shell: |
+        chmod a+rx {{lm_prefix}}/bin/nextflow
+        find {{ lm_prefix }}/opt/nextflow -type f | xargs chmod 0644
+        find {{ lm_prefix }}/opt/nextflow -type d | xargs chmod 0755
+
+    - name: Install PICCL
+      include_role:
+        name: lamachine-git
+      vars:
+        package:
+          user: LanguageMachines
+          repo: PICCL
+
+    - name: Symlink PICCL in opt
+      file:
+        dest: "{{source_path}}/PICCL"
+        src: "{{lm_prefix}}/opt/PICCL"
+        state: link
+
+    - name: Make PICCL nextflow scripts available in environment
+      shell: |
+        cp -s {{lm_prefix}}/opt/PICCL/*.nf .
+      args:
+        chdir: "{{lm_prefix}}/bin"
+
