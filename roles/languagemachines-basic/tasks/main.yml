@@ -15,6 +15,12 @@
             register: macosx
       when: ansible_distribution == 'MacOSX' and root == True and version == "stable" #note: no locality check here, we use homebrew even in local mode
 
+    - name: Link frogdata and uctodata on Mac OS X
+      shell: |
+          ln -sf /usr/local/opt/uctodata/share/ucto/* /usr/local/opt/ucto/share/ucto/
+          ln -sf /usr/local/opt/frogdata/share/frog/ /usr/local/opt/frog/share
+      when: ansible_distribution == 'MacOSX' and root == True and version == "stable" #note: no locality check here, we use homebrew even in local mode
+
     - name: Installation on Arch Linux
       block:
         - name: Installing packages from Arch User Repository
