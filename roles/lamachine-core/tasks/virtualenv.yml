@@ -16,7 +16,17 @@
         dest: "{{local_prefix}}/bin/activate"
         block: |
           export LD_LIBRARY_PATH={{local_prefix}}/lib/
+          EXTRAACTIVATE=$(find $VIRTUAL_ENV/bin/activate.d -type f -name "*.sh")
+          for f in $EXTRAACTIVATE; do
+              source $f
+          done
         marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
         insertafter: EOF
         create: yes
         mode: u+rwx
+
+    - name: Adding activate.d directory for extra activation scripts (local)
+      file:
+        path: "{{local_prefix}}/bin/activate.d"
+        state: directory
+      when: locality == "local"

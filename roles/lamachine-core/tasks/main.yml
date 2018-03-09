@@ -133,11 +133,14 @@
                       source activate lamachine-{{conf_name}}
                       export VIRTUAL_ENV=$LM_LOCAL_PREFIX #backward compatibility
                   else
-                      source $LM_LOCAL_PREFIX/bin/activate
+                      source "$LM_LOCAL_PREFIX/bin/activate"
                   fi
               fi
           else
-              export LM_PREFIX={{global_prefix}}
+              EXTRAACTIVATE=$(find {{global_prefix}}/bin/activate.d -type f -name "*.sh")
+              for f in $EXTRAACTIVATE; do
+                  source $f
+              done
           fi
         mode: u+rwx,a+rx
 
@@ -186,6 +189,11 @@
     - import_tasks: virtualenv.yml
       when: localenv_type == 'virtualenv' and locality == "local"
 
+    - name: Adding activate.d directory for extra activation scripts (global)
+      file:
+        path: "{{global_prefix}}/bin/activate.d"
+        state: directory
+      when: locality == "global"
 
     - name: Enable activation script globally
       become: yes
@@ -235,6 +243,22 @@
           path: "{{ source_path }}"
           state: directory
           owner: "{{unix_user}}"
+
+    - name: Create opt directory (local)
+      file:
+          path: "{{ local_prefix }}/opt"
+          state: directory
+          owner: "{{unix_user}}"
+      when: locality == "local"
+
+    - name: Create opt directory (global)
+      become: yes
+      become_user: root
+      file:
+          path: "{{ global_prefix }}/opt"
+          state: directory
+          mode: u+rwx,a+rx
+      when: locality == "global"
 
     - name: Link to LaMachine controller from local prefix
       file:
