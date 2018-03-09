@@ -743,10 +743,17 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     #run the activation script (this will do the actual initial provision as well)
     bash $BASEDIR/lamachine-$LM_NAME-activate
     rc=$?
+    echo "======================================================================================"
     if [ $rc -eq 0 ]; then
-        echo "All done, to run LaMachine next time, just run: lamachine-$LM_NAME-activate   (or: bash ~/bin/lamachine-$LM_NAME-activate)"
+        echo "${boldgreen}All done, the LaMachine VM has been built succesfully${normal}."
+        echo "- ${bold}to start and enter your VM, run: lamachine-$LM_NAME-activate${normal}   (or: bash ~/bin/lamachine-$LM_NAME-activate)"
+        echo "  note that the VM will be stopped as soon as you disconnect again."
+        echo "- to power up the VM, run: lamachine-$LM_NAME-start"
+        echo "- to power down the VM, run: lamachine-$LM_NAME-stop"
+        echo "- to connect to a started VM, run: lamachine-$LM_NAME-connect"
+        echo "- to delete the entire VM again, run: lamachine-$LM_NAME-destroy"
     else
-        echo "The LaMachine VM bootstrap has failed unfortunately. You have several options:"
+        echo "${boldred}The LaMachine VM bootstrap has failed unfortunately.${normal} You have several options:"
         echo " - Start from scratch again with a new bootstrap, possibly tweaking configuration options"
         echo " - Enter the LaMachine VM in its uncompleted state, run: bash ~/bin/lamachine-$LM_NAME-activate"
         echo " - Force the LaMachine VM to update itself, run: bash ~/bin/lamachine-$LM_NAME-update"
@@ -762,8 +769,19 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     cwd=$(pwd)
     echo "Running ansible command from $cwd: $cmd" >&2
     echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
-    if ! $cmd; then
-        fatalerror "Local provisioning failed!"
+    if $cmd; then
+        rc=0
+        echo "======================================================================================"
+        echo "${boldgreen}All done, a local LaMachine environment has been built!${normal}"
+        echo "- ${bold}to activate your environment, run: lamachine-$LM_NAME-activate${normal}   (or: bash ~/bin/lamachine-$LM_NAME-activate)"
+    else
+        echo "======================================================================================"
+        echo "${boldred}Building a local LaMachine environment has failed unfortunately.${normal} You have several options:"
+        echo " - Start from scratch again with a new bootstrap, possibly tweaking configuration options"
+        echo "-  Attempt to activate the environment (run: lamachine-$LM_NAME-activate) and debug the problem"
+        echo "-  Run lamachine-$LM_NAME-update after activating the environment to see if the problem corrects itself"
+        echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
+        rc=1
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
     echo "Building docker"
@@ -772,10 +790,12 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
     docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME .
     rc=$?
     if [ $rc -eq 0 ]; then
-        echo "All done, a docker image has been build!"
+        echo "======================================================================================"
+        echo "${boldgreen}All done, a docker image has been built!${normal}"
         echo "- to create and run a *new* interactive container using this image, run: docker run -p 8080:80 -t -i $DOCKERREPO:$LM_NAME"
     else
-        echo "The docker build has failed unfortunately. You have several options:"
+        echo "======================================================================================"
+        echo "${boldred}The docker build has failed unfortunately.${normal} You have several options:"
         echo " - Start from scratch again with a new bootstrap, possibly tweaking configuration options"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
     fi
