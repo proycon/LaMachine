@@ -7,6 +7,7 @@
           - { github_user: "proycon", github_repo: "pynlpl", pip: "pynlpl", conda: "" }
           - { github_user: "proycon", github_repo: "clam", pip: "clam", conda: "" }
           - { github_user: "proycon", github_repo: "folia", pip: "folia-tools", conda: "" }
+          - { github_user: "proycon", github_repo: "foliadocserve", pip: "foliadocserve", conda: "" }
           - { github_user: "proycon", github_repo: "babelpy", pip: "babelpy", conda: "" }
           - { github_user: "proycon", github_repo: "babelente", pip: "babelente", conda: "" }
       loop_control:
