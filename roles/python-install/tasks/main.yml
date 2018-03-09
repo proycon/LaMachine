@@ -1,7 +1,7 @@
 ---
 - when: "'exclude_when' not in package or not package.exclude_when"
   block:
-    - name: "{{package.github_repo}} - Installing latest version from github (development)"
+    - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest version from github (development)"
       block:
         - name: "{{package.github_repo}} - Check if repository exists"
           stat:
@@ -26,7 +26,7 @@
       when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and (version == "development" or ("pip" not in package or package.pip == ""))'
 
 
-    - name: "{% if 'pip' in package %}{{package.pip}}{% endif %} - Installing latest release from the Python Package Index (stable)"
+    - name: "{% if 'pip' in package %}{{package.pip}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest release from the Python Package Index (stable)"
       become: "{% if locality == 'global' %}yes{% else %}no{% endif %}"
       become_user: root
       pip:
@@ -36,12 +36,12 @@
       environment: "{% if locality == 'local' %}{{localenv}}{% else %}{{globalenv}}{% endif %}"
       when: (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == ""))) and localenv_type != "conda" and "pip" in package and package.pip != ""
 
-    - name: "{% if 'conda' in package %}{{package.conda}}{% endif %} - Installing latest release from conda (stable)"
+    - name: "{% if 'conda' in package %}{{package.conda}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest release from conda (stable)"
       command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} {{package.conda}}"
       environment: "{% if locality == 'local' %}{{localenv}}{% else %}{{globalenv}}{% endif %}"
       when: (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == ""))) and localenv_type == "conda" and "conda" in package and package.conda != ""
 
-    - name: "{% if 'pip' in package %}{{package.pip}}{% endif %} - Installing latest release from the Python Package Index (stable, conda)"
+    - name: "{% if 'pip' in package %}{{package.pip}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest release from the Python Package Index (stable, conda)"
       pip:
            name: "{{package.pip}}"
            state: latest
