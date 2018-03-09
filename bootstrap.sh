@@ -57,6 +57,7 @@ usage () {
     echo " ${bold}--private${normal} - Do not transmit anonymous analytics on this LaMachine build"
     echo " ${bold}--minimal${normal} - Attempt to install less than normal, leaving out extra options. This may break things."
     echo " ${bold}--prefer_distro${normal} - Prefer distribution packages over other channels (such as pip). This generally installs more conserative versions, and less, but might break things."
+    echo " ${bold}--dockerrepo${normal} - Docker repository name (default: proycon/lamachine)"
 }
 
 USERNAME=$(whoami)
@@ -143,6 +144,7 @@ ANSIBLE_OPTIONS="-v"
 MINIMAL=0
 PREFER_DISTRO=0
 VAGRANTBOX="debian/contrib-stretch64" #base distribution for VM
+DOCKERREPO="proycon/lamachine"
 
 echo "Detected OS: $OS"
 echo "Detected distribution ID: $DISTRIB_ID"
@@ -767,7 +769,15 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
     echo "Building docker"
     sed -i "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to run sed"
     #echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
-    docker build --build-arg LM_NAME=$LM_NAME .
+    docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME .
+    if [ $rc -eq 0 ]; then
+        echo "All done, a docker image has been build!"
+        echo "- to create and run a *new* interactive container using this image, run: docker run -p 8080:80 -t -i $DOCKERREPO:$LM_NAME"
+    else
+        echo "The docker build has failed unfortunately. You have several options:"
+        echo " - Start from scratch again with a new bootstrap, possibly tweaking configuration options"
+        echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
+    fi
 else
     echo "No bootstrap for $FLAVOUR implemented yet at this stage, sorry!!">&2
     rc=1
