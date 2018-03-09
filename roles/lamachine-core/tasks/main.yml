@@ -30,7 +30,14 @@
     - name: Create home bin directory
       file:
           path: "{{homedir}}/bin"
+          mode: u+rwx,a+rx
           state: directory
+
+    - name: Ensure home directory is world-traversable
+      file:
+          path: "{{homedir}}"
+          mode: u+rwx,a+x
+      when: locality == "global"
 
     - name: Ensure home/bin is in $PATH by default #necessary because this is where our activation script will reside
       blockinfile:
@@ -90,7 +97,6 @@
     - name: Create LaMachine activation script
       copy:
         dest: "{{homedir}}/bin/lamachine-{{ conf_name }}-activate"
-        unsafe_writes: yes
         content: |
           #!/bin/bash
           if [[ ! -z "$VIRTUAL_ENV" ]] && [[ "$VIRTUAL_ENV" != "$LM_LOCAL_PREFIX" ]]; then
@@ -131,33 +137,33 @@
           else
               export LM_PREFIX={{global_prefix}}
           fi
-        mode: u+rwx
+        mode: u+rwx,a+rx
 
-    - name: Copy activation script to global environment
+    - name: Link activation script to global environment
       become: yes
       become_user: root
-      copy:
+      file:
         src: "{{homedir}}/bin/lamachine-{{conf_name}}-activate"
         dest: "{{global_prefix}}/bin/lamachine-{{conf_name}}-activate"
-        mode: a+rx
+        state: link
       when: locality == "global"
 
-    - name: Copy update script to global environment
+    - name: Link update script to global environment
       become: yes
       become_user: root
-      copy:
+      file:
         src: "{{homedir}}/bin/lamachine-{{conf_name}}-update"
         dest: "{{global_prefix}}/bin/lamachine-{{conf_name}}-update"
-        mode: a+rx
+        state: link
       when: locality == "global"
 
-    - name: Copy generic update script to global environment
+    - name: Link generic update script to global environment
       become: yes
       become_user: root
-      copy:
+      file:
         src: "{{homedir}}/bin/lamachine-update"
         dest: "{{global_prefix}}/bin/lamachine-update"
-        mode: a+rx
+        state: link
       when: locality == "global"
 
     - import_tasks: debian.yml

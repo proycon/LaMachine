@@ -732,6 +732,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     ln -sf $BASEDIR/lamachine-$LM_NAME-stop $HOMEDIR/bin/
     ln -sf $BASEDIR/lamachine-$LM_NAME-connect $HOMEDIR/bin/
     ln -sf $BASEDIR/lamachine-$LM_NAME-update $HOMEDIR/bin/
+    ln -sf $BASEDIR/lamachine-$LM_NAME-destroy $HOMEDIR/bin/
     ln -sf $BASEDIR/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
     #run the activation script (this will do the actual initial provision as well)
     bash $BASEDIR/lamachine-$LM_NAME-activate
