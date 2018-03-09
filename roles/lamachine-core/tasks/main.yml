@@ -110,6 +110,7 @@
           if [[ "$PATH" == *"lamachine-controller"* ]]; then
               export PATH=${PATH/lamachine-controller/DISABLED} #extra fallback to ensure the controller environment is not active
           fi
+          export LM_NAME={{conf_name}}
           export LM_LOCALITY={{locality}}
           export LM_GLOBAL_PREFIX={{global_prefix}}
           export LM_LOCALENV_TYPE={{localenv_type}}
