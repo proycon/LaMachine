@@ -42,7 +42,7 @@
       block:
         - name: Installing from LanguageMachines github
           include_role:
-            name: autoconf_git
+            name: lamachine-git-autoconf
           with_items:
             - repo: ticcutils
               user: LanguageMachines
@@ -83,7 +83,7 @@
 
     - name: Installing Colibri Core from github
       include_role:
-        name: lamachine-autoconf-git
+        name: lamachine-git-autoconf
       vars:
         package:
             user: proycon
