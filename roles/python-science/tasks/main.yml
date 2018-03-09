@@ -25,7 +25,7 @@
    block:
      - name: "Installing generic 3rd party Python Packages via pip (1)"
        include_role:
-           name: python-install
+           name: lamachine-python-install
        with_items: #more or less in dependency order
          - { "pip": cython, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
          - { "pip": lxml, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
@@ -38,7 +38,7 @@
            loop_var: package
      - name: "Installing generic 3rd party Python Packages via pip (2)"
        include_role:
-           name: python-install
+          name: lamachine-python-install
        with_items: #more or less in dependency order
          - { "pip": scipy }
          - { "pip": scikit-learn }

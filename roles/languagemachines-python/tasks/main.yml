@@ -2,7 +2,7 @@
 
     - name: Installing Python packages
       include_role:
-        name: python-install
+        name: lamachine-python-install
       with_items:
           - { github_user: "proycon", github_repo: "pynlpl", pip: "pynlpl", conda: "" }
           - { github_user: "proycon", github_repo: "clam", pip: "clam", conda: "" }
@@ -14,7 +14,7 @@
 
     - name: Testing Python packages
       include_role:
-          name: lamachine_run
+          name: lamachine-run
       vars:
           command: "python3 -c 'import {{ item }}'"
       with_items:
@@ -25,7 +25,7 @@
 
     - name: Testing whether python-based tools start
       include_role:
-          name: lamachine_run
+          name: lamachine-run
       vars:
           command: "{{ item }} -h"
       with_items:

@@ -119,7 +119,7 @@
           export LM_SOURCEPATH={{source_path}}
           unset PYTHONPATH #would most likely mess thing up otherwise
           if [[ "{{ ansible_distribution|lower }}" == "macosx" ]]; then
-             export CLANG_CXX_LIBRARY="libc++" #needed for python bindings in python-install
+          export CLANG_CXX_LIBRARY="libc++" #needed for python bindings in lamachine-python-install
              export MACOSX_DEPLOYMENT_TARGET="{{ ansible_distribution_version }}"
           fi
           if [[ "$LAMACHINE_QUIET" != "1" ]]; then
@@ -251,14 +251,19 @@
           owner: "{{unix_user}}"
       when: locality == "local"
 
-    - name: Create opt directory (global)
+    - name: Create global directories
       become: yes
       become_user: root
       file:
-          path: "{{ global_prefix }}/opt"
+          path: "{{ global_prefix }}/{{item}}"
           state: directory
           owner: "{{unix_user}}"
           mode: u+rwx,a+rx
+      with_items:
+          - bin
+          - lib
+          - share
+          - opt
       when: locality == "global"
 
     - name: Link to LaMachine controller from local prefix
