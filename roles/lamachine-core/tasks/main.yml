@@ -82,7 +82,7 @@
         dest: "{{homedir}}/bin/lamachine-update"
         content: |
             #!/bin/bash
-            if [ ! -z "$LM_NAME" ]; then
+            if [ -z "$LM_NAME" ]; then
                 echo "You are not in a LaMachine environment! Unable to update, activate one first!">&2
                 exit 2
             else
