@@ -51,7 +51,7 @@ docker run  -p 8080:80 -t -i proycon/lamachine:stable
 
 This requires you to already have [Docker](https://www.docker.com/) installed and running on your system.
 
-The pre-built image contains only a basic set of software rather than all options, run ``lamachine-stable-update --edit``
+The pre-built image contains only a basic set of common software rather than the full set, run ``lamachine-stable-update --edit``
 inside the container to select extra software to install. Alternatively, other specialised LaMachine builds may be available
 on Docker Hub.
 
@@ -68,7 +68,7 @@ vagrant ssh
 
 This requires you to already have [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org) installed on your system.
 
-The pre-built image contains only a basic set of software rather than all options, run ``lamachine-stable-update --edit``
+The pre-built image contains only a basic set of common software rather than the full set, run ``lamachine-stable-update --edit``
 inside the virtual machine to select extra software to install.
 
 Included Software
