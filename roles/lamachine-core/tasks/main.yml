@@ -67,21 +67,20 @@
           if [ -d .git ]; then
             git pull
           fi
+          FIRST=1
+          if [ "$1" -eq "--edit" ]; then
+            if [ ! -z "$EDITOR" ]; then
+              EDITOR=nano
+            fi
+            $EDITOR {{lamachine_path}}/hosts.{{conf_name}}
+            $EDITOR install-{{conf_name}}.yml
+            FIRST=2
+          fi
           OPTS=""
           if [ {{root|int}} -eq 1 ]; then
              OPTS="--ask-become-pass"
           fi
-          {% if prefer_distro is defined %}
-          if [ {{prefer_distro|int}} -eq 1 ]; then
-             OPTS="$OPTS --prefer-distro"
-          fi
-          {% endif %}
-          {% if minimal is defined %}
-          if [ {{minimal|int}} -eq 1 ]; then
-             OPTS="$OPTS --minimal"
-          fi
-          {% endif %}
-          ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v $OPTS --extra-vars "$*"
+          ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v $OPTS --extra-vars "${*:$FIRST}"
         mode: u+rwx,a+rx
 
     - name: Set generic update script
