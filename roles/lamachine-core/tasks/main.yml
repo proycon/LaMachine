@@ -69,8 +69,8 @@
           fi
           FIRST=1
           if [ "$1" = "--edit" ]; then
-            if [ ! -z "$EDITOR" ]; then
-              EDITOR=nano
+            if [ -z "$EDITOR" ]; then
+              export EDITOR=nano
             fi
             $EDITOR {{lamachine_path}}/hosts.{{conf_name}}
             $EDITOR install-{{conf_name}}.yml
