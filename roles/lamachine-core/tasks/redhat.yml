@@ -21,7 +21,7 @@
       yum:
         name: "{{item}}"
         state: installed
-        with_items: [pkgconfig, git, icu, libtool, autoconf, automake, autoconf-archive, make, gcc, gcc-c++, libxml2, libxml2-devel, libxslt, libxslt-devel, libtar, libtar-devel, boost, boost-devel, zlib, zlib-devel, bzip2, bzip2-devel, libcurl, gnutls-devel, libcurl-devel, wget, curl, libexttextcat, libexttextcat-devel]
+      with_items: [pkgconfig, git, icu, libtool, autoconf, automake, autoconf-archive, make, gcc, gcc-c++, libxml2, libxml2-devel, libxslt, libxslt-devel, libtar, libtar-devel, boost, boost-devel, zlib, zlib-devel, bzip2, bzip2-devel, libcurl, gnutls-devel, libcurl-devel, wget, curl, libexttextcat, libexttextcat-devel]
 
     - name: installing common base packages for CentOS/RHEL (yum)
       become: true
@@ -29,7 +29,7 @@
       yum:
         name: "{{item}}"
         state: installed
-        with_items: [python34, python34-devel, python34-pip, icu-devel] #will need to be updated once CentOS progresses..
+      with_items: [python34, python34-devel, python34-pip, icu-devel] #will need to be updated once CentOS progresses..
       when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
 
     - name: installing common base packages (2) (yum)
@@ -38,7 +38,7 @@
       yum:
         name: "{{item}}"
         state: installed
-        with_items: [python3, python3-devel, python3-pip, python3-virtualenv, icu-devel ]
+      with_items: [python3, python3-devel, python3-pip, python3-virtualenv, icu-devel ]
       when: not (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") #aka fedora mainly
 
 
