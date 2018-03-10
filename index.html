@@ -44,21 +44,29 @@
         <div class="row">
             <div class="col-md-5 title">
                 <h3>Get Started.</h3>
-                <h4>LaMachine comes in various flavours, it can be installed as a Virtual Machine, a Docker container, or directly on your Linux or Mac OS X system.<br><br> Start the bootstrap procedure by running a single command and let it guide you through your custom build!</h4>
+                <h4>LaMachine comes in various flavours, it can be installed as a Virtual Machine, a Docker container, or directly on your Linux or Mac OS X system.<br><br> Start the bootstrap procedure by running a single command and let it guide you through your custom build, or just use one of our pre-built images with Vagrant or Docker!</h4>
             </div>
             <div class="col-md-7 options-sets">
                 <div class="option-row os" data-key="os">
                     <div class="option-label">Your Operating System?</div>
                     <div class="option-set">
-                        <div class="btn selected" id="os_posix">Linux, BSD or Mac OS X</div>
-                        <div class="btn" id="os_win10">Windows 10 (or later)</div>
+                        <div class="btn selected" id="os_posix">Linux, BSD, or Mac OS X</div>
+                        <div class="btn" id="os_win10">Windows 10, Window 2016 (or later)</div>
                         <div class="btn" id="os_win7">Older Windows</div>
+                    </div>
+                </div>
+                <div class="option-row os" data-key="mode">
+                    <div class="option-label">Custom build or pre-built?</div>
+                    <div class="option-set">
+                        <div class="btn selected" id="mode_custom">Build your own custom LaMachine (recommend)</div>
+                        <div class="btn" id="mode_docker">Pre-built Docker image</div>
+                        <div class="btn" id="mode_vagrant">Pre-built VM image (Vagrant)</div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="command">
-            <div class="label">Run this command:</div>
+            <div class="label">Open a terminal and run the following:</div>
             <div class="text">bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh)</div>
         </div>
         <div class="help">
@@ -134,7 +142,6 @@
                         <li><a href="http://scikit-learn.org">Scikit-learn</a></li>
                         <li><a href="http://www.nltk.org">NLTK</a></li>
                     </ul></li>
-                    <li><a href="https://anaconda.org">Anaconda / conda</a></li>
                     <li><a href="https://jupyter.org">Jupyter</a></li>
                     <li><a href="https://r-project.org">R</a></li>
                     <li><a href="https://www.nextflow.io">Nextflow</a></li>
@@ -160,19 +167,70 @@
 
    </div>
    <script>
+       function setcommand() {
+           cmd_bootstrap = "bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh)";
+           if (mode == "custom") {
+               $('div.command div.text').html(cmd_bootstrap);
+               if (os == "win10") {
+                   $('div.help').html("You need to run this command in a Linux subsystem in Windows 10, therefore you must first install the Linux Subsystem with a distribution of your choice (we recommend Ubuntu) from the Microsoft Store. Follow the instructions <a href=\"https://msdn.microsoft.com/en-us/commandline/wsl/install_guide\">here</a>. Alternatively, use a pre-built VM image.");
+                   $('div.help').css('color','red');
+               } else {
+                   $('div.command div.text').html("");
+                   $('div.help').html("Building a custom LaMachine is not supported on older versions of Windows as it requires the Linux subsystem! Use a pre-built VM instead.");
+                   $('div.help').css('color','red');
+               }
+           } else if (mode == "docker") {
+               $('div.command div.text').html("docker pull proycon/lamachine:stable && docker run -p 8080:80 -t -i proycon/lamachine:stable ");
+               $('div.help').html("For this to work, you need to have Docker installed and running on your system. On Linux or Mac OS X, you can install it with: <tt>curl -fsSL get.docker.com -o get-docker.sh &amp;&amp; sh get-docker.sh</tt>");
+               $('div.help').css('color','black');
+           } else if (mode == "vagrant") {
+               $('div.command div.text').html("vagrant init proycon/lamachine && vagrant up && vagrant ssh");
+               var s = "For this to work, you need to have <a href=\"https://www.vagrantup.com\">Vagrant</a> and <a href=\"https://www.virtualbox.org\">VirtualBox</a> installed on your system."
+               if (os == "posix") {
+                   s = s + ". If you are on Debian/Ubuntu Linux, just run <tt>sudo apt-get install vagrant virtualbox</tt>. "
+               }
+               $('div.help').html(s );
+               $('div.help').css('color','black');
+           }
+       }
+       $.load(function(){
+           if (navigator.appVersion.indexOf("Win")!=-1) {
+               os="win10";
+               mode="vagrant";
+           } else {
+               os="posix";
+           }
+           $('#os_' + os).click();
+       }
        $('#os_posix').click(function(){
-           $('div.command div.text').html("bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh)");
-           $('div.help').html("");
+           os = 'posix';
+           setcommand();
        });
        $('#os_win10').click(function(){
-           $('div.command div.text').html("bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh)");
-           $('div.help').html("You need to run this command in a Linux subsystem in Windows 10, therefore you must first install the Linux Subsystem with a distribution of your choice (we recommend Ubuntu) from the Microsoft Store. Follow the instructions <a href=\"https://msdn.microsoft.com/en-us/commandline/wsl/install_guide\">here</a>.");
-           $('div.help').css('color','red');
+           os = 'win10';
+           setcommand();
        });
        $('#os_win7').click(function(){
-           $('div.command div.text').html("(TODO: documentation not ready yet)");
+           os = 'win7';
+           setcommand();
+       });
+       $('#mode_custom').click(function(){
+           mode = 'custom';
+           setcommand();
+       });
+       $('#mode_docker').click(function(){
+           mode = 'docker';
+           setcommand();
+       });
+       $('#mode_vagrant').click(function(){
+           mode = 'vagrant';
+           setcommand();
        });
        $('div.os .btn').click(function(){
+           $('.btn').removeClass("selected");
+           $(this).addClass("selected");
+       });
+       $('div.mode .btn').click(function(){
            $('.btn').removeClass("selected");
            $(this).addClass("selected");
        });
