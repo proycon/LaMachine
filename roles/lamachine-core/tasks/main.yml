@@ -68,7 +68,7 @@
             git pull
           fi
           FIRST=1
-          if [ "$1" -eq "--edit" ]; then
+          if [ "$1" = "--edit" ]; then
             if [ ! -z "$EDITOR" ]; then
               EDITOR=nano
             fi
