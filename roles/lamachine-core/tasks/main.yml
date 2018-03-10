@@ -93,7 +93,7 @@
                 exit 2
             else
                if which lamachine-$LM_NAME-update; then
-                    lamachine-$LM_NAME-update
+                    lamachine-$LM_NAME-update $@
                else
                     echo "Unable to find update script lamachine-$LM_NAME-update!">&2
                     exit 3
