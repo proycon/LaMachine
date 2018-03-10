@@ -760,21 +760,21 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     ln -sf $BASEDIR/lamachine-$LM_NAME-destroy $HOMEDIR/bin/
     ln -sf $BASEDIR/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
     #run the activation script (this will do the actual initial provision as well)
-    bash $BASEDIR/lamachine-$LM_NAME-activate
+    bash $BASEDIR/lamachine-$LM_NAME-start
     rc=$?
     echo "======================================================================================"
     if [ $rc -eq 0 ]; then
-        echo "${boldgreen}All done, the LaMachine VM has been built succesfully${normal}."
-        echo "- ${bold}to start and enter your VM, run: lamachine-$LM_NAME-activate${normal}   (or: bash ~/bin/lamachine-$LM_NAME-activate)"
-        echo "  note that the VM will be stopped as soon as you disconnect again."
+        echo "${boldgreen}All done, the LaMachine VM has been built and started succesfully${normal}."
+        echo "- ${bold}to connect to a started VM, run: lamachine-$LM_NAME-connect${normal} (or: bash ~/bin/lamachine-$LM_NAME-connect)"
         echo "- to power up the VM, run: lamachine-$LM_NAME-start"
         echo "- to power down the VM, run: lamachine-$LM_NAME-stop"
-        echo "- to connect to a started VM, run: lamachine-$LM_NAME-connect"
         echo "- to delete the entire VM again, run: lamachine-$LM_NAME-destroy"
+        echo "- to start and immediately connect to your VM, run: lamachine-$LM_NAME-activate${normal}"
+        echo "  note that the VM will be stopped as soon as you disconnect again."
     else
         echo "${boldred}The LaMachine VM bootstrap has failed unfortunately.${normal} You have several options:"
         echo " - Start from scratch again with a new bootstrap, possibly tweaking configuration options"
-        echo " - Enter the LaMachine VM in its uncompleted state, run: bash ~/bin/lamachine-$LM_NAME-activate"
+        echo " - Enter the LaMachine VM in its uncompleted state, run: bash ~/bin/lamachine-$LM_NAME-connect"
         echo " - Force the LaMachine VM to update itself, run: bash ~/bin/lamachine-$LM_NAME-update"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
     fi

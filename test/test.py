@@ -71,7 +71,7 @@ for build in buildmatrix:
         r2 = os.system("lamachine-" + build['name'] + "-destroy -f")
     elif build['flavour'] == "docker":
         r2 = os.system("docker image rm proycon/lamachine:" + build['name'])
-    results.append( (build, r, endtime - begintime), r2 )
+    results.append( (build, r, endtime - begintime, r2) )
 
 for build, returncode, duration, cleanup in results:
     print(build['name'] + " , " + ("OK" if returncode == 0 else "FAILED") + ", " + str(round(duration/60))+ ("CLEANED" if cleanup == 0 else "DIRTY") )
