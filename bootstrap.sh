@@ -462,7 +462,7 @@ for package in $NEED; do
         fi
     elif [ "$package" = "docker" ]; then
         echo "We expect users of docker to be able to install docker themselves."
-        echo "Docker was not found on your system yet."
+        echo "Docker was not found on your system yet!"
         echo "Please install docker, start the daemon, and press ENTER to continue (or CTRL-C) to abort."
         read
     elif [ "$package" = "brew" ]; then

@@ -22,17 +22,54 @@ that expose some of the functionality to a larger audience.
 Installation
 ---------------
 
-Open a terminal on your Linux, BSD or Mac OS X system and run the following command:
+### Custom build (recommended)
+
+To build your own LaMachine instance, in any of the possible flavours, open a terminal on your Linux, BSD or Mac OS X
+system and run the following command:
 
 ```
 bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh)
 ```
 
-This will prompt you for some questions on how you would like your LaMachine build.
+This will prompt you for some questions on how you would like your LaMachine build and allows you to include precisely
+the software you want or need and ensures that all is up to date.
 
-Are you on Windows 10? Then you need to run this command in a Linux subsystem in Windows 10; to do this you must first
+Are you on Windows 10? Then you need to run this command in a Linux subsystem in Windows 10/2016 or above; to do this you must first
 install the Linux Subsystem with a distribution of your choice (we recommend Ubuntu) from the Microsoft Store. Follow
-the instructions [here](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide).
+the instructions [here](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide). Are you on an older Windows,
+then this won't work you have will to use a pre-built Virtual Machine.
+
+### Pre-built container image for Docker
+
+We regularly build a basic LaMachine image an publish it to [Docker Hub](https://hub.docker.com/r/proycon/lamachine/).
+To download and use it, run:
+
+```
+docker pull proycon/lamachine:stable
+docker run  -p 8080:80 -t -i proycon/lamachine:stable
+```
+
+This requires you to already have [Docker](https://www.docker.com/) installed and running on your system.
+
+The pre-built image contains only a basic set of software rather than all options, run ``lamachine-stable-update --edit``
+inside the container to select extra software to install. Alternatively, other specialised LaMachine builds may be available
+on Docker Hub.
+
+### Pre-built Virtual Machine image for Vagrant
+
+We regularly build a basic LaMachine image an publish it to the [Vagrant Cloud](https://app.vagrantup.com/proycon/).
+To download and use it, run:
+
+```
+vagrant init proycon/lamachine
+vagrant up
+vagrant ssh
+```
+
+This requires you to already have [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org) installed on your system.
+
+The pre-built image contains only a basic set of software rather than all options, run ``lamachine-stable-update --edit``
+inside the virtual machine to select extra software to install.
 
 Included Software
 ---------------------
