@@ -463,7 +463,7 @@ for package in $NEED; do
     elif [ "$package" = "docker" ]; then
         echo "We expect users of docker to be able to install docker themselves."
         echo "Docker was not found on your system yet."
-        echo "Please install docker and press ENTER to continue (or CTRL-C) to abort."
+        echo "Please install docker, start the daemon, and press ENTER to continue (or CTRL-C) to abort."
         read
     elif [ "$package" = "brew" ]; then
         echo "Homebrew (https://brew.sh) is required on Mac OS X but was not found yet"
@@ -803,6 +803,15 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
         rc=1
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
+    if ! docker info >/dev/null 2>/dev/null; then
+        echo "The docker daemon is not running!"
+        if [ $INTERACTIVE -eq 1 ]; then
+            echo "Please start it (usually using: sudo systemctl start docker) and press ENTER to continue when ready.."
+            read
+        else
+            exit 2
+        fi
+    fi
     echo "Building docker"
     sed -i "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to run sed"
     #echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
