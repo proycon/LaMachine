@@ -72,7 +72,11 @@
             if [ -z "$EDITOR" ]; then
               export EDITOR=nano
             fi
-            $EDITOR {{lamachine_path}}/hosts.{{conf_name}}
+            if [ -e {{lamachine_path}}/host_vars/localhost.yml ]; then
+                $EDITOR {{lamachine_path}}/host_vars/localhost.yml && cp -f {{lamachine_path}}/host_vars/localhost.yml {{lamachine_path}}/host_vars/lamachine-{{conf_name}}.yml
+            else
+                $EDITOR {{lamachine_path}}/host_vars/lamachine-{{conf_name}}.yml
+            fi
             $EDITOR install-{{conf_name}}.yml
             FIRST=2
           fi
