@@ -53,7 +53,8 @@
       become: "{{lm_become}}"
       become_user: root
       copy:
-        dest: "{{lm_prefix}}/activate.d/alpino.sh"
+        dest: "{{lm_prefix}}/bin/activate.d/alpino.sh"
+        mode: u+rwx,a+rx
         contents: |
           export ALPINO_HOME={{lm_prefix}}/opt/Alpino
 

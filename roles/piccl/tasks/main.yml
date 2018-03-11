@@ -67,9 +67,10 @@
       become: "{{lm_become}}"
       become_user: root
       copy:
-        dest: "{{lm_prefix}}/activate.d/nextflow.sh"
-        contents: |
+        dest: "{{lm_prefix}}/bin/activate.d/nextflow.sh"
+        content: |
           export NXF_HOME={{lm_prefix}}/opt/nextflow
+        mode: u+rwx,a+rx
 
     - name: Install PICCL
       include_role:
