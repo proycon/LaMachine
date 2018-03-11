@@ -41,7 +41,7 @@
             exit 123
           fi
           rm latest.tar.gz 2>/dev/null
-          curl -s http://www.let.rug.nl/vannoord/alp/Alpino/versions/binary/latest.tar.gz && tar -xvzf latest.tar.gz -C {{lm_prefix}}/opt/ && mv -f .alpino_index .alpino_index_old && rm latest.tar.gz
+          wget http://www.let.rug.nl/vannoord/alp/Alpino/versions/binary/latest.tar.gz && tar -xvzf latest.tar.gz -C {{lm_prefix}}/opt/ && mv -f .alpino_index .alpino_index_old && rm latest.tar.gz
           exit $?
       args:
         chdir: "{{ source_path }}"
