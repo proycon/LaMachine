@@ -22,12 +22,12 @@
     - name: "Alpino - Download and install"
       shell: |
           #!/bin/bash
-          wget http://www.let.rug.nl/vannoord/alp/Alpino/versions/binary/ -O alpino_index
+          wget http://www.let.rug.nl/vannoord/alp/Alpino/versions/binary/ -O .alpino_index
           {% if (force is defined) %}
           INSTALL=1
           {% else %}
-          if [ -e alpino_index_old ]; then
-            if [ "$(sha256sum alpino_index)" = "$(sha256sum alpino_index_old") ]; then
+          if [ -e .alpino_index_old ]; then
+            if [ "$(sha256sum .alpino_index)" = "$(sha256sum .alpino_index_old") ]; then
               INSTALL=0
             else
               INSTALL=1
@@ -41,10 +41,10 @@
             exit 123
           fi
           rm latest.tar.gz 2>/dev/null
-          curl -s http://www.let.rug.nl/vannoord/alp/Alpino/versions/binary/latest.tar.gz && tar -xvzf latest.tar.gz -C {{lm_prefix}}/opt/ && mv alpino_index alpino_index_old
+          curl -s http://www.let.rug.nl/vannoord/alp/Alpino/versions/binary/latest.tar.gz && tar -xvzf latest.tar.gz -C {{lm_prefix}}/opt/ && mv -f .alpino_index .alpino_index_old && rm latest.tar.gz
           exit $?
       args:
-        chdir: "{{ source_path }}/alpino"
+        chdir: "{{ source_path }}"
       register: install_alpino
       changed_when: install_alpino.rc != 123
       failed_when: install_alpino.rc != 0 and install_alpino.rc != 123
