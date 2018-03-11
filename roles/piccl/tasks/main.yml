@@ -57,6 +57,12 @@
       environment:
         NXF_HOME: "{{lm_prefix}}/opt/nextflow"
 
+    - name: Nextflow test
+      include_role:
+          name: lamachine-run
+      vars:
+          command: "nextflow -version"
+
     - name: Ensure nextflow script permissions are sane
       shell: |
         chmod a+rx {{lm_prefix}}/bin/nextflow

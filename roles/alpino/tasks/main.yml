@@ -27,7 +27,7 @@
           INSTALL=1
           {% else %}
           if [ -e .alpino_index_old ]; then
-            if [ "$(sha256sum .alpino_index)" = "$(sha256sum .alpino_index_old") ]; then
+            if [ "$(sha256sum .alpino_index)" = "$(sha256sum .alpino_index_old)" ]; then
               INSTALL=0
             else
               INSTALL=1
