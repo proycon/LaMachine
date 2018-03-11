@@ -46,8 +46,6 @@
           user: LanguageMachines
 
     - name: Create nextflow home
-      become: "{{lm_become}}"
-      become_user: root
       file:
         path: "{{lm_prefix}}/opt/nextflow"
         state: directory
