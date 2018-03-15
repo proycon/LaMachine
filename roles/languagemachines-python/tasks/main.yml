@@ -39,3 +39,51 @@
       register: test
       changed_when: test.rc != 0
 
+    - when: webserver
+      block:
+        - name: Installing FLAT
+          include_role:
+            name: lamachine-python-install
+          vars:
+            package:
+               github_user: "proycon"
+               github_repo: "flat"
+               pip: "FoLiA-Linguistic-Annotation-Tool"
+        - name: Installing webservices
+          include_role:
+            name: lamachine-python-install
+          vars:
+            package:
+               github_user: "proycon"
+               github_repo: "clamservices"
+               pip: "clamservices"
+        - name: Link {{item}} installation in {{lm_prefix}}/opt
+          shell: |
+            export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
+            ln -sf $DIR {{lm_prefix}}/opt/{{item}}
+          with_items:
+            - clam
+            - clamservices
+            - django
+            - flat
+         - name: Install webserver configuration for clamservices
+           become: true
+           become_user: root
+           template:
+             src: clamservices.conf
+             dest: /etc/nginx/conf.d/clamservices.conf
+             force: yes
+             backup: yes
+           when: root and locality="global"
+         - name: Install webserver configuration for flat
+           become: true
+           become_user: root
+           template:
+             src: flat.conf
+             dest: /etc/nginx/conf.d/flat.conf
+             force: yes
+             backup: yes
+           when: root and locality="global"
+
+
+

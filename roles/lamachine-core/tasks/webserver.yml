@@ -1,1 +1,33 @@
 ---
+    - name: Installing webserver globally (Debian/Ubuntu)
+      become: true
+      become_user: root
+      apt:
+        name: "{{item}}"
+        state: latest
+      with_items: [nginx, uwsgi-emperor, uwsgi, uwsgi-plugin-python3]
+      when: root and locality="global" and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
+
+    - name: Installing webserver globally (RedHat)
+      become: true
+      become_user: root
+      yum:
+        name: "{{item}}"
+        state: latest
+      with_items: [nginx] #TODO:  uwsgi
+      when: root and locality="global" and (ansible_distribution|lower == "redhat" or ansible_distribution|lower == "centos" or ansible_distribution|lower == "fedora" or ansible_distribution|lower == "rhel")
+
+    - name: Install webserver configuration
+      become: true
+      become_user: root
+      template:
+        src: nginx.conf
+        dest: /etc/nginx/nginx.conf
+        force: yes
+        backup: yes
+      when: root and locality="global"
+
+
+
+
+
