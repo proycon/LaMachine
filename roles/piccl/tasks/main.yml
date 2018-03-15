@@ -46,8 +46,6 @@
           user: LanguageMachines
 
     - name: Create nextflow home
-      become: "{{lm_become}}"
-      become_user: root
       file:
         path: "{{lm_prefix}}/opt/nextflow"
         state: directory
@@ -59,6 +57,12 @@
       environment:
         NXF_HOME: "{{lm_prefix}}/opt/nextflow"
 
+    - name: Nextflow test
+      include_role:
+          name: lamachine-run
+      vars:
+          command: "nextflow -version"
+
     - name: Ensure nextflow script permissions are sane
       shell: |
         chmod a+rx {{lm_prefix}}/bin/nextflow
@@ -69,9 +73,10 @@
       become: "{{lm_become}}"
       become_user: root
       copy:
-        dest: "{{lm_prefix}}/activate.d/nextflow.sh"
-        contents: |
+        dest: "{{lm_prefix}}/bin/activate.d/nextflow.sh"
+        content: |
           export NXF_HOME={{lm_prefix}}/opt/nextflow
+        mode: u+rwx,a+rx
 
     - name: Install PICCL
       include_role:
@@ -83,8 +88,8 @@
 
     - name: "Symlink PICCL in {{lm_prefix}}/opt"
       file:
-        dest: "{{source_path}}/PICCL"
-        src: "{{lm_prefix}}/opt/PICCL"
+        src: "{{source_path}}/PICCL"
+        dest: "{{lm_prefix}}/opt/PICCL"
         state: link
 
     - name: Make PICCL nextflow scripts available in environment

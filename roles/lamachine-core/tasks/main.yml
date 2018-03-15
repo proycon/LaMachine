@@ -68,11 +68,15 @@
             git pull
           fi
           FIRST=1
-          if [ "$1" -eq "--edit" ]; then
-            if [ ! -z "$EDITOR" ]; then
-              EDITOR=nano
+          if [ "$1" = "--edit" ]; then
+            if [ -z "$EDITOR" ]; then
+              export EDITOR=nano
             fi
-            $EDITOR {{lamachine_path}}/hosts.{{conf_name}}
+            if [ -e {{lamachine_path}}/host_vars/localhost.yml ]; then
+                $EDITOR {{lamachine_path}}/host_vars/localhost.yml && cp -f {{lamachine_path}}/host_vars/localhost.yml {{lamachine_path}}/host_vars/lamachine-{{conf_name}}.yml
+            else
+                $EDITOR {{lamachine_path}}/host_vars/lamachine-{{conf_name}}.yml
+            fi
             $EDITOR install-{{conf_name}}.yml
             FIRST=2
           fi
@@ -93,7 +97,7 @@
                 exit 2
             else
                if which lamachine-$LM_NAME-update; then
-                    lamachine-$LM_NAME-update
+                    lamachine-$LM_NAME-update $@
                else
                     echo "Unable to find update script lamachine-$LM_NAME-update!">&2
                     exit 3

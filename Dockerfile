@@ -22,4 +22,4 @@ COPY host_vars/lamachine-$LM_NAME.yml $LAMACHINE_PATH/host_vars/localhost.yml
 RUN chown -R $UNIX_USER $LAMACHINE_PATH
 USER $UNIX_USER
 RUN ansible-playbook $ANSIBLE_OPTIONS $LAMACHINE_PATH/install-$LM_NAME.yml -c local
-CMD /bin/bash
+CMD /bin/bash -l
