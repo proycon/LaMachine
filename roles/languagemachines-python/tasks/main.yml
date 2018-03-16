@@ -59,7 +59,9 @@
                github_repo: "clamservices"
                pip: "clamservices"
 
-        - name: Link {{item}} installation in {{lm_prefix}}/opt
+        - name: Link Python package installation in opt/
+          become: "{{lm_become}}"
+          become_user: root
           shell: |
             export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
             ln -sf $DIR {{lm_prefix}}/opt/{{item}}

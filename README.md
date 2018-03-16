@@ -197,78 +197,17 @@ The update normally only updates what has changed, if you want to force an updat
 For Docker and the Virtual Machine flavours, when a SUDO password is being asked by the update script, you can simply
 press ENTER and leave it empty, do not run the entire script with escalated privileges.
 
-
-Parameters
----------------
-
-You can add the following optional arguments to ``virtualenv-bootstrap.sh`` (and ``lamachine-update.sh``):
-
- * ``noadmin`` - Do not attempt to install global dependencies (but if they are missing, compilation will fail)
- * ``adminonly`` - Only install global dependencies, do not actually set up the virtual environment. Requires a user
-   with sudo rights. Allows for seperation of the bootstrap process for privileged and non-privileged user.
- * ``nopythondeps`` - Do not update 3rd party Python dependencies (such as numpy and scipy), may save time.
- * ``force`` - Force recompilation of everything, even if it's not updated
- * ``python2`` - Use python 2.7 instead of Python 3 *(note that some software may be not be available for Python 2!)*
- * ``stable`` - Use stable releases  *(this is the new default since February 2016)*
- * ``dev`` - Use cutting-edge development versions *(this may sometimes breaks things)*
- * ``version=`` - Use the specified version file *(see the versioning section below)*
- * ``private`` - Do not send information to us regarding your LaMachine installation *(see the privacy section below)*
- * ``branch=`` - Use the specified git branch of LaMachine *(default: master)*
-
-The latter five parameters are persistent, if you specify them once during
-installation or upgrade you won't need to the next time you upgrade your LaMachine.
-
-Compatibility
----------------
-
-Tested to work on:
-
- * Arch Linux
- * Debian 8
- * Debian 9
- * Fedora Core 21
- * CentOS 7
- * Ubuntu 16.04 LTS - Xenial Xerus
- * Ubuntu 15.10 - Wily Werewolf
- * Ubuntu 15.04 - Vivid Vervet
- * Ubuntu 14.04 LTS - Trusty Tahr
- * Windows 10 with Ubuntu Linux 14.04 Subsystem
-
-Partially works on:
- * Mac OS X Yosemite/El Capitán/and later  *(wopr does not work yet, python-frog breaks, gecco and toad are not available; optional software valkuil and tscan are not supported)*
-
-Deprecated:
- * Ubuntu 12.04 LTS - Precise Pangolin
- * CentOS 6
- * Debian 7
-
-Updating & Extra Software
-===========================
-
-Once you have a LaMachine running in whatever form, just run ``lamachine-update.sh`` to update
-everything again.
-
-The ``lamachine-update.sh`` script is also used to install additional *optional* software, pass the optional software as a parameter (multiple are allowed, or just used the ``all`` parameter to install all optional software):
-
- * ``tscan`` - Compile and install tscan (will download about 1GB in data), also installs Alpino (another 1GB)
- * ``valkuil`` - Valkuil Spelling Corrector (for Dutch)
- * ``foliaentity`` - Named entity linker
- * ``alpino`` - [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/), a dependency parser and tagger for Dutch (about 1GB)
-
-Note that for the docker version, you can pull a new docker image using ``docker pull proycon/lamachine`` instead. If you do use ``lamachine-update.sh`` with docker, you most likely will want to ``docker commit`` your container afterwards to preserve the update!
-
 Privacy
 ============
 
-Unless you explicitly opt-out, LaMachine send a few details to us regarding
-your installation of LaMachine whenever you install or update it. This is to
-help us keep track of its usage and improve it.
+Unless you explicitly opt-out, LaMachine sends a few details to us regarding your installation of LaMachine whenever you
+build a new one or update an existing one. This is to help us keep track of its usage and improve it.
 
 The following information is sent:
-* The form in which you run LaMachine (vagrant/virtualenv/docker)
+* The form in which you run LaMachine (vagrant/local/docker)
 * Is it a new LaMachine installation or an update
 * Stable or Development?
-* The OS you are running on and its version (only for the virtualenv form)
+* The OS you are running on and its version
 * Your Python version
 
 Your IP address will only be used to identify your country and not used in any
@@ -276,22 +215,14 @@ other way. No personally identifiable information whatsoever will be included
 in any reports we generate from this and it will never be used for
 advertisement purposes.
 
-To opt-out of this behaviour, For the ``virtualenv-bootstrap.sh`` and
-``lamachine-update.sh`` scripts, add the parameter ``private``. For the VM
-method, prior to building the VM, edit ``Vagrantfile`` and add the ``private``
-parameter after ``bootstrap.sh``. Due to the nature of Docker, installation of
-Docker images are not tracked by us (but may be by Docker itself).
+To opt-out of this behaviour, set ``private: true`` in your LaMachine settings.
 
-LaMachine downloads software from a number of external sources, depending on the form you choose,
-which may or may not collect your IP:
-
- * [Github](https://github.com)
- * [The Python Package Index](https://pypi.python.org)
- * [The Arch Linux User Repository](https://aur.archlinux.org)
- * [Docker](https://docker.io)
+During build and upgrade, LaMachine downloads software from a wide variety of external sources.
 
 Versioning
 ============
+
+    (this section needs to be (re)written still and is out of date!)
 
 LaMachine outputs a ``VERSION`` file for each installation or upgrade. The
 version file contains the exact version numbers of all software installed.  You
@@ -323,45 +254,15 @@ LaMachine comes with several webservices ready out of the box
 using CLAM, but also offer a web-interface for human end-users.
 
 In the Virtual Machine variant of LaMachine, these are all running and available out-of-the
-box. In the docker variant, you will need to explicitly start the services
-first, this is done using the following command *from within* the container:
+box.
 
-``sudo /usr/src/LaMachine/startwebservices.sh``
-
-All webservices are then accessible through http://127.0.0.1:8080 (ensure that
-this port is free) *from your host system*. For Docker you have to run the
-container with the ``-p 8080:80`` for the port forward to be active.
-
-Webservices/webapplications are currently available for the following software:
-
- * ucto
- * Frog
- * timbl
- * Colibri Core
- * PICCL
- * FoLiA Document Server
- * FLAT: FoLiA Linguistic Annotation Tool
-
-For the LaMachine Virtual Environment, however, you have to start and access each service individually using CLAM's
-built-in development server, only one is set up to run at a time:
-
- * ``clamservice start clamservices.config.ucto``
- * ``clamservice start clamservices.config.frog``
- * ``clamservice start clamservices.config.timbl``
- * ``clamservice start clamservices.config.colibricore``
- * ``clamservice start picclservice.picclservice``
-
-For FLAT in the virtual environment, run the following:
- * ``start-flat.sh``
-
-Each webservice/webapplication will itself advertise on what port it has been launched and how to
-access it.
+    (this section needs to be (re)written still)
 
 Note that there is no or poor authentication enabled on the webservices, so do not
 expose them to the outside world!
 
 Alternatives
-====================
+================
 
 If you have no need for a VM or a self-contained environment, and you have
 proper administrative access to the system, then it may be possible to install
@@ -376,24 +277,55 @@ Details:
  * Debian Linux (up to date for Debian 9 [stretch] or later only) -- ``sudo apt-get install science-linguistics``. Consult the [package state](https://qa.debian.org/developer.php?login=proycon@anaproy.nl).
  * Ubuntu Linux (packages are currently out of date until Ubuntu 17.04 Zesty Zapus)
  * Mac OS X (homebrew), missing most sofware (most notably Frog, Colibri Core, and Python bindings)
- * CentOS/Fedora (packages are outdated completely, do not use)
 
 The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself, which can be a tedious endeavour.
 
+Frequently Asked Questioned & Troubleshooting
+=================================================
 
-Troubleshooting
-====================
+#### Q: Do I need LaMachine?
 
-If you use the Python virtual environment and come across the error ``undefined
-symbol: _PyTraceback_Add`` upon updating LaMachine. Then some dependencies are
-still making a reference to the global Python interpreter, which has a newer
-version than the one in the virtual environment. You can fix this issue by
-copying the newer global version of the Python interpreter into your virtual
-environment as follows: ``cp /usr/bin/python3.4 $VIRTUAL_ENV/bin/python3``.
-Then run ``lamachine-update.sh`` again.
+A: This depends on the software you are interested in and the kind of system you are on. LaMachine is offered as a
+convenience but draws from other software repositories which you can also access directly.
 
-On some older version you may run into a syntax error error similar to the following when running ``lamachine-update.sh``:
- ``/home/proycon/lamachine/bin/lamachine-update.sh: line 775: syntax error near unexpected token `fi'``
- ``/home/proycon/lamachine/bin/lamachine-update.sh: line 775: `fi'``
-In this case, simply run ``lamachine-update.sh`` again and the problem will correct itself.
+You may want to first check if our software packages is available for your Linux distribution. For C++ software such as
+Frog, ucto and Timbl, we provide packages for:
+
+ * Debian Linux 9 [stretch] or higher -- Consult the [package
+   state](https://qa.debian.org/developer.php?login=proycon@anaproy.nl).
+ * Ubuntu Linux 18.04 or higher
+ * Arch Linux  -- https://aur.archlinux.org/packages/?SeB=m&K=proycon
+ * Mac OS X (homebrew) -- https://github.com/fbkarsdorp/homebrew-lamachine/tree/master/Formula
+ * A final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself, which can be a tedious endeavour.
+
+Python software is generally provided through the [Python Package Index](https://pypi.python.org) and can be installed
+using ``pip install``.
+
+#### Q: Why is my LaMachine installation so big??
+
+A LaMachine installation quickly reaches 6GB, and even more if you enable software that is not enabled by default.
+LaMachine is a research environment that can be used in a wide variety of ways which we can't predict in advance, so we
+by default include a lot of popular software for maximum flexibility. When building your LaMachine, you can disable
+software groups you don't want and save space.
+
+You can also limit the size somewhat by setting ``minimal: true`` in your LaMachine configuration, but this may mean that
+certains tools don't fully work.
+
+Disk space is also, by far, the cheapest resource, in contrast to memory or CPU.
+
+#### Q: Can I run LaMachine in a 32-bit environment?
+
+No
+
+#### Q: Can I run LaMachine with Python 2.7 instead of 3?
+
+No
+
+#### Q: Can I run LaMachine on an old Linux distribution?
+
+No, your Linux distribution needs to be up to date and supported.
+
+#### Q: Can I include my own software in LaMachine?
+
+Yes! See the contribution guidelines!
 
