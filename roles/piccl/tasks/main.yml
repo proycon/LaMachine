@@ -98,3 +98,13 @@
       args:
         chdir: "{{lm_prefix}}/bin"
 
+    - name: "Download data and example corpora for PICCL"
+      shell: |
+        if [ ! -d data ]; then
+          ./download-data.nf
+        fi
+        if [ ! -d corpora ]; then
+          ./download-examples.nf
+        fi
+      args:
+        chdir: "{{lm_prefix}}/opt/PICCL"
