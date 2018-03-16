@@ -147,6 +147,7 @@
                   fi
               fi
           else
+              export LM_PREFIX={{global_prefix}}
               EXTRAACTIVATE=$(find {{global_prefix}}/bin/activate.d -type f -name "*.sh")
               for f in $EXTRAACTIVATE; do
                   source $f

@@ -1,3 +1,4 @@
 port: 8803
+urlprefix: "colibricore"
 root: "{{lm_prefix}}/var/www-data/colibricore.clam/"
 bindir: "{{lm_prefix}}/bin"
