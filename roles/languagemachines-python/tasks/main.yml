@@ -66,24 +66,24 @@
             - clamservices
             - django
             - flat
-         - name: Install webserver configuration for clamservices
-           become: true
-           become_user: root
-           template:
-             src: clamservices.conf
-             dest: /etc/nginx/conf.d/clamservices.conf
-             force: yes
-             backup: yes
-           when: root and locality="global"
-         - name: Install webserver configuration for flat
-           become: true
-           become_user: root
-           template:
-             src: flat.conf
-             dest: /etc/nginx/conf.d/flat.conf
-             force: yes
-             backup: yes
-           when: root and locality="global"
+        - name: Install webserver configuration for clamservices
+          become: true
+          become_user: root
+          template:
+            src: clamservices.conf
+            dest: /etc/nginx/conf.d/clamservices.conf
+            force: yes
+            backup: yes
+          when: root and locality="global"
+        - name: Install webserver configuration for flat
+          become: true
+          become_user: root
+          template:
+            src: flat.conf
+            dest: /etc/nginx/conf.d/flat.conf
+            force: yes
+            backup: yes
+          when: root and locality="global"
 
 
 
