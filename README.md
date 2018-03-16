@@ -148,12 +148,12 @@ Usage
 
 How to start LaMachine differs a bit depending on your flavour.
 
-# Local Environment
+### Local Environment
 
 Run the generated activation script to activate the local environment (here we assume your LaMachine VM is called **stable**!):
 * Run``lamachine-stable-activate``
 
-# Virtual Machine
+### Virtual Machine
 
 If you built your own LaMachine you have various scripts at your disposal (here we assume your LaMachine VM is called **stable**!):
 * Run``lamachine-stable-start`` to start the VM
@@ -177,96 +177,26 @@ these in any exposed environments!
 If you enabled a webserver in your LaMachine build, you can connect your web browser to http://127.0.0.1:8080 after having started the
 VM.
 
+### Docker Container
 
+In this example we assume your LaMachine image is called **stable**!):
 
+* To start a new interactive container, run ``docker run -i -t proycon/lamachine:stable``
 
+If you use LaMachine with docker, we expect you to actually be familiar with docker and understand the difference
+between images, containers and how to commit changes.
 
+### Updating LaMachine
 
+When you are inside LaMachine, you can update it by running ``lamachine-update``, if you first want to edit your LaMachine's settings and/or the packages to be
+installed/updated, run ``lamachine-update --edit`` instead.
 
+The update normally only updates what has changed, if you want to force an update of everything instead, run
+``lamachine-update force=1``.
 
+For Docker and the Virtual Machine flavours, when a SUDO password is being asked by the update script, you can simply
+press ENTER and leave it empty, do not run the entire script with escalated privileges.
 
-
-Installation & Usage as Virtual Machine (for Linux, BSD, MacOS X, Windows)
-=========================================================================
-
-1. Obtain **Vagrant** from https://www.vagrantup.com/downloads.html or your package manager.
-2. Obtain **VirtualBox** from https://www.virtualbox.org/ or your package manager.
-3. Clone this repository and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine``  (or [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) manually from github)
-4. Power up the VM: ``vagrant up`` (this will download and install everything the first time)
-5. SSH into your VM: ``vagrant ssh``
-6. When done, power down the VM with: ``vagrant halt`` (and you can delete it entirely with ``vagrant destroy``)
-
-You may want to adapt Vagrantfile to change the number of CPUs and Memory
-available to the VM (2 CPUs and 3GB RAM by default).
-
-On most Linux distributions, steps one and two may be combined with a simple command such as
-``sudo apt-get install virtualbox vagrant`` on Ubuntu, or ``sudo pacman -Syu virtualbox vagrant`` on Arch Linux.
-
-Entering your LaMachine Virtual Machine as per step 5 should be password-less,
-other methods may require a login; use username ``vagrant`` and password
-``vagrant``.  The root password is also ``vagrant``.
-
-Various webservices in the Virtual Machine will be automatically accessible through https://127.0.0.1:8080 .
-
-Note that LaMachine by default is running on a 64-bit architecture, if you have a 32-bit host OS and really want to run
-LaMachine despite likely memory shortage; checkout the ``32bit`` branch after step 3 and before step 4 by issuing the
-following command: ``git checkout 32bit``. This is not really properly supported nor recommended.
-
-Make sure to also read our privacy section below.
-
-Installation & Usage with Docker (for Linux only)
-===================================================
-
-1. Obtain **Docker** from http://www.docker.com or your package manager (``sudo apt-get install docker.io`` on Debian/Ubuntu).
-2. Pull the [LaMachine image](https://registry.hub.docker.com/u/proycon/lamachine/): ``docker pull proycon/lamachine`` (or the executable may be called ``docker.io`` on Debian/Ubuntu)
-3. Start an interactive prompt to LaMachine: ``docker run -p 8080:80 -t -i proycon/lamachine``, or run stuff: ``docker run proycon/lamachine <program>``  (use ``run -i`` if the program has an interactive mode; set up a mounted volume to pass files from host OS to docker, see: https://docs.docker.com/userguide/dockervolumes/)
-
-There is no need to clone this git repository at all for this method.
-
-Installation & Usage locally (for Linux/BSD/Mac OS X/Windows 10)
-==================================================================
-
-LaMachine can be used on a Linux/BSD/Mac OS X systems without root access (provided a set of prerequisites is available
-on the system or installed by a system administrator!) and even on Windows 10 systems, provided the latter has the
-Windows Subsystem for Linux and Ubuntu on Windows installed (so if you use Windows, see
-[here](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide) for instructions first).
-
-This local flavour of LaMachine runs in an extended Python Virtual Environment (using Python 3.3 or later) and is the option with
-least overhead (i.e. the most performant). This offers a local environment (not a virtual machine!), ideal for development, that binds against
-the software globally available on your system. The virtual environment will be contained under a single directory and
-contains everything.  All sources are pulled from git and compiled for you.
-
-
-Installation
---------------
-
-0. Open a command line terminal
-1. **Obtain a copy of LaMachine** in a temporary location (it will only be needed once).
-   * A copy is best obtained through git: ``$ cd /tmp && git clone https://github.com/proycon/LaMachine``, provided you have git installed already (``sudo apt-get install git`` installs it on Ubuntu/Debian systems)
-   * Alternatively, you can [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) from github and extract it: ``$ cd /tmp && wget https://github.com/proycon/LaMachine/archive/master.zip && unzip master.zip``
-2. In a terminal, **navigate to the directory** where you want to install
-   LaMachine, for instance your home directory:  ``$ cd ~``.
-   A ``lamachine/`` directory that contains everything will be automatically created in the next step.
-   (Advanced users can also pre-create and activate an existing virtual environment that LaMachine will then reuse.)
-3. **Bootstrap the virtual environment** by calling: ``/tmp/LaMachine/virtualenv-bootstrap.sh``
-   * Do not run this as root, you will be queried for ``sudo`` for specific parts pertaining to the installation of
-   required global packages.
-
-Usage
---------------
-
-Note that you will always have to activate your virtual environment before you can use any of the applications installed
-in it.
-
-1. Navigate to the directory where you installed LaMachine (e.g. ``cd ~/lamachine``)
-   * Note that this is not the same as the temporary ``/tmp/LaMachine`` we created during installation
-2. Run ``. bin/activate`` (don't forget the dot and the space!)
-
-In most configurations, your prompt will change to indicate LaMachine is activated.
-
-To facilitate activation, we recommend you add an alias ``alias lm=". /path/to/lamachine/bin/activate"`` to your
-``~/.bashrc`` (or ``~/.zshrc`` or whatever shell you prefer), allowing you to simply activate LaMachine by typing
-``lm``.
 
 Parameters
 ---------------

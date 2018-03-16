@@ -81,7 +81,7 @@
           with_items:
             - clamservices
             - flat
-          when: root and locality="global"
+          when: root and locality=="global"
 
         - name: "Install uwsgi configuration for {{item}}"
           become: true
@@ -97,7 +97,7 @@
             - ucto
             - timbl
             - colibricore
-          when: root and locality="global"
+          when: root and locality=="global"
 
         - name: "Install clam configuration for {{item}}"
           become: true
@@ -113,6 +113,6 @@
             - ucto
             - timbl
             - colibricore
-          when: root and locality="global"
+          when: root and locality=="global"
 
 
