@@ -19,6 +19,18 @@
         with_items: [nginx] #TODO:  uwsgi
         when: (ansible_distribution|lower == "redhat" or ansible_distribution|lower == "centos" or ansible_distribution|lower == "fedora" or ansible_distribution|lower == "rhel")
 
+      - name: Adding webserver start script #might not work on non-debian systems
+        become: true
+        become_user: root
+        copy:
+          dest: "{{global_prefix}}/bin/lamachine-start-webserver"
+          content: |
+             #!/bin/bash
+			 sudo service nginx restart
+			 sudo service uwsgi-emperor restart
+ 		  owner: "{{unix_user}}"
+          mode: u+rwx,a+rx
+
       - name: "Ensure {{web_user}} group exists"
         become: true
         become_user: root

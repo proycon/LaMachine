@@ -179,12 +179,20 @@ VM.
 
 ### Docker Container
 
-In this example we assume your LaMachine image is called **stable**!):
+In this example we assume your LaMachine image has the tag **stable**, run ``docker image ls`` to see all images you have available:
 
-* To start a new interactive container, run ``docker run -i -t proycon/lamachine:stable``
+* To start a **new** interactive container, run ``docker run -i -t proycon/lamachine:stable``
+* To start a **new** container with a command line tool, just append the command: ``docker run -t proycon/lamachine:stable ucto -L nld /data/input.txt /data/output.folia.xml``
+	* Add the ``-i`` flag if the tool is an interactive tool that reads from standard input (i.e. keyboard input).
+* To start a **new** container with the server: ``docker run -p 8080:80 -h hostname -t proycon/lamachine:stable lamachine-start-webserver``
+	* The numbers values for ``-p`` are the port numbers on the host side and on the container side respectively, the latter must always match with the ``http_port`` setting LaMachine has been built with.
+	* Set ``-h`` with the desired hostname, this too must match the setting LaMachine has been built with.
+	* If started in this way, you can connect your webbrowser on the host system to http://127.0.0.1:8080 .
 
-If you use LaMachine with docker, we expect you to actually be familiar with docker and understand the difference
-between images, containers and how to commit changes.
+If you use LaMachine with docker, we expect you to actually be familiar with
+docker and understand the difference between images, containers, how to commit
+changes (``docker commit``), and how to reuse existing containers if that is
+what you need (``docker start``, ``docker attach``).
 
 ### Updating LaMachine
 
