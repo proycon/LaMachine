@@ -58,7 +58,7 @@
             - "var/log/nginx"
             - "var/www-data"
 
-  - when: locality="local"
+  - when: locality=="local"
     block:
       - name: Create webserver writable directories (local)
         file:
