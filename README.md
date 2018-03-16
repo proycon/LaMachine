@@ -146,8 +146,42 @@ In addition to a flavour, users can opt for one of three versions of LaMachine:
 Usage
 ------------
 
+How to start LaMachine differs a bit depending on your flavour.
 
-TODO
+# Local Environment
+
+Run the generated activation script to activate the local environment (here we assume your LaMachine VM is called **stable**!):
+* Run``lamachine-stable-activate``
+
+# Virtual Machine
+
+If you built your own LaMachine you have various scripts at your disposal (here we assume your LaMachine VM is called **stable**!):
+* Run``lamachine-stable-start`` to start the VM
+* Run``lamachine-stable-connect`` to connect to a running VM and obtain a command line shell (over ssh)
+* Run``lamachine-stable-stop`` to stop the VM
+* Run``lamachine-stable-destroy`` to completely delete the VM again
+* ``lamachine-stable-activate`` is a shortcut that starts the VM and connects automatically, and stops the VM when you
+  disconnect again.
+
+If you used a prebuilt image you have to invoke ``vagrant`` yourself from the proper directory where you did ``vagrant
+init proycon/lamachine:stable``:
+* Run ``vagrant up`` to start the VM
+* Run ``vagrant halt`` to stop the VM
+* Run ``vagrant ssh`` to connect to the VM and obtain a command line shell
+* Run ``vagrant destroy`` to remove the VM
+
+Command line access to your LaMachine Virtual Machine through vagrant or ``lamachine-*-connect`` should be passwordless, other methods
+may require a login; use username ``vagrant`` and password ``vagrant``.  The root password is also ``vagrant``. Change
+these in any exposed environments!
+
+If you enabled a webserver in your LaMachine build, you can connect your web browser to http://127.0.0.1:8080 after having started the
+VM.
+
+
+
+
+
+
 
 
 
