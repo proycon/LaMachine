@@ -248,28 +248,23 @@
           state: directory
           owner: "{{unix_user}}"
 
-    - name: Create opt directory (local)
-      file:
-          path: "{{ local_prefix }}/opt"
-          state: directory
-          owner: "{{unix_user}}"
-      when: locality == "local"
-
-    - name: Create global directories
-      become: yes
+    - name: Create directories
+      become: "{{lm_become}}"
       become_user: root
       file:
-          path: "{{ global_prefix }}/{{item}}"
+          path: "{{ lm_prefix }}/{{item}}"
           state: directory
           owner: "{{unix_user}}"
           mode: u+rwx,a+rx
       with_items:
           - bin
           - "bin/activate.d"
+          - etc
           - lib
           - share
           - opt
-      when: locality == "global"
+          - var
+          - "var/log"
 
     - name: Link to LaMachine controller from local prefix
       file:

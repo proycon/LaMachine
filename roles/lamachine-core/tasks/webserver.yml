@@ -1,33 +1,74 @@
 ---
-    - name: Installing webserver globally (Debian/Ubuntu)
-      become: true
-      become_user: root
-      apt:
-        name: "{{item}}"
-        state: latest
-      with_items: [nginx, uwsgi-emperor, uwsgi, uwsgi-plugin-python3]
-      when: root and locality="global" and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
+  - when: root and locality="global"
+    block:
+      - name: Installing webserver globally (Debian/Ubuntu)
+        become: true
+        become_user: root
+        apt:
+          name: "{{item}}"
+          state: latest
+        with_items: [nginx, uwsgi-emperor, uwsgi, uwsgi-plugin-python3]
+        when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
 
-    - name: Installing webserver globally (RedHat)
-      become: true
-      become_user: root
-      yum:
-        name: "{{item}}"
-        state: latest
-      with_items: [nginx] #TODO:  uwsgi
-      when: root and locality="global" and (ansible_distribution|lower == "redhat" or ansible_distribution|lower == "centos" or ansible_distribution|lower == "fedora" or ansible_distribution|lower == "rhel")
+      - name: Installing webserver globally (RedHat)
+        become: true
+        become_user: root
+        yum:
+          name: "{{item}}"
+          state: latest
+        with_items: [nginx] #TODO:  uwsgi
+        when: (ansible_distribution|lower == "redhat" or ansible_distribution|lower == "centos" or ansible_distribution|lower == "fedora" or ansible_distribution|lower == "rhel")
 
-    - name: Install webserver configuration
-      become: true
-      become_user: root
-      template:
-        src: nginx.conf
-        dest: /etc/nginx/nginx.conf
-        force: yes
-        backup: yes
-      when: root and locality="global"
+      - name: "Ensure {{web_user}} group exists"
+        become: true
+        become_user: root
+        group:
+          name: "{{web_user}}"
+          state: present
 
+      - name: "Ensure {{web_user}} user exists"
+        become: true
+        become_user: root
+        user:
+          name: "{{web_user}}"
+          group: "{{web_user}}"
+          createhome: no
+          state: present
 
+      - name: Install webserver configuration
+        become: true
+        become_user: root
+        template:
+          src: nginx.conf
+          dest: /etc/nginx/nginx.conf
+          force: yes
+          backup: yes
+        when: root and locality="global"
 
+      - name: Create webserver writable directories (global)
+        become: "{{lm_become}}"
+        become_user: root
+        file:
+            path: "{{ lm_prefix }}/{{item}}"
+            state: directory
+            owner: "{{web_user}}"
+            mode: u+rwx,a+rx
+        with_items:
+            - "var/log/uwsgi"
+            - "var/log/nginx"
+            - "var/www-data"
+
+  - when: locality="local"
+    block:
+      - name: Create webserver writable directories (local)
+        file:
+            path: "{{ lm_prefix }}/{{item}}"
+            state: directory
+            owner: "{{unix_user}}"
+            mode: u+rwx,a+rx
+        with_items:
+            - "var/log/uwsgi"
+            - "var/log/nginx"
+            - "var/www-data"
 
 

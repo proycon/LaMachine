@@ -1,0 +1,4 @@
+port: 8801
+root: "{{lm_prefix}}/var/www-data/frog.clam/"
+bindir: "{{lm_prefix}}/bin"
+flaturl: "{% if http_port|int == 443 %}https://{% else %}http://{% endif %}{{hostname}}/flat"

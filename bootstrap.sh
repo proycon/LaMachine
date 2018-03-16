@@ -603,6 +603,7 @@ locality: \"$LOCALITY\" #local or global?
         echo "global_prefix: \"/usr/local/\" #Path for global installations" >> $CONFIGFILE
     else
         echo "unix_user: \"$USERNAME\"" >> $CONFIGFILE
+        WEBUSER=$USERNAME
         HOMEDIR=$(echo ~)
         echo "homedir: \"$HOMEDIR\"" >> $CONFIGFILE
         if [ ! -z "$SOURCEDIR" ]; then
@@ -648,6 +649,11 @@ webserver: true #include a webserver
 http_port: 80 #webserver port (for VM or docker)
 mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
 " >> $CONFIGFILE
+if [[ $FLAVOUR == "local" ]]; then
+    echo "web_user: \"$USERNAME\"" >> $CONFIGFILE
+else
+    echo "web_user: \"www-data\"" >> $CONFIGFILE
+fi
 
 if [ $INTERACTIVE -eq 1 ]; then
     echo "${bold}Opening configuration file $CONFIGFILE in editor for final configuration...${normal}"

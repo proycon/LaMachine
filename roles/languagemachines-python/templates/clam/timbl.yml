@@ -1,0 +1,3 @@
+port: 8804
+root: "{{lm_prefix}}/var/www-data/timbl.clam/"
+bindir: "{{lm_prefix}}/bin"
