@@ -1,5 +1,5 @@
 ---
-  - when: root and locality="global"
+  - when: root and locality=="global"
     block:
       - name: Installing webserver globally (Debian/Ubuntu)
         become: true
