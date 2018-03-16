@@ -69,7 +69,7 @@
          - { "pip": xgboost }
          - { "pip": tqdm }
          - { "pip": django, "exclude_when": "{% if webserver %}false{% else %}true{% endif %}" }
-         - { "pip": uwsgi, "exclude_when": "{% if webserver and not (root and locality='global' and (ansible_distribution|lower == 'debian' or ansible_distribution|lower == 'ubuntu' or ansible_distribution|lower == 'linuxmint')) %}false{% else %}true{% endif %}" } #uwsgi will already be installed globally if on debian/ubuntu in global mode
+         - { "pip": uwsgi, "exclude_when": "{% if webserver and not (root and locality=='global' and (ansible_distribution|lower == 'debian' or ansible_distribution|lower == 'ubuntu' or ansible_distribution|lower == 'linuxmint')) %}false{% else %}true{% endif %}" } #uwsgi will already be installed globally if on debian/ubuntu in global mode
        loop_control:
            loop_var: package
        when: minimal is not defined or not minimal
