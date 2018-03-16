@@ -26,9 +26,9 @@
           dest: "{{global_prefix}}/bin/lamachine-start-webserver"
           content: |
              #!/bin/bash
-			 sudo service nginx restart
-			 sudo service uwsgi-emperor restart
- 		  owner: "{{unix_user}}"
+             sudo service nginx restart
+             sudo service uwsgi-emperor restart
+          owner: "{{unix_user}}"
           mode: u+rwx,a+rx
 
       - name: "Ensure {{web_user}} group exists"
