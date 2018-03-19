@@ -72,9 +72,6 @@ fatalerror () {
     exit 2
 }
 
-if [[ "$USERNAME" == "root" ]]; then
-    fatalerror "Do not run the LaMachine bootstrap process as root!"
-fi
 
 #The base directory is the directory where the bootstrap is downloaded/executed
 #It will be the default directory for data sharing, will host some configuration files
@@ -152,6 +149,22 @@ echo "Detected distribution ID: $DISTRIB_ID"
 echo "Detected distribution release: $DISTRIB_RELEASE"
 echo
 
+
+#Test if we come from LaMachine v1 VM/Docker
+if [ "$OS" = "arch" ] && [ -e /usr/src/LaMachine ]; then
+    echo "${boldred}Automated upgrade from LaMachine v1 not possible${normal}"
+    echo "A new major LaMachine version (v2) has been released in early 2018."
+    echo "You are currently on the older v1. Due to many changes a direct upgrade path was not feasible."
+    echo "It is easier to simply build a new LaMachine Virtual Machine or Docker Container."
+    echo "We recommend you remove this VM or container and "
+    echo "obtain the latest version by following the instructions on"
+    echo "the LaMachine website at https://proycon.github.io/LaMachine ."
+    exit 6
+fi
+
+if [[ "$USERNAME" == "root" ]]; then
+    fatalerror "Do not run the LaMachine bootstrap process as root!"
+fi
 
 echo "Looking for dependencies..."
 if ! which git; then
