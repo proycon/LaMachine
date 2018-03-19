@@ -108,3 +108,48 @@
         fi
       args:
         chdir: "{{lm_prefix}}/opt/PICCL"
+
+    - when: webserver
+      block:
+        - name: Installing PICCL webservice
+          include_role:
+            name: lamachine-python-install
+          vars:
+            package:
+              github_user: "LanguageMachines"
+              github_repo: "PICCL"
+              pip: "" #always installed from source, will reuse same sourcedir
+              setup: "webservice/setup.py"
+
+        - name: "Install webserver configuration for PICCL"
+          become: true
+          become_user: root
+          template:
+            src: "nginx/piccl.conf"
+            dest: "/etc/nginx/conf.d/piccl.conf"
+            force: yes
+            backup: yes
+            owner: "{{unix_user}}"
+          when: root and locality=="global"
+
+        - name: "Install uwsgi configuration for PICCL"
+          become: true
+          become_user: root
+          template:
+            src: "uwsgi/piccl.ini"
+            dest: "/etc/uwsgi-emperor/vassals/piccl.ini"
+            force: yes
+            backup: yes
+            owner: "{{unix_user}}"
+          when: root and locality=="global"
+
+        - name: "Install clam configuration for PICCL"
+          become: true
+          become_user: root
+          template:
+            src: "clam/piccl.yml"
+            dest: "{{lm_prefix}}/etc/piccl.clam.yml"
+            force: yes
+            backup: yes
+            owner: "{{unix_user}}"
+          when: root and locality=="global"
