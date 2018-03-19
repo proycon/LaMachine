@@ -119,7 +119,7 @@
               github_user: "LanguageMachines"
               github_repo: "PICCL"
               pip: "" #always installed from source, will reuse same sourcedir
-              setup: "webservice/setup.py"
+              setupdir: "webservice" #setup.py is in this subdir
 
         - name: "Install webserver configuration for PICCL"
           become: true
