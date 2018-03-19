@@ -13,7 +13,7 @@
   Index](https://pypi.python.org) for Python, [CPAN](https://wwww.cpan.org) for
   Perl, [CRAN](https://www.cran.org) for R, [Maven](https://search.maven.org) for Java); use it to publish stable releases. LaMachine can in turn obtain it from these
   repositories.
-* Your software should have at least some form of documentation, at the least a decent README
+* Your software should have at least some form of documentation, at least a decent README
 * Any Python software should support Python 3 (and not just 2.7)
 
 ## LaMachine Architecture
