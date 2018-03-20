@@ -1,0 +1,5 @@
+---
+dependencies:
+  - { role: python-core }
+  - { role: languagemachines-basic }
+  - { role: languagemachines-python }

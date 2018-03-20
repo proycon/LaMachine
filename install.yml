@@ -1,5 +1,6 @@
 ---
-#(Comment or remove categories/roles you do not want to install)
+#(Comment or remove categories/roles you do not want to install, dependencies will be automatically
+#resolved even when not explicitly mentioned)
 - hosts: all
   roles:
       - lamachine-core #The LaMachine core, you always need this or nothing works; already includes Python 3
