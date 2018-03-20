@@ -25,7 +25,7 @@ for build in buildmatrix:
                 args.append("--" + key + " " + value)
         begintime = time.time()
         r = os.system("bash ../bootstrap.sh " + " ".join(args) + " --noninteractive --private --verbose 2> " + buildid(build).replace(':','-') + ".log >&2")
-        endtime = time.time() - begintime
+        endtime = time.time()
         print("Destroying " + build['name'] + " ...", file=sys.stderr)
         if build['flavour'] == "vagrant":
             r2 = os.system("lamachine-" + build['name'] + "-destroy -f")
@@ -36,7 +36,7 @@ for build in buildmatrix:
         results.append( (build, r, endtime - begintime, r2) )
 
 for build, returncode, duration, cleanup in results:
-    print(buildid(build) + " , " + ("OK" if returncode == 0 else "FAILED") + ", " + str(round(duration/60))+ ("CLEANED" if cleanup == 0 else "DIRTY") )
+    print(buildid(build) + " , " + ("OK" if returncode == 0 else "FAILED") + ", " + str(round(duration/60))+ " " + ("CLEANED" if cleanup == 0 else "DIRTY") )
 
 if not results:
     print("No such build defined. Options:", file=sys.stderr)
