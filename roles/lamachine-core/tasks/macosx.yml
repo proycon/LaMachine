@@ -14,6 +14,7 @@
       homebrew:
         update_homebrew: yes
         upgrade_all: yes
+      ignore_errors: yes
 
     - name: Installing common base packages (Homebrew)
       homebrew:
