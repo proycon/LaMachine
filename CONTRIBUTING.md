@@ -2,8 +2,11 @@
 
 ## Requirements and guidelines
 
-* Only add relevant NLP software that fits with the rest
-* All software must be in public version control (we recommend *github*), be *public*, and be fully *open source*
+* Only add relevant NLP software
+* LaMachine is only intended for POSIX-compliant systems (i.e. Linux, BSD, Mac OS X).
+  Other systems such as Windows are only supported through a VM.
+* All software must be in public version control (we recommend *github*), be *public*, and be fully *open source* with
+  an explicitly stated licence.
 * LaMachine distinguishes between latest development versions and stable
   releases. If your software is mature enough to be released, please do so
   using the releases mechanism on github. Version numbers should use semantic versioning and start with a **v** (like
@@ -11,10 +14,21 @@
 * The latest state of the ``master`` branch of your repository will be considered the development version.
 * If there is a suitable software repository for your software (such as the [Python Package
   Index](https://pypi.python.org) for Python, [CPAN](https://wwww.cpan.org) for
-  Perl, [CRAN](https://www.cran.org) for R, [Maven](https://search.maven.org) for Java); use it to publish stable releases. LaMachine can in turn obtain it from these
+  Perl, [CRAN](https://www.cran.org) for R, [Maven](https://search.maven.org) for Java); use it to publish stable releases.
+  LaMachine can in turn obtain it from these
   repositories.
-* Your software should have at least some form of documentation, at least a decent README
+* Your software should have at some form of documentation, at least a decent README
 * Any Python software should support Python 3 (and not just 2.7)
+* The software should be maintained and should work on modern linux distributions.
+  LaMachine is not intended for legacy or archiving purposes.
+
+## How to contribute?
+
+Contributors are expected to be familiar with git and github:
+
+* Fork the LaMachine github repository
+* Add a role for your software in ``roles/``  (read the rest of this documentation to learn how)
+* When all done, create a pull request on Github
 
 ## LaMachine Architecture
 
@@ -33,7 +47,10 @@ A task may also define [a condition](http://docs.ansible.com/ansible/latest/play
 for its execution through a ``when`` statement.
 
 LaMachine provides a full framework with various predefined *roles* and preset
-*variables*. Let's first look at the latter:
+*variables*.  The framework allows for installation in various forms (docker, VM, local, global). A single
+``bootstrap.sh`` script is used build any desired form; it does the necessary preprocessing and finally invokes Ansible.
+
+First we take a look at the variables defined in LaMachine:
 
 ### Variables
 
@@ -99,7 +116,7 @@ We try to follow the [Filesystem Hierarchy Standard](https://wiki.linuxfoundatio
 
 ### Reusable Roles
 
- We supply  *roles* that are built for reuse (they all start with
+We supply  *roles* that are built for reuse (they all start with
 ``lamachine-*``) and are meant to to install software from one or more external
 repositories:
 
@@ -122,7 +139,38 @@ or ``github`` module.
 To add your own software, you add a *role* yourself which includes one (or more) of the above, with specific parameters, to do the
 actual work. Your role, in turn, is referenced by the end-user who has final control over the installation playbook.
 
-This may sound a bit cryptic still, so let's go through an example step by step:
+This may sound a bit cryptic still, so let's go through some examples:
+
+### Example: Python software
+
+* We assume a fictitious Python software package named *foobar*.
+* The source code is on github as *proycon/foobar*.
+* The software is released on the Python Package Index as *foobar*, meaning a simple ``pip install foobar`` is enough to
+  install it and all dependencies.
+* Fork the LaMachine github repository
+* Git clone your fork
+* Create a file  *roles/foobar/tasks/main.yml* (create the necessary directories) with the following contents:
+
+```
+ - name: Install Foobar
+   include_role:
+      name: lamachine-python-install
+   vars:
+      package:
+         github_user: proycon
+         github_repo: foobar
+         pip: foobar
+```
+
+
+
+
+
+
+
+
+
+
 
 
 (todo)
