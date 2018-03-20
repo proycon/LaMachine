@@ -431,7 +431,7 @@ if [ -z "$SUDO" ]; then
             echo "or another official source whenever possible. You need to have sudo permission for this though..."
             echo "Answering 'no' to this question may make installation on your system impossible!"
             echo
-            echo -n "${bold}Do you have administrative access (root/sudo) on the current system?${normal} [yn]"
+            echo -n "${bold}Do you have administrative access (root/sudo) on the current system?${normal} [yn] "
             read yn
             case $yn in
                 [Yy]* ) SUDO=1; break;;
@@ -461,7 +461,7 @@ for package in $NEED; do
         echo "Vagrant and Virtualbox are required for your flavour of LaMachine but are not installed yet. ${bold}Install automatically?${normal}"
         if [ ! -z "$cmd" ]; then
             while true; do
-                echo -n "${bold}Run:${normal} $cmd ? [yn]"
+                echo -n "${bold}Run:${normal} $cmd ? [yn] "
                 read yn
                 case $yn in
                     [Yy]* ) $cmd; break;;
@@ -481,7 +481,7 @@ for package in $NEED; do
     elif [ "$package" = "brew" ]; then
         echo "Homebrew (https://brew.sh) is required on Mac OS X but was not found yet"
         while true; do
-            echo -n "${bold}Download and install homebrew?${normal} [yn]"
+            echo -n "${bold}Download and install homebrew?${normal} [yn] "
             read yn
             case $yn in
                 [Yy]* ) break;;
@@ -509,7 +509,7 @@ for package in $NEED; do
         echo "Git is required for LaMachine but not installed yet. ${bold}Install now?${normal}"
         if [ ! -z "$cmd" ]; then
             while true; do
-                echo -n "${bold}Run:${normal} $cmd ? [yn]"
+                echo -n "${bold}Run:${normal} $cmd ? [yn] "
                 read yn
                 case $yn in
                     [Yy]* ) $cmd || fatalerror "Git installation failed!"; break;;
@@ -534,7 +534,7 @@ for package in $NEED; do
         echo "Pip is required for LaMachine but not installed yet. ${bold}Install now?${normal}"
         if [ ! -z "$cmd" ]; then
             while true; do
-                echo -n "${bold}Run:${normal} $cmd ? [yn]"
+                echo -n "${bold}Run:${normal} $cmd ? [yn] "
                 read yn
                 case $yn in
                     [Yy]* ) $cmd || fatalerror "Pip installation failed"; break;;
@@ -561,7 +561,7 @@ for package in $NEED; do
         echo "Virtualenv is required for LaMachine but not installed yet. ${bold}Install now?${normal}"
         if [ ! -z "$cmd" ]; then
             while true; do
-                echo -n "${bold}Run:${normal} $cmd ? [yn]"
+                echo -n "${bold}Run:${normal} $cmd ? [yn] "
                 read yn
                 case $yn in
                     [Yy]* ) $cmd || fatalerror "Virtualenv installation failed"; break;;
@@ -779,7 +779,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     ln -sf $BASEDIR/lamachine-$LM_NAME-destroy $HOMEDIR/bin/
     ln -sf $BASEDIR/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
     #run the activation script (this will do the actual initial provision as well)
-    bash $BASEDIR/lamachine-$LM_NAME-start
+    bash $BASEDIR/lamachine-$LM_NAME-start 2>&1 | tee lamachine-$LM_NAME.log
     rc=$?
     echo "======================================================================================"
     if [ $rc -eq 0 ]; then
@@ -807,7 +807,7 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     cwd=$(pwd)
     echo "Running ansible command from $cwd: $cmd" >&2
     echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
-    if $cmd; then
+    if $cmd 2>&1 | tee lamachine-$LM_NAME.log; then
         rc=0
         echo "======================================================================================"
         echo "${boldgreen}All done, a local LaMachine environment has been built!${normal}"
@@ -834,7 +834,7 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
     echo "Building docker"
     sed -i "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to run sed"
     #echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
-    docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME .
+    docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME . 2>&1 | tee lamachine-$LM_NAME.log
     rc=$?
     if [ $rc -eq 0 ]; then
         echo "======================================================================================"

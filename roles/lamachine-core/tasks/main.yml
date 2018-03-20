@@ -84,7 +84,7 @@
           if [ {{root|int}} -eq 1 ]; then
              OPTS="--ask-become-pass"
           fi
-          ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v $OPTS --extra-vars "${*:$FIRST}"
+          ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee lamachine-{{conf_name}}.log
         mode: u+rwx,a+rx
 
     - name: Set generic update script
