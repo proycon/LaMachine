@@ -111,13 +111,13 @@
 
       - name: Link nginx from global prefix
         file:
-          source: "/etc/nginx"
+          src: "/etc/nginx"
           dest: "{{ lm_prefix }}/etc/nginx"
           state: link
 
       - name: Link uwsgi-emperor from global prefix (debian)
         file:
-          source: "/etc/uwsgi-emperor"
+          src: "/etc/uwsgi-emperor"
           dest: "{{ lm_prefix }}/etc/uwsgi-emperor"
           state: link
         when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
