@@ -1,0 +1,44 @@
+---
+
+    - name: Installing global dependencies for Gecco (Debian/Ubuntu)
+      become: true
+      become_user: root
+      apt:
+        name: "{{item}}"
+        state: installed
+      with_items:
+        - myspell-nl
+        - libhunspell-dev
+        - libaspell-dev
+      when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linuxmint")
+
+    - name: Installing global dependencies for Gecco (RedHat)
+      become: true
+      become_user: root
+      yum:
+        name: "{{item}}"
+        state: installed
+      with_items:
+        - aspell
+        - aspell-devel
+        - hunspell-devel
+      when: root and (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel" or ansible_distribution|lower == "redhat" or ansible_distribution|lower == "fedora")
+
+    - name: Installing global dependencies for Gecco (Arch)
+      become: true
+      become_user: root
+      pacman:
+        name: "{{item}}"
+        state: installed
+      with_items:
+        - aspell
+        - hunspell
+      when: root and (ansible_distribution|lower == "arch")
+
+    - name: Installing Gecco
+      include_role:
+        name: lamachine-python-install
+      with_items:
+          - { github_user: "proycon", github_repo: "gecco", pip: "gecco" }
+      loop_control:
+           loop_var: package
