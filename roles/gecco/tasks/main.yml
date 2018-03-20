@@ -5,7 +5,7 @@
       become_user: root
       apt:
         name: "{{item}}"
-        state: installed
+        state: latest
       with_items:
         - myspell-nl
         - libhunspell-dev
@@ -17,7 +17,7 @@
       become_user: root
       yum:
         name: "{{item}}"
-        state: installed
+        state: latest
       with_items:
         - aspell
         - aspell-devel
@@ -29,11 +29,22 @@
       become_user: root
       pacman:
         name: "{{item}}"
-        state: installed
+        state: latest
       with_items:
         - aspell
         - hunspell
       when: root and (ansible_distribution|lower == "arch")
+
+    - name: Installing global dependencies for Gecco (Mac OS X)
+      become: true
+      become_user: root
+      homebrew:
+        name: "{{item}}"
+        state: installed
+      with_items:
+        - aspell
+        - hunspell
+      when: root and (ansible_distribution|lower == "macosx")
 
     - name: Installing Gecco
       include_role:
