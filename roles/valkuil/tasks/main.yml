@@ -1,0 +1,28 @@
+---
+    - name: Installing Valkuil
+      include_role:
+        name: lamachine-git
+      vars:
+        package:
+            user: proycon
+            repo: valkuil-gecco
+
+    - name: Check if models already downloaded
+      stat:
+        path: "{{ source_path }}/valkuil-gecco/models/ValkuilCorpus.spacing.colibri.patternmodel"
+      register: valkuil_model
+
+    - name: Downloading Valkuil models
+      include_role:
+          name: lamachine-run
+      vars:
+          command: ./download-models.sh
+          chdir: "{{source_path}}/valkuil-gecco"
+      when: not valkuil_model.stat.exists
+
+
+
+
+
+
+
