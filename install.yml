@@ -6,7 +6,7 @@
       - lamachine-core #The LaMachine core, you always need this or nothing works; already includes Python 3
       - languagemachines-basic #includes basic NLP tools written in C++, such as timbl, frog, ucto, folia by the Language Machines Research group, Centre of Language and Speech Technology, Radboud University Nijmegen
       - python-core #Core 3rd party scientific python packages (numpy, scipy, pandas, scikit-learn, nltk, and more)
-      - languagemachines-python #contains basic Python-based tools and libraries by the Language Machines Research group, Centre of Language and Speech Technology, Radboud University Nijmegen
+      - languagemachines-python #contains basic Python-based tools and libraries and web applications/services by the Language Machines Research group, Centre of Language and Speech Technology, Radboud University Nijmegen. (includes pynlpl, CLAM, foliadocserve, FLAT)
       - languagemachines-python-bindings #contains python-ucto, python-frog, python-timbl (requires the above)
       - r-core #R with core R packages (3rd party)
      #- piccl #Workflows for Post-OCR correction and normalisation and pseudo-modernisation of historical text. Includes TICCL. Requires languagemachines-* (Radboud University & Tilburg University)

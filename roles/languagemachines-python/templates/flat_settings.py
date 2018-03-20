@@ -26,10 +26,7 @@ hostname = gethostname()
 ##############################################################################
 
 #Configure your database here, by default a simple sqlite database will be used
-if 'VIRTUAL_ENV' in environ:
-    DBFILE = os.path.join(environ['VIRTUAL_ENV'], 'flat.db')
-else:
-    DBFILE = "/var/db/flat.db"
+DBFILE = "{{lm_prefix}}/var/www-data/flat.db"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
@@ -49,17 +46,14 @@ DATABASES = {
 
 #This is the path to the document root directory, this is the same directory as specified when running foliadocserve.
 #If the document server is running on a different system, the remote root disk will have to be mounted and the mountpoint specified here.
-if 'VIRTUAL_ENV' in environ:
-    WORKDIR = os.path.join(environ['VIRTUAL_ENV'], 'flat.docroot')
-else:
-    WORKDIR = "/var/flat.docroot"
+WORKDIR = "{{lm_prefix}}/var/www-data/flat.docroot"
 
 #The path and port on which the FoLiA Document Server can be reached (these defaults suffice for a local connection)
 FOLIADOCSERVE_HOST = '127.0.0.1'
 FOLIADOCSERVE_PORT = 3030
 
 # Make sure to start the document server when starting FLAT!
-#   $ foliadocserve -d /path/to/document/root -p 8080
+#   $ foliadocserve -d /path/to/document/root -p 3030
 
 
 ##############################################################################
