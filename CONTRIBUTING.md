@@ -42,7 +42,7 @@ when building or updating LaMachine. These determine the type of environment to
 build, as LaMachine offers quite some flexibility by coming in different
 flavours, versions, and being intended to work on multiple Linux distributions.
 
-We distinguish the following variables:
+We distinguish the following variables, all of which you can read and use in your Ansible roles for LaMachine:
 
 * *Generic:*
   * ``version`` -- The version of LaMachine, is either ``stable``, ``development``, or ``custom``.
@@ -63,9 +63,39 @@ We distinguish the following variables:
   * ``hostname`` - The hostname of the system
   * ``webserver`` - (boolean) Include a webserver or not
   * ``http_port`` - port the webserver will listen on
+  * ``web_user`` - The unix user that runs the webserver and webservices
 * *Other:*
   * ``private`` - (boolean) Send basic analytics back to us
   * ``minimal`` - (boolean) A minimal installation is requested (might break some stuff)
+
+### Directory layout
+
+It is important to understand the directory layout used by LaMachine and to adhere to it when adding software yourself.
+The variable ``lm_prefix`` is most important here, as it holds the base directory under which all software is installed.
+For a global installation (in the Docker and Virtual Machine flavours for instance), this by default corresponds to
+``/usr/local`` (don't let the word *local* confuse you here, we are still talking about a global installation). In a
+local installation ``lm_prefix`` corresponds to the directory containing the virtual environment, which can be anywhere the user desires.
+
+We try to follow the [Filesystem Hierarchy Standard](https://wiki.linuxfoundation.org/lsb/fhs) as much as possible:
+
+ * ``{{lm_prefix}}/bin`` - Holds executable binaries other executable scripts; this will be added to your
+   environment's ``$PATH`` upon activation
+   * ``{{lm_prefix}}/bin/activate.d`` - Extra shell scripts for activating the environment for specific software, will be sourced automatically by the main LaMachine activation script
+ * ``{{lm_prefix}}/lib`` - Holds shared libraries; this will be added to your environments library path.
+   * ``{{lm_prefix}}/lib/python3.*/site-packages`` - Contains installed Python modules.
+ * ``{{lm_prefix}}/include`` - Holds development header files
+ * ``{{lm_prefix}}/src`` - Holds sources of the software, symlinks to ``{{source_path}}``
+ * ``{{lm_prefix}}/opt`` - Holds optional application software, for which each application is stored in a single directory under this path. This is common for software that is not typically distributed in a more unix-like fashion.
+ (e.g. Alpino, PICCL, Nextflow), but we also use it to symlink to certain software.
+ * ``{{lm_prefix}}/share`` - Shared data files
+ * ``{{lm_prefix}}/var`` - Holds variable files.
+   * ``{{lm_prefix}}/var/log/nginx`` - Holds log files by the webserver.
+   * ``{{lm_prefix}}/var/log/uwsgi`` - Holds log files for the individual uwsgi-powered (e.g. CLAM, Django) webservices/webapplications.
+ * ``{{lm_prefix}}/etc`` - Holds configuration files
+   * ``{{lm_prefix}}/etc/nginx/nginx.conf`` - Generic webserver configuration (in global installations this will symlink to the system-wide ``/etc/nginx``)
+   * ``{{lm_prefix}}/etc/nginx/conf.d/*.conf`` - Configurations per webservice/webapplication.
+   * ``{{lm_prefix}}/etc/uwsgi-emperor/vassals/`` - Holds individual uwsgi configuration files for uwsgi-powered webservices/webapplications
+   * ``{{lm_prefix}}/etc/*.clam.yml`` - External configuration files for specific CLAM webservices
 
 ### Reusable Roles
 
@@ -85,13 +115,12 @@ Some lower-level roles:
 * ``lamachine-run`` - Run a particular command in the LaMachine environment.
 
 The use of specific LaMachine roles is always preferred over the use of comparable generic ansible modules as the
-LaMachines
+LaMachine roles take care of a lot of specific things for you so it works in all environments. So use
+``lamachine-python-install`` rather than Ansible's ``pip`` module, and ``lamachine-git`` rather than ansible's ``git``
+or ``github`` module.
 
 To add your own software, you add a *role* yourself which includes one (or more) of the above, with specific parameters, to do the
-actual work.
-
-
-Your role, in turn, is referenced by the end-user who has final control over the installation playbook.
+actual work. Your role, in turn, is referenced by the end-user who has final control over the installation playbook.
 
 This may sound a bit cryptic still, so let's go through an example step by step:
 

@@ -57,7 +57,7 @@ on Docker Hub.
 
 ### Pre-built Virtual Machine image for Vagrant
 
-We regularly build a basic LaMachine image an publish it to the [Vagrant Cloud](https://app.vagrantup.com/proycon/).
+We regularly build a basic LaMachine image and publish it to the [Vagrant Cloud](https://app.vagrantup.com/proycon/).
 To download and use it, run:
 
 ```
@@ -112,6 +112,8 @@ the installation procedure.
     * [Hunspell](http://hunspell.github.io) - A spell checker
     * [NextFlow](http://www.nextflow.io) - A system and language for writing parallel and scalable pipelines in a portable manner.
     * [R](https://r-project.org)
+
+Note that some software may not be available on certain platforms/distributions (most notably Mac OS X).
 
 Architecture
 -------------------
@@ -205,6 +207,19 @@ The update normally only updates what has changed, if you want to force an updat
 For Docker and the Virtual Machine flavours, when a SUDO password is being asked by the update script, you can simply
 press ENTER and leave it empty, do not run the entire script with escalated privileges.
 
+### Webservices and web applications
+
+LaMachine comes with several webservices and web applications out of the box
+(source: https://github.com/proycon/clamservices). Most are RESTful webservices served
+using [CLAM](https://proycon.github.io/clam), which also offer a generic web-interface for human end-users.
+
+To start the webserver and webservices, run ``lamachine-start-webserver`` from within your LaMachine installation. You
+can then connect your browser (on the host system) to http://localhost:8080 (the port may differ if you changed the
+default value).
+
+Note that there is no currently or poor authentication enabled on the webservices, so do not
+expose them to the outside world!
+
 Privacy
 ============
 
@@ -254,21 +269,6 @@ Note that only our own software and certain Python dependencies are subject to
 this versioning scheme, generic system packages and libraries will always be at
 their latest versions.
 
-Webservices
-==================
-
-LaMachine comes with several webservices ready out of the box
-(source: https://github.com/proycon/clamservices). These are RESTful webservices served
-using CLAM, but also offer a web-interface for human end-users.
-
-In the Virtual Machine variant of LaMachine, these are all running and available out-of-the
-box.
-
-    (this section needs to be (re)written still)
-
-Note that there is no or poor authentication enabled on the webservices, so do not
-expose them to the outside world!
-
 Alternatives
 ================
 
@@ -281,7 +281,7 @@ Details:
 
  * Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
  * Debian Linux (up to date for Debian 9 [stretch] or later only) -- ``sudo apt-get install science-linguistics``. Consult the [package state](https://qa.debian.org/developer.php?login=proycon@anaproy.nl).
- * Ubuntu Linux (packages are currently out of date until Ubuntu 17.04 Zesty Zapus)
+ * Ubuntu Linux (packages are currently out of date until Ubuntu 18.04)
  * Mac OS X (homebrew), missing some sofware (Colibri Core, Python bindings, PICCL, Gecco)
 
 The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself, which can be a tedious endeavour.

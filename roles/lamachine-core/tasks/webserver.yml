@@ -44,7 +44,7 @@
         with_items: [nginx, uwsgi, uwsgi-plugin-python]
         when: (ansible_distribution|lower == "arch")
 
-      - name: Adding webserver start script #might not work on non-debian systems
+      - name: Adding webserver start script (debian)
         become: true
         become_user: root
         copy:
@@ -55,6 +55,21 @@
              sudo service uwsgi-emperor restart
           owner: "{{unix_user}}"
           mode: u+rwx,a+rx
+        when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
+
+      - name: Adding webserver start script (non-debian)
+        become: true
+        become_user: root
+        copy:
+          dest: "{{global_prefix}}/bin/lamachine-start-webserver"
+          content: |
+             #!/bin/bash
+             killall -w uwsgi
+             sudo systemctl restart nginx #assume systemd
+             uwsgi --ini {{lm_prefix}}/etc/uwsgi-emperor/emperor.ini --die-on-term &
+          owner: "{{unix_user}}"
+          mode: u+rwx,a+rx
+        when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
 
       - name: "Ensure {{web_user}} group exists"
         become: true
