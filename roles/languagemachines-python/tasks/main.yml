@@ -99,6 +99,7 @@
             - ucto
             - timbl
             - colibricore
+            - flat
 
         - name: "Install clam configuration"
           become: "{{lm_become}}"
