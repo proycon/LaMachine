@@ -1,4 +1,11 @@
 ---
+  - name: Installing webserver (Mac OS X)
+    homebrew:
+      name: "{{item}}"
+      state: latest
+    with_items: [nginx]
+    when: (ansible_distribution|lower == "macosx")
+
   - when: root and locality=="global"
     block:
       - name: Installing webserver globally (Debian/Ubuntu)
@@ -16,8 +23,26 @@
         yum:
           name: "{{item}}"
           state: latest
-        with_items: [nginx] #TODO:  uwsgi
+        with_items: [nginx]
         when: (ansible_distribution|lower == "redhat" or ansible_distribution|lower == "centos" or ansible_distribution|lower == "fedora" or ansible_distribution|lower == "rhel")
+
+      - name: Installing uwsgi globally (RedHat)
+        become: true
+        become_user: root
+        pip:
+          name: "uwsgi"
+          state: latest
+          executable: /usr/bin/pip3
+        when: (ansible_distribution|lower == "redhat" or ansible_distribution|lower == "centos" or ansible_distribution|lower == "fedora" or ansible_distribution|lower == "rhel")
+
+      - name: Installing webserver globally (Arch)
+        become: true
+        become_user: root
+        pacman:
+          name: "{{item}}"
+          state: latest
+        with_items: [nginx, uwsgi, uwsgi-plugin-python]
+        when: (ansible_distribution|lower == "arch")
 
       - name: Adding webserver start script #might not work on non-debian systems
         become: true
@@ -69,6 +94,30 @@
             - "var/log/nginx"
             - "var/www-data"
 
+      - name: Link nginx from global prefix
+        file:
+          source: "/etc/nginx"
+          dest: "{{ lm_prefix }}/etc/nginx"
+          state: link
+
+      - name: Link uwsgi-emperor from global prefix (debian)
+        file:
+          source: "/etc/uwsgi-emperor"
+          dest: "{{ lm_prefix }}/etc/uwsgi-emperor"
+          state: link
+        when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
+
+      - name: Create webserver readable directories (global, non-debian)
+        file:
+            path: "{{ lm_prefix }}/{{item}}"
+            state: directory
+            owner: "{{unix_user}}"
+            mode: u+rwx,a+rx
+        with_items:
+            - "etc/uwsgi-emperor"
+            - "etc/uwsgi-emperor/vassals"
+        when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
+
   - when: locality=="local"
     block:
       - name: Create webserver writable directories (local)
@@ -81,5 +130,40 @@
             - "var/log/uwsgi"
             - "var/log/nginx"
             - "var/www-data"
+            - "etc/nginx"
+            - "etc/nginx/conf.d"
+            - "etc/uwsgi-emperor"
+            - "etc/uwsgi-emperor/vassals"
 
+      - name: Installing uwsgi locally
+        pip:
+          name: "uwsgi"
+          state: latest
+          executable: "{{lm_prefix}}/bin/pip"
 
+      - name: Install webserver configuration (local)
+        template:
+          src: nginx.conf
+          dest: "{{lm_prefix}}/etc/nginx/nginx.conf"
+          force: yes
+          backup: yes
+
+      - name: Adding webserver start script (local)
+        copy:
+          dest: "{{lm_prefix}}/bin/lamachine-start-webserver"
+          content: |
+             #!/bin/bash
+             killall -w nginx
+             killall -w uwsgi
+             nginx -c {{lm_prefix}}/etc/nginx -p {{lm_prefix}}/etc/nginx &
+             uwsgi --ini {{lm_prefix}}/etc/uwsgi-emperor/emperor.ini --die-on-term &
+          owner: "{{unix_user}}"
+          mode: u+rwx,a+rx
+
+  - name: Install uwsgi-emperor configuration (non-debian)
+    template:
+      src: emperor.ini
+      dest: "{{lm_prefix}}/etc/uwsgi-emperor/emperor.ini"
+      force: yes
+      backup: yes
+    when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")

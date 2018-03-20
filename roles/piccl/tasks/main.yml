@@ -122,29 +122,27 @@
               setupdir: "webservice" #setup.py is in this subdir
 
         - name: "Install webserver configuration for PICCL"
-          become: true
+          become: "{{lm_become}}"
           become_user: root
           template:
             src: "nginx/piccl.conf"
-            dest: "/etc/nginx/conf.d/piccl.conf"
+            dest: "{{lm_prefix}}/etc/nginx/conf.d/piccl.conf"
             force: yes
             backup: yes
             owner: "{{unix_user}}"
-          when: root and locality=="global"
 
         - name: "Install uwsgi configuration for PICCL"
-          become: true
+          become: "{{lm_become}}"
           become_user: root
           template:
             src: "uwsgi/piccl.ini"
-            dest: "/etc/uwsgi-emperor/vassals/piccl.ini"
+            dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/piccl.ini"
             force: yes
             backup: yes
             owner: "{{unix_user}}"
-          when: root and locality=="global"
 
         - name: "Install clam configuration for PICCL"
-          become: true
+          become: "{{lm_become}}"
           become_user: root
           template:
             src: "clam/piccl.yml"
@@ -152,4 +150,3 @@
             force: yes
             backup: yes
             owner: "{{unix_user}}"
-          when: root and locality=="global"

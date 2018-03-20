@@ -71,38 +71,37 @@
             - django
             - flat
 
-        - name: "Install webserver configuration for {{item}}"
-          become: true
+        - name: "Install webserver configuration"
+          become: "{{lm_become}}"
           become_user: root
           template:
             src: "nginx/{{item}}.conf"
-            dest: "/etc/nginx/conf.d/{{item}}.conf"
+            dest: "{{lm_prefix}}/etc/nginx/conf.d/{{item}}.conf"
             force: yes
             backup: yes
             owner: "{{unix_user}}"
           with_items:
             - clamservices
             - flat
-          when: root and locality=="global"
 
-        - name: "Install uwsgi configuration for {{item}}"
-          become: true
+        - name: "Install uwsgi configuration"
+          become: "{{lm_become}}"
           become_user: root
           template:
             src: "uwsgi/{{item}}.ini"
-            dest: "/etc/uwsgi-emperor/vassals/{{item}}.ini"
+            dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{item}}.ini"
             force: yes
             backup: yes
             owner: "{{unix_user}}"
+            mode: u+rw,a+r
           with_items:
             - frog
             - ucto
             - timbl
             - colibricore
-          when: root and locality=="global"
 
-        - name: "Install clam configuration for {{item}}"
-          become: true
+        - name: "Install clam configuration"
+          become: "{{lm_become}}"
           become_user: root
           template:
             src: "clam/{{item}}.yml"
@@ -110,11 +109,11 @@
             force: yes
             backup: yes
             owner: "{{unix_user}}"
+            mode: u+rw,a+r
           with_items:
             - frog
             - ucto
             - timbl
             - colibricore
-          when: root and locality=="global"
 
 
