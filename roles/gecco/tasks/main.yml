@@ -53,3 +53,11 @@
           - { github_user: "proycon", github_repo: "gecco", pip: "gecco" }
       loop_control:
            loop_var: package
+
+    - name: Testing whether gecco starts
+      include_role:
+          name: lamachine-run
+      vars:
+          command: "gecco --helpmodules"
+      register: test
+      changed_when: test.rc != 0

@@ -13,7 +13,7 @@
      #- alpino #A dependency parser for dutch (University of Groningen)
      #- tscan  #Software for feature extraction for readability prediction  (Utrecht University, Tilburg University & Radboud University), requires alpino and languagemachines-*
      #- gecco  #Generic software for context-aware spelling correction (CLST, Radboud University Nijmegen)
-     #- valkuil  #A Dutch spelling corrector
+     #- valkuil  #A Dutch spelling corrector (CLST, Radboud University Nijmegen)
 
 
 
