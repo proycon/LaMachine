@@ -780,7 +780,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     ln -sf $BASEDIR/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
     #run the activation script (this will do the actual initial provision as well)
     bash $BASEDIR/lamachine-$LM_NAME-start 2>&1 | tee lamachine-$LM_NAME.log
-    rc=$?
+    rc=${PIPESTATUS[0]}
     echo "======================================================================================"
     if [ $rc -eq 0 ]; then
         echo "${boldgreen}All done, the LaMachine VM has been built and started succesfully${normal}."
@@ -807,8 +807,9 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     cwd=$(pwd)
     echo "Running ansible command from $cwd: $cmd" >&2
     echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
-    if $cmd 2>&1 | tee lamachine-$LM_NAME.log; then
-        rc=0
+    $cmd 2>&1 | tee lamachine-$LM_NAME.log
+    rc=${PIPESTATUS[0]}
+    if [ $rc -eq 0 ]; then
         echo "======================================================================================"
         echo "${boldgreen}All done, a local LaMachine environment has been built!${normal}"
         echo "- ${bold}to activate your environment, run: lamachine-$LM_NAME-activate${normal}   (or: bash ~/bin/lamachine-$LM_NAME-activate)"
@@ -835,7 +836,7 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
     sed -i "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to run sed"
     #echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
     docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME . 2>&1 | tee lamachine-$LM_NAME.log
-    rc=$?
+    rc=${PIPESTATUS[0]}
     if [ $rc -eq 0 ]; then
         echo "======================================================================================"
         echo "${boldgreen}All done, a docker image has been built!${normal}"
