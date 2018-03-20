@@ -10,8 +10,10 @@
       - languagemachines-python-bindings #contains python-ucto, python-frog, python-timbl (requires the above)
       - r-core #R with core R packages (3rd party)
      #- piccl #Workflows for Post-OCR correction and normalisation and pseudo-modernisation of historical text. Includes TICCL. Requires languagemachines-* (Radboud University & Tilburg University)
-     #- alpino #a dependency parser for dutch (University of Groningen)
+     #- alpino #A dependency parser for dutch (University of Groningen)
      #- tscan  #Software for feature extraction for readability prediction  (Utrecht University, Tilburg University & Radboud University), requires alpino and languagemachines-*
+     #- gecco  #Generic software for context-aware spelling correction (CLST, Radboud University Nijmegen)
+     #- valkuil  #A Dutch spelling corrector
 
 
 
