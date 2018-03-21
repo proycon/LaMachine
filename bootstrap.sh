@@ -59,6 +59,7 @@ usage () {
     echo " ${bold}--prefer_distro${normal} - Prefer distribution packages over other channels (such as pip). This generally installs more conserative versions, and less, but might break things."
     echo " ${bold}--dockerrepo${normal} - Docker repository name (default: proycon/lamachine)"
     echo " ${bold}--install${normal} - Provide an explicit comma separated list of LaMachine roles to install (instead of querying interactively or just taking the default)"
+    echo " ${bold}--vmmem${normal} - Memory to reserve for virtual machine"
 }
 
 USERNAME=$(whoami)
@@ -141,6 +142,7 @@ PRIVATE=0
 ANSIBLE_OPTIONS="-v"
 MINIMAL=0
 PREFER_DISTRO=0
+VMMEM=4096
 VAGRANTBOX="debian/contrib-stretch64" #base distribution for VM
 DOCKERREPO="proycon/lamachine"
 
@@ -276,6 +278,11 @@ while [[ $# -gt 0 ]]; do
         ;;
         --extra) #extra ansible parameters
         ANSIBLE_OPTIONS="$ANSIBLE_OPTIONS --extra-vars $2"
+        shift
+        shift
+        ;;
+        --vmmem) #extra ansible parameters
+        VMMEM=$2
         shift
         shift
         ;;
@@ -639,7 +646,7 @@ locality: \"$LOCALITY\" #local or global?
     fi
     if [[ $FLAVOUR == "vagrant" ]]; then
         echo "vagrant_box: \"$VAGRANTBOX\" #Base box for vagrant (changing this may break things if packages are not compatible!)" >>$CONFIGFILE
-        echo "vm_memory: 6096 #Memory allocated to the VM; in MB (the more the better! but too high and the VM won't start)">> $CONFIGFILE
+        echo "vm_memory: $VMMEM #Memory allocated to the VM; in MB (the more the better! but too high and the VM won't start)">> $CONFIGFILE
         echo "vm_cpus: 2 #CPU cores allocated to the VM">>$CONFIGFILE
     fi
     if [ $PRIVATE -eq 1 ]; then
