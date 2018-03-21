@@ -8,6 +8,7 @@ from builds import buildmatrix
 
 selection = sys.argv[1:]
 
+VMMEM = 2690
 
 def buildid(build):
     return build['flavour'] + ':' + build['name']
@@ -24,7 +25,7 @@ for build in buildmatrix:
             else:
                 args.append("--" + key + " " + value)
         begintime = time.time()
-        r = os.system("bash ../bootstrap.sh " + " ".join(args) + " --noninteractive --private --verbose 2> " + buildid(build).replace(':','-') + ".log >&2")
+        r = os.system("bash ../bootstrap.sh " + " ".join(args) + " --noninteractive --private --verbose --vmmem " + str(VMMEM) + " 2> " + buildid(build).replace(':','-') + ".log >&2")
         endtime = time.time()
         print("Destroying " + build['name'] + " ...", file=sys.stderr)
         if build['flavour'] == "vagrant":
