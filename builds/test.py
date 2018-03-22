@@ -13,8 +13,8 @@ def buildid(build):
     return build['flavour'] + ':' + build['name']
 
 def test(build, args):
-    msg = "Building " + buildid(build)+ " ..."
-    print("[LaMachine] " + msg, file=sys.stderr)
+    msg = "[LaMachine Test] Building " + buildid(build)+ " ..."
+    print(msg, file=sys.stderr)
     ircprint(msg, args)
     passargs = []
     for key, value in build.items():
@@ -37,10 +37,10 @@ def test(build, args):
     #remove controller
     shutil.rmtree('lamachine-controller', ignore_errors=True)
     if r == 0:
-        msg = "Build " + buildid(build)+ " passed! (" + str(round(duration/60)) + " mins) :-)"
+        msg = "[LaMachine Test] Build " + buildid(build)+ " passed! (" + str(round(duration/60)) + " mins) :-)"
     else:
-        msg = "Build " + buildid(build)+ " FAILED!  (" + str(round(duration/60)) + " mins) :-("
-    print("[LaMachine] " + msg, file=sys.stderr)
+        msg = "[LaMachine Test] Build " + buildid(build)+ " FAILED!  (" + str(round(duration/60)) + " mins) :-("
+    print(msg, file=sys.stderr)
     ircprint(msg, args)
     return (r, endtime - begintime, r2)
 

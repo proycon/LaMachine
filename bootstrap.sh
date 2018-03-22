@@ -384,9 +384,9 @@ fi
 
 if [ -z "$VERSION" ]; then
     echo "${bold}LaMachine comes in several versions:${normal}"
-    echo " 1) a stable version, you get the latest releases deemed stable (recommended)"
-    echo " 2) a development version, you get the very latest development versions for testing, this may not always work as expected!"
-    echo " 3) custom version, you decide explicitly what exact versions you want (for reproducibility)."
+    echo " 1) a stable version; you get the latest releases deemed stable (recommended)"
+    echo " 2) a development version; you get the very latest development versions for testing, this may not always work as expected!"
+    echo " 3) custom version; you decide explicitly what exact versions you want (for reproducibility)."
     echo "    this expects you to provide a LaMachine version file with exact version numbers."
     while true; do
         echo -n "${bold}Which version do you want to install?${normal} [123] "
@@ -436,7 +436,7 @@ if [ -z "$SUDO" ]; then
             echo "The installation relies on certain software to be available on your (host)"
             echo "system. It will be automatically obtained from your distribution's package manager"
             echo "or another official source whenever possible. You need to have sudo permission for this though..."
-            echo "Answering 'no' to this question may make installation on your system impossible!"
+            echo "${red}Answering 'no' to this question may make installation on your system impossible!${normal}"
             echo
             echo -n "${bold}Do you have administrative access (root/sudo) on the current system?${normal} [yn] "
             read yn
