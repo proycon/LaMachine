@@ -14,7 +14,7 @@ def buildid(build):
 
 def test(build, args):
     msg = "Building " + buildid(build)+ " ..."
-    print(msg, file=sys.stderr)
+    print("[LaMachine] " + msg, file=sys.stderr)
     ircprint(msg, args)
     passargs = []
     for key, value in build.items():
@@ -25,6 +25,7 @@ def test(build, args):
     begintime = time.time()
     r = os.system("bash ../bootstrap.sh " + " ".join(passargs) + " --noninteractive --private --verbose --vmmem " + str(args.vmmem) + " 2> logs/" + buildid(build).replace(':','-') + ".log >&2")
     endtime = time.time()
+    duration = endtime-begintime
     if not args.keep:
         print("Destroying " + build['name'] + " ...", file=sys.stderr)
         if build['flavour'] == "vagrant":
@@ -35,10 +36,15 @@ def test(build, args):
         r2 = 0
     #remove controller
     shutil.rmtree('lamachine-controller', ignore_errors=True)
+    if r == 0:
+        msg = "Build " + buildid(build)+ " passed! (" + str(round(duration/60)) + " mins) :-)"
+    else:
+        msg = "Build " + buildid(build)+ " FAILED!  (" + str(round(duration/60)) + " mins) :-("
+    print("[LaMachine] " + msg, file=sys.stderr)
+    ircprint(msg, args)
     return (r, endtime - begintime, r2)
 
 def ircprint(message, args, port=6667):
-    hostname = os.uname()[1].encode('utf-8')
     nick = b"lmtestbot_" + os.uname()[1].encode('utf-8')
     if args.ircchannel and args.ircserver and message:
         s = socket.socket()
@@ -81,7 +87,6 @@ def main():
     for build, returncode, duration, cleanup in results:
         msg = buildid(build) + " , " + ("OK" if returncode == 0 else "FAILED") + ", " + str(round(duration/60))+ " " + ("KEPT" if args.keep else "CLEANED" if cleanup == 0 else "DIRTY")
         print(msg)
-        ircprint(msg, args)
 
     if not results:
         print("No such build defined. Options:", file=sys.stderr)
