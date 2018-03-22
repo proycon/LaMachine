@@ -35,7 +35,7 @@ def test(build, args):
         #remove controller
         shutil.rmtree('lamachine-controller', ignore_errors=True)
         os.system("rm *" + build['name']"*.yml")
-        os.system("rm lamachine-" build['name']"*")
+        os.system("rm lamachine-"+ build['name']+ "*")
     else:
         r2 = 0
     if r == 0:
