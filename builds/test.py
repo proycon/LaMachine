@@ -9,7 +9,7 @@ from builds import buildmatrix
 import argparse
 parser = argparse.ArgumentParser(description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--keep',help="Keep VM/container", action='store_true',default=False,required=False)
-parser.add_argument('--vmmem',dest="num", type=int,help="VM Memory", action='store',default=2690,required=False)
+parser.add_argument('--vmmem', type=int,help="VM Memory", action='store',default=2690,required=False)
 parser.add_argument('selection', nargs='*', help='bar help')
 args = parser.parse_args()
 
