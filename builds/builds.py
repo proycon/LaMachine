@@ -32,6 +32,12 @@ buildmatrix = [
         "vagrantbox": "ubuntu/xenial64"
     },
     {
+        "name": 'stable-fedora27',
+        "flavour": 'vagrant',
+        "version": 'stable',
+        "vagrantbox": "fedora/27-atomic-host"
+    },
+    {
         "name": 'piccl-stable',
         "flavour": 'docker',
         "version": 'stable',
