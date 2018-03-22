@@ -6,9 +6,13 @@ import time
 import shutil
 from builds import buildmatrix
 
-selection = sys.argv[1:]
+import argparse
+parser = argparse.ArgumentParser(description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument('--keep',help="Keep VM/container", action='store_true',default=False,required=False)
+parser.add_argument('--vmmem',dest="num", type=int,help="VM Memory", action='store',default=2690,required=False)
+parser.add_argument('selection', nargs='*', help='bar help')
+args = parser.parse_args()
 
-VMMEM = 2690
 
 def buildid(build):
     return build['flavour'] + ':' + build['name']
@@ -16,7 +20,7 @@ def buildid(build):
 
 results = []
 for build in buildmatrix:
-    if not selection or buildid(build) in selection:
+    if not args.selection or buildid(build) in args.selection:
         print("Building " + buildid(build)+ " ...", file=sys.stderr)
         args = []
         for key, value in build.items():
@@ -25,19 +29,20 @@ for build in buildmatrix:
             else:
                 args.append("--" + key + " " + value)
         begintime = time.time()
-        r = os.system("bash ../bootstrap.sh " + " ".join(args) + " --noninteractive --private --verbose --vmmem " + str(VMMEM) + " 2> " + buildid(build).replace(':','-') + ".log >&2")
+        r = os.system("bash ../bootstrap.sh " + " ".join(args) + " --noninteractive --private --verbose --vmmem " + str(args.vmmem) + " 2> " + buildid(build).replace(':','-') + ".log >&2")
         endtime = time.time()
-        print("Destroying " + build['name'] + " ...", file=sys.stderr)
-        if build['flavour'] == "vagrant":
-            r2 = os.system("lamachine-" + build['name'] + "-destroy -f")
-        elif build['flavour'] == "docker":
-            r2 = os.system("docker image rm proycon/lamachine:" + build['name'])
+        if not args.keep:
+            print("Destroying " + build['name'] + " ...", file=sys.stderr)
+            if build['flavour'] == "vagrant":
+                r2 = os.system("lamachine-" + build['name'] + "-destroy -f")
+            elif build['flavour'] == "docker":
+                r2 = os.system("docker image rm proycon/lamachine:" + build['name'])
         #remove controller
         shutil.rmtree('lamachine-controller', ignore_errors=True)
         results.append( (build, r, endtime - begintime, r2) )
 
 for build, returncode, duration, cleanup in results:
-    print(buildid(build) + " , " + ("OK" if returncode == 0 else "FAILED") + ", " + str(round(duration/60))+ " " + ("CLEANED" if cleanup == 0 else "DIRTY") )
+    print(buildid(build) + " , " + ("OK" if returncode == 0 else "FAILED") + ", " + str(round(duration/60))+ " " + ("KEPT" if args.keep else "CLEANED" if cleanup == 0 else "DIRTY") )
 
 if not results:
     print("No such build defined. Options:", file=sys.stderr)
