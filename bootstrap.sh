@@ -809,6 +809,9 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     rc=${PIPESTATUS[0]}
     echo "======================================================================================"
     if [ $rc -eq 0 ]; then
+        echo "${boldgreen}Build completed succesfully! Rebooting VM...${normal}."
+        bash $BASEDIR/lamachine-$LM_NAME-stop
+        bash $BASEDIR/lamachine-$LM_NAME-start
         echo "${boldgreen}All done, the LaMachine VM has been built and started succesfully${normal}."
         echo "- ${bold}to connect to a started VM, run: lamachine-$LM_NAME-connect${normal} (or: bash ~/bin/lamachine-$LM_NAME-connect)"
         echo "- to power up the VM, run: lamachine-$LM_NAME-start"
