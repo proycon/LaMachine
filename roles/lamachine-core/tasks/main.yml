@@ -296,7 +296,7 @@
     - name: Adding global library path to ldconfig
       become: yes
       copy:
-        dest: "/etc/ld.so.conf.d/lamachine-{{lm_name}}.conf"
+        dest: "/etc/ld.so.conf.d/lamachine-{{conf_name}}.conf"
         content: "{{global_prefix}}/lib"
       when: root and locality == "global" and ansible_distribution|lower != 'macosx'
 
