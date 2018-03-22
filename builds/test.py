@@ -32,10 +32,12 @@ def test(build, args):
             r2 = os.system("lamachine-" + build['name'] + "-destroy -f")
         elif build['flavour'] == "docker":
             r2 = os.system("docker image rm proycon/lamachine:" + build['name'])
+        #remove controller
+        shutil.rmtree('lamachine-controller', ignore_errors=True)
+        os.system("rm *" + build['name']"*.yml")
+        os.system("rm lamachine-" build['name']"*")
     else:
         r2 = 0
-    #remove controller
-    shutil.rmtree('lamachine-controller', ignore_errors=True)
     if r == 0:
         msg = "[LaMachine Test] Build " + buildid(build)+ " passed! (" + str(round(duration/60)) + " mins) :-)"
     else:
