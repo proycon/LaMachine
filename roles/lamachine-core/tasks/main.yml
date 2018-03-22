@@ -293,6 +293,18 @@
         state: link
       when: locality == "local" and local_prefix not in source_path
 
+    - name: Adding global library path to ldconfig
+      become: yes
+      copy:
+        dest: "/etc/ld.so.conf.d/lamachine-{{lm_name}}.conf"
+        content: "{{global_prefix}}/lib"
+      when: root and locality == "global" and ansible_distribution|lower != 'macosx'
+
+    - name: Running ldconfig
+      become: yes
+      command: ldconfig -v
+      when: root and locality == "global" and ansible_distribution|lower != 'macosx'
+
     - name: Installing ansible locally (conda)
       pip:
           name: "ansible"
