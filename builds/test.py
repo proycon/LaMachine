@@ -34,7 +34,7 @@ def test(build, args):
             r2 = os.system("docker image rm proycon/lamachine:" + build['name'])
         #remove controller
         shutil.rmtree('lamachine-controller', ignore_errors=True)
-        os.system("rm *" + build['name']"*.yml")
+        os.system("rm *" + build['name']+"*.yml")
         os.system("rm lamachine-"+ build['name']+ "*")
     else:
         r2 = 0
