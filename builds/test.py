@@ -23,7 +23,7 @@ def test(build, args):
         else:
             passargs.append("--" + key + " " + value)
     begintime = time.time()
-    r = os.system("bash ../bootstrap.sh " + " ".join(passargs) + " --noninteractive --private --verbose --vmmem " + str(args.vmmem) + " 2> " + buildid(build).replace(':','-') + ".log >&2")
+    r = os.system("bash ../bootstrap.sh " + " ".join(passargs) + " --noninteractive --private --verbose --vmmem " + str(args.vmmem) + " 2> logs/" + buildid(build).replace(':','-') + ".log >&2")
     endtime = time.time()
     if not args.keep:
         print("Destroying " + build['name'] + " ...", file=sys.stderr)
@@ -38,11 +38,13 @@ def test(build, args):
     return (r, endtime - begintime, r2)
 
 def ircprint(message, args, port=6667):
+    hostname = os.uname()[1].encode('utf-8')
+    nick = b"lmtestbot_" + os.uname()[1].encode('utf-8')
     if args.ircchannel and args.ircserver and message:
         s = socket.socket()
         s.connect((args.ircserver.strip(), port))
-        s.send(b"NICK lmtestbot\r\n")
-        s.send(b"USER lmtestbot lmtestbot bla :LaMachine Test Bot\r\n")
+        s.send(b"NICK " + nick + b"\r\n")
+        s.send(b"USER " + nick + b" " + nick + b" bla :LaMachine Test Bot\r\n")
         while True:
             response = s.recv(2049)
             if b'Welcome' in  response:
@@ -59,6 +61,12 @@ def main():
     parser.add_argument('--irctest', help="Test IRC only", action='store_true',required=False)
     parser.add_argument('selection', nargs='*', help='Selection')
     args = parser.parse_args()
+
+
+    try:
+        os.mkdir("logs")
+    except:
+        pass
 
     if args.irctest:
         ircprint("Test", args)
