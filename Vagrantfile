@@ -88,7 +88,7 @@ Vagrant.configure(2) do |config|
     #ansible.verbose = "v"
     ansible.playbook = "install.yml"
     ansible.extra_vars = {
-        ansible_python_interpreter: "/usr/bin/python3",
+        ansible_python_interpreter: lamachine_config["ansible_python_interpreter"],
     }
   end
 end

@@ -626,6 +626,11 @@ locality: \"$LOCALITY\" #local or global?
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
         echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
         echo "global_prefix: \"/usr/local\" #Path for global installations" >> $CONFIGFILE
+        if [ "$VAGRANTBOX" == "centos/7" ]; then
+            echo "ansible_python_interpreter: \"/usr/bin/python\" #Python interpreter for Vagrant to use with Ansible" >> $CONFIGFILE
+        else
+            echo "ansible_python_interpreter: \"/usr/bin/python3\" #Python interpreter for Vagrant to use with Ansible. This interpreter must be already available in vagrant box $VAGRANTBOX, you may want to set it to python2 instead" >> $CONFIGFILE
+        fi
     elif [[ $FLAVOUR == "docker" ]]; then
         echo "unix_user: \"lamachine\"" >> $CONFIGFILE
         echo "homedir: \"/home/lamachine\"" >> $CONFIGFILE
