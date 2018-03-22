@@ -377,7 +377,20 @@ if [[ "$LOCALITY" == "local" ]]; then
         #    esac
         #done
     fi
+
+    if [ $INTERACTIVE -ne 0 ]; then
+        echo "${bold}Where do you want to create the local user environment?${normal}"
+        echo " By default, a directory will be created under your current location, which is $(pwd)"
+        echo " If this is what you want, just press ENTER, "
+        echo " Otherwise, type a new existing path: "
+        echo -n "${bold}Where do you want to create the local user environment?${normal} [press ENTER for $(pwd)] "
+        read $targetdir
+        if [ ! -z "$targetdir" ]; then
+            cd $targetdir || fatalerror "Specified directory does not exist"
+        fi
+    fi
 fi
+
 if [ -z "$LOCALENV_TYPE" ]; then
     LOCALENV_TYPE="virtualenv"
 fi
