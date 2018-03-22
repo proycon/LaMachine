@@ -697,6 +697,7 @@ if [ ! -d lamachine-controller/$LM_NAME ]; then
         virtualenv --python=python2.7 lamachine-controller/$LM_NAME || fatalerror "Unable to create LaMachine control environment"
         cd lamachine-controller/$LM_NAME
         source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
+        pip install -U setuptools
         pip install ansible || fatalerror "Unable to install Ansible"
         #pip install docker==2.7.0 docker-compose ansible-container[docker]
     else
