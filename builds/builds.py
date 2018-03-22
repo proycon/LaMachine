@@ -35,7 +35,7 @@ buildmatrix = [
         "name": 'stable-fedora27',
         "flavour": 'vagrant',
         "version": 'stable',
-        "vagrantbox": "fedora/27-atomic-host"
+        "vagrantbox": "fedora/27-cloud-base"
     },
     {
         "name": 'piccl-stable',
