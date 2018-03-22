@@ -22,14 +22,14 @@ results = []
 for build in buildmatrix:
     if not args.selection or buildid(build) in args.selection:
         print("Building " + buildid(build)+ " ...", file=sys.stderr)
-        args = []
+        passargs = []
         for key, value in build.items():
             if value is True:
-                args.append("--" + key)
+                passargs.append("--" + key)
             else:
-                args.append("--" + key + " " + value)
+                passrgs.append("--" + key + " " + value)
         begintime = time.time()
-        r = os.system("bash ../bootstrap.sh " + " ".join(args) + " --noninteractive --private --verbose --vmmem " + str(args.vmmem) + " 2> " + buildid(build).replace(':','-') + ".log >&2")
+        r = os.system("bash ../bootstrap.sh " + " ".join(passargs) + " --noninteractive --private --verbose --vmmem " + str(args.vmmem) + " 2> " + buildid(build).replace(':','-') + ".log >&2")
         endtime = time.time()
         if not args.keep:
             print("Destroying " + build['name'] + " ...", file=sys.stderr)
