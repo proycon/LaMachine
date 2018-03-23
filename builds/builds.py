@@ -15,7 +15,7 @@ buildmatrix = [
         "version": 'stable'
     },
     {
-        "name": 'development',
+        "name": 'develop', #tag compatible with LaMachine v1
         "flavour": 'docker',
         "version": 'development'
     },

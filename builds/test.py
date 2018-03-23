@@ -59,6 +59,7 @@ def ircprint(message, args, port=6667):
                 s.send(b"PRIVMSG #" + args.ircchannel.strip('#').encode('utf-8') + b" :" + message.encode('utf-8') + b"\r\n")
                 s.send(b"QUIT\r\n")
                 break
+    time.sleep(5)
 
 def main():
     parser = argparse.ArgumentParser(description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
