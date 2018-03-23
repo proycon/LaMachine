@@ -5,17 +5,17 @@ buildmatrix = [
         "version": 'stable'
     },
     {
-        "name": 'dev',
+        "name": 'development',
         "flavour": 'vagrant',
         "version": 'development'
     },
     {
-        "name": 'stable',
+        "name": 'latest', #'latest' is the default docker tag
         "flavour": 'docker',
         "version": 'stable'
     },
     {
-        "name": 'dev',
+        "name": 'development',
         "flavour": 'docker',
         "version": 'development'
     },

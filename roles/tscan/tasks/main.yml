@@ -10,5 +10,6 @@
             summary: "T-scan: an analysis tool for dutch texts to assess the complexity of the text, based on original work by Rogier Kraf"
             license: AGPL
 
-    #TODO: download data
+    #download data is done in tscan bootstrap.sh already
+    #
     #TODO: set up webservice?

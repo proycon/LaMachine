@@ -201,9 +201,10 @@ In this example we assume your LaMachine image has the tag **latest**, which cor
 * To start a **new** interactive container, run ``docker run -i -t proycon/lamachine:latest``
 * To start a **new** container with a command line tool, just append the command: ``docker run -t proycon/lamachine:latest ucto -L nld /data/input.txt /data/output.folia.xml``
 	* Add the ``-i`` flag if the tool is an interactive tool that reads from standard input (i.e. keyboard input).
-* To start a **new** container with the server: ``docker run -p 8080:80 -h hostname -t proycon/lamachine:latest lamachine-start-webserver``
+* To start a **new** container with the server: ``docker run -p 8080:80 -h hostname -t proycon/lamachine:latest lamachine-start-webserver -f ``
 	* The numbers values for ``-p`` are the port numbers on the host side and on the container side respectively, the latter must always match with the ``http_port`` setting LaMachine has been built with.
 	* Set ``-h`` with the desired hostname, this too must match the setting LaMachine has been built with.
+    * The ``-f`` argument ensures the script waits in the foreground and doesn't exit after starting.
 	* If started in this way, you can connect your webbrowser on the host system to http://127.0.0.1:8080 .
 
 If you use LaMachine with docker, we expect you to actually be familiar with

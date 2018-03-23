@@ -53,6 +53,10 @@
              #!/bin/bash
              sudo service nginx restart
              sudo service uwsgi-emperor restart
+             if [ "$1" = "-f" ]; then
+                echo "Servers running, waiting indefinitely..."
+                sleep infinity
+             fi
           owner: "{{unix_user}}"
           mode: u+rwx,a+rx
         when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
