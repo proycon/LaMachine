@@ -115,6 +115,12 @@ the installation procedure.
 
 Note that some software may not be available on certain platforms/distributions (most notably Mac OS X).
 
+Contribute
+-----------------
+
+LaMachine is open for contributions by other software projects, please read [the contributor
+documentation](https://github.com/proycon/LaMachine/blob/lamachine2/CONTRIBUTING.md).
+
 Architecture
 -------------------
 
@@ -125,9 +131,10 @@ LaMachine can be installed in multiple *flavours*:
  * **Docker container** - Installs LaMachine in a docker container
  * **Virtual Machine** - Installs LaMachine in a Virtual Machine
 
-In all cases, the installation is mediated through [Ansible](https://www.ansible.com). Containerisation uses
-[Docker](https://docker.com). Virtualisation is made possible through [Vagrant](https://vagrantup.com) and
-[VirtualBox](https://virtualbox.org). The local installation variant uses virtualenv with some custom extensions.
+In all cases, the installation is mediated through [Ansible](https://www.ansible.com), providing a level of abstraction
+over whatever underlying technology is employed. Containerisation uses [Docker](https://docker.com). Virtualisation is
+made possible through [Vagrant](https://vagrantup.com) and [VirtualBox](https://virtualbox.org). The local installation
+variant uses virtualenv with some custom extensions.
 
 LaMachine uses [Debian](https://www.debian.org) as primary Linux distribution (for virtualisation and containerisation), but
 derivatives like Ubuntu and certain other distributions such as RHEL, CentOS, Fedora and Arch Linux are also supported
@@ -245,46 +252,8 @@ During build and upgrade, LaMachine downloads software from a wide variety of ex
 Versioning
 ============
 
-    (this section needs to be (re)written still and is out of date!)
+    (this section needs to be (re)written still!)
 
-LaMachine outputs a ``VERSION`` file for each installation or upgrade. The
-version file contains the exact version numbers of all software installed.  You
-can find this file in either in your virtual environment directory or in the
-root directory (Vagrant/Docker).
-
-You can use the VERSION file to bootstrap LaMachine with specific versions. For
-the virtual environment form of LaMachine, add the argument
-``version=/path/to/your/VERSIONfile`` when running ``virtualenv-bootstrap.sh``.
-For the Vagrant form, substitute the dummy ``VERSION`` file with one of your
-own and adapt ``Vagrantfile`` according to the instructions prior to running
-``vagrant up``. For Docker, you'll have to adapt ``Dockerfile`` and build the
-image locally, or rely on an earlier published build.
-
-This versioning is intended to facilitate scientific reproducibility and
-deployment of production environments. The caveat to always keep in mind is
-that the versions you run may be outdated and not have any of the latest
-improvements/fixes applied.
-
-Note that only our own software and certain Python dependencies are subject to
-this versioning scheme, generic system packages and libraries will always be at
-their latest versions.
-
-Alternatives
-================
-
-If you have no need for a VM or a self-contained environment, and you have
-proper administrative access to the system, then it may be possible to install
-our software using the proper package manager, provided we have packages
-available.
-
-Details:
-
- * Arch Linux (up to date) -- https://aur.archlinux.org/packages/?SeB=m&K=proycon , these packages are used as the basis of LaMachine VM and Docker App, and are freshly pulled from git.
- * Debian Linux (up to date for Debian 9 [stretch] or later only) -- ``sudo apt-get install science-linguistics``. Consult the [package state](https://qa.debian.org/developer.php?login=proycon@anaproy.nl).
- * Ubuntu Linux (packages are currently out of date until Ubuntu 18.04)
- * Mac OS X (homebrew), missing some sofware (Colibri Core, Python bindings, PICCL, Gecco)
-
-The final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself, which can be a tedious endeavour.
 
 Frequently Asked Questioned & Troubleshooting
 =================================================
@@ -305,6 +274,8 @@ Frog, ucto and Timbl, we provide packages for:
 
 Python software is generally provided through the [Python Package Index](https://pypi.python.org) and can be installed
 using ``pip install``.
+
+LaMachine shines as it combines a lot of software, includes complex set-ups, and handles some default configuration.
 
 #### Q: Why is my LaMachine installation so big??
 
@@ -332,5 +303,5 @@ No, your Linux distribution needs to be up to date and supported.
 
 #### Q: Can I include my own software in LaMachine?
 
-Yes! See the contribution guidelines!
+Yes! [See the contribution guidelines](https://github.com/proycon/LaMachine/blob/lamachine2/CONTRIBUTING.md)
 
