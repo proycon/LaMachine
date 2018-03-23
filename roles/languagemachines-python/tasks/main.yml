@@ -105,8 +105,8 @@
           become: "{{lm_become}}"
           become_user: root
           template:
-            src: "clam/{{item}}.yml"
-            dest: "{{lm_prefix}}/etc/{{item}}.clam.yml"
+            src: "clam/{{item}}.config.yml"
+            dest: "{{lm_prefix}}/etc/{{item}}.config.yml"
             force: yes
             backup: yes
             owner: "{{unix_user}}"

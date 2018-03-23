@@ -133,8 +133,8 @@
           become: "{{lm_become}}"
           become_user: root
           template:
-            src: "clam/piccl.yml"
-            dest: "{{lm_prefix}}/etc/piccl.clam.yml"
+            src: "clam/piccl.config.yml"
+            dest: "{{lm_prefix}}/etc/piccl.config.yml"
             force: yes
             backup: yes
             owner: "{{unix_user}}"
