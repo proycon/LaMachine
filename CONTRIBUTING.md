@@ -167,6 +167,11 @@ software components and all their dependencies.
 
 This may sound a bit cryptic still, so let's go through some examples:
 
+## Examples
+
+Learning by example is usually the most efficient. We provide somes examples below, but also want to encourage you to
+just browse around in the ``roles/`` directory and see how some of the existing software packages are installed:
+
 ### Example: Python software
 
 * For this example, we use a Python software package named *babelente*
@@ -222,3 +227,7 @@ we encourage you to set up a task that produces an error if the platform is unsu
      msg: "This software is not supported on Mac OS X or CentOS"
    when: ansible_distribution|lower == "macosx" or ansible_distribution|lower == "centos"
 ```
+
+## Testing
+
+(todo)
