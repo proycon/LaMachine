@@ -4,7 +4,7 @@
 
 * Only add relevant NLP software
 * LaMachine is only intended for POSIX-compliant systems (i.e. Linux, BSD, Mac OS X).
-  Other systems such as Windows are only supported through a VM.
+  Other systems such as Windows are only supported as a host system for a VM.
 * All software must be in public version control (we recommend *github*), be *public*, and be fully *open source* with
   an explicitly stated licence.
 * LaMachine distinguishes between latest development versions and stable
