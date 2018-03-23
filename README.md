@@ -45,15 +45,22 @@ We regularly build a basic LaMachine image an publish it to [Docker Hub](https:/
 To download and use it, run:
 
 ```
-docker pull proycon/lamachine:stable
-docker run  -p 8080:80 -t -i proycon/lamachine:stable
+docker pull proycon/lamachine
+docker run  -p 8080:80 -t -i proycon/lamachine
 ```
 
 This requires you to already have [Docker](https://www.docker.com/) installed and running on your system.
 
-The pre-built image contains only a basic set of common software rather than the full set, run ``lamachine-stable-update --edit``
+The pre-built image contains the stable version with only a basic set of common software rather than the full set, run ``lamachine-stable-update --edit``
 inside the container to select extra software to install. Alternatively, other specialised LaMachine builds may be available
 on Docker Hub.
+
+If you want another release, specify its tag explicitly:
+
+```
+docker pull proycon/lamachine:develop
+docker run  -p 8080:80 -t -i proycon/lamachine:develop
+```
 
 ### Pre-built Virtual Machine image for Vagrant
 
@@ -188,12 +195,13 @@ VM.
 
 ### Docker Container
 
-In this example we assume your LaMachine image has the tag **stable**, run ``docker image ls`` to see all images you have available:
+In this example we assume your LaMachine image has the tag **latest**, which corresponds to the latest stable LaMachine release
+(and can technically be omitted as it is the default), run ``docker image ls`` to see all images you have available:
 
-* To start a **new** interactive container, run ``docker run -i -t proycon/lamachine:stable``
-* To start a **new** container with a command line tool, just append the command: ``docker run -t proycon/lamachine:stable ucto -L nld /data/input.txt /data/output.folia.xml``
+* To start a **new** interactive container, run ``docker run -i -t proycon/lamachine:latest``
+* To start a **new** container with a command line tool, just append the command: ``docker run -t proycon/lamachine:latest ucto -L nld /data/input.txt /data/output.folia.xml``
 	* Add the ``-i`` flag if the tool is an interactive tool that reads from standard input (i.e. keyboard input).
-* To start a **new** container with the server: ``docker run -p 8080:80 -h hostname -t proycon/lamachine:stable lamachine-start-webserver``
+* To start a **new** container with the server: ``docker run -p 8080:80 -h hostname -t proycon/lamachine:latest lamachine-start-webserver``
 	* The numbers values for ``-p`` are the port numbers on the host side and on the container side respectively, the latter must always match with the ``http_port`` setting LaMachine has been built with.
 	* Set ``-h`` with the desired hostname, this too must match the setting LaMachine has been built with.
 	* If started in this way, you can connect your webbrowser on the host system to http://127.0.0.1:8080 .
