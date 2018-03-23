@@ -49,7 +49,7 @@ DATABASES = {
 WORKDIR = "{{lm_prefix}}/var/www-data/flat.docroot"
 
 #The path and port on which the FoLiA Document Server can be reached (these defaults suffice for a local connection)
-FOLIADOCSERVE_HOST = '127.0.0.1'
+FOLIADOCSERVE_HOST = 'localhost'
 FOLIADOCSERVE_PORT = 3030
 
 # Make sure to start the document server when starting FLAT!
@@ -274,7 +274,7 @@ MANAGERS = ADMINS
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', "{{hostname}}"]
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -471,7 +471,6 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 # $ export PYTHONPATH=/your/settings/path/
 # $ export DJANGO_SETTINGS_MODULE=settings
-# $ django-admin makemigrations
 # $ django-admin migrate --run-syncdb
 # $ django-admin createsuperuser
 

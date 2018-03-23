@@ -1,0 +1,38 @@
+---
+
+    - name: Installing FLAT settings
+      template:
+          src: "flat_settings.py"
+          dest: "{{lm_prefix}}/etc/flat_settings.py"
+          force: yes
+          backup: yes
+          owner: "{{unix_user}}"
+          mode: u+rw,a+r
+
+    - name: Applying migrations
+      shell: django-admin migrate --run-syncdb
+      environment:
+          DJANGO_SETTINGS_MODULE: flat_settings
+          PYTHONPATH: "{{lm_prefix}}/etc"
+
+    - name: Create FLAT superuser
+      shell: |
+        echo -n "
+        from django.contrib.auth.models import User
+
+        username = 'flat'
+        password = 'flat'
+        email = 'flat@localhost'
+
+        if User.objects.filter(username=username).count() == 0:
+            User.objects.create_superuser(username, email, password)
+            print('Superuser created.')
+        else:
+            print('Superuser creation skipped.')
+        " | django-admin shell -i python
+      args:
+          executable: /bin/bash
+      environment:
+          PATH: "{{lm_prefix}}/bin:{{ansible_env.PATH}}"
+          DJANGO_SETTINGS_MODULE: flat_settings
+          PYTHONPATH: "{{lm_prefix}}/etc"
