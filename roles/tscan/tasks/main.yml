@@ -6,3 +6,6 @@
           package:
             repo: tscan
             user: proycon
+
+    #TODO: download data
+    #TODO: set up webservice?

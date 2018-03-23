@@ -1,41 +1,23 @@
 ---
 
-    - name: Installing global dependencies for PICCL (Debian/Ubuntu)
-      become: true
-      become_user: root
-      apt:
-        name: "{{item}}"
-        state: installed
+    - name: Installing global dependencies for PICCL
+      include_role:
+        name: lamachine-package-install
       with_items:
-        - tesseract-ocr
-        - tesseract-ocr-eng
-        - tesseract-ocr-nld
-        - tesseract-ocr-deu
-        - tesseract-ocr-deu-frak
-        - tesseract-ocr-fra
-        - poppler-utils
-        - djvulibre-bin
-        - libdjvulibre-text
-        - imagemagick
-        - default-jre
-        - perl
-      when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linuxmint")
-
-    - name: Installing global dependencies for PICCL (RedHat)
-      become: true
-      become_user: root
-      yum:
-        name: "{{item}}"
-        state: installed
-      with_items:
-        - perl
-        - java-1.8.0-openjdk
-        - tesseract-langpack-*
-        - poppler
-        - djvulibre
-        - ImageMagick
-      when: root and (ansible_distribution|lower == "redhat" or ansible_distribution|lower == "centos" or  ansible_distribution|lower == "fedora" or ansible_distribution|lower == "rhel")
-
+        - { debian: tesseract-ocr, redhat: tesseract, arch: tesseract }
+        - { debian: tesseract-ocr-eng, redhat: tesseract-langpack-eng, arch: tesseract-data-eng }
+        - { debian: tesseract-ocr-nld, redhat: tesseract-langpack-nld, arch: tesseract-data-nld }
+        - { debian: tesseract-ocr-deu, redhat: tesseract-langpack-deu, arch: tesseract-data-deu }
+        - { debian: tesseract-ocr-deu-frak, redhat: tesseract-langpack-deu-frak, arch: tesseract-data-deu-frak }
+        - { debian: tesseract-ocr-fra, redhat: tesseract-langpack-fra, arch: tesseract-data-fra }
+        - { debian: poppler-utils, redhat: poppler, arch: poppler }
+        - { debian: djvulibre-bin, redhat: djvulibre, arch: djvulibre }
+        - { debian: libdjvulibre-text }
+        - { debian: imagemagick, redhat: ImageMagick, arch: imagemagick }
+        - { debian: default-jre, redhat: java-1.8.0-openjdk, arch: jre8-openjdk }
+        - { debian: perl, redhat: perl, arch: perl }
+      loop_control:
+          loop_var: package
 
     - name: Installing TICCLtools
       include_role:

@@ -22,6 +22,24 @@
 * The software should be maintained and should work on modern linux distributions.
   LaMachine is not intended for legacy or archiving purposes.
 
+## Why use LaMachine?
+
+Why should you want to participate in LaMachine to distribute your software?
+
+* LaMachine comes in many flavours and is not just a containerisation solution (e.g. Docker). We use Ansible to offer
+  a good and clear level of abstraction, allowing it to work with multiple technologies (Vagrant, Docker, local installation, global installation).
+  It also removes the need to mess with Dockerfile or Vagrantfile yourself, as this is something LaMachine handles for
+  you.
+* LaMachine already offers a lot of NLP software; this may include software your tool depends on or software people like
+  to use independently in combination with your tool.
+* LaMachine supports multiple modern Linux distributions, offering flexibility rather than forcing a single one.
+* LaMachine aims to provide a Virtual Research Environment
+* From a user perspective, LaMachine is easy to install (one command bootstrap).
+* LaMachine comes with an extensive test framework.
+* LaMachine is extensively documented.
+* LaMachine does not replace or reinvent existing technologies, but builds on them: Linux Distributions, Ansible, Vagrant, Docker, pip, virtualenv
+    * This means LaMachine remains an optional solution to make things easier, but build on established installation methods that remain usable outside LaMachine.
+
 ## How to contribute?
 
 Contributors are expected to be familiar with git and github:
@@ -125,6 +143,12 @@ repositories:
       * ``github_user`` - The user/group that holds the github repository (used by the development version of LaMachine)
       * ``github_repo`` - The name of the github repository (used by the development version of LaMachine)
       * ``pip`` - The name of the package in the Python Package Index (used by the stable version of LaMachine)
+* ``lamachine-package-install`` - Install Distribution packages
+	* Expects a ``package`` variable that is a dictionary/map with one or more of the following fields:
+      * ``debian`` - The package name for APT on debian/ubuntu/mint systems.
+      * ``redhat`` - The package name for YUM on fedora/redhat/rhel/centos systems.
+      * ``arch`` - The package name for Arch Linux
+      * ``homebrew`` - The package name for Homebrew on Mac OS X
 * ``lamachine-git-autoconf`` -  Install C++ software hosted in git and which makes use of the GNU autotools (autoconf/automake), i.e. software that follows the classic  ``./configure && make && make install`` paradigm.
 
 Some lower-level roles:
@@ -145,13 +169,13 @@ This may sound a bit cryptic still, so let's go through some examples:
 
 ### Example: Python software
 
-* We assume a fictitious Python software package named *foobar*.
-* The source code is on github as *proycon/foobar*.
-* The software is released on the Python Package Index as *foobar*, meaning a simple ``pip install foobar`` is enough to
+* For this example, we use a Python software package named *babelente*
+* The source code is on github as https://github.com/proycon/babelente
+* The software is released on the Python Package Index as *babelente*, meaning a simple ``pip install babelente`` is enough to
   install it and all dependencies.
 * Fork the LaMachine github repository
 * Git clone your fork
-* Create a file  *roles/foobar/tasks/main.yml* (create the necessary directories) with the following contents:
+* Create a file  *roles/babelente/tasks/main.yml* (create the necessary directories) with the following contents:
 
 ```
  - name: Install Foobar
@@ -160,20 +184,41 @@ This may sound a bit cryptic still, so let's go through some examples:
    vars:
       package:
          github_user: proycon
-         github_repo: foobar
-         pip: foobar
+         github_repo: babelente
+         pip: babelente
 ```
 
 That's it, the ``lamachine-python-install`` role works in such a way that the stable version of LaMachine will use
-``pip`` with PyPI, whilst the development version of LaMachine will draw from github directly and run ``python setup.py
-install``.
+``pip`` with PyPI, whilst the development version of LaMachine will draw from github directly and run ``python3 setup.py
+install``. Note that this automatically covers any Python dependencies the package has declared.
 
-### Example: Dependencies
+### Example: Distribution packages
 
-We expand upon our previous example; assume our python software needs some global non-python dependencies to function
-properly (Python dependencies would already be covered automatically).
+If a software package already commonly included in our supported Linux distributions, then we can pull straight from the
+distribution's repository. To this end, we use the ``lamachine-package-install`` role. The following example
+demonstrates an installation of the Tesseract OCR system, supported on different distributions:
 
-(todo)
+```
+ - name: Install Tesseract
+   include_role:
+      name: lamachine-package-install
+   with_items:
+      - { debian: tesseract-ocr, redhat: tesseract, arch: tesseract, homebrew: tesseract }
+      - { debian: tesseract-ocr-eng, redhat: tesseract-langpack-eng, arch: tesseract-data-eng }
+   loop_control:
+       loop_var: package
+```
 
+Note that ``with_items`` and ``loop_control`` is a standard [Ansible looping construct](http://docs.ansible.com/ansible/latest/playbooks_loops.html). The role is called two times, and the
+variable ``package`` is assigned the value provided in ``with_items``.
 
+It is not always feasible to include all distributions and this it not obligatory, if a platform isn't mentioned then
+nothing will be installed. This however may break the process, so you if you decide not to support a certain platform,
+we encourage you to set up a task that produces an error if the platform is unsupported. This can be done as follows:
 
+```
+ - name: Check for unsupported OS
+   fail:
+     msg: "This software is not supported on Mac OS X or CentOS"
+   when: ansible_distribution|lower == "macosx" or ansible_distribution|lower == "centos"
+```

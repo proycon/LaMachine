@@ -294,11 +294,10 @@ Frequently Asked Questioned & Troubleshooting
 A: This depends on the software you are interested in and the kind of system you are on. LaMachine is offered as a
 convenience but draws from other software repositories which you can also access directly.
 
-You may want to first check if our software packages is available for your Linux distribution. For C++ software such as
+You may want to first check if our software packages are available for your Linux distribution. For C++ software such as
 Frog, ucto and Timbl, we provide packages for:
 
- * Debian Linux 9 [stretch] or higher -- Consult the [package
-   state](https://qa.debian.org/developer.php?login=proycon@anaproy.nl).
+ * Debian Linux 9 [stretch] or higher -- Consult the [package state](https://qa.debian.org/developer.php?login=proycon@anaproy.nl).
  * Ubuntu Linux 18.04 or higher
  * Arch Linux  -- https://aur.archlinux.org/packages/?SeB=m&K=proycon
  * Mac OS X (homebrew) -- https://github.com/fbkarsdorp/homebrew-lamachine/tree/master/Formula
