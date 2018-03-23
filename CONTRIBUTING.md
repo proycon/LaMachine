@@ -32,8 +32,8 @@ Contributors are expected to be familiar with git and github:
 
 ## LaMachine Architecture
 
-LaMachine consists of installation and configuration recipes for [Ansible](https://ansible.org). These recipes are
-called *playbooks* by Ansible, or more specifically they are called *roles* when used in a modular fashion as we do.
+LaMachine consists primarily of installation and configuration recipes for [Ansible](https://ansible.org). These recipes
+are called *playbooks* by Ansible, or more specifically they are called *roles* when used in a modular fashion as we do.
 Roles are defined in a simple [YAML syntax](http://docs.ansible.com/ansible/latest/YAMLSyntax.html) in combination with
 a powerful [templating language](http://docs.ansible.com/ansible/latest/playbooks_templating.html).
 
@@ -56,8 +56,8 @@ First we take a look at the variables defined in LaMachine:
 
 The variables are generally set by the end-user in the LaMachine configuration
 when building or updating LaMachine. These determine the type of environment to
-build, as LaMachine offers quite some flexibility by coming in different
-flavours, versions, and being intended to work on multiple Linux distributions.
+build, as LaMachine offers quite some flexibility through its different
+flavours, versions, and is meant to work on multiple Linux distributions.
 
 We distinguish the following variables, all of which you can read and use in your Ansible roles for LaMachine:
 
@@ -138,6 +138,8 @@ or ``github`` module.
 
 To add your own software, you add a *role* yourself which includes one (or more) of the above, with specific parameters, to do the
 actual work. Your role, in turn, is referenced by the end-user who has final control over the installation playbook.
+Rather than just installing a single piece of software, a role in LaMachine usually installs multiple inter-connected
+software components and all their dependencies.
 
 This may sound a bit cryptic still, so let's go through some examples:
 
@@ -162,16 +164,16 @@ This may sound a bit cryptic still, so let's go through some examples:
          pip: foobar
 ```
 
+That's it, the ``lamachine-python-install`` role works in such a way that the stable version of LaMachine will use
+``pip`` with PyPI, whilst the development version of LaMachine will draw from github directly and run ``python setup.py
+install``.
 
+### Example: Dependencies
 
-
-
-
-
-
-
-
-
+We expand upon our previous example; assume our python software needs some global non-python dependencies to function
+properly (Python dependencies would already be covered automatically).
 
 (todo)
+
+
 
