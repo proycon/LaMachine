@@ -28,4 +28,4 @@
       homebrew:
         name: "{{package.homebrew}}"
         state: installed
-      when: "homebrew" in package and (ansible_distribution|lower == "macosx")
+      when: '"homebrew" in package and (ansible_distribution|lower == "macosx")'
