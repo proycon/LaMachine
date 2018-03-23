@@ -8,4 +8,5 @@
 
 Welcome to LaMachine!
   - run lamachine-update to update and test your LaMachine installation
+    add the --edit flag if you want to install extra software.
 
