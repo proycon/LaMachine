@@ -48,3 +48,11 @@
            executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
       environment: "{{lm_env}}"
       when: (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == ""))) and localenv_type == "conda" and ("conda" not in package or package.conda == "") and "pip" in package and package.pip != ""
+
+    - name: Register software in lamachine-list
+      include_role:
+        name: lamachine-run
+      vars:
+        command: "echo '{{package.pip}}:' >> {{lm_prefix}}/var/lamachine-list.yml && {% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %} show {{package.pip}} | sed 's/^/    /' >> {{lm_prefix}}/var/lamachine-list.yml"
+      when: '"pip" in package'
+

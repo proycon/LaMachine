@@ -32,6 +32,10 @@
         package:
           repo: ticcltools
           user: LanguageMachines
+          author: Martin Reynaert, Ko van der Sloot
+          homepage: "https://github.com/LanguageMachines/ticcltools"
+          summary: "TicclTools is a collection of programs to process datafiles, together they constitute the bulk of TICCL: Text Induced Corpus-Cleanup. This software is invoked by the pipeline system PICCL"
+          license: GPL
 
     - name: Create nextflow home
       file:
@@ -44,6 +48,16 @@
         chdir: "{{lm_prefix}}/bin" #this is where the nextflow binary will be written
       environment:
         NXF_HOME: "{{lm_prefix}}/opt/nextflow"
+
+    - name: Register Nextflow
+      include_role:
+         name: lamachine-register
+      vars:
+         package:
+           name: Nextflow
+           author: Paolo Di Tommaso, Maria Chatzou, Evan W Floden, Pablo Prieto Barja, Emilio Palumbo, Cedric Notredame
+           homepage: "http://nextflow.io"
+           license: GPL
 
     - name: Nextflow test
       include_role:
@@ -85,6 +99,17 @@
         cp -sf {{lm_prefix}}/opt/PICCL/*.nf .
       args:
         chdir: "{{lm_prefix}}/bin"
+
+    - name: Register PICCL
+      include_role:
+         name: lamachine-register
+      vars:
+         package:
+           name: PICCL
+           author: Martin Reynaert, Maarten van Gompel, Ko van der Sloot
+           homepage: "https://github.com/LanguageMachines/PICCL"
+           license: GPL
+           summary: "A set of workflows for corpus building through OCR, post-correction, modernization of historic language and Natural Language Processing"
 
     - name: "Download data and example corpora for PICCL"
       shell: |

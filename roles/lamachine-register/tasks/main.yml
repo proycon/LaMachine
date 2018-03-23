@@ -1,0 +1,21 @@
+---
+    - name: "{{package.name}} - Register in lamachine-list"
+      shell: |
+        #!/bin/bash
+        echo '{{package.name}}:' >> {{lm_prefix}}/var/lamachine-list.yml
+        echo     '    Name: {{package.name}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% if "version" in package %}
+        echo     '    Version: {{package.version}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% endif %}
+        {% if "license" in package %}
+        echo     '    License: {{package.license}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% endif %}
+        {% if "summary" in package %}
+        echo     '    Summary: {{package.summary}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% endif %}
+        {% if "author" in package %}
+        echo     '    Author: {{package.author}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% endif %}
+        {% if "homepage" in package %}
+        echo     "    Home-page: {{package.homepage}}" >> {{lm_prefix}}/var/lamachine-list.yml
+        {% endif %}

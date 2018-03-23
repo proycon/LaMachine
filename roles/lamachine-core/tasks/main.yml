@@ -155,6 +155,7 @@
           fi
         mode: u+rwx,a+rx
 
+
     - name: Link activation script to global environment
       become: yes
       become_user: root
@@ -358,6 +359,25 @@
       shell: which pip3
       register: pip
       when: locality == "global"
+
+    - name: Install LaMachine list script
+      copy:
+        dest: "{{lm_prefix}}/bin/lamachine-list"
+        content: |
+          #!/bin/bash
+          if [ "$1" = "-s" ]; then
+            cat {{lm_prefix}}/var/lamachine-list.yml | grep -e "^\w" | sed "s/://" | sort | less
+          else
+            cat {{lm_prefix}}/var/lamachine-list.yml | less
+          fi
+        mode: u+rwx,a+rx
+
+    - name: Reinitialize LaMachine list
+      copy:
+        dest: "{{lm_prefix}}/var/lamachine-list.yml"
+        content: |
+          ---
+        mode: u+rwx,a+rx
 
     - import_tasks: webserver.yml
       when: webserver is defined and webserver == true

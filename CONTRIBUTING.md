@@ -150,10 +150,18 @@ repositories:
       * ``arch`` - The package name for Arch Linux
       * ``homebrew`` - The package name for Homebrew on Mac OS X
 * ``lamachine-git-autoconf`` -  Install C++ software hosted in git and which makes use of the GNU autotools (autoconf/automake), i.e. software that follows the classic  ``./configure && make && make install`` paradigm.
+	* Expects a ``package`` variable that is a dictionary/map with the following fields:
+      * ``user`` - The user/group that holds the github repository (used by the development version of LaMachine)
+      * ``repo`` - The name of the github repository (used by the development version of LaMachine)
+      * You can also pass any of the variables used by ``lamachine-register``, as this will be called automatically.
 
 Some lower-level roles:
 * ``lamachine-git`` - Clone a particular git repository
 * ``lamachine-run`` - Run a particular command in the LaMachine environment.
+* ``lamachine-register`` -  Registers software metadata manually.
+	* Expects a ``package`` variable that is a dictionary/map that can contain the following fields: ``name`` (mandatory!), ``version``, ``license``,``author``,``homepage``,``summary``
+    * When using ``lamachine-python-install``, metadata registration is entirely automatic, as the PyPI contains all relevant information already. So you never need ``lamachine-register``
+    * When using ``lamachine-git-autoconf``,  ``lamachine-register`` is automatically called and certain variables (name,version) can be pre-filled. Others you will need to provide explicitly if wanted.
 
 The use of specific LaMachine roles is always preferred over the use of comparable generic ansible modules as the
 LaMachine roles take care of a lot of specific things for you so it works in all environments. So use

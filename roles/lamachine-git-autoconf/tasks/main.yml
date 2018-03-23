@@ -49,4 +49,29 @@
         chdir: "{{ source_path }}/{{package.repo}}"
       when: autoconf_git_updated.stdout|int == 1 and make_install_result is defined and make_install_result.rc == 0
 
-
+    - name: "{{package.repo}} - Register in lamachine-list"
+      shell: |
+        #!/bin/bash
+        echo '{{package.repo}}:' >> {{lm_prefix}}/var/lamachine-list.yml
+        echo     '    Name: {{package.repo}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        echo -ne '    Version:\n    ' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% if "license" in package %}
+        echo     '    License: {{package.license}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% endif %}
+        {% if "summary" in package %}
+        echo     '    Summary: {{package.summary}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% endif %}
+        {% if "author" in package %}
+        echo     '    Author: {{package.author}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% else %}
+        echo     '    Author: {{package.user}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% endif %}
+        git describe --tags >> .installed-version.lamachine
+        if [ $? -eq 0 ]; then
+          cat .installed-version.lamachine >> {{lm_prefix}}/var/lamachine-list.yml
+        else
+          cat .installed-commit.lamachine >> {{lm_prefix}}/var/lamachine-list.yml
+        fi
+        echo     "    Home-page: {% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}" >> {{lm_prefix}}/var/lamachine-list.yml
+      args:
+        chdir: "{{ source_path }}/{{package.repo}}"

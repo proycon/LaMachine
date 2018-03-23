@@ -18,7 +18,6 @@
               echo "    PYTHONPATH=$PYTHONPATH">&2
               echo "    PYTHON=$(which python3)">&2
               echo "    PIP=$(which pip3)">&2
-              echo "    CONDA=$(which conda)">&2
               echo "Running: {{command}}">&2
               {{command}}
           args:
