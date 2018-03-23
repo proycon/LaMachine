@@ -1,5 +1,11 @@
 ---
 
+
+    - name: Check for unsupported OS for PICCL
+      debug:
+        msg: "PICCL is not supported on Mac OS X"
+      when: ansible_distribution|lower == "macosx"
+
     - name: Installing global dependencies for PICCL
       include_role:
         name: lamachine-package-install
