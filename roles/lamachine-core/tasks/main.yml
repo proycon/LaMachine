@@ -132,9 +132,6 @@
           export CLANG_CXX_LIBRARY="libc++" #needed for python bindings in lamachine-python-install
              export MACOSX_DEPLOYMENT_TARGET="{{ ansible_distribution_version }}"
           fi
-          if [[ "$LAMACHINE_QUIET" != "1" ]]; then
-            cat $LM_PATH/motd
-          fi
           if [[ "$LM_LOCALITY" == "local" ]]; then
               export LM_LOCAL_PREFIX={{local_prefix}}
               export LM_PREFIX={{local_prefix}}
@@ -152,6 +149,9 @@
               for f in $EXTRAACTIVATE; do
                   source $f
               done
+          fi
+          if [[ "$LAMACHINE_QUIET" != "1" ]]; then
+            cat $LM_PREFIX/etc/motd
           fi
         mode: u+rwx,a+rx
 
@@ -266,6 +266,15 @@
           - opt
           - var
           - "var/log"
+
+    - name: Install motd
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: motd
+        dest: "{{lm_prefix}}/etc/motd"
+        force: yes
+        backup: yes
 
     - name: Link to LaMachine controller from local prefix
       file:

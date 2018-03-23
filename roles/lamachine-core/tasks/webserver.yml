@@ -182,3 +182,21 @@
       force: yes
       backup: yes
     when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
+
+  - name: Create document root
+    become: "{{lm_become}}"
+    become_user: root
+    file:
+        path: "{{ lm_prefix }}/var/www-data/docroot"
+        state: directory
+        owner: "{{unix_user}}"
+        mode: u+rwx,a+rx
+
+  - name: Copy document root
+    become: "{{lm_become}}"
+    become_user: root
+    copy:
+      src: "{{item}}"
+      dest: "{{ lm_prefix}}/var/www-data/docroot"
+    with_fileglob:
+      - "{{lamachine_path}}/webserver/docroot/*"

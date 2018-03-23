@@ -1,12 +1,17 @@
 ==============================================================================
            ,              LaMachine v2 - Unified NLP Software distribution
-          ~)                     (https://proycon.github.io/LaMachine)
+          ~)                    (https://proycon.github.io/LaMachine)
            (----í
             /| |\         Centre for Language and Speech Technology
            / / /|	             Radboud University Nijmegen
 ==============================================================================
+ Build Name: {{ conf_name }}
+ Version: {{ version }}     Build time: {{ ansible_date_time.date }} {{ ansible_date_time.time }} {{ansible_date_time.tz}}
 
 Welcome to LaMachine!
   - run lamachine-update to update and test your LaMachine installation
     add the --edit flag if you want to install extra software.
+{% if webserver %}
+  - run lamachine-start-webserver to (re)start the webserver
+{% endif }
 
