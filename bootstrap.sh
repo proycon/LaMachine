@@ -621,11 +621,11 @@ locality: \"$LOCALITY\" #local or global?
     if [[ $FLAVOUR == "vagrant" ]]; then
         echo "unix_user: \"vagrant\" #(don't change this)" >> $CONFIGFILE
         echo "homedir: \"/home/vagrant\"" >> $CONFIGFILE
-        echo "source_path: \"/home/vagrant/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is stored/shared" >> $CONFIGFILE
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
         echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
         echo "global_prefix: \"/usr/local\" #Path for global installations" >> $CONFIGFILE
+        echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         if [ "$VAGRANTBOX" == "centos/7" ]; then
             echo "ansible_python_interpreter: \"/usr/bin/python\" #Python interpreter for Vagrant to use with Ansible" >> $CONFIGFILE
         else
@@ -637,8 +637,8 @@ locality: \"$LOCALITY\" #local or global?
         echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is stored/shared" >> $CONFIGFILE
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
         echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
-        echo "source_path: \"/lamachine/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         echo "global_prefix: \"/usr/local\" #Path for global installations" >> $CONFIGFILE
+        echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
     else
         echo "unix_user: \"$USERNAME\"" >> $CONFIGFILE
         WEBUSER=$USERNAME
@@ -646,14 +646,17 @@ locality: \"$LOCALITY\" #local or global?
         echo "homedir: \"$HOMEDIR\"" >> $CONFIGFILE
         if [ ! -z "$SOURCEDIR" ]; then
             echo "lamachine_path: \"$SOURCEDIR\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
-            echo "source_path: \"$SOURCEDIR/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         else
             echo "lamachine_path: \"$BASEDIR/lamachine-controller/$LM_NAME/LaMachine\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
-            echo "source_path: \"$BASEDIR/lamachine-controller/$LM_NAME/LaMachine/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         fi
         echo "data_path: \"$BASEDIR\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
-        echo "local_prefix: \"$HOMEDIR/lamachine-$LM_NAME\" #Path to the local environment (conda/virtualenv)" >> $CONFIGFILE
+        echo "local_prefix: \"$HOMEDIR/lamachine-$LM_NAME\" #Path to the local environment (virtualenv)" >> $CONFIGFILE
         echo "global_prefix: \"/usr/local\" #Path for global installations" >> $CONFIGFILE
+        if [ "$locality" == "global" ]; then
+            echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+        else
+            echo "source_path: \"$HOMEDIR/lamachine-$LM_NAME/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+        fi
     fi
     if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]]; then
         echo "root: true #Do you have root on the target system?" >> $CONFIGFILE
