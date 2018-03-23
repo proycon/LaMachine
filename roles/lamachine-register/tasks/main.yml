@@ -19,3 +19,7 @@
         {% if "homepage" in package %}
         echo     "    Home-page: {{package.homepage}}" >> {{lm_prefix}}/var/lamachine-list.yml
         {% endif %}
+        {% if "location" in package %}
+        echo     "    Location: {{package.location}}" >> {{lm_prefix}}/var/lamachine-list.yml
+        {% endif %}
+        echo >> {{lm_prefix}}/var/lamachine-list.yml

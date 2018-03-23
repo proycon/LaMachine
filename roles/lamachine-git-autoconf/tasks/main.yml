@@ -54,7 +54,13 @@
         #!/bin/bash
         echo '{{package.repo}}:' >> {{lm_prefix}}/var/lamachine-list.yml
         echo     '    Name: {{package.repo}}' >> {{lm_prefix}}/var/lamachine-list.yml
-        echo -ne '    Version:\n    ' >> {{lm_prefix}}/var/lamachine-list.yml
+        echo -e  '    Version:\n    ' >> {{lm_prefix}}/var/lamachine-list.yml
+        git describe --tags >> .installed-version.lamachine
+        if [ $? -eq 0 ]; then
+          cat .installed-version.lamachine >> {{lm_prefix}}/var/lamachine-list.yml
+        else
+          cat .installed-commit.lamachine >> {{lm_prefix}}/var/lamachine-list.yml
+        fi
         {% if "license" in package %}
         echo     '    License: {{package.license}}' >> {{lm_prefix}}/var/lamachine-list.yml
         {% endif %}
@@ -66,12 +72,8 @@
         {% else %}
         echo     '    Author: {{package.user}}' >> {{lm_prefix}}/var/lamachine-list.yml
         {% endif %}
-        git describe --tags >> .installed-version.lamachine
-        if [ $? -eq 0 ]; then
-          cat .installed-version.lamachine >> {{lm_prefix}}/var/lamachine-list.yml
-        else
-          cat .installed-commit.lamachine >> {{lm_prefix}}/var/lamachine-list.yml
-        fi
         echo     "    Home-page: {% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}" >> {{lm_prefix}}/var/lamachine-list.yml
+        echo >> {{lm_prefix}}/var/lamachine-list.yml
       args:
+        executable: "/bin/bash"
         chdir: "{{ source_path }}/{{package.repo}}"

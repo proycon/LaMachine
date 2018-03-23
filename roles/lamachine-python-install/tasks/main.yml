@@ -53,6 +53,6 @@
       include_role:
         name: lamachine-run
       vars:
-        command: "echo '{{package.pip}}:' >> {{lm_prefix}}/var/lamachine-list.yml && {% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %} show {{package.pip}} | sed 's/^/    /' >> {{lm_prefix}}/var/lamachine-list.yml"
+        command: "echo '{{package.pip}}:' >> {{lm_prefix}}/var/lamachine-list.yml && {% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %} show {{package.pip}} | sed 's/^/    /' >> {{lm_prefix}}/var/lamachine-list.yml && echo >> {{lm_prefix}}/var/lamachine-list.yml"
       when: '"pip" in package'
 
