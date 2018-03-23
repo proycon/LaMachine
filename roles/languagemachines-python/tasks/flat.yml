@@ -10,12 +10,16 @@
           mode: u+rw,a+r
 
     - name: Applying migrations
+      become: "{{lm_become}}"
+      become_user: "{{web_user}}"
       shell: django-admin migrate --run-syncdb
       environment:
           DJANGO_SETTINGS_MODULE: flat_settings
           PYTHONPATH: "{{lm_prefix}}/etc"
 
     - name: Create FLAT superuser
+      become: "{{lm_become}}"
+      become_user: "{{web_user}}"
       shell: |
         echo -n "
         from django.contrib.auth.models import User
