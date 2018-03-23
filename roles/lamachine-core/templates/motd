@@ -13,5 +13,5 @@ Welcome to LaMachine!
     add the --edit flag if you want to install extra software.
 {% if webserver %}
   - run lamachine-start-webserver to (re)start the webserver
-{% endif }
+{% endif %}
 
