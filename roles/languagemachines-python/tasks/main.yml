@@ -118,5 +118,4 @@
             - colibricore
 
         - name: "Setting up FLAT"
-          import_role:
-              name: flat
+          import_tasks: flat.yml
