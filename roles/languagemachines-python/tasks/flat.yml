@@ -15,7 +15,7 @@
       shell: "DJANGO_SETTINGS_MODULE=flat_settings django-admin migrate --run-syncdb"
       args:
           executable: /bin/bash
-          chdir: "{{lm_prefix}}/etc"}
+          chdir: "{{lm_prefix}}/etc"
       environment: "{{lm_env}}"
 
     - name: Create FLAT superuser
