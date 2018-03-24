@@ -19,7 +19,7 @@
     - name: Create FLAT superuser
       shell: |
         export PYTHONPATH="{{lm_prefix}}/etc" DJANGO_SETTINGS_MODULE=flat_settings
-        echo -n "
+        echo -ne "
         from django.contrib.auth.models import User
 
         username = 'flat'
@@ -27,10 +27,10 @@
         email = 'flat@localhost'
 
         if User.objects.filter(username=username).count() == 0:
-            User.objects.create_superuser(username, email, password)
-            print('Superuser created.')
+        \tUser.objects.create_superuser(username, email, password)
+        \tprint('Superuser created.')
         else:
-            print('Superuser creation skipped.')
+        \tprint('Superuser creation skipped.')
         " | django-admin shell -i python
       args:
           executable: /bin/bash
