@@ -12,6 +12,17 @@ from builds import buildmatrix
 def buildid(build):
     return build['flavour'] + ':' + build['name']
 
+def clean(build, args):
+    print("Destroying " + build['name'] + " ...", file=sys.stderr)
+    if build['flavour'] == "vagrant":
+        r2 = os.system("lamachine-" + build['name'] + "-destroy -f")
+    elif build['flavour'] == "docker":
+        r2 = os.system("docker image rm proycon/lamachine:" + build['name'])
+    #remove controller
+    shutil.rmtree('lamachine-controller/' + build['name'], ignore_errors=True)
+    os.system("rm *" + build['name']+"*.yml")
+    os.system("rm lamachine-"+ build['name']+ "*")
+
 def test(build, args):
     msg = "[LaMachine Test] Building " + buildid(build)+ " ..."
     print(msg, file=sys.stderr)
@@ -22,20 +33,19 @@ def test(build, args):
             passargs.append("--" + key)
         else:
             passargs.append("--" + key + " " + value)
+    if build['flavour'] == 'vagrant' and os.path.exists('lamachine-'+ build['name'] + '-destroy'):
+        print("[LaMachine Test] VM " + build['name'] + " already exists...", file=sys.stderr)
+        if args.clean:
+            clean(build, args)
+        else:
+            ircprint(msg, args)
+            return (1,0,1)
     begintime = time.time()
     r = os.system("bash ../bootstrap.sh " + " ".join(passargs) + " --noninteractive --private --verbose --vmmem " + str(args.vmmem) + " 2> logs/" + buildid(build).replace(':','-') + ".log >&2")
     endtime = time.time()
     duration = endtime-begintime
-    if not args.keep:
-        print("Destroying " + build['name'] + " ...", file=sys.stderr)
-        if build['flavour'] == "vagrant":
-            r2 = os.system("lamachine-" + build['name'] + "-destroy -f")
-        elif build['flavour'] == "docker":
-            r2 = os.system("docker image rm proycon/lamachine:" + build['name'])
-        #remove controller
-        shutil.rmtree('lamachine-controller', ignore_errors=True)
-        os.system("rm *" + build['name']+"*.yml")
-        os.system("rm lamachine-"+ build['name']+ "*")
+    if args.clean:
+        clean(build, args)
     else:
         r2 = 0
     if r == 0:
@@ -50,6 +60,7 @@ def ircprint(message, args, port=6667):
     nick = b"lmtestbot_" + os.uname()[1].encode('utf-8')
     if args.ircchannel and args.ircserver and message:
         s = socket.socket()
+        s.settimeout(60)
         s.connect((args.ircserver.strip(), port))
         s.send(b"NICK " + nick + b"\r\n")
         s.send(b"USER " + nick + b" " + nick + b" bla :LaMachine Test Bot\r\n")
@@ -59,11 +70,11 @@ def ircprint(message, args, port=6667):
                 s.send(b"PRIVMSG #" + args.ircchannel.strip('#').encode('utf-8') + b" :" + message.encode('utf-8') + b"\r\n")
                 s.send(b"QUIT\r\n")
                 break
-    time.sleep(5)
+        time.sleep(5)
 
 def main():
     parser = argparse.ArgumentParser(description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--keep',help="Keep VM/container", action='store_true',default=False,required=False)
+    parser.add_argument('--clean',help="Clean up after tests (otherwise VMs and containers will be kept)", action='store_true',default=False,required=False)
     parser.add_argument('--vmmem', type=int,help="VM Memory", action='store',default=2690,required=False)
     parser.add_argument('--ircserver', type=str,help="IRC server for notifications", action='store',required=False)
     parser.add_argument('--ircchannel', type=str,help="IRC channel for notifications", action='store',required=False)
@@ -88,7 +99,7 @@ def main():
             results.append( (build, r, duration, r2)  )
 
     for build, returncode, duration, cleanup in results:
-        msg = buildid(build) + " , " + ("OK" if returncode == 0 else "FAILED") + ", " + str(round(duration/60))+ " " + ("KEPT" if args.keep else "CLEANED" if cleanup == 0 else "DIRTY")
+        msg = buildid(build) + " , " + ("OK" if returncode == 0 else "FAILED") + ", " + str(round(duration/60))+ " " + ("KEPT" if not args.clean else "CLEANED" if cleanup == 0 else "DIRTY")
         print(msg)
 
     if not results:
