@@ -8,6 +8,7 @@
       - python-core #Core 3rd party scientific python packages (numpy, scipy, pandas, scikit-learn, nltk, and more)
       - languagemachines-python #contains basic Python-based tools and libraries and web applications/services by the Language Machines Research group, Centre of Language and Speech Technology, Radboud University Nijmegen. (includes pynlpl, CLAM, foliadocserve, FLAT)
       - languagemachines-python-bindings #contains python-ucto, python-frog, python-timbl (requires the above)
+      - java-core #Java 8, Maven
       - r-core #R with core R packages (3rd party)
      #- piccl #Workflows for Post-OCR correction and normalisation and pseudo-modernisation of historical text. Includes TICCL. Requires languagemachines-* (Radboud University & Tilburg University)
      #- alpino #A dependency parser for dutch (University of Groningen)

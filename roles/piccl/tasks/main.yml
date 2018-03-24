@@ -20,7 +20,6 @@
         - { debian: djvulibre-bin, redhat: djvulibre, arch: djvulibre }
         - { debian: libdjvulibre-text }
         - { debian: imagemagick, redhat: ImageMagick, arch: imagemagick }
-        - { debian: default-jre, redhat: java-1.8.0-openjdk, arch: jre8-openjdk }
         - { debian: perl, redhat: perl, arch: perl }
       loop_control:
           loop_var: package
