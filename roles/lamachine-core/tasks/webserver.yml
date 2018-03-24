@@ -96,7 +96,7 @@
         become_user: root
         user:
           name: "{{unix_user}}"
-          group: "{{web_user}}"
+          groups: "{{web_user}}"
           append: yes
 
       - name: Install webserver configuration

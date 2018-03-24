@@ -1,17 +1,28 @@
 ---
 
-    - name: Create server writable directories for FLAT
+    - name: Create server writable directories for FLAT (global)
       become: "{{lm_become}}"
       become_user: root
       file:
           path: "{{ lm_prefix }}/{{item}}"
           state: directory
-          owner: "{% if locality == 'global' %}{{web_user}}{% else %}{{ unix_user }}{% endif %}"
-          group: "{% if locality == 'global' %}{{web_user}}{% else %}{{ unix_user }}{% endif %}"
+          owner: "{{ web_user }}"
+          group: "{{ web_user }}"
           mode: u+rwx,g+rwsx,a+rx
       with_items:
           - "var/www-data/flat.docroot"
           - "var/log/foliadocserve"
+      when: root and locality == "global"
+
+    - name: Create server writable directories for FLAT (local)
+      file:
+          path: "{{ lm_prefix }}/{{item}}"
+          state: directory
+          mode: u+rwx,g+rwx,a+rx
+      with_items:
+          - "var/www-data/flat.docroot"
+          - "var/log/foliadocserve"
+      when: root and locality == "local"
 
     - name: Installing FLAT settings
       template:
