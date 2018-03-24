@@ -93,10 +93,16 @@ def main():
         sys.exit(0)
 
     results = []
-    for build in buildmatrix:
-        if not args.selection or buildid(build) in args.selection:
+    if not args.selection: #just build everything
+        for build in buildmatrix:
             r, duration, r2 = test(build, args)
             results.append( (build, r, duration, r2)  )
+    else:
+        for build_id in args.selection:
+            for build in buildmatrix:
+                if buildid(build) == build_id:
+                    r, duration, r2 = test(build, args)
+                    results.append( (build, r, duration, r2)  )
 
     for build, returncode, duration, cleanup in results:
         msg = buildid(build) + " , " + ("OK" if returncode == 0 else "FAILED") + ", " + str(round(duration/60))+ " " + ("KEPT" if not args.clean else "CLEANED" if cleanup == 0 else "DIRTY")
