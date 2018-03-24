@@ -14,6 +14,7 @@ def buildid(build):
 
 def clean(build, args):
     print("Destroying " + build['name'] + " ...", file=sys.stderr)
+    r2 = 1
     if build['flavour'] == "vagrant":
         r2 = os.system("lamachine-" + build['name'] + "-destroy -f")
     elif build['flavour'] == "docker":
@@ -22,6 +23,7 @@ def clean(build, args):
     shutil.rmtree('lamachine-controller/' + build['name'], ignore_errors=True)
     os.system("rm *" + build['name']+"*.yml")
     os.system("rm lamachine-"+ build['name']+ "*")
+    return r2
 
 def test(build, args):
     msg = "[LaMachine Test] Building " + buildid(build)+ " ..."
@@ -45,7 +47,7 @@ def test(build, args):
     endtime = time.time()
     duration = endtime-begintime
     if args.clean:
-        clean(build, args)
+        r2 = clean(build, args)
     else:
         r2 = 0
     if r == 0:
