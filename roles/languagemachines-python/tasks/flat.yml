@@ -1,5 +1,15 @@
 ---
 
+    - name: Create document root for FLAT
+      become: "{{lm_become}}"
+      become_user: root
+      file:
+          path: "{{ lm_prefix }}/var/www-data/flat.docroot"
+          state: directory
+          owner: "{% if locality == "global" %}{{web_user}}{% else %}{{ unix_user }}{% endif %}"
+          group: "{% if locality == "global" %}{{web_user}}{% else %}{{ unix_user }}{% endif %}"
+          mode: u+rwx,g+rwsx,a+rx
+
     - name: Installing FLAT settings
       template:
           src: "flat_settings.py"
