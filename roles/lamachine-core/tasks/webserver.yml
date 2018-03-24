@@ -99,8 +99,6 @@
           groups: "{{web_user}}"
           append: yes
 
-      - name: Reset connection to allow user changes to affect current login user
-        meta: reset_connection
 
       - name: Install webserver configuration
         become: true
@@ -117,7 +115,7 @@
         file:
             path: "{{ lm_prefix }}/{{item}}"
             state: directory
-            owner: "{{web_user}}"
+            owner: "{{unix_user}}"
             group: "{{web_user}}"
             mode: u+rwx,g+rwsx,a+rx
         with_items:

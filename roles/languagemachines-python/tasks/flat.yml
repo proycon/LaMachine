@@ -6,7 +6,7 @@
       file:
           path: "{{ lm_prefix }}/{{item}}"
           state: directory
-          owner: "{{ web_user }}"
+          owner: "{{ unix_user }}"
           group: "{{ web_user }}"
           mode: u+rwx,g+rwsx,a+rx
       with_items:
