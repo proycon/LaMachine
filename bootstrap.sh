@@ -428,6 +428,14 @@ if [ "$FLAVOUR" == "vagrant" ]; then
     echo "Looking for vagrant..."
     if ! which vagrant; then
         NEED+=("vagrant")
+        NEED+=("vbguest")
+    else
+        echo "Checking available vagrant plugins"
+        if vagrant plugin list | grep vbguest; then
+            echo "ok"
+        else
+            NEED+=("vbguest")
+        fi
     fi
 fi
 
@@ -492,6 +500,22 @@ for package in $NEED; do
         else
             echo "No automated installation possible on your OS."
             echo "Please install vagrant manually from https://www.vagrantup.com/downloads.html and VirtualBox from https://www.virtualbox.org/" && echo " .. press ENTER when done or CTRL-C to abort..." && read
+        fi
+    elif [ "$package" = "vbguest" ]; then
+        cmd="sudo vagrant plugin install vagrant-vbguest"
+        echo "The vagrant-vbguest plugin is required for building VMs. ${bold}Install automatically?${normal}"
+        if [ ! -z "$cmd" ]; then
+            while true; do
+                echo -n "${bold}Run:${normal} $cmd ? [yn] "
+                read yn
+                case $yn in
+                    [Yy]* ) $cmd; break;;
+                    [Nn]* ) break;;
+                    * ) echo "Please answer yes or no.";;
+                esac
+            done
+        else
+            echo "${boldred}Automated installation of vagrant-vbguest failed!${normal}"
         fi
     elif [ "$package" = "docker" ]; then
         echo "We expect users of docker to be able to install docker themselves."
