@@ -7,6 +7,15 @@
         state: latest
       when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
 
+    - name: Enable IUS Repository
+      become: true
+      become_user: root
+      shell: |
+           yum install https://$(rpm -E '%{?centos:centos}%{!?centos:rhel}%{rhel}').iuscommunity.org/ius-release.rpm
+      args:
+          executable: /bin/bash
+      when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+
     - name: Updating base system (YUM)
       become: true
       become_user: root
@@ -15,7 +24,7 @@
         state: latest
         update_cache: yes
 
-    - name: installing common base packages (1) (yum)
+    - name: installing common base packages (yum)
       become: true
       become_user: root
       yum:
@@ -23,16 +32,34 @@
         state: installed
       with_items: [pkgconfig, git, icu, libtool, autoconf, automake, autoconf-archive, nano, make, gcc, gcc-c++, libxml2, libxml2-devel, libxslt, libxslt-devel, libtar, libtar-devel, boost, boost-devel, zlib, zlib-devel, bzip2, bzip2-devel, libcurl, gnutls-devel, libcurl-devel, wget, curl, libexttextcat, libexttextcat-devel]
 
-    - name: installing common base packages for CentOS/RHEL (yum)
+    - name: installing Python base packages for CentOS/RHEL (yum)
       become: true
       become_user: root
       yum:
         name: "{{item}}"
         state: installed
-      with_items: [python34, python34-devel, python34-pip, libicu-devel] #will need to be updated once CentOS progresses..
+      with_items: [python36u, python36u-devel, python36u-pip, python36u-setuptools, libicu-devel] #will need to be updated once CentOS progresses..
       when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
 
-    - name: installing common base packages (2) (yum)
+    - name: Linking Python 3.6 (RHEL/CentOS)
+      become: yes
+      become_user: root
+      file:
+        src: "/usr/bin/{{item.src}}"
+        dest: "/usr/bin/{{item.dest}}"
+        state: link
+        force: yes
+        backup: no
+      with_items:
+          - { src: python3.6, dest: python3 }
+          - { src: python3.6-config, dest: python3-config }
+          - { src: pip3.6, dest: pip3 }
+          - { src: pyenv3.6, dest: pyenv3 }
+          - { src: pydoc3.6, dest: pydoc3 }
+          - { src: easy_install-3.6, dest: easy_install-3 }
+      when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+
+    - name: installing Python base packages for Fedora
       become: true
       become_user: root
       yum:
