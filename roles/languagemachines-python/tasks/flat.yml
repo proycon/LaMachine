@@ -9,7 +9,7 @@
           owner: "{% if locality == 'global' %}{{web_user}}{% else %}{{ unix_user }}{% endif %}"
           group: "{% if locality == 'global' %}{{web_user}}{% else %}{{ unix_user }}{% endif %}"
           mode: u+rwx,g+rwsx,a+rx
-      with_item:
+      with_items:
           - "var/www-data/flat.docroot"
           - "var/log/foliadocserve"
 
