@@ -64,12 +64,17 @@
           become_user: root
           shell: |
             export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
+            if [ ! -e "$DIR" ]; then
+                echo "Unable to find dir"
+                exit 2
+            fi
             ln -sf $DIR {{lm_prefix}}/opt/{{item}}
           with_items:
             - clam
             - clamservices
             - django
             - flat
+          environment: "{{lm_env}}"
 
         - name: "Install webserver configuration"
           become: "{{lm_become}}"

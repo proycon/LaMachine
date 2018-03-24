@@ -12,10 +12,11 @@
     - name: Applying migrations
       become: "{{lm_become}}"
       become_user: "{{web_user}}"
-      shell: django-admin migrate --run-syncdb
-      environment:
-          DJANGO_SETTINGS_MODULE: flat_settings
-          PYTHONPATH: "{{lm_prefix}}/etc"
+      shell: "DJANGO_SETTINGS_MODULE=flat_settings django-admin migrate --run-syncdb"
+      args:
+          executable: /bin/bash
+          chdir: "{{lm_prefix}}/etc"}
+      environment: "{{lm_env}}"
 
     - name: Create FLAT superuser
       become: "{{lm_become}}"
@@ -36,7 +37,5 @@
         " | django-admin shell -i python
       args:
           executable: /bin/bash
-      environment:
-          PATH: "{{lm_prefix}}/bin:{{ansible_env.PATH}}"
-          DJANGO_SETTINGS_MODULE: flat_settings
-          PYTHONPATH: "{{lm_prefix}}/etc"
+          chdir: "{{lm_prefix}}/etc"
+      environment: "{{lm_env}}"
