@@ -12,7 +12,7 @@
     - name: Applying migrations
       become: "{{lm_become}}"
       become_user: "{{web_user}}"
-      shell: "DJANGO_SETTINGS_MODULE=flat_settings django-admin migrate --run-syncdb"
+      shell: "PYTHONPATH={{lm_prefix}}/etc DJANGO_SETTINGS_MODULE=flat_settings django-admin migrate --run-syncdb"
       args:
           executable: /bin/bash
           chdir: "{{lm_prefix}}/etc"
@@ -22,6 +22,7 @@
       become: "{{lm_become}}"
       become_user: "{{web_user}}"
       shell: |
+        export PYTHONPATH="{{lm_prefix}}/etc" DJANGO_SETTINGS_MODULE=flat_settings
         echo -n "
         from django.contrib.auth.models import User
 
