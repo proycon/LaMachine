@@ -201,6 +201,20 @@
     - import_tasks: virtualenv.yml
       when: localenv_type == 'virtualenv' and locality == "local"
 
+    - name: Compiling boost from source for CentOS/RHEL
+      shell:
+          if [ ! -d boost_1_66_0 ]; then
+              wget https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.gz
+              tar xvf boost_1_66_0.tar.gz
+              cd boost_1_66_0
+              ./bootstrap.sh  --with-python=python3.6 --with-python-version=3.6 --prefix={{lm_prefix}}
+              ./b2 install --config=project-config.jam --prefix={{lm_prefix}} --with=all
+          fi
+      args:
+          executable: /bin/bash
+          chdir: "{{source_path}}"
+      when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+
     - name: Enable activation script globally
       become: yes
       become_user: root
