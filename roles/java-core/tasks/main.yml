@@ -22,3 +22,4 @@
       name: java
       path: /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
     when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
+    ignore_errors: yes
