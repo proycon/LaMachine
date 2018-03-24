@@ -65,7 +65,7 @@
     - name: Compiling boost from source for CentOS/RHEL
       become: yes
       become_user: root
-      shell:          
+      shell:
           if [ ! -d boost_1_66_0 ]; then
               wget https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.gz
               tar xvf boost_1_66_0.tar.gz
