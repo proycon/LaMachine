@@ -119,6 +119,7 @@ the installation procedure.
     * [Hunspell](http://hunspell.github.io) - A spell checker
     * [NextFlow](http://www.nextflow.io) - A system and language for writing parallel and scalable pipelines in a portable manner.
     * [R](https://r-project.org)
+    * [Java](http://openjdk.java.net/)
 
 Note that some software may not be available on certain platforms/distributions (most notably Mac OS X).
 
