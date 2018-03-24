@@ -42,3 +42,15 @@
       when: ansible_distribution|lower != "centos" and ansible_distribution|lower != "rhel" #aka fedora mainly
 
 
+      #############################################################
+      # ANSIBLE installation so we can bootstrap ourselves
+      ############################################################
+
+    - when: locality == "global"
+      block:
+        - name: Install ansible
+          become: true
+          become_user: root
+          yum:
+            name: "ansible"
+            state: installed
