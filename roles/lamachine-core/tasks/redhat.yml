@@ -15,6 +15,7 @@
       args:
           executable: /bin/bash
       when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+      ignore_errors: yes #would return 1 when already installed (during update)
 
     - name: Updating base system (YUM)
       become: true
