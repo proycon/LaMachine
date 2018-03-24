@@ -91,6 +91,14 @@
           createhome: no
           state: present
 
+      - name: "Ensure {{unix_user}} user is also in {{web_user}} group"
+        become: true
+        become_user: root
+        user:
+          name: "{{unix_user}}"
+          group: "{{web_user}}"
+          append: yes
+
       - name: Install webserver configuration
         become: true
         become_user: root
@@ -107,7 +115,8 @@
             path: "{{ lm_prefix }}/{{item}}"
             state: directory
             owner: "{{web_user}}"
-            mode: u+rwx,a+rx
+            group: "{{web_user}}"
+            mode: u+rwx,g+rwsx,a+rx
         with_items:
             - "var/log/uwsgi"
             - "var/log/nginx"
