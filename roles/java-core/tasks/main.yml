@@ -16,6 +16,8 @@
     when: ansible_distribution|lower == "macosx"
 
   - name: Ensure correct java version is selected (Debian/Ubuntu)
+    become: "{{lm_become}}"
+    become_user: root
     alternatives:
       name: java
       path: /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
