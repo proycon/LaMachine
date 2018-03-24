@@ -202,7 +202,8 @@
       when: localenv_type == 'virtualenv' and locality == "local"
 
     - name: Compiling boost from source for CentOS/RHEL
-      shell:
+      shell: |
+          #!/bin/bash
           if [ ! -d boost_1_66_0 ]; then
               wget https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.gz
               tar xvf boost_1_66_0.tar.gz
