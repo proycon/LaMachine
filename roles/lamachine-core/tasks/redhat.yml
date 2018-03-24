@@ -11,7 +11,7 @@
       become: true
       become_user: root
       shell: |
-           yum install https://$(rpm -E '%{?centos:centos}%{!?centos:rhel}%{rhel}').iuscommunity.org/ius-release.rpm
+           yum install -y https://$(rpm -E '%{?centos:centos}%{!?centos:rhel}%{rhel}').iuscommunity.org/ius-release.rpm
       args:
           executable: /bin/bash
       when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
