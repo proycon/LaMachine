@@ -513,6 +513,7 @@ for package in $NEED; do
             done
         else
             echo "No automated installation possible on your OS."
+            if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
             echo "Please install vagrant manually from https://www.vagrantup.com/downloads.html and VirtualBox from https://www.virtualbox.org/" && echo " .. press ENTER when done or CTRL-C to abort..." && read
         fi
     elif [ "$package" = "vbguest" ]; then
@@ -534,6 +535,7 @@ for package in $NEED; do
             done
         else
             echo "${boldred}Automated installation of vagrant-vbguest failed!${normal}"
+            if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
         fi
     elif [ "$package" = "docker" ]; then
         echo "We expect users of docker to be able to install docker themselves."
@@ -589,6 +591,7 @@ for package in $NEED; do
             done
         else
             echo "No automated installation possible on your OS."
+            if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
             echo "Please install git manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
         fi
     elif [ "$package" = "pip" ]; then
@@ -618,6 +621,7 @@ for package in $NEED; do
             done
         else
             echo "No automated installation possible on your OS."
+            if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
             echo "Please install pip manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
         fi
     elif [ "$package" = "virtualenv" ]; then
@@ -649,6 +653,7 @@ for package in $NEED; do
             done
         else
             echo "No automated installation possible on your OS."
+            if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
             echo "Please install virtualenv manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
         fi
     fi
