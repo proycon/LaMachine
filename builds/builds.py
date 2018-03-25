@@ -64,6 +64,12 @@ buildmatrix = [
         "version": 'stable',
         "context": "ubuntu1604",
     },
+    {
+        "name": 'stable-venv-arch',
+        "flavour": 'local',
+        "version": 'stable',
+        "context": "arch",
+    },
     ##### SPECIALISED BUILDS WITH OPTIONAL SOFTWARE ######
     {
         "name": 'piccl',
