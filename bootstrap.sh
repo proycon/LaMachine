@@ -195,6 +195,10 @@ if [[ "$OS" == "mac" ]]; then
         NEED+=("brew-cask")
     fi
 fi
+if [ ! -z "$NEED" ]; then
+    echo " Missing dependencies: $NEED"
+fi
+
 
 while [[ $# -gt 0 ]]; do
     key="$1"
