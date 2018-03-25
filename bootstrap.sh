@@ -402,6 +402,28 @@ if [ -z "$GITREPO" ]; then
     GITREPO="https://github.com/proycon/LaMachine"
 fi
 
+if [ -z "$SUDO" ]; then
+    if [ $INTERACTIVE -eq 0 ]; then
+        SUDO=1 #assume root (use --noadmin option otherwise)
+    else
+        while true; do
+            echo
+            echo "The installation relies on certain software to be available on your (host)"
+            echo "system. It will be automatically obtained from your distribution's package manager"
+            echo "or another official source whenever possible. You need to have sudo permission for this though..."
+            echo "${red}Answering 'no' to this question may make installation on your system impossible!${normal}"
+            echo
+            echo -n "${bold}Do you have administrative access (root/sudo) on the current system?${normal} [yn] "
+            read yn
+            case $yn in
+                [Yy]* ) SUDO=1; break;;
+                [Nn]* ) SUDO=0; break;;
+                * ) echo "Please answer yes or no.";;
+            esac
+        done
+    fi
+fi
+
 echo "Looking for dependencies..."
 if ! which git; then
     NEED+=("git")
@@ -478,27 +500,6 @@ if [ "$FLAVOUR" == "docker" ]; then
     fi
 fi
 
-if [ -z "$SUDO" ]; then
-    if [ $INTERACTIVE -eq 0 ]; then
-        SUDO=1 #assume root (use --noadmin option otherwise)
-    else
-        while true; do
-            echo
-            echo "The installation relies on certain software to be available on your (host)"
-            echo "system. It will be automatically obtained from your distribution's package manager"
-            echo "or another official source whenever possible. You need to have sudo permission for this though..."
-            echo "${red}Answering 'no' to this question may make installation on your system impossible!${normal}"
-            echo
-            echo -n "${bold}Do you have administrative access (root/sudo) on the current system?${normal} [yn] "
-            read yn
-            case $yn in
-                [Yy]* ) SUDO=1; break;;
-                [Nn]* ) SUDO=0; break;;
-                * ) echo "Please answer yes or no.";;
-            esac
-        done
-    fi
-fi
 
 
 NONINTERACTIVEFLAGS=""
