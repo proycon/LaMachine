@@ -37,6 +37,9 @@ install the Linux Subsystem with a distribution of your choice (we recommend Ubu
 the instructions [here](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide). Are you on an older Windows?
 Then this won't work you have will to use a pre-built Virtual Machine. (installation path C)
 
+Building LaMachine can take quite some time, depending also on your computer's resources, internet connection, and the
+amount of software you selected to install. Half an hour to an hour is a normal build time.
+
 ### B) Pre-built container image for Docker
 
 We regularly build a basic LaMachine image an publish it to [Docker Hub](https://hub.docker.com/r/proycon/lamachine/).

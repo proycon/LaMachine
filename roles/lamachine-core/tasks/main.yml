@@ -264,6 +264,8 @@
           - "bin/activate.d"
           - etc
           - lib
+          - include
+          - sbin
           - share
           - opt
           - var
