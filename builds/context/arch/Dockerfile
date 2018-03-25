@@ -5,6 +5,7 @@ EXPOSE 80
 USER root
 MAINTAINER Maarten van Gompel <proycon@anaproy.nl>
 LABEL Description="LaMachine Local Test"
+RUN pacman --noconfirm -Su wget
 RUN useradd -ms /bin/bash lamachine
 RUN echo "lamachine:lamachine" | chpasswd
 RUN echo "lamachine ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
