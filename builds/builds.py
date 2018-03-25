@@ -1,4 +1,5 @@
 buildmatrix = [
+    ##### DEBIAN 9 (stretch) [default] ######
     {
         "name": 'stable',
         "flavour": 'vagrant',
@@ -19,6 +20,7 @@ buildmatrix = [
         "flavour": 'docker',
         "version": 'development'
     },
+    ##### OTHER DISTRIBUTIONS ######
     {
         "name": 'stable-centos7',
         "flavour": 'vagrant',
@@ -32,23 +34,30 @@ buildmatrix = [
         "vagrantbox": "ubuntu/xenial64"
     },
     {
+        "name": 'stable-ubuntu1804',
+        "flavour": 'vagrant',
+        "version": 'stable',
+        "vagrantbox": "ubuntu/bionic64"
+    },
+    {
         "name": 'stable-fedora27',
         "flavour": 'vagrant',
         "version": 'stable',
         "vagrantbox": "fedora/27-cloud-base"
     },
+    ##### SPECIALISED BUILDS WITH OPTIONAL SOFTWARE ######
     {
-        "name": 'piccl-stable',
+        "name": 'piccl',
         "flavour": 'docker',
         "version": 'stable',
         "minimal": True,
-        "install": "python-core,languagemachines-basic,languagemachines-python,piccl"
+        "install": "piccl"
     },
     {
-        "name": 'tscan-stable',
+        "name": 'tscan',
         "flavour": 'docker',
         "version": 'stable',
         "minimal": True,
-        "install": "python-core,languagemachines-basic,languagemachines-python,alpino,tscan"
+        "install": "tscan"
     }
 ]
