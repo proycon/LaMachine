@@ -5,8 +5,8 @@ EXPOSE 80
 USER root
 MAINTAINER Maarten van Gompel <proycon@anaproy.nl>
 LABEL Description="LaMachine Local Test"
-RUN yum update
-RUN yum install -y python sudo wget
+RUN yum -y update
+RUN yum -y install python sudo wget
 RUN useradd -ms /bin/bash lamachine
 RUN echo "lamachine:lamachine" | chpasswd
 RUN adduser lamachine sudo
