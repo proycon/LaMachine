@@ -537,7 +537,7 @@ for package in ${NEED[@]}; do
                     yn="y"
                 fi
                 case $yn in
-                    [Yy]* ) $cmd; break;;
+                    [Yy]* ) eval $cmd; break;;
                     [Nn]* ) echo "Please install vagrant manually from https://www.vagrantup.com/downloads.html and VirtualBox from https://www.virtualbox.org/" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
                     * ) echo "Please answer yes or no.";;
                 esac
@@ -672,7 +672,7 @@ for package in ${NEED[@]}; do
                     yn="y"
                 fi
                 case $yn in
-                    [Yy]* ) $cmd || fatalerror "Ansible installation failed"; break;;
+                    [Yy]* ) eval $cmd || fatalerror "Ansible installation failed"; break;;
                     [Nn]* ) echo "Please install Ansible manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
                     * ) echo "Please answer yes or no.";;
                 esac
