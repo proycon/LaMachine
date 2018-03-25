@@ -39,7 +39,7 @@
       yum:
         name: "{{item}}"
         state: installed
-      with_items: [python36u, python36u-devel, python36u-pip, python36u-setuptools, libicu-devel] #will need to be updated once CentOS progresses..
+      with_items: [python36u, python36u-devel, python36u-pip, python36u-setuptools, python-virtualenv, libicu-devel]
       when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
 
     - name: Linking Python 3.6 (RHEL/CentOS)
