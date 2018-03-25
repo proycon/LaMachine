@@ -9,6 +9,10 @@
 # Licensed under GPLv3
 #=====================================
 
+export LC_ALL=en_US.UTF-8
+export LANGUAGE=en_US.UTF-8
+export LANG=en_US.UTF-8
+
 bold=$(tput bold)
 boldred=${bold}$(tput setaf 1) #  red
 boldgreen=${bold}$(tput setaf 2) #  green

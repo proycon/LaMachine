@@ -10,7 +10,9 @@ MAINTAINER Maarten van Gompel <proycon@anaproy.nl>
 LABEL Description="A distribution containing NLP software developed by the Language Machines Research Group and the Centre of Language and Speech Technology (both Radboud University Nijmegen) and the Tilburg Centre for Cognition and Communication (Tilburg University)"
 VOLUME $DATA_PATH
 RUN apt-get update
-RUN apt-get install -m -y python python-pip sudo apt-utils
+RUN apt-get install -m -y python python-pip sudo apt-utils locales
+RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen
+RUN locale-gen
 RUN pip install ansible
 RUN useradd -ms /bin/bash $UNIX_USER
 RUN echo "$UNIX_USER:lamachine" | chpasswd
