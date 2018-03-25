@@ -412,12 +412,13 @@ else
     NEED_VIRTUALENV=1 #Do we need a virtualenv with ansible for the controller? (this is a default we will attempt to falsify)
     if which ansible-playbook; then
         NEED_VIRTUALENV=0
-    elif [ "$SUDO" -eq 1 ]; then #we can only install ansible globally if we have root
+    elif [ $SUDO -eq 1 ]; then #we can only install ansible globally if we have root
         if [ "$OS" != "mac" ]; then #pip is preferred on mac
             if [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
                 NEED+=("epel") #ansible is in  EPEL
             fi
             NEED+=("ansible")
+            NEED_VIRTUALENV=0
         fi
     fi
     if [ $NEED_VIRTUALENV -eq 1 ]; then
@@ -450,7 +451,7 @@ if [[ "$OS" == "mac" ]]; then
     fi
 fi
 if [ ! -z "$NEED" ]; then
-    echo " Missing dependencies: $NEED"
+    echo " Missing dependencies: ${NEED[@]}"
 fi
 
 if [ "$FLAVOUR" == "vagrant" ]; then
@@ -659,6 +660,26 @@ for package in ${NEED[@]}; do
             cmd="sudo pacman  $NONINTERACTIVEFLAGS -Sy ansible"
         else
             continue
+        fi
+        echo "Ansible is required for LaMachine but not installed yet. ${bold}Install now?${normal}"
+        if [ ! -z "$cmd" ]; then
+            while true; do
+                echo -n "${bold}Run:${normal} $cmd ? [yn] "
+                if [ "$INTERACTIVE" -eq 1 ]; then
+                    read yn
+                else
+                    yn="y"
+                fi
+                case $yn in
+                    [Yy]* ) $cmd || fatalerror "Ansible installation failed"; break;;
+                    [Nn]* ) echo "Please install Ansible manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
+                    * ) echo "Please answer yes or no.";;
+                esac
+            done
+        else
+            echo "No automated installation possible on your OS."
+            if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
+            echo "Please install Ansible manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
         fi
     elif [ "$package" = "pip" ]; then
         if [ "$OS" = "debian" ]; then
