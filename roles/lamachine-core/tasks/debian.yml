@@ -7,7 +7,7 @@
     - name: Version check (Ubuntu)
       debug:
          msg: "WARNING: Your version of Ubuntu is older than recommended, upgrade to the latest LTS release"
-      when: ansible_distribution|lower == "ubuntu" and ansible_distribution_version <= 16.04
+      when: ansible_distribution|lower == "ubuntu" and ansible_distribution_version < 16.04
 
     - name: Version check (Debian)
       fail:
@@ -17,7 +17,7 @@
     - name: Version check (Debian)
       debug:
           msg: "WARNING: Your version of Debian is older than recommended, upgrade to the latest stable release"
-      when: ansible_distribution|lower == "debian" and ansible_distribution_major_version|int <= 9
+      when: ansible_distribution|lower == "debian" and ansible_distribution_major_version|int < 9
 
     - name: Installing aptitude (APT) #needed by ansible apt module in next step
       become: true
