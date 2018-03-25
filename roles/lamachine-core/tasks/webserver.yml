@@ -42,7 +42,7 @@
           name: "{{item}}"
           state: latest
         with_items: [nginx, uwsgi, uwsgi-plugin-python]
-        when: (ansible_distribution|lower == "arch")
+        when: (ansible_distribution|lower == "archlinux")
 
       - name: Adding webserver start script (debian)
         become: true

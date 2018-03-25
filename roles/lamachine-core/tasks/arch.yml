@@ -5,7 +5,6 @@
       pacman:
          update_cache: yes
          upgrade: yes
-      when: root == True
 
     - name: installing common base packages (Arch)
       become: true

@@ -22,7 +22,7 @@
       pacman:
         name: "{{package.arch}}"
         state: installed
-      when: root and "arch" in package and (ansible_distribution|lower == "arch")
+      when: root and "arch" in package and (ansible_distribution|lower == "archlinux")
 
     - name: "{% if 'homebrew' in package %}{{package.homebrew}}{% else %}(NOT APPLICABLE){% endif %} - Installing global dependency (Mac OS X/Homebrew)"
       homebrew:
