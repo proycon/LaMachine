@@ -789,9 +789,12 @@ fi
 if [ ! -d lamachine-controller/$LM_NAME ]; then
     echo "Setting up control environment..."
     if [[ "$FLAVOUR" != "docker" ]]; then
-        if which python3; then
+        if which python3.6; then
             echo "(Using python3)"
-            PYTHON=python3
+            PYTHON=python3.6
+        elif which python3.5; then #older not supported by ansible
+            echo "(Using python3)"
+            PYTHON=python3.5
         else
             PYTHON=python
         fi
