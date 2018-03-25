@@ -414,7 +414,7 @@ else
         NEED_VIRTUALENV=0
     elif [ "$SUDO" -eq 1 ]; then #we can only install ansible globally if we have root
         if [ "$OS" != "mac" ]; then #pip is preferred on mac
-            if [ "$DISTRIB_IB" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
+            if [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
                 NEED+=("epel") #ansible is in  EPEL
             fi
             NEED+=("ansible")
@@ -422,7 +422,7 @@ else
     fi
     if [ $NEED_VIRTUALENV -eq 1 ]; then
         if ! which pip; then
-            if [ "$DISTRIB_IB" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
+            if [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
                 NEED+=("epel") #python-pip is in  EPEL
             fi
             NEED+=("pip")
