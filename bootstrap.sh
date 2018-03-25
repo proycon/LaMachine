@@ -172,36 +172,6 @@ if [[ "$USERNAME" == "root" ]]; then
     fatalerror "Do not run the LaMachine bootstrap process as root!"
 fi
 
-echo "Looking for dependencies..."
-if ! which git; then
-    NEED+=("git")
-fi
-if ! which pip; then
-    NEED+=("pip")
-fi
-if ! which virtualenv; then
-    NEED+=("virtualenv")
-fi
-if [ -z "$EDITOR" ]; then
-    if which nano; then
-        EDITOR=nano
-    else
-        EDITOR=vi
-    fi
-fi
-if [[ "$OS" == "mac" ]]; then
-    if ! which brew; then
-        NEED+=("brew")
-    fi
-    if brew info brew-cask | grep "brew-cask" >/dev/null 2>&1 ; then
-        echo "brew-cask found"
-    else
-        NEED+=("brew-cask")
-    fi
-fi
-if [ ! -z "$NEED" ]; then
-    echo " Missing dependencies: $NEED"
-fi
 
 
 while [[ $# -gt 0 ]]; do
@@ -432,6 +402,57 @@ if [ -z "$GITREPO" ]; then
     GITREPO="https://github.com/proycon/LaMachine"
 fi
 
+echo "Looking for dependencies..."
+if ! which git; then
+    NEED+=("git")
+fi
+if [ "$FLAVOUR" = "docker" ]; then
+    NEED_VIRTUALENV=0 #Do we need a virtualenv with ansible for the controller? Never for docker, all ansible magic happens inside the docker container
+else
+    NEED_VIRTUALENV=1 #Do we need a virtualenv with ansible for the controller? (this is a default we will attempt to falsify)
+    if which ansible-playbook; then
+        NEED_VIRTUALENV=0
+    elif [ "$SUDO" -eq 1 ]; then #we can only install ansible globally if we have root
+        if [ "$OS" != "mac" ]; then #pip is preferred on mac
+            if [ "$DISTRIB_IB" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
+                NEED+=("epel") #ansible is in  EPEL
+            fi
+            NEED+=("ansible")
+        fi
+    fi
+    if [ $NEED_VIRTUALENV -eq 1 ]; then
+        if ! which pip; then
+            if [ "$DISTRIB_IB" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
+                NEED+=("epel") #python-pip is in  EPEL
+            fi
+            NEED+=("pip")
+        fi
+        if ! which virtualenv; then
+            NEED+=("virtualenv")
+        fi
+    fi
+fi
+if [ -z "$EDITOR" ]; then
+    if which nano; then
+        EDITOR=nano
+    else
+        EDITOR=vi
+    fi
+fi
+if [[ "$OS" == "mac" ]]; then
+    if ! which brew; then
+        NEED+=("brew")
+    fi
+    if brew info brew-cask | grep "brew-cask" >/dev/null 2>&1 ; then
+        echo "brew-cask found"
+    else
+        NEED+=("brew-cask")
+    fi
+fi
+if [ ! -z "$NEED" ]; then
+    echo " Missing dependencies: $NEED"
+fi
+
 if [ "$FLAVOUR" == "vagrant" ]; then
     echo "Looking for vagrant..."
     if ! which vagrant; then
@@ -602,11 +623,48 @@ for package in ${NEED[@]}; do
             if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
             echo "Please install git manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
         fi
+    elif [ "$package" = "epel" ]; then
+        cmd="sudo yum $NONINTERACTIVEFLAGS install epel-release"
+        echo "EPEL is required for LaMachine but not installed yet. ${bold}Install now?${normal}"
+        if [ ! -z "$cmd" ]; then
+            while true; do
+                echo -n "${bold}Run:${normal} $cmd ? [yn] "
+                if [ "$INTERACTIVE" -eq 1 ]; then
+                    read yn
+                else
+                    yn="y"
+                fi
+                case $yn in
+                    [Yy]* ) $cmd || fatalerror "EPEL installation failed"; break;;
+                    [Nn]* ) echo "Please install EPEL manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
+                    * ) echo "Please answer yes or no.";;
+                esac
+            done
+        else
+            echo "No automated installation possible on your OS."
+            if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
+            echo "Please install pip manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
+        fi
+    elif [ "$package" = "ansible" ]; then
+        if [ "$OS" = "debian" ]; then
+            if [ "$DISTRIB_ID" = "ubuntu" ]; then
+                #add PPA
+                cmd="sudo apt-get $NONINTERACTIVEFLAGS update && sudo apt-get $NONINTERACTIVEFLAGS install software-properties-common && sudo apt-add-repository -y ppa:ansible/ansible && sudo apt-get $NONINTERACTIVEFLAGS update && sudo apt-get $NONINTERACTIVEFLAGS install ansible"
+            else
+                cmd="sudo echo 'deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main' >> /etc/apt/sources.list && sudo apt-get $NONINTERACTIVEFLAGS update && sudo apt-get $NONINTERACTIVEFLAGS install ansible"
+            fi
+        elif [ "$OS" = "redhat" ]; then
+            cmd="sudo yum  $NONINTERACTIVEFLAGS install ansible"
+        elif [ "$OS" = "arch" ]; then
+            cmd="sudo pacman  $NONINTERACTIVEFLAGS -Sy ansible"
+        else
+            continue
+        fi
     elif [ "$package" = "pip" ]; then
         if [ "$OS" = "debian" ]; then
             cmd="sudo apt-get  $NONINTERACTIVEFLAGS install python-pip"
         elif [ "$OS" = "redhat" ]; then
-            cmd="sudo yum $NONINTERACTIVEFLAGS install epel-release && sudo yum  $NONINTERACTIVEFLAGS install python-pip"
+            cmd="sudo yum  $NONINTERACTIVEFLAGS install python-pip"
         elif [ "$OS" = "arch" ]; then
             cmd="sudo pacman  $NONINTERACTIVEFLAGS -Sy python-pip"
         elif [ "$OS" = "mac" ]; then
@@ -788,23 +846,16 @@ fi
 
 if [ ! -d lamachine-controller/$LM_NAME ]; then
     echo "Setting up control environment..."
-    if [[ "$FLAVOUR" != "docker" ]]; then
-        if [ -e /usr/bin/python3.6 ]; then
-            echo "(Using python3)"
-            PYTHON=python3.6
-        elif [ -e /usr/bin/python3.5 ]; then #older not supported by ansible
-            echo "(Using python3)"
-            PYTHON=python3.5
-        else
-            PYTHON=python
-        fi
-        virtualenv --python=$PYTHON lamachine-controller/$LM_NAME || fatalerror "Unable to create LaMachine control environment"
+    if [ $NEED_VIRTUALENV -eq 1 ]; then
+        echo " (with virtualenv and ansible inside)"
+        virtualenv lamachine-controller/$LM_NAME || fatalerror "Unable to create LaMachine control environment"
         cd lamachine-controller/$LM_NAME
         source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
         pip install -U setuptools
         pip install ansible || fatalerror "Unable to install Ansible"
         #pip install docker==2.7.0 docker-compose ansible-container[docker]
     else
+        echo " (simple)"
         mkdir lamachine-controller/$LM_NAME && cd lamachine-controller/$LM_NAME #no need for a virtualenv
     fi
 else
@@ -966,7 +1017,7 @@ else
     echo "No bootstrap for $FLAVOUR implemented yet at this stage, sorry!!">&2
     rc=1
 fi
-if [[ "$FLAVOUR" != "docker" ]]; then
+if [ $NEED_VIRTUALENV -eq 1 ]; then
     deactivate #deactivate the controller before quitting
 fi
 exit $rc
