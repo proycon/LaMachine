@@ -315,7 +315,7 @@
       shell: |
           #!/bin/bash
           if [ ! -d boost_1_66_0 ]; then
-              wget -q "ansible_python_interpreter:https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.gz
+              wget -q https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.gz
               tar xf boost_1_66_0.tar.gz
               cd boost_1_66_0
               ./bootstrap.sh  --with-python=python3.6 --with-python-version=3.6 --prefix={{lm_prefix}}
