@@ -709,16 +709,19 @@ locality: \"$LOCALITY\" #local or global?
     else
         echo "prefer_distro: false #prefer using the distribution's packages as much as possible rather than distribution channels such as pip (this will install more conservative versions but may break certain things)" >> $CONFIGFILE
     fi
-echo "
-webserver: true #include a webserver
-http_port: 80 #webserver port (for VM or docker)
+    if [ $OS = "mac" ]; then
+        echo "webserver: false #include a webserver" >> $CONFIGFILE
+    else
+        echo "webserver: true #include a webserver" >> $CONFIGFILE
+    fi
+echo "http_port: 80 #webserver port (for VM or docker)
 mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
 " >> $CONFIGFILE
-if [[ $FLAVOUR == "local" ]]; then
-    echo "web_user: \"$USERNAME\"" >> $CONFIGFILE
-else
-    echo "web_user: \"www-data\"" >> $CONFIGFILE
-fi
+    if [[ $FLAVOUR == "local" ]]; then
+        echo "web_user: \"$USERNAME\"" >> $CONFIGFILE
+    else
+        echo "web_user: \"www-data\"" >> $CONFIGFILE
+    fi
 
 if [ $INTERACTIVE -eq 1 ]; then
     echo "${bold}Opening configuration file $CONFIGFILE in editor for final configuration...${normal}"

@@ -2,8 +2,7 @@
 [![Build Status](https://travis-ci.org/proycon/LaMachine.svg?branch=master)](https://travis-ci.org/proycon/LaMachine)
 [![Docker Pulls](https://img.shields.io/docker/pulls/proycon/lamachine.svg)](https://hub.docker.com/r/proycon/lamachine/)
 
-LaMachine
-===========
+# LaMachine
 
 LaMachine is a unified software distribution for Natural Language Processing.  We integrate numerous open-source NLP
 tools, programming libraries, web-services, and web-applications in a single Virtual Research Environment that can be
@@ -19,8 +18,7 @@ command line and some programming. We give you the instruments and it is up to y
 attempt to accommodate researchers that require more high-level interfaces by incorporating webservices and websites
 that expose some of the functionality to a larger audience.
 
-Installation
----------------
+## Installation
 
 ### Custom build (recommended)
 
@@ -78,8 +76,7 @@ This requires you to already have [Vagrant](https://www.vagrantup.com/) and [Vir
 The pre-built image contains only a basic set of common software rather than the full set, run ``lamachine-stable-update --edit``
 inside the virtual machine to select extra software to install.
 
-Included Software
----------------------
+## Included Software
 
 LaMachine includes a wide variety of open-source NLP software. You can select which software you want to include during
 the installation procedure.
@@ -125,14 +122,12 @@ Note that some software may not be available on certain platforms/distributions 
 
 For a verbose list of installed software, run ``lamachine-list`` once you are inside your LaMachine installation.
 
-Contribute
------------------
+## Contribute
 
 LaMachine is open for contributions by other software projects, please read [the contributor
 documentation](https://github.com/proycon/LaMachine/blob/lamachine2/CONTRIBUTING.md).
 
-Architecture
--------------------
+## Architecture
 
 LaMachine can be installed in multiple *flavours*:
 
@@ -146,9 +141,18 @@ over whatever underlying technology is employed. Containerisation uses [Docker](
 made possible through [Vagrant](https://vagrantup.com) and [VirtualBox](https://virtualbox.org). The local installation
 variant uses virtualenv with some custom extensions.
 
-LaMachine uses [Debian](https://www.debian.org) as primary Linux distribution (for virtualisation and containerisation), but
-derivatives like Ubuntu and certain other distributions such as RHEL, CentOS, Fedora and Arch Linux are also supported
-(though may be unsupported by a minority of participating software).
+LaMachine uses [Debian](https://www.debian.org) as primary Linux distribution (for virtualisation and containerisation),
+we generally support the following platforms (but certain participating software may not support all!):
+
+ * Debian 9 (stretch) - *This is the primary platform and the only one for which ALL participating software is
+   guaranteed to work*
+ * Ubuntu 18.04 LTS
+ * Ubuntu 16.04 LTS
+ * Ubuntu 14.04 LTS - *Being phased out and not recommended*
+ * CentOS 7 / RedHat Enterprise Linux 7
+ * Fedora 27
+ * Arch Linux
+ * Mac OS X 10.13 (High Sierra) - *Limited support only! No webservices/applications. Various optional software will not support Mac OS X either*
 
 Initially, the user executes a ``bootstrap.sh`` script that acts as a single point of entry for all flavours. It will
 automatically download LaMachine and create the necessary configuration files for your LaMachine build, guiding you
@@ -161,9 +165,9 @@ In addition to a flavour, users can opt for one of three versions of LaMachine:
    installed straight from the latest git version.
  * **custom** - Installs explicitly defined versions for all software (for e.g. scientific reproducibility).
 
+Read more about the technical details in the [the contributor documentation](https://github.com/proycon/LaMachine/blob/lamachine2/CONTRIBUTING.md).
 
-Usage
-------------
+## Usage
 
 How to start LaMachine differs a bit depending on your flavour.
 
@@ -239,8 +243,7 @@ default value).
 Note that there is no currently or poor authentication enabled on the webservices, so do not
 expose them to the outside world!
 
-Privacy
-============
+## Privacy
 
 Unless you explicitly opt-out, LaMachine sends a few details to us regarding your installation of LaMachine whenever you
 build a new one or update an existing one. This is to help us keep track of its usage and improve it.
@@ -261,14 +264,12 @@ To opt-out of this behaviour, set ``private: true`` in your LaMachine settings.
 
 During build and upgrade, LaMachine downloads software from a wide variety of external sources.
 
-Versioning
-============
+## Versioning
 
     (this section needs to be (re)written still!)
 
 
-Frequently Asked Questioned & Troubleshooting
-=================================================
+## Frequently Asked Questioned & Troubleshooting
 
 #### Q: Do I need LaMachine?
 
