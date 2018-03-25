@@ -59,10 +59,10 @@ buildmatrix = [
         "context": "centos7",
     },
     {
-        "name": 'stable-venv-ubuntu1804',
+        "name": 'stable-venv-ubuntu1604',
         "flavour": 'local',
         "version": 'stable',
-        "context": "ubuntu1804",
+        "context": "ubuntu1604",
     },
     ##### SPECIALISED BUILDS WITH OPTIONAL SOFTWARE ######
     {
