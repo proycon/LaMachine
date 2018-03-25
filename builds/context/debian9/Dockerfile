@@ -6,7 +6,7 @@ USER root
 MAINTAINER Maarten van Gompel <proycon@anaproy.nl>
 LABEL Description="LaMachine Local Test"
 RUN apt-get update
-RUN apt-get install -m -y python sudo apt-utils wget locales language-pack-en
+RUN apt-get install -m -y python sudo apt-utils wget locales
 RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen
 RUN locale-gen
 RUN useradd -ms /bin/bash lamachine
