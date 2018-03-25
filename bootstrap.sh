@@ -471,16 +471,26 @@ if [ -z "$SUDO" ]; then
 fi
 
 
+NONINTERACTIVEFLAGS=""
+if [ "$INTERACTIVE" -eq 0 ]; then
+    if [ "$OS" = "debian" ]; then
+        NONINTERACTIVEFLAGS="-m -y"
+    elif [ "$OS" = "redhat" ]; then
+        NONINTERACTIVEFLAGS="-y"
+    elif [ "$OS" = "arch" ]; then
+        NONINTERACTIVEFLAGS="--noconfirm"
+    fi
+fi
 
 
 for package in $NEED; do
     if [ "$package" = "vagrant" ]; then
         if [ "$OS" = "debian" ]; then
-            cmd="sudo apt install virtualbox vagrant"
+            cmd="sudo apt-get $NONINTERACTIVEFLAGS install virtualbox vagrant"
         elif [ "$OS" = "redhat" ]; then
-            cmd="sudo yum install virtualbox vagrant"
+            cmd="sudo yum $NONINTERACTIVEFLAGS install virtualbox vagrant"
         elif [ "$OS" = "arch" ]; then
-            cmd="sudo pacman -Sy virtualbox vagrant"
+            cmd="sudo pacman $NONINTERACTIVEFLAGS -Sy virtualbox vagrant"
         elif [ "$OS" = "mac" ]; then
             cmd="brew install brew-cask && brew cask install virtualbox vagrant"
         else
@@ -552,11 +562,11 @@ for package in $NEED; do
         brew install brew-cask
     elif [ "$package" = "git" ]; then
         if [ "$OS" = "debian" ]; then
-            cmd="sudo apt install git-core"
+            cmd="sudo apt-get $NONINTERACTIVEFLAGS install git-core"
         elif [ "$OS" = "redhat" ]; then
-            cmd="sudo yum install git"
+            cmd="sudo yum $NONINTERACTIVEFLAGS install git"
         elif [ "$OS" = "arch" ]; then
-            cmd="sudo pacman -Sy git"
+            cmd="sudo pacman $NONINTERACTIVEFLAGS -Sy git"
         elif [ "$OS" = "mac" ]; then
             cmd="brew install git"
         else
@@ -583,11 +593,11 @@ for package in $NEED; do
         fi
     elif [ "$package" = "pip" ]; then
         if [ "$OS" = "debian" ]; then
-            cmd="sudo apt install python-pip"
+            cmd="sudo apt-get  $NONINTERACTIVEFLAGS install python-pip"
         elif [ "$OS" = "redhat" ]; then
-            cmd="sudo yum install python-pip"
+            cmd="sudo yum  $NONINTERACTIVEFLAGS install python-pip"
         elif [ "$OS" = "arch" ]; then
-            cmd="sudo pacman -Sy python-pip"
+            cmd="sudo pacman  $NONINTERACTIVEFLAGS -Sy python-pip"
         elif [ "$OS" = "mac" ]; then
             cmd="sudo easy_install pip"
         fi
@@ -612,11 +622,11 @@ for package in $NEED; do
         fi
     elif [ "$package" = "virtualenv" ]; then
         if [ "$OS" = "debian" ]; then
-            cmd="sudo apt install python-virtualenv"
+            cmd="sudo apt $NONINTERACTIVEFLAGS install python-virtualenv"
         elif [ "$OS" = "redhat" ]; then
-            cmd="sudo yum install python-virtualenv"
+            cmd="sudo yum  $NONINTERACTIVEFLAGS install python-virtualenv"
         elif [ "$OS" = "arch" ]; then
-            cmd="sudo pacman -Sy python-virtualenv"
+            cmd="sudo pacman  $NONINTERACTIVEFLAGS -Sy python-virtualenv"
         elif [ "$OS" = "mac" ]; then
             cmd="sudo pip install virtualenv"
         else
