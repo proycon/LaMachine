@@ -6,7 +6,7 @@ USER root
 MAINTAINER Maarten van Gompel <proycon@anaproy.nl>
 LABEL Description="LaMachine Local Test"
 RUN yum -y update
-RUN yum -y install python sudo wget
+RUN yum -y install python sudo wget pkgconfig gcc
 RUN useradd -ms /bin/bash lamachine
 RUN echo "lamachine:lamachine" | chpasswd
 RUN echo "lamachine ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
