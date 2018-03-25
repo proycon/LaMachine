@@ -9,7 +9,6 @@ RUN yum -y update
 RUN yum -y install python sudo wget
 RUN useradd -ms /bin/bash lamachine
 RUN echo "lamachine:lamachine" | chpasswd
-RUN adduser lamachine sudo
 RUN echo "lamachine ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER lamachine
 WORKDIR /home/lamachine
