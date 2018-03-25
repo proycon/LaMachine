@@ -48,7 +48,7 @@ def test(build, args):
         #we build local tests in a docker container (clean environment), the dockerfile invokes the bootstrap:
         cwd = os.getcwd()
         os.chdir("context/" + build['context'])
-        r = os.system("docker build -t proycon/lamachine:" + build['name'] + " --build-arg NAME=" + build['name'] + " VERSION=" + build['version'] + " . 2> logs/" + buildid(build).replace(':','-') + '.log >&2')
+        r = os.system("docker build -t proycon/lamachine:" + build['name'] + " --build-arg NAME=" + build['name'] + " VERSION=" + build['version'] + " . 2> " + cwd + "/logs/" + buildid(build).replace(':','-') + '.log >&2')
         os.chdir(cwd)
     else:
         r = os.system("bash ../bootstrap.sh " + " ".join(passargs) + " --noninteractive --private --verbose --vmmem " + str(args.vmmem) + " 2> logs/" + buildid(build).replace(':','-') + ".log >&2")
