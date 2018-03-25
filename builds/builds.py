@@ -39,12 +39,12 @@ buildmatrix = [
         "version": 'stable',
         "vagrantbox": "ubuntu/bionic64"
     },
-    {
-        "name": 'stable-fedora27',
-        "flavour": 'vagrant',
-        "version": 'stable',
-        "vagrantbox": "fedora/27-cloud-base"
-    },
+    #{
+    #    "name": 'stable-fedora27',
+    #    "flavour": 'vagrant',
+    #    "version": 'stable',
+    #    "vagrantbox": "fedora/27-cloud-base" #this image won't boot
+    #},
     ##### SPECIALISED BUILDS WITH OPTIONAL SOFTWARE ######
     {
         "name": 'piccl',
