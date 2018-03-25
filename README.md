@@ -20,7 +20,7 @@ that expose some of the functionality to a larger audience.
 
 ## Installation
 
-### Custom build (recommended)
+### A) Custom build (recommended)
 
 To build your own LaMachine instance, in any of the possible flavours, open a terminal on your Linux, BSD or Mac OS X
 system and run the following command:
@@ -34,10 +34,10 @@ the software you want or need and ensures that all is up to date.
 
 Are you on Windows 10? Then you need to run this command in a Linux subsystem in Windows 10/2016 or above; to do this you must first
 install the Linux Subsystem with a distribution of your choice (we recommend Ubuntu) from the Microsoft Store. Follow
-the instructions [here](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide). Are you on an older Windows,
-then this won't work you have will to use a pre-built Virtual Machine.
+the instructions [here](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide). Are you on an older Windows?
+Then this won't work you have will to use a pre-built Virtual Machine. (installation path C)
 
-### Pre-built container image for Docker
+### B) Pre-built container image for Docker
 
 We regularly build a basic LaMachine image an publish it to [Docker Hub](https://hub.docker.com/r/proycon/lamachine/).
 To download and use it, run:
@@ -60,7 +60,7 @@ docker pull proycon/lamachine:develop
 docker run  -p 8080:80 -t -i proycon/lamachine:develop
 ```
 
-### Pre-built Virtual Machine image for Vagrant
+### C) Pre-built Virtual Machine image for Vagrant
 
 We regularly build a basic LaMachine image and publish it to the [Vagrant Cloud](https://app.vagrantup.com/proycon/).
 To download and use it, run:
@@ -141,6 +141,11 @@ over whatever underlying technology is employed. Containerisation uses [Docker](
 made possible through [Vagrant](https://vagrantup.com) and [VirtualBox](https://virtualbox.org). The local installation
 variant uses virtualenv with some custom extensions.
 
+Initially, the user executes a ``bootstrap.sh`` script that acts as a single point of entry for all flavours. It will
+automatically download LaMachine and create the necessary configuration files for your LaMachine build, guiding you
+through all the options. It will eventually invoke a so-called ansible playbook that executes installation steps for all
+of the individual software projects included in LaMachine, depending on your distribution and flavour.
+
 LaMachine uses [Debian](https://www.debian.org) as primary Linux distribution (for virtualisation and containerisation),
 we generally support the following platforms (but certain participating software may not support all!):
 
@@ -154,10 +159,9 @@ we generally support the following platforms (but certain participating software
  * Arch Linux
  * Mac OS X 10.13 (High Sierra) - *Limited support only! No webservices/applications. Various optional software will not support Mac OS X either*
 
-Initially, the user executes a ``bootstrap.sh`` script that acts as a single point of entry for all flavours. It will
-automatically download LaMachine and create the necessary configuration files for your LaMachine build, guiding you
-through all the options. It will eventually invoke a so-called ansible playbook that executes installation steps for all
-of the individual software projects included in LaMachine, depending on your distribution and flavour.
+This concerns the platforms LaMachine runs on natively or on which you can bootstrap your own build (installation path A). The options for host platforms
+for simply running a pre-built LaMachine Virtual Machine or Docker container, are much larger, and also include Windows
+(see installation paths B & C).
 
 In addition to a flavour, users can opt for one of three versions of LaMachine:
  * **stable** - Installs the latest official releases of all participating software
@@ -221,8 +225,9 @@ what you need (``docker start``, ``docker attach``).
 
 ### Updating LaMachine
 
-When you are inside LaMachine, you can update it by running ``lamachine-update``, if you first want to edit your LaMachine's settings and/or the packages to be
-installed/updated, run ``lamachine-update --edit`` instead.
+When you are inside LaMachine, you can update it by running ``lamachine-update``, if you first want to edit your
+LaMachine's settings and/or the packages to be installed/updated, run ``lamachine-update --edit`` instead. Do note that
+this can't be used to uninstall software.
 
 The update normally only updates what has changed, if you want to force an update of everything instead, run
 ``lamachine-update force=1``.
