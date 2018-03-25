@@ -849,6 +849,11 @@ mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
     else
         echo "web_user: \"www-data\"" >> $CONFIGFILE
     fi
+    if [ $OS = "arch" ]; then
+        if [[ $FLAVOUR == "local" ]] || [[ $FLAVOUR == "global" ]]; then
+            echo "ansible_python_interpreter: \"/bin/python2\" #Python interpreter for Vagrant to use with Ansible" >> $CONFIGFILE
+        fi
+    fi
 
 if [ $INTERACTIVE -eq 1 ]; then
     echo "${bold}Opening configuration file $CONFIGFILE in editor for final configuration...${normal}"
