@@ -323,6 +323,7 @@
           executable: /bin/bash
           chdir: "{{source_path}}"
       when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+      ignore_errors: yes
 
     - name: Installing ansible locally (conda)
       pip:
