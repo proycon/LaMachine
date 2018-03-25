@@ -123,7 +123,7 @@ fi
 if [ "$OS" = "unknown" ]; then
     echo "(Fallback: Detecting OS by finding installed package manager...)">&2
     ARCH=$(which pacman 2> /dev/null)
-    DEBIAN=$(which apt 2> /dev/null)
+    DEBIAN=$(which apt-get 2> /dev/null)
     REDHAT=$(which yum 2> /dev/null)
     if [ -e "$ARCH" ]; then
         OS='arch'
@@ -622,7 +622,7 @@ for package in $NEED; do
         fi
     elif [ "$package" = "virtualenv" ]; then
         if [ "$OS" = "debian" ]; then
-            cmd="sudo apt $NONINTERACTIVEFLAGS install python-virtualenv"
+            cmd="sudo apt-get $NONINTERACTIVEFLAGS install python-virtualenv"
         elif [ "$OS" = "redhat" ]; then
             cmd="sudo yum  $NONINTERACTIVEFLAGS install python-virtualenv"
         elif [ "$OS" = "arch" ]; then
@@ -776,7 +776,13 @@ fi
 if [ ! -d lamachine-controller/$LM_NAME ]; then
     echo "Setting up control environment..."
     if [[ "$FLAVOUR" != "docker" ]]; then
-        virtualenv --python=python2.7 lamachine-controller/$LM_NAME || fatalerror "Unable to create LaMachine control environment"
+        if which python3; then
+            echo "(Using python3)"
+            PYTHON=python3
+        else
+            PYTHON=python
+        fi
+        virtualenv --python=$PYTHON lamachine-controller/$LM_NAME || fatalerror "Unable to create LaMachine control environment"
         cd lamachine-controller/$LM_NAME
         source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
         pip install -U setuptools
