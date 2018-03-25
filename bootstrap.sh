@@ -490,7 +490,11 @@ for package in $NEED; do
         if [ ! -z "$cmd" ]; then
             while true; do
                 echo -n "${bold}Run:${normal} $cmd ? [yn] "
-                read yn
+                if [ "$INTERACTIVE" -eq 1 ]; then
+                    read yn
+                else
+                    yn="y"
+                fi
                 case $yn in
                     [Yy]* ) $cmd; break;;
                     [Nn]* ) echo "Please install vagrant manually from https://www.vagrantup.com/downloads.html and VirtualBox from https://www.virtualbox.org/" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
@@ -507,7 +511,11 @@ for package in $NEED; do
         if [ ! -z "$cmd" ]; then
             while true; do
                 echo -n "${bold}Run:${normal} $cmd ? [yn] "
-                read yn
+                if [ "$INTERACTIVE" -eq 1 ]; then
+                    read yn
+                else
+                    yn="y"
+                fi
                 case $yn in
                     [Yy]* ) $cmd; break;;
                     [Nn]* ) break;;
@@ -526,7 +534,11 @@ for package in $NEED; do
         echo "Homebrew (https://brew.sh) is required on Mac OS X but was not found yet"
         while true; do
             echo -n "${bold}Download and install homebrew?${normal} [yn] "
-            read yn
+            if [ "$INTERACTIVE" -eq 1 ]; then
+                read yn
+            else
+                yn="y"
+            fi
             case $yn in
                 [Yy]* ) break;;
                 [Nn]* ) echo "Unable to continue without homebrew, see https://brew.sh/"; exit 2;;
@@ -554,7 +566,11 @@ for package in $NEED; do
         if [ ! -z "$cmd" ]; then
             while true; do
                 echo -n "${bold}Run:${normal} $cmd ? [yn] "
-                read yn
+                if [ "$INTERACTIVE" -eq 1 ]; then
+                    read yn
+                else
+                    yn="y"
+                fi
                 case $yn in
                     [Yy]* ) $cmd || fatalerror "Git installation failed!"; break;;
                     [Nn]* ) echo "Please install git manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
@@ -579,7 +595,11 @@ for package in $NEED; do
         if [ ! -z "$cmd" ]; then
             while true; do
                 echo -n "${bold}Run:${normal} $cmd ? [yn] "
-                read yn
+                if [ "$INTERACTIVE" -eq 1 ]; then
+                    read yn
+                else
+                    yn="y"
+                fi
                 case $yn in
                     [Yy]* ) $cmd || fatalerror "Pip installation failed"; break;;
                     [Nn]* ) echo "Please install pip manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
@@ -606,7 +626,11 @@ for package in $NEED; do
         if [ ! -z "$cmd" ]; then
             while true; do
                 echo -n "${bold}Run:${normal} $cmd ? [yn] "
-                read yn
+                if [ "$INTERACTIVE" -eq 1 ]; then
+                    read yn
+                else
+                    yn="y"
+                fi
                 case $yn in
                     [Yy]* ) $cmd || fatalerror "Virtualenv installation failed"; break;;
                     [Nn]* ) echo "Please install virtualenv manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
