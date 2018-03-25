@@ -318,6 +318,7 @@
               cd boost_1_66_0
               ./bootstrap.sh  --with-python=python3.6 --with-python-version=3.6 --prefix={{lm_prefix}}
               ./b2 install --config=project-config.jam --prefix={{lm_prefix}} --with=all
+              ln -s {{lm_prefix}}/boost_1_66_0/boost {{lm_prefix}}/include/boost
           fi
       args:
           executable: /bin/bash
