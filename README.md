@@ -123,6 +123,8 @@ the installation procedure.
 
 Note that some software may not be available on certain platforms/distributions (most notably Mac OS X).
 
+For a verbose list of installed software, run ``lamachine-list`` once you are inside your LaMachine installation.
+
 Contribute
 -----------------
 
