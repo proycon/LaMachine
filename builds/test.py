@@ -17,7 +17,7 @@ def clean(build, args):
     r2 = 1
     if build['flavour'] == "vagrant":
         r2 = os.system("lamachine-" + build['name'] + "-destroy -f")
-    elif build['flavour'] == "docker":
+    elif build['flavour'] in ("docker", "local"):
         r2 = os.system("docker image rm proycon/lamachine:" + build['name'])
     #remove controller
     shutil.rmtree('lamachine-controller/' + build['name'], ignore_errors=True)
@@ -31,10 +31,11 @@ def test(build, args):
     ircprint(msg, args)
     passargs = []
     for key, value in build.items():
-        if value is True:
-            passargs.append("--" + key)
-        else:
-            passargs.append("--" + key + " " + value)
+        if key != 'context':
+            if value is True:
+                passargs.append("--" + key)
+            else:
+                passargs.append("--" + key + " " + value)
     if build['flavour'] == 'vagrant' and os.path.exists('lamachine-'+ build['name'] + '-destroy'):
         print("[LaMachine Test] VM " + build['name'] + " already exists...", file=sys.stderr)
         if args.clean:
@@ -43,7 +44,14 @@ def test(build, args):
             ircprint(msg, args)
             return (1,0,1)
     begintime = time.time()
-    r = os.system("bash ../bootstrap.sh " + " ".join(passargs) + " --noninteractive --private --verbose --vmmem " + str(args.vmmem) + " 2> logs/" + buildid(build).replace(':','-') + ".log >&2")
+    if build['flavour'] == 'local':
+        #we build local tests in a docker container (clean environment), the dockerfile invokes the bootstrap:
+        cwd = os.getcwd()
+        os.chdir("context/" + build['context'])
+        r = os.system("docker build -t proycon/lamachine:" + build['name'] + " --build-arg NAME=" + build['name'] + " VERSION=" + build['version'] + " . 2> logs/" + buildid(build).replace(':','-') + '.log >&2')
+        os.chdir(cwd)
+    else:
+        r = os.system("bash ../bootstrap.sh " + " ".join(passargs) + " --noninteractive --private --verbose --vmmem " + str(args.vmmem) + " 2> logs/" + buildid(build).replace(':','-') + ".log >&2")
     endtime = time.time()
     duration = endtime-begintime
     if args.clean:

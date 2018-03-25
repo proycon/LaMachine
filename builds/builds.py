@@ -45,6 +45,25 @@ buildmatrix = [
     #    "version": 'stable',
     #    "vagrantbox": "fedora/27-cloud-base" #this image won't boot
     #},
+    ##### LOCAL BUILDS ######
+    {
+        "name": 'stable-venv-debian9',
+        "flavour": 'local',
+        "version": 'stable',
+        "context": "debian9",
+    },
+    {
+        "name": 'stable-venv-centos7',
+        "flavour": 'local',
+        "version": 'stable',
+        "context": "centos7",
+    },
+    {
+        "name": 'stable-venv-ubuntu1804',
+        "flavour": 'local',
+        "version": 'stable',
+        "context": "ubuntu1804",
+    },
     ##### SPECIALISED BUILDS WITH OPTIONAL SOFTWARE ######
     {
         "name": 'piccl',
