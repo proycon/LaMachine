@@ -487,7 +487,7 @@ if [ "$INTERACTIVE" -eq 0 ]; then
 fi
 
 
-for package in $NEED; do
+for package in ${NEED[@]}; do
     if [ "$package" = "vagrant" ]; then
         if [ "$OS" = "debian" ]; then
             cmd="sudo apt-get $NONINTERACTIVEFLAGS install virtualbox vagrant"
