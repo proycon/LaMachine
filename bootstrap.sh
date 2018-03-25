@@ -606,7 +606,7 @@ for package in ${NEED[@]}; do
         if [ "$OS" = "debian" ]; then
             cmd="sudo apt-get  $NONINTERACTIVEFLAGS install python-pip"
         elif [ "$OS" = "redhat" ]; then
-            cmd="sudo yum  $NONINTERACTIVEFLAGS install python-pip"
+            cmd="sudo yum $NONINTERACTIVEFLAGS install epel-release && sudo yum  $NONINTERACTIVEFLAGS install python-pip"
         elif [ "$OS" = "arch" ]; then
             cmd="sudo pacman  $NONINTERACTIVEFLAGS -Sy python-pip"
         elif [ "$OS" = "mac" ]; then
