@@ -55,6 +55,9 @@
               license: GPL
               author: Ko van der Sloot
               summary: Ticcutils, a generic C++ utility library shared by our software.
+              configure_opts: "{% if ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'rhel' %}--with-boost={{lm_prefix}}{% endif %}"
+              build_environment:
+                 TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
             - repo: libfolia
               user: LanguageMachines
               summary: C++ Library for the Format for Linguistic Annotation (FoLiA)
