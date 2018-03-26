@@ -153,6 +153,24 @@
           if [[ "$LAMACHINE_QUIET" != "1" ]]; then
             cat $LM_PREFIX/etc/motd
           fi
+          if [[ "$LM_LOCALITY" == "local" ]] && [[ "$LM_LOCALENV_TYPE" == "virtualenv" ]]; then
+              if [ -z "$SOURCED" ]; then #protection against endless recursion
+                SOURCED=0
+                if [ -n "$ZSH_EVAL_CONTEXT" ]; then
+                  case $ZSH_EVAL_CONTEXT in *:file) SOURCED=1;; esac
+                elif [ -n "$BASH_VERSION" ]; then
+                  [ "$0" != "$BASH_SOURCE" ] && SOURCED=1
+                else # All other shells: examine $0 for known shell binary filenames
+                  # Detects `sh` and `dash`; add additional shell filenames as needed.
+                  case ${0##*/} in sh|dash) SOURCED=1;; esac
+                fi
+                if [ $SOURCED -eq 0 ]; then
+                  #not SOURCED, start a subshell
+                  export SOURCED
+                  bash
+                fi
+              fi
+          fi
         mode: u+rwx,a+rx
 
 
