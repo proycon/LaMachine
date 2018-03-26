@@ -315,18 +315,23 @@
       shell: |
           #!/bin/bash
           if [ ! -d boost_1_66_0 ]; then
-              wget -q https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.gz
-              tar xf boost_1_66_0.tar.gz
+              wget -q https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.gz || exit 2
+              tar xf boost_1_66_0.tar.gz || exit 2
               cd boost_1_66_0
-              ./bootstrap.sh  --with-python=python3.6 --with-python-version=3.6 --prefix={{lm_prefix}}
-              ./b2 install --config=project-config.jam --prefix={{lm_prefix}} --with=all
-              ln -s {{source_path}}/boost_1_66_0/boost {{lm_prefix}}/include/boost
+              ./bootstrap.sh  --with-python=python3.6 --with-python-version=3.6 --prefix="{{lm_prefix}}" || exit 2
+              ./b2 install --config=project-config.jam --prefix="{{lm_prefix}}" --with=all
+              if [ ! -e "{{lm_prefix}}/include/boost" ]; then
+                ln -s "{{source_path}}/boost_1_66_0/boost" "{{lm_prefix}}/include/boost"
+                exit $?
+              fi
+              exit 0
+          else
+              exit 0
           fi
       args:
           executable: /bin/bash
           chdir: "{{source_path}}"
       when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
-      ignore_errors: yes
 
     - name: Installing ansible locally (conda)
       pip:
