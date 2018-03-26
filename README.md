@@ -2,159 +2,6 @@
 [![Build Status](https://travis-ci.org/proycon/LaMachine.svg?branch=master)](https://travis-ci.org/proycon/LaMachine)
 [![Docker Pulls](https://img.shields.io/docker/pulls/proycon/lamachine.svg)](https://hub.docker.com/r/proycon/lamachine/)
 
-<<<<<<< HEAD
-LaMachine
-===========
-
-LaMachine is a software distribution of NLP software developed by the Language
-Machines research group and Centre for Language and Speech Technology (Radboud
-University Nijmegen), as well as TiCC (Tilburg University).
-
-Our software is highly specialised and generally depends on a lot of other
-software. Installing all this software can be a daunting task, compiling it
-from scratch even more so.  Ideally software is installed through your
-distribution's package manager, but we do not always have packages available
-for all platforms, or they may be out of date. LaMachine ensures you can always
-use all of our software at the very latest stable versions by bundling
-them all and offering them in three distinct forms or flavours:
-
- * As a **Virtual Machine** - Easiest, allows you to run our software on any host OS.
- * As a **Docker application**
- * As a compilation/installation script in a **virtual environment** - This is the option with least overhead and most
-   tightly bound with the OS.
-
-LaMachine is suitable for both end-users and developers. It has to be noted,
-however, that running the latest development versions always comes with the
-risk of decreased stability due to undiscovered bugs.
-
-Our pre-installed software:
-- [Timbl](https://languagemachines.github.io/timbl) - Tilburg Memory Based Learner
-- [Ucto](https://languagemachines.github.io/ucto) - Tokenizer
-- [Frog](https://languagemachines.github.io/frog) - Frog is an integration of memory-based natural language processing (NLP) modules developed for Dutch.
-- [Mbt](https://languagemachines.github.io/mbt) - Memory-based Tagger
-- [Wopr](http://ilk.uvt.nl/wopr) - Memory-based Word Predictor
-- [FoLiA-tools](http://proycon.github.io/folia) - Command line tools for working with the FoLiA format
-- [PyNLPl](https://pypi.python.org/pypi/PyNLPl) - Python Natural Language Processing Library
-- [Colibri Core](http://proycon.github.io/colibri-core/) - Colibri core is an NLP tool as well as a C++ and Python library for working
-  with basic linguistic constructions such as n-grams and skipgrams (i.e patterns
-  with one or more gaps, either of fixed or dynamic size) in a quick and
-  memory-efficient way. At the core is the tool colibri-patternmodeller which
-  allows you to build, view, manipulate and query pattern models.
-- *C++ libraries* - [ticcutils](https://github.com/LanguageMachines/ticcutils), [libfolia](https://github.com/LanguageMachines/libfolia)
-- *Python bindings* - [python-ucto](https://github.com/proycon/python-ucto), [python-frog](https://github.com/proycon/python-frog), [python-timbl](https://github.com/proycon/python-timbl)
-- [CLAM](https://proycon.github.io/clam) - Quickly build RESTful webservices
-- [Gecco](https://github.com/proycon/gecco) - Generic Environment for Context-Aware Correction of Orthography
-- [Toad](https://github.com/LanguageMachines/toad) - Trainer Of All Data, training tools for Frog
-- [foliadocserve](https://github.com/proycon/foliadocserve) - FoLiA Document Server
-- [FLAT](https://github.com/proycon/flat) - FoLiA Linguistic Annotation Tool
-- [PICCL](https://github.com/LanguageMachines/PICCL)¹ - PICCL: A set of workflows for corpus building through OCR, post-correction (using TICCL) and Natural Language Processing.
-
-Our optional additional software, will not be installed by default but explicitly opt-in:
-- [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction.
-- [Valkuil](https://github.com/proycon/valkuil-gecco) - A context-aware spelling corrector for Dutch
-- [FoliaEntity](https://github.com/ErwinKomen/FoliaEntity) - A named entity linker
-
-Notable pre-installed *third party* software (not exhaustive):
-- [NumPy](http://www.numpy.org/) and [SciPy](http://www.numpy.org/) - Python libraries for scientific computing
-- [Matplotlib](http://matplotlib.org) - A Python 2D plotting library producing publication quality figures
-- [Scikit-learn](http://matplotlib.org)¹ - Machine learning in Python
-- [Tesseract](https://github.com/tesseract-ocr/tesseract)¹ - Open Source Optical Character Recognition (OCR)
-- [IPython](http://ipython.org/) and [Jupyter](https://jupyter.org/)¹ - A rich architecture for interactive computing.
-- [Pandas](http://pandas.pydata.org/)¹ - Python Data Analysis Library
-- [NLTK](http://www.nltk.org)¹ - Natural Language Toolkit for Python
-- [Hunspell](http://hunspell.github.io) - A spell checker
-- [NextFlow](http://www.nextflow.io)¹ - A system and language for writing parallel and scalable pipelines in a portable manner.
-
-Notable optional third party software:
-- [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) - A dependency parser and tagger for Dutch (about 1GB)
-- [Kaldi](https://github.com/kaldi-asr/kaldi) - Open source speech recognition toolkit (several GB!, experimental!)
-
-
-The Python bindings and libraries all use Python 3. Both the VM image as well as the docker image are based on Arch Linux.
-
-(¹ = This software will be excluded if a minimal installation is chosen)
-
-Installation & Usage as Virtual Machine (for Linux, BSD, MacOS X, Windows)
-=========================================================================
-
-1. Obtain **Vagrant** from https://www.vagrantup.com/downloads.html or your package manager.
-2. Obtain **VirtualBox** from https://www.virtualbox.org/ or your package manager.
-3. Clone this repository and navigate to the directory in the terminal: ``$ git clone https://github.com/proycon/LaMachine && cd LaMachine``  (or [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) manually from github)
-4. Power up the VM: ``vagrant up`` (this will download and install everything the first time)
-5. SSH into your VM: ``vagrant ssh``
-6. When done, power down the VM with: ``vagrant halt`` (and you can delete it entirely with ``vagrant destroy``)
-
-You may want to adapt Vagrantfile to change the number of CPUs and Memory
-available to the VM (2 CPUs and 3GB RAM by default).
-
-On most Linux distributions, steps one and two may be combined with a simple command such as
-``sudo apt-get install virtualbox vagrant`` on Ubuntu, or ``sudo pacman -Syu virtualbox vagrant`` on Arch Linux.
-
-Entering your LaMachine Virtual Machine as per step 5 should be password-less,
-other methods may require a login; use username ``vagrant`` and password
-``vagrant``.  The root password is also ``vagrant``.
-
-Various webservices in the Virtual Machine will be automatically accessible through https://127.0.0.1:8080 .
-
-Note that LaMachine by default is running on a 64-bit architecture, if you have a 32-bit host OS and really want to run
-LaMachine despite likely memory shortage; checkout the ``32bit`` branch after step 3 and before step 4 by issuing the
-following command: ``git checkout 32bit``. This is not really properly supported nor recommended.
-
-Make sure to also read our privacy section below.
-
-Installation & Usage with Docker (for Linux only)
-===================================================
-
-1. Obtain **Docker** from http://www.docker.com or your package manager (``sudo apt-get install docker.io`` on Debian/Ubuntu).
-2. Pull the [LaMachine image](https://registry.hub.docker.com/u/proycon/lamachine/): ``docker pull proycon/lamachine`` (or the executable may be called ``docker.io`` on Debian/Ubuntu)
-3. Start an interactive prompt to LaMachine: ``docker run -p 8080:80 -t -i proycon/lamachine``, or run stuff: ``docker run proycon/lamachine <program>``  (use ``run -i`` if the program has an interactive mode; set up a mounted volume to pass files from host OS to docker, see: https://docs.docker.com/userguide/dockervolumes/)
-
-There is no need to clone this git repository at all for this method.
-
-Installation & Usage locally (for Linux/BSD/Mac OS X/Windows 10)
-==================================================================
-
-LaMachine can be used on a Linux/BSD/Mac OS X systems without root access (provided a set of prerequisites is available
-on the system or installed by a system administrator!) and even on Windows 10 systems, provided the latter has the
-Windows Subsystem for Linux and Ubuntu on Windows installed (so if you use Windows, see
-[here](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide) for instructions first).
-
-This local flavour of LaMachine runs in an extended Python Virtual Environment (using Python 3.3 or later) and is the option with
-least overhead (i.e. the most performant). This offers a local environment (not a virtual machine!), ideal for development, that binds against
-the software globally available on your system. The virtual environment will be contained under a single directory and
-contains everything.  All sources are pulled from git and compiled for you.
-
-
-Installation
---------------
-
-0. Open a command line terminal
-1. **Obtain a copy of LaMachine** in a temporary location (it will only be needed once).
-   * A copy is best obtained through git: ``$ cd /tmp && git clone https://github.com/proycon/LaMachine``, provided you have git installed already (``sudo apt-get install git`` installs it on Ubuntu/Debian systems)
-   * Alternatively, you can [download the ZIP](https://github.com/proycon/LaMachine/archive/master.zip) from github and extract it: ``$ cd /tmp && wget https://github.com/proycon/LaMachine/archive/master.zip && unzip master.zip``
-2. In a terminal, **navigate to the directory** where you want to install
-   LaMachine, for instance your home directory:  ``$ cd ~``.
-   A ``lamachine/`` directory that contains everything will be automatically created in the next step.
-   (Advanced users can also pre-create and activate an existing virtual environment that LaMachine will then reuse.)
-3. **Bootstrap the virtual environment** by calling: ``/tmp/LaMachine/virtualenv-bootstrap.sh``
-   * Do not run this as root, you will be queried for ``sudo`` for specific parts pertaining to the installation of
-   required global packages.
-
-Usage
---------------
-
-Note that you will always have to activate your virtual environment before you can use any of the applications installed
-in it.
-
-1. Navigate to the directory where you installed LaMachine (e.g. ``cd ~/lamachine``)
-   * Note that this is not the same as the temporary ``/tmp/LaMachine`` we created during installation
-2. Run ``. bin/activate`` (don't forget the dot and the space!)
-
-In most configurations, your prompt will change to indicate LaMachine is activated.
-=======
-# LaMachine
->>>>>>> lamachine2
-
 LaMachine is a unified software distribution for Natural Language Processing.  We integrate numerous open-source NLP
 tools, programming libraries, web-services, and web-applications in a single Virtual Research Environment that can be
 installed on a wide variety of machines.
@@ -177,7 +24,7 @@ To build your own LaMachine instance, in any of the possible flavours, or to dow
 on your Linux, BSD or Mac OS X system and run the following command:
 
 ```
-bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh)
+bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/develop/bootstrap.sh)
 ```
 
 This will prompt you for some questions on how you would like your LaMachine installation and allows you to include precisely
@@ -290,7 +137,7 @@ For a verbose list of installed software, run ``lamachine-list`` once you are in
 ## Contribute
 
 LaMachine is open for contributions by other software projects, please read [the contributor
-documentation](https://github.com/proycon/LaMachine/blob/lamachine2/CONTRIBUTING.md).
+documentation](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md).
 
 ## Architecture
 
@@ -324,28 +171,9 @@ we generally support the following platforms (but certain participating software
  * Arch Linux
  * Mac OS X 10.13 (High Sierra) - *Limited support only! No webservices/applications. Various optional software will not support Mac OS X either*
 
-<<<<<<< HEAD
- * ``noadmin`` - Do not attempt to install global dependencies (but if they are missing, compilation will fail)
- * ``adminonly`` - Only install global dependencies, do not actually set up the virtual environment. Requires a user
-   with sudo rights. Allows for seperation of the bootstrap process for privileged and non-privileged user.
- * ``nopythondeps`` - Do not update 3rd party Python dependencies (such as numpy and scipy), may save time.
- * ``force`` - Force recompilation of everything, even if it's not updated
- * ``python2`` - Use python 2.7 instead of Python 3 *(note that some software may be not be available for Python 2!
-   This is experimental and not really supported!)*
- * ``stable`` - Use stable releases  *(this is the new default since February 2016)*
- * ``dev`` - Use cutting-edge development versions *(this may sometimes breaks things)*
- * ``version=`` - Use the specified version file *(see the versioning section below)*
- * ``private`` - Do not send information to us regarding your LaMachine installation *(see the privacy section below)*
- * ``branch=`` - Use the specified git branch of LaMachine *(default: master)*
- * ``minimal`` - Install a minimal configuration (this includes a lot but will exclude certain large software packages
-   and certain third party software that is not strictly needed, all marked with ¹ in the listing above)
- * ``full`` - Install the full configuration (default)
- * ``all`` - Install all optional software as well (i.e more than full)
-=======
 This concerns the platforms LaMachine runs on natively or on which you can bootstrap your own build (installation path A). The options for host platforms
 for simply running a pre-built LaMachine Virtual Machine or Docker container, are much larger, and also include Windows
 (see installation paths B & C).
->>>>>>> lamachine2
 
 In addition to a flavour, users can opt for one of three versions of LaMachine:
  * **stable** - Installs the latest official releases of all participating software
@@ -353,7 +181,7 @@ In addition to a flavour, users can opt for one of three versions of LaMachine:
    installed straight from the latest git version.
  * **custom** - Installs explicitly defined versions for all software (for e.g. scientific reproducibility).
 
-Read more about the technical details in the [the contributor documentation](https://github.com/proycon/LaMachine/blob/lamachine2/CONTRIBUTING.md).
+Read more about the technical details in the [the contributor documentation](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md).
 
 ## Usage
 
@@ -409,18 +237,6 @@ what you need (``docker start``, ``docker attach``).
 
 ### Updating LaMachine
 
-<<<<<<< HEAD
-Once you have a LaMachine running in whatever form, just run ``lamachine-update.sh`` to update
-everything again, it takes all of the parameters the normal bootstrap script takes as well (see section: Parameters).
-
-The ``lamachine-update.sh`` script is also used to install additional *optional* software, pass the optional software as a parameter (multiple are allowed, or just used the ``all`` parameter to install all optional software). Note that additional software does not work if you bootstrapped LaMachine in the ``minimal`` configuration.
-
- * ``tscan`` - Compile and install tscan (will download about 1GB in data), also installs Alpino (another 1GB)
- * ``valkuil`` - Valkuil Spelling Corrector (for Dutch)
- * ``foliaentity`` - Named entity linker
- * ``alpino`` - [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/), a dependency parser and tagger for Dutch (about 1GB)
- * ``kaldi`` - [Kaldi](https://github.com/kaldi-asr/kaldi), open source speech recognition toolkit (several GB!, experimental!). You can use extra parameters ``kaldisource=`` to set the source repository of kaldi (defaults to https://github.com/kaldi-asr/kaldi) and ``kaldibranch=`` to set the git branch (defaults to master).
-=======
 When you are inside LaMachine, you can update it by running ``lamachine-update``, if you first want to edit your
 LaMachine's settings and/or the packages to be installed/updated, run ``lamachine-update --edit`` instead. Do note that
 this can't be used to uninstall software.
@@ -430,7 +246,6 @@ The update normally only updates what has changed, if you want to force an updat
 
 For Docker and the Virtual Machine flavours, when a SUDO password is being asked by the update script, you can simply
 press ENTER and leave it empty, do not run the entire script with escalated privileges.
->>>>>>> lamachine2
 
 ### Webservices and web applications
 
@@ -518,5 +333,5 @@ No, your Linux distribution needs to be up to date and supported.
 
 #### Q: Can I include my own software in LaMachine?
 
-Yes! [See the contribution guidelines](https://github.com/proycon/LaMachine/blob/lamachine2/CONTRIBUTING.md)
+Yes! [See the contribution guidelines](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md)
 

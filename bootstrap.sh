@@ -431,9 +431,9 @@ fi
 
 if [ -z "$BRANCH" ]; then
     if [[ "$VERSION" == "development" ]]; then
-        BRANCH="lamachine2" #TODO: change to develop
+        BRANCH="develop"
     else
-        BRANCH="lamachine2" #TODO: change to master
+        BRANCH="develop"
     fi
 fi
 if [ -z "$GITREPO" ]; then
