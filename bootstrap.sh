@@ -931,7 +931,7 @@ if [ ! -d lamachine-controller/$LM_NAME ]; then
 else
     echo "Reusing existing control environment..."
     cd lamachine-controller/$LM_NAME
-    if [[ "$FLAVOUR" != "docker" ]]; then
+    if [ $NEED_VIRTUALENV -eq 1 ]; then
         source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
     fi
 fi
