@@ -146,6 +146,7 @@ if [ "$OS" = "unknown" ]; then
       WINDOWS=1 #we are running in the Windows Linux Subsystem
     fi
 fi
+VERSION="undefined" # we set this because it might have been overriden by the distro
 INTERACTIVE=1
 LOCALITY=""
 PRIVATE=0
@@ -410,7 +411,7 @@ if [ -z "$LOCALENV_TYPE" ]; then
     LOCALENV_TYPE="virtualenv"
 fi
 
-if [ -z "$VERSION" ]; then
+if [[ "$VERSION" == "undefined" ]]; then
     echo "${bold}LaMachine comes in several versions:${normal}"
     echo " 1) a stable version; you get the latest releases deemed stable (recommended)"
     echo " 2) a development version; you get the very latest development versions for testing, this may not always work as expected!"
