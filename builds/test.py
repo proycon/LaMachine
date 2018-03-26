@@ -37,7 +37,8 @@ def test(build, args):
             else:
                 passargs.append("--" + key + " " + value)
     if build['flavour'] == 'vagrant' and os.path.exists('lamachine-'+ build['name'] + '-destroy'):
-        print("[LaMachine Test] VM " + build['name'] + " already exists...", file=sys.stderr)
+        msg = "[LaMachine Test] VM " + build['name'] + " already exists..."
+        print(msg, file=sys.stderr)
         if args.clean:
             clean(build, args)
         else:

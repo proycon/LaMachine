@@ -1019,6 +1019,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant ssh; exit \$?" > $BASEDIR/lamachine-$LM_NAME-connect
     echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant ssh -c 'lamachine-update'; exit \$?" > $BASEDIR/lamachine-$LM_NAME-update
     echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant destroy \$@; exit \$?" > $BASEDIR/lamachine-$LM_NAME-destroy
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant package \$@; exit \$?" > $BASEDIR/lamachine-$LM_NAME-export
     chmod a+x $BASEDIR/lamachine-$LM_NAME-*
     ln -sf $BASEDIR/lamachine-$LM_NAME-activate $HOMEDIR/bin/
     ln -sf $BASEDIR/lamachine-$LM_NAME-start $HOMEDIR/bin/
@@ -1026,6 +1027,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     ln -sf $BASEDIR/lamachine-$LM_NAME-connect $HOMEDIR/bin/
     ln -sf $BASEDIR/lamachine-$LM_NAME-update $HOMEDIR/bin/
     ln -sf $BASEDIR/lamachine-$LM_NAME-destroy $HOMEDIR/bin/
+    ln -sf $BASEDIR/lamachine-$LM_NAME-package $HOMEDIR/bin/
     ln -sf $BASEDIR/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
     #run the activation script (this will do the actual initial provision as well)
     bash $BASEDIR/lamachine-$LM_NAME-start 2>&1 | tee lamachine-$LM_NAME.log
