@@ -1,6 +1,11 @@
 ---
-#(Comment or remove categories/roles you do not want to install, dependencies will be automatically
+# INSTRUCTIONS: Comment or remove categories/roles you do not want to install, dependencies will be automatically
 # resolved even when not explicitly mentioned)
+#
+# NOTE: ensure that all roles are lined up with the same amount of spaces!
+#       (all hyphens must be vertically on the same column!)
+#       (don't mix tabs and spaces)
+#
 - hosts: all
   roles:
       - lamachine-core #The LaMachine core, you always need this or nothing works; already includes Python 3
