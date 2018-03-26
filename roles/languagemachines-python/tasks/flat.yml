@@ -1,0 +1,62 @@
+---
+
+    - name: Create server writable directories for FLAT (global)
+      become: "{{lm_become}}"
+      become_user: root
+      file:
+          path: "{{ lm_prefix }}/{{item}}"
+          state: directory
+          owner: "{{ unix_user }}"
+          group: "{{ web_user }}"
+          mode: u+rwx,g+rwsx,a+rx
+      with_items:
+          - "var/www-data/flat.docroot"
+          - "var/log/foliadocserve"
+      when: root and locality == "global"
+
+    - name: Create server writable directories for FLAT (local)
+      file:
+          path: "{{ lm_prefix }}/{{item}}"
+          state: directory
+          mode: u+rwx,g+rwx,a+rx
+      with_items:
+          - "var/www-data/flat.docroot"
+          - "var/log/foliadocserve"
+      when: root and locality == "local"
+
+    - name: Installing FLAT settings
+      template:
+          src: "flat_settings.py"
+          dest: "{{lm_prefix}}/etc/flat_settings.py"
+          force: yes
+          backup: yes
+          owner: "{{unix_user}}"
+          mode: u+rw,a+r
+
+    - name: Applying migrations
+      shell: "PYTHONPATH={{lm_prefix}}/etc DJANGO_SETTINGS_MODULE=flat_settings django-admin migrate --run-syncdb"
+      args:
+          executable: /bin/bash
+          chdir: "{{lm_prefix}}/etc"
+      environment: "{{lm_env}}"
+
+    - name: Create FLAT superuser
+      shell: |
+        export PYTHONPATH="{{lm_prefix}}/etc" DJANGO_SETTINGS_MODULE=flat_settings
+        echo -ne "
+        from django.contrib.auth.models import User
+
+        username = 'flat'
+        password = 'flat'
+        email = 'flat@localhost'
+
+        if User.objects.filter(username=username).count() == 0:
+        \tUser.objects.create_superuser(username, email, password)
+        \tprint('Superuser created.')
+        else:
+        \tprint('Superuser creation skipped.')
+        " | django-admin shell -i python
+      args:
+          executable: /bin/bash
+          chdir: "{{lm_prefix}}/etc"
+      environment: "{{lm_env}}"

@@ -1,0 +1,103 @@
+---
+    - name: Check for existing installation of conda
+      shell: which conda
+      register: whichconda
+      failed_when: whichconda.rc == 127
+
+    - when: whichconda.rc > 0
+      block:
+        - name: check for installation of Miniconda
+          stat:
+             path: '{{ansible_env.HOME}}/miniconda'
+          changed_when: false
+          register: miniconda_conda_binary
+        - when: not miniconda_conda_binary.stat.exists
+          block:
+               - name: Downloading miniconda installer
+                 get_url:
+                    url: '{{miniconda_installer_url}}'
+                    dest: "{{ansible_env.HOME}}/miniconda-installer.sh"
+                    mode: 0755
+
+               - name: Installing miniconda
+                 command: bash "{{ansible_env.HOME}}/miniconda-installer.sh" -b -p "{{ansible_env.HOME}}/miniconda"
+                 args:
+                    creates: '{{ansible_env.HOME}}/bin/conda'
+
+    - name: Creating conda environment for LaMachine
+      shell: |
+          #!/bin/bash
+          echo "PATH=$PATH">&2
+          which conda>&2
+          conda create -mqy -p {{local_prefix}} conda python pip #conda needs to be explicitly added for it to be present in the environment!!!
+      args:
+          creates: "{{local_prefix}}"
+      environment:
+          PATH: "{{ansible_env.HOME}}/bin:{{ansible_env.HOME}}/miniconda/bin:{{local_prefix}}/bin:{{ansible_env.PATH}}"
+
+    - name: Create .conda directory for user
+      file:
+          path: "{{ansible_env.HOME}}/.conda/envs"
+          state: directory
+
+    - name: Adding conda environment to user's
+      file:
+          src: "{{local_prefix}}"
+          dest: "{{ansible_env.HOME}}/.conda/envs/lamachine-{{conf_name}}"
+          state: link
+
+
+    - name: Creating conda activation directory
+      file:
+          path: "{{local_prefix}}/etc/conda/activate.d"
+          state: directory
+          recurse: yes
+
+    - name: Adapting activation script for conda
+      blockinfile:
+        dest: "{{local_prefix}}/etc/conda/activate.d/lamachine-{{ conf_name }}.sh"
+        block: |
+          #!/usr/bin/env sh
+          export LD_LIBRARY_PATH={{local_prefix}}/lib/
+        marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'
+        insertafter: EOF
+        create: yes
+        mode: u+rwx
+
+    - name: Linking conda activate script
+      file:
+          src: "{{local_prefix}}/bin/activate"
+          dest: "{{ansible_env.HOME}}/bin/activate"
+          state: link
+
+    - name: Conda sanity check
+      shell: |
+          #/usr/bin/env bash
+          hash -r #clear cache
+          if [ ! -e {{local_prefix}}/bin/conda ]; then
+            du -ah {{local_prefix}}>&2
+            echo "ERROR: {{local_prefix}}/bin/conda not found .. Debug listing above">&2
+            exit 2
+          fi
+          {{local_prefix}}/bin/conda info || exit 3
+          {{local_prefix}}/bin/conda list -p {{local_prefix}} || exit 4
+      environment: "{{localenv}}"
+      changed_when: False
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

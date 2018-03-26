@@ -1,0 +1,96 @@
+---
+    - name: Enable EPEL Repositories
+      become: true
+      become_user: root
+      yum:
+        name: epel-release
+        state: latest
+      when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+
+    - name: Enable IUS Repository
+      become: true
+      become_user: root
+      shell: |
+           yum install -y https://$(rpm -E '%{?centos:centos}%{!?centos:rhel}%{rhel}').iuscommunity.org/ius-release.rpm
+      args:
+          executable: /bin/bash
+      when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+      ignore_errors: yes #would return 1 when already installed (during update)
+
+    - name: Updating base system (YUM)
+      become: true
+      become_user: root
+      yum:
+        name: "*"
+        state: latest
+        update_cache: yes
+
+    - name: installing common base packages (yum)
+      become: true
+      become_user: root
+      yum:
+        name: "{{item}}"
+        state: installed
+      with_items: [pkgconfig, git, icu, libtool, autoconf, automake, autoconf-archive, nano, make, gcc, gcc-c++, libxml2, libxml2-devel, libxslt, libxslt-devel, libtar, libtar-devel, zlib, zlib-devel, bzip2, bzip2-devel, libcurl, gnutls-devel, libcurl-devel, wget, curl, libexttextcat, libexttextcat-devel]
+
+    - name: Installing Python base packages for CentOS/RHEL (yum)
+      become: true
+      become_user: root
+      yum:
+        name: "{{item}}"
+        state: installed
+      with_items: [python36u, python36u-devel, python36u-pip, python36u-setuptools, libicu-devel]
+      when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+
+    - name: Linking Python 3.6 (RHEL/CentOS)
+      become: yes
+      become_user: root
+      file:
+        src: "{{item.src}}"
+        dest: "{{item.dest}}"
+        state: link
+        force: yes
+        backup: no
+      with_items:
+          - { src: /usr/bin/python3.6, dest: /usr/bin/python3 }
+          - { src: /usr/bin/python3.6-config, dest: /usr/bin/python3-config }
+          - { src: /usr/bin/pip3.6, dest: /usr/bin/pip3 }
+          - { src: /usr/bin/pyenv3.6, dest: /usr/bin/pyenv3 }
+          - { src: /usr/bin/pydoc3.6, dest: /usr/bin/pydoc3 }
+          - { src: /usr/bin/easy_install-3.6, dest: /usr/bin/easy_install-3 }
+          - { src: /usr/include/python3.6m, dest: /usr/include/python3.6 }
+      when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+
+
+
+    - name: Installing virtualenv for CentOS/RHEL
+      become: true
+      become_user: root
+      shell: "pip3 install virtualenv"
+      when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+
+
+    - name: installing Python base packages for Fedora
+      become: true
+      become_user: root
+      yum:
+        name: "{{item}}"
+        state: installed
+      with_items: [python3, python3-devel, python3-pip, python3-virtualenv, boost, boost-devel, boost-python3, libicu-devel ]
+      when: ansible_distribution|lower != "centos" and ansible_distribution|lower != "rhel" #aka fedora mainly
+
+
+
+
+      #############################################################
+      # ANSIBLE installation so we can bootstrap ourselves
+      ############################################################
+
+    - when: locality == "global"
+      block:
+        - name: Install ansible
+          become: true
+          become_user: root
+          yum:
+            name: "ansible"
+            state: installed

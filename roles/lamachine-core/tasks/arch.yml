@@ -1,0 +1,28 @@
+---
+    - name: Updating base system (Arch)
+      become: true
+      become_user: root
+      pacman:
+         update_cache: yes
+         upgrade: yes
+
+    - name: installing common base packages (Arch)
+      become: true
+      become_user: root
+      pacman:
+        name: "{{item}}"
+        state: installed
+      with_items: [pkg-config, git, autoconf-archive, icu, libxml2, zlib, libtar, boost, boost-libs, nano, make, wget curl, libexttextcat, perl, python, python-virtualenv, python-pip]
+
+      #############################################################
+      # ANSIBLE installation so we can bootstrap ourselves
+      ############################################################
+
+    - when: locality == "global"
+      block:
+        - name: Install ansible
+          become: true
+          become_user: root
+          pacman:
+            name: "ansible"
+            state: installed

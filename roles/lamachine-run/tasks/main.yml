@@ -1,0 +1,40 @@
+
+    - block:
+        - name: "Running {{command}}"
+          shell: |
+              #!/bin/bash
+              if [ -e {{homedir}}/bin/lamachine-{{ conf_name }}-activate ]; then
+                  source {{homedir}}/bin/lamachine-{{ conf_name }}-activate
+              else
+                  echo "Activation script {{homedir}}/bin/lamachine-{{ conf_name }}-activate not found! ">&2
+                  exit 2
+              fi
+              hash -r  #clear cache
+              echo "Run environment:">&2
+              echo "    LM_NAME=$LM_NAME">&2
+              echo "    PATH=$PATH">&2
+              echo "    LD_LIBRARY_PATH=$LD_LIBRARY_PATH">&2
+              echo "    VIRTUAL_ENV=$VIRTUAL_ENV">&2
+              echo "    PYTHONPATH=$PYTHONPATH">&2
+              echo "    PYTHON=$(which python3)">&2
+              echo "    PIP=$(which pip3)">&2
+              echo "Running: {{command}}">&2
+              {{command}}
+          args:
+              executable: /bin/bash
+              chdir: "{% if chdir is defined %}{{ chdir }}{% else %}{{homedir}}{% endif %}"
+          environment:
+              PATH: "{{ansible_env.HOME}}/bin:{{ansible_env.PATH}}"
+          register: lamachine_run
+          changed_when: 'sideeffects is defined and sideeffects == True'
+      rescue:
+        - name: "Package list at time of failure when running {{command}}"
+          shell: "{{local_prefix}}/bin/conda list -p {{local_prefix}}"
+          when: localenv_type == "conda" and locality == "local"
+        - name: "Delayed failure after running {{command}}"
+          fail:
+             msg: "Delayed failure after running {{command}}. Consult the output of the previous failed task for more information."
+
+
+
+

@@ -1,0 +1,25 @@
+---
+  - name: Installing Java 8 (Linux)
+    include_role:
+      name: lamachine-package-install
+    with_items:
+      - { debian: openjdk-8-jdk, redhat: java-1.8.0-openjdk, arch: jre8-openjdk }
+      - { debian: maven, redhat: maven, arch: maven } #not sure if this works on CentOS
+    loop_control:
+       loop_var: package
+    when: root and (ansible_distribution|lower != "macosx")
+
+  - name: Installing Java 8 (Mac OS X)
+    homebrew_cask:
+      name: java
+      state: present
+    when: ansible_distribution|lower == "macosx"
+
+  - name: Ensure correct java version is selected (Debian/Ubuntu)
+    become: "{{lm_become}}"
+    become_user: root
+    alternatives:
+      name: java
+      path: /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+    when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
+    ignore_errors: yes

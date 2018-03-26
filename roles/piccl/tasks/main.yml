@@ -1,0 +1,164 @@
+---
+
+
+    - name: Check for unsupported OS for PICCL
+      debug:
+        msg: "PICCL is not supported on Mac OS X"
+      when: ansible_distribution|lower == "macosx"
+
+    - name: Installing global dependencies for PICCL
+      include_role:
+        name: lamachine-package-install
+      with_items:
+        - { debian: tesseract-ocr, redhat: tesseract, arch: tesseract }
+        - { debian: tesseract-ocr-eng, redhat: tesseract-langpack-eng, arch: tesseract-data-eng }
+        - { debian: tesseract-ocr-nld, redhat: tesseract-langpack-nld, arch: tesseract-data-nld }
+        - { debian: tesseract-ocr-deu, redhat: tesseract-langpack-deu, arch: tesseract-data-deu }
+        - { debian: tesseract-ocr-deu-frak, redhat: tesseract-langpack-deu-frak, arch: tesseract-data-deu-frak }
+        - { debian: tesseract-ocr-fra, redhat: tesseract-langpack-fra, arch: tesseract-data-fra }
+        - { debian: poppler-utils, redhat: poppler, arch: poppler }
+        - { debian: djvulibre-bin, redhat: djvulibre, arch: djvulibre }
+        - { debian: libdjvulibre-text }
+        - { debian: imagemagick, redhat: ImageMagick, arch: imagemagick }
+        - { debian: perl, redhat: perl, arch: perl }
+      loop_control:
+          loop_var: package
+
+    - name: Installing TICCLtools
+      include_role:
+        name: lamachine-git-autoconf
+      vars:
+        package:
+          repo: ticcltools
+          user: LanguageMachines
+          author: Martin Reynaert, Ko van der Sloot
+          homepage: "https://github.com/LanguageMachines/ticcltools"
+          summary: "TicclTools is a collection of programs to process datafiles, together they constitute the bulk of TICCL: Text Induced Corpus-Cleanup. This software is invoked by the pipeline system PICCL"
+          license: GPL
+
+    - name: Create nextflow home
+      file:
+        path: "{{lm_prefix}}/opt/nextflow"
+        state: directory
+
+    - name: Install Nextflow
+      shell: curl -fsSL https://get.nextflow.io | bash
+      args:
+        chdir: "{{lm_prefix}}/bin" #this is where the nextflow binary will be written
+      environment:
+        NXF_HOME: "{{lm_prefix}}/opt/nextflow"
+
+    - name: Register Nextflow
+      include_role:
+         name: lamachine-register
+      vars:
+         package:
+           name: Nextflow
+           author: Paolo Di Tommaso, Maria Chatzou, Evan W Floden, Pablo Prieto Barja, Emilio Palumbo, Cedric Notredame
+           homepage: "http://nextflow.io"
+           license: GPL
+
+    - name: Nextflow test
+      include_role:
+          name: lamachine-run
+      vars:
+          command: "nextflow -version"
+
+    - name: Ensure nextflow script permissions are sane
+      shell: |
+        chmod a+rx {{lm_prefix}}/bin/nextflow
+        find {{ lm_prefix }}/opt/nextflow -type f | xargs chmod 0644
+        find {{ lm_prefix }}/opt/nextflow -type d | xargs chmod 0755
+
+    - name: "Adding activation script for Nextflow"
+      become: "{{lm_become}}"
+      become_user: root
+      copy:
+        dest: "{{lm_prefix}}/bin/activate.d/nextflow.sh"
+        content: |
+          export NXF_HOME={{lm_prefix}}/opt/nextflow
+        mode: u+rwx,a+rx
+
+    - name: Install PICCL
+      include_role:
+        name: lamachine-git
+      vars:
+        package:
+          user: LanguageMachines
+          repo: PICCL
+
+    - name: "Symlink PICCL in {{lm_prefix}}/opt"
+      file:
+        src: "{{source_path}}/PICCL"
+        dest: "{{lm_prefix}}/opt/PICCL"
+        state: link
+
+    - name: Make PICCL nextflow scripts available in environment
+      shell: |
+        cp -sf {{lm_prefix}}/opt/PICCL/*.nf .
+      args:
+        chdir: "{{lm_prefix}}/bin"
+
+    - name: Register PICCL
+      include_role:
+         name: lamachine-register
+      vars:
+         package:
+           name: PICCL
+           author: Martin Reynaert, Maarten van Gompel, Ko van der Sloot
+           homepage: "https://github.com/LanguageMachines/PICCL"
+           license: GPL
+           summary: "A set of workflows for corpus building through OCR, post-correction, modernization of historic language and Natural Language Processing"
+
+    - name: "Download data and example corpora for PICCL"
+      shell: |
+        if [ ! -d data ]; then
+          ./download-data.nf
+        fi
+        if [ ! -d corpora ]; then
+          ./download-examples.nf
+        fi
+      args:
+        chdir: "{{lm_prefix}}/opt/PICCL"
+
+    - when: webserver
+      block:
+        - name: Installing PICCL webservice
+          include_role:
+            name: lamachine-python-install
+          vars:
+            package:
+              github_user: "LanguageMachines"
+              github_repo: "PICCL"
+              pip: "" #always installed from source, will reuse same sourcedir
+              setupdir: "webservice" #setup.py is in this subdir
+
+        - name: "Install webserver configuration for PICCL"
+          become: "{{lm_become}}"
+          become_user: root
+          template:
+            src: "nginx/piccl.conf"
+            dest: "{{lm_prefix}}/etc/nginx/conf.d/piccl.conf"
+            force: yes
+            backup: yes
+            owner: "{{unix_user}}"
+
+        - name: "Install uwsgi configuration for PICCL"
+          become: "{{lm_become}}"
+          become_user: root
+          template:
+            src: "uwsgi/piccl.ini"
+            dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/piccl.ini"
+            force: yes
+            backup: yes
+            owner: "{{unix_user}}"
+
+        - name: "Install clam configuration for PICCL"
+          become: "{{lm_become}}"
+          become_user: root
+          template:
+            src: "clam/piccl.config.yml"
+            dest: "{{lm_prefix}}/etc/piccl.config.yml"
+            force: yes
+            backup: yes
+            owner: "{{unix_user}}"

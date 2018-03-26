@@ -1,6 +1,13 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+require 'yaml'
+
+Vagrant.require_version ">= 1.7.0"
+
+current_dir = File.dirname(File.expand_path(__FILE__))
+lamachine_config = YAML.load_file("#{current_dir}/host_vars/lamachine-vm.yml")
+
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -12,7 +19,8 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "terrywang/archlinux"
+  config.vm.box = lamachine_config['vagrant_box']
+  config.vm.define "lamachine-vm"
 
 
   # Disable automatic box update checking. If you disable this, then
@@ -20,15 +28,15 @@ Vagrant.configure(2) do |config|
   # `vagrant box outdated`. This is not recommended.
   # config.vm.box_check_update = false
 
-  config.vm.hostname = "lamachine"
+  config.vm.hostname = lamachine_config['hostname']
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  config.vm.network "forwarded_port", guest: 80, host: 8080 #clam services and main landing page (nginx)
-  config.vm.network "forwarded_port", guest: 8081, host: 8081 #flat (nginx)
-  config.vm.network "forwarded_port", guest: 8888, host: 8888 #reserved for user defined applications such as jypiter notebooks
-  config.vm.network "forwarded_port", guest: 3030, host: 3030 #foliadocserve
+  config.vm.network "forwarded_port", guest: lamachine_config['http_port'], host: lamachine_config['mapped_http_port'] #clam services and main landing page (nginx)
+  #config.vm.network "forwarded_port", guest: 8081, host: 8081 #flat (nginx)
+  #config.vm.network "forwarded_port", guest: 8888, host: 8888 #reserved for user defined applications such as jypiter notebooks
+  #config.vm.network "forwarded_port", guest: 3030, host: 3030 #foliadocserve
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -43,7 +51,7 @@ Vagrant.configure(2) do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  # config.vm.synced_folder "../data", "/vagrant_data"
+  config.vm.synced_folder lamachine_config["host_data_path"], lamachine_config["data_path"]
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -51,13 +59,20 @@ Vagrant.configure(2) do |config|
   #
   config.vm.provider "virtualbox" do |vb|
      # Customize the amount of memory on the VM:
-     vb.memory = "3072" #you will want to increase the memory limit for many applications!!
-     vb.cpus = 2
+     vb.name = lamachine_config['hostname']
+     vb.memory = lamachine_config['vm_memory'] #you will want to increase the memory limit for many applications!!
+     vb.cpus = lamachine_config['vm_cpus']
      vb.customize ["modifyvm", :id, "--nictype1", "Am79C973"]
   end
   #
   # View the documentation for the provider you are using for more
   # information on available options.
+
+  # This plugin needs to be installed: vagrant plugin install vagrant-vbguest
+  #
+  # set auto_update to false, if you do NOT want to check the correct
+  # additions version when booting this machine
+  #config.vbguest.auto_update = true
 
   # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
   # such as FTP and Heroku are also available. See the documentation at
@@ -69,12 +84,11 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-
-  config.vm.provision :shell, path: "bootstrap.sh", keep_color: true;
-
-  #If you want to install a specific version, copy your LaMachine VERSION file over the
-  #dummy file, disable the default shell provisioning line above and enable the
-  #following two lines:
-  #config.vm.provision "file", source: "VERSION", destination: "/tmp/VERSION"
-  #config.vm.provision :shell, path: "bootstrap.sh", args: "version=/tmp/VERSION", keep_color: true;
+  config.vm.provision "ansible" do |ansible|
+    #ansible.verbose = "v"
+    ansible.playbook = "install.yml"
+    ansible.extra_vars = {
+        ansible_python_interpreter: lamachine_config["ansible_python_interpreter"],
+    }
+  end
 end

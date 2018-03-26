@@ -1,0 +1,160 @@
+---
+
+    - name: Checking if a C++ compiler is available
+      import_role:
+        name: check_cc
+
+    - name: Installation on Mac OS X using homebrew
+      block:
+          - name: Ensuring legacy homebrew/science tap is removed
+            shell: brew untap homebrew/science || /usr/bin/true
+          - name: Adding homebrew tap
+            command: brew tap fbkarsdorp/homebrew-lamachine
+          - name: Installing from homebrew
+            command: brew install ticcutils libfolia uctodata ucto timbl timblserver mbt frogdata frog foliautils #TODO: toad still missing cause it failed to compile earlier
+            register: macosx
+      when: ansible_distribution|lower == 'macosx' and root and version == "stable" #note: no locality check here, we use homebrew even in local mode
+
+    - name: Link frogdata and uctodata on Mac OS X
+      shell: |
+          ln -sf /usr/local/opt/uctodata/share/ucto/* /usr/local/opt/ucto/share/ucto/
+          ln -sf /usr/local/opt/frogdata/share/frog/ /usr/local/opt/frog/share
+      when: ansible_distribution|lower == 'macosx' and root and version == "stable" #note: no locality check here, we use homebrew even in local mode
+
+    - name: Installation on Arch Linux
+      block:
+        - name: Installing packages from Arch User Repository
+          include_role:
+              name: aur
+          vars:
+              package: "{{ item }}"
+          with_items:
+            - ticcutils
+            - libfolia
+            - uctodata
+            - ucto
+            - timbl
+            - timblserver
+            - mbt
+            - mbtserver
+            - frogdata
+            - frog
+            - foliautils
+            - toad
+          register: arch
+      when: ansible_distribution|lower == 'archlinux' and root == True and locality == "global" and version == "stable" #mimicks old LaMachine v1 behaviour
+
+    - name: Installation from Github
+      block:
+        - name: Installing from LanguageMachines github
+          include_role:
+            name: lamachine-git-autoconf
+          with_items:
+            - repo: ticcutils
+              user: LanguageMachines
+              license: GPL
+              author: Ko van der Sloot
+              summary: Ticcutils, a generic C++ utility library shared by our software.
+              configure_opts: "{% if ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'rhel' %}--with-boost={{lm_prefix}}{% endif %}"
+              build_environment:
+                 TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
+            - repo: libfolia
+              user: LanguageMachines
+              summary: C++ Library for the Format for Linguistic Annotation (FoLiA)
+              license: GPL
+              author: Ko van der Sloot
+            - repo: uctodata
+              user: LanguageMachines
+              license: GPL
+              author: Maarten van Gompel, Ko van der Sloot
+            - repo: ucto
+              user: LanguageMachines
+              summary: "Unicode tokeniser. Ucto tokenizes text files: it separates words from punctuation, and splits sentences."
+              license: GPL
+              author: Maarten van Gompel, Ko van der Sloot
+              build_environment:
+                 TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
+                 TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/ -ltextcat{% endif %}"
+                 CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D HAVE_OLD_TEXTCAT{% endif %}"
+            - repo: timbl
+              user: LanguageMachines
+              license: GPL
+              author: Ko van der Sloot, Peter Berck, Antal van den Bosch, Walter Daelemans, Maarten van Gompel, Ton Weijter, Jakub Zavrel
+              summary: TiMBL implements several memory-based learning algorithms.
+            - repo: timblserver
+              user: LanguageMachines
+              license: GPL
+              author: Ko van der Sloot
+              summary: TiMBL implements several memory-based learning algorithms.
+            - repo: mbt
+              user: LanguageMachines
+              license: GPL
+              author: Ko van der Sloot, Antal van den Bosch, Walter Daelemans, Jakub Zavrel
+              summary: "MBT: Memory-based tagger generation and tagging MBT is a memory-based tagger-generator and tagger in one."
+            - repo: mbtserver
+              user: LanguageMachines
+              license: GPL
+              author: Ko van der Sloot
+              summary: "MBT: Memory-based tagger generation and tagging MBT is a memory-based tagger-generator and tagger in one."
+            - repo: frogdata
+              user: LanguageMachines
+              license: GPL
+              author: Ko van der Sloot, Antal van den Bosch, Maarten van Gompel, Bertjan Busser
+            - repo: frog
+              user: LanguageMachines
+              license: GPL
+              author: Ko van der Sloot, Antal van den Bosch, Maarten van Gompel, Bertjan Busser
+            - repo: foliautils
+              user: LanguageMachines
+              license: GPL
+              author: Ko van der Sloot, Maarten van Gompel
+              summary: Command-line utilities for working with the Format for Linguistic Annotation (FoLiA), powered by libfolia (C++)
+              build_environment:
+                 TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
+                 TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/ -ltextcat{% endif %}"
+                 CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D HAVE_OLD_TEXTCAT{% endif %}"
+            - repo: toad
+              user: LanguageMachines
+              author: Ko van der Sloot
+              license: GPL
+              exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
+            - repo: wopr
+              user: LanguageMachines
+              author: Peter Berck
+              license: GPL
+              exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
+          loop_control:
+              loop_var: package
+      when: not (ansible_distribution|lower == 'macosx' and root and version == "stable") and not (ansible_distribution|lower == 'arch' and root and version == "stable")
+
+    - name: Installing Colibri Core from github
+      include_role:
+        name: lamachine-git-autoconf
+      vars:
+        package:
+            user: proycon
+            repo: colibri-core
+            summary: "Colibri core is an NLP tool as well as a C++ and Python library for working with basic linguistic constructions such as n-grams and skipgrams (i.e patterns with one or more gaps, either of fixed or dynamic size) in a quick and memory-efficient way."
+            license: GPL
+
+    - name: Running ldconfig
+      become: yes
+      command: ldconfig
+      when: root and locality == "global" and ansible_distribution|lower != 'macosx'
+
+    - name: Testing whether tools start
+      include_role:
+          name: lamachine-run
+      vars:
+          command: "{{item}} -h"
+      with_items:
+          - ucto
+          - timbl
+          - timblserver
+          - frog
+          - mbt
+          - folialint
+          - colibri-classencode
+          - colibri-patternmodeller
+      register: test
+      changed_when: test.rc != 0

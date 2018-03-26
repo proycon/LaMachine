@@ -1,0 +1,110 @@
+---
+    - name: Version check (Ubuntu)
+      fail:
+        msg: "Your version of Ubuntu is too old for Lamachine, upgrade to the latest LTS release"
+      when: ansible_distribution|lower == "ubuntu" and ansible_distribution_version <= 14.04
+
+    - name: Version check (Ubuntu)
+      debug:
+         msg: "WARNING: Your version of Ubuntu is older than recommended, upgrade to the latest LTS release"
+      when: ansible_distribution|lower == "ubuntu" and ansible_distribution_version < 16.04
+
+    - name: Version check (Debian)
+      fail:
+          msg: "Your version of Debian is too old for LaMachine, upgrade to the latest stable release"
+      when: ansible_distribution|lower == "debian" and ansible_distribution_major_version|int <= 8
+
+    - name: Version check (Debian)
+      debug:
+          msg: "WARNING: Your version of Debian is older than recommended, upgrade to the latest stable release"
+      when: ansible_distribution|lower == "debian" and ansible_distribution_major_version|int < 9
+
+    - name: Installing aptitude (APT) #needed by ansible apt module in next step
+      become: true
+      become_user: root
+      apt:
+        name: aptitude
+        state: latest
+        update-cache: yes
+
+    - name: Updating base system (APT)
+      become: true
+      become_user: root
+      apt:
+        name: '*'
+        state: latest
+        update-cache: yes
+        allow-unauthenticated: yes #there may be unauthenticated packages from other sources already present
+      ignore_errors: "{% if ansible_user_id == 'travis' %}yes{% else %}no{% endif %}" #bit unelegant but sometimes the system is too messy and fails on something (like travis)
+      when: nosysupdate is not defined or nosysupdate == false
+
+      #############################################################
+
+    - name: installing common base packages (apt)
+      become: true
+      become_user: root
+      apt:
+        name: "{{item}}"
+        state: present
+      with_items: [coreutils, procps, lsof, dirmngr, pkg-config, git-core, nano, make, gcc, g++, autoconf, automake, autoconf-archive, libtool, autotools-dev, libicu-dev, libxml2-dev, libxslt1-dev, libbz2-dev, zlib1g-dev, libtar-dev, libaspell-dev, libhunspell-dev,  python3, python3-pip, python3-wheel, python3-dev, libboost-all-dev, libboost-python-dev, wget, curl, libexttextcat-dev, libcurl4-gnutls-dev, poppler-utils, perl]
+      #dirmngr is needed for gpg apt-get key
+
+    - name: Installing python-virtualenv
+      become: true
+      become_user: root
+      apt:
+        name: "python-virtualenv"
+        state: present
+
+    - name: Installing python3-virtualenv
+      become: true
+      become_user: root
+      apt:
+        name: "python3-virtualenv"
+        state: present
+      when: (ansible_distribution|lower == 'ubuntu' and ansible_distribution_major_version|int >= 16) or (ansible_distribution|lower == 'debian' and ansible_distribution_major_version|int >= 8) or (ansible_distribution|lower == "linuxmint")
+
+    - name: Installing libgnutls28
+      become: true
+      become_user: root
+      apt:
+        name: "libgnutls28-dev"
+        state: present
+
+      #############################################################
+      # ANSIBLE installation so we can bootstrap ourselves
+      ############################################################
+
+    - when: locality == "global"
+      block:
+        - name: Checking whether ansible is already available (global)
+          shell: which ansible
+          register: have_ansible
+          failed_when: have_ansible.rc == 127
+
+        - name: Adding key for keyserver.ubuntu.com
+          become: true
+          become_user: root
+          apt_key:
+            keyserver: keyserver.ubuntu.com
+            id: 93C4A3FD7BB9C367
+          when: have_ansible.rc != 0
+
+        - name: Adding Ansible APT repository
+          become: true
+          become_user: root
+          apt_repository:
+            repo: deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main #should work on jessie/stretch as well
+            state: present
+          when: have_ansible.rc != 0
+
+        - name: Install Ansible (APT)
+          become: true
+          become_user: root
+          apt:
+              name: ansible
+              state: latest
+              update_cache: yes
+          when: have_ansible.rc != 0
+
+

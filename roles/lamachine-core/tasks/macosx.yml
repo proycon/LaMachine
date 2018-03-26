@@ -1,0 +1,45 @@
+---
+    - name: Verifying if can get root
+      fail:
+          msg: "Mac OS X installation is not supported without root/sudo permission."
+      when: not root
+
+    - name: Verifying global installation is not preferred
+      fail:
+          msg: "Mac OS X installation is not supported with global locality, use local instead"
+      when: locality == "global"
+
+
+    - name: Updating base system (Homebrew)
+      homebrew:
+        update_homebrew: yes
+        upgrade_all: yes
+      ignore_errors: yes
+
+    - name: Installing common base packages (Homebrew)
+      homebrew:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - pkg-config
+        - autoconf
+        - automake
+        - libtool
+        - autoconf-archive
+        - xml2
+        - libxslt
+        - icu4c
+        - libtextcat
+        - libtar
+        - python
+        - wget
+        - ansible
+        - boost
+        - boost-python3
+      when: nosysupdate is not defined or nosysupdate == false
+
+    - name: (Re)install virtualenv
+      become: yes
+      become_user: root
+      command: pip3 install virtualenv
+      when: localenv_type == "virtualenv"
