@@ -55,6 +55,7 @@ usage () {
     echo "  development = you get the very latest development versions for testing, this may not always work as expected!"
     echo "  custom = you decide explicitly what exact versions you want (for reproducibility)."
     echo "           this expects you to provide a LaMachine version file with exact version numbers."
+    echo " ${bold}--prebuilt${normal} - Download a pre-built image rather than building a new one from scratch (for Docker or Vagrant)"
     echo " ${bold}--env${normal} [virtualenv|conda] - Local user environment type"
     echo "  virtualenv = A simple virtual environment"
     echo "  conda = provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R). EXPERIMENTAL!!"
@@ -124,6 +125,7 @@ if [ "$OS" = "unknown" ]; then
         OS="redhat"
     fi
 fi
+WINDOWS=0
 if [ "$OS" = "unknown" ]; then
     echo "(Fallback: Detecting OS by finding installed package manager...)">&2
     ARCH=$(which pacman 2> /dev/null)
@@ -139,6 +141,10 @@ if [ "$OS" = "unknown" ]; then
         echo "Unable to detect a supported OS! Perhaps your distribution is not yet supported by LaMachine? Please contact us!">&2
         exit 2
     fi
+    if grep -q Microsoft /proc/version; then
+      echo "(Windows Linux Subsystem detected)">&2
+      WINDOWS=1 #we are running in the Windows Linux Subsystem
+    fi
 fi
 INTERACTIVE=1
 LOCALITY=""
@@ -149,6 +155,7 @@ PREFER_DISTRO=0
 VMMEM=4096
 VAGRANTBOX="debian/contrib-stretch64" #base distribution for VM
 DOCKERREPO="proycon/lamachine"
+BUILD=1
 
 echo "Detected OS: $OS"
 echo "Detected distribution ID: $DISTRIB_ID"
@@ -169,7 +176,7 @@ if [ "$OS" = "arch" ] && [ -e /usr/src/LaMachine ]; then
 fi
 
 if [[ "$USERNAME" == "root" ]]; then
-    fatalerror "Do not run the LaMachine bootstrap process as root!"
+    fatalerror "Do not run the LaMachine bootstrap process as root!" #we can't do this message earlier because people coming from LaMachine v1 do run as root sometimes
 fi
 
 
@@ -238,6 +245,10 @@ while [[ $# -gt 0 ]]; do
         shift # past argument
         shift # past value
         ;;
+        -B|--prebuilt)
+        BUILD=0
+        shift
+        ;;
         --noninteractive) #Script mode
         INTERACTIVE=0
         shift
@@ -300,11 +311,13 @@ if [ -z "$FLAVOUR" ]; then
         echo "       for a particular user; can exists alongside existing"
         echo "       installations"
         echo "       (uses conda or virtualenv)"
+        if [ $WINDOWS -eq 0 ]; then
         echo "  2) in a Virtual Machine"
         echo "       complete separation from the host OS"
         echo "       (uses Vagrant and VirtualBox)"
         echo "  3) in a Docker container"
         echo "       (uses Docker and Ansible)"
+        fi
         echo "  4) Globally on this machine"
         echo "       modifies the existing system and may"
         echo "       interact with existing packages"
@@ -324,9 +337,33 @@ if [ -z "$FLAVOUR" ]; then
     done
 fi
 
-if [[ "$FLAVOUR" == "vm" ]]; then
+if [[ "$FLAVOUR" == "vm" ]]; then #alias
     FLAVOUR="vagrant"
 fi
+
+if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
+  if [[ "$FLAVOUR" == "vagrant" || "$FLAVOUR" == "docker" ]]; then
+    while true; do
+        echo "${bold}Do you want to build a new personalised LaMachine image or use and download a prebuilt one?${normal}"
+        echo "  1) Build a new image"
+        echo "       Offers most flexibility and ensures you are on the latest versions."
+        echo "       Allows you to choose even for development versions or custom versions."
+        echo "       Allows you to choose what software to include from scratch."
+        echo "       Best integration with your custom data."
+        echo "  2) Download a prebuilt one"
+        echo "       Comes with a fixed selection of software, allows you to update with extra software later."
+        echo "       Fast & easy but less flexible"
+        echo -n "${bold}Your choice?${normal} [12] "
+        read choice
+        case $choice in
+            [1]* ) break;;
+            [2]* ) BUILD=0;  break;;
+            * ) echo "Please answer with the corresponding number of your preference..";;
+        esac
+    done
+  fi
+fi
+
 
 if [ -z "$LOCALITY" ]; then
     if [[ "$FLAVOUR" == "local" ]]; then
@@ -362,7 +399,7 @@ if [[ "$LOCALITY" == "local" ]]; then
         echo " If this is what you want, just press ENTER, "
         echo " Otherwise, type a new existing path: "
         echo -n "${bold}Where do you want to create the local user environment?${normal} [press ENTER for $(pwd)] "
-        read $targetdir
+        read targetdir
         if [ ! -z "$targetdir" ]; then
             cd $targetdir || fatalerror "Specified directory does not exist"
         fi
@@ -425,33 +462,37 @@ if [ -z "$SUDO" ]; then
 fi
 
 echo "Looking for dependencies..."
-if ! which git; then
-    NEED+=("git")
-fi
-if [ "$FLAVOUR" = "docker" ]; then
-    NEED_VIRTUALENV=0 #Do we need a virtualenv with ansible for the controller? Never for docker, all ansible magic happens inside the docker container
+if [ $BUILD -eq 0 ]; then
+    NEED_VIRTUALENV=0 #Do we need a virtualenv with ansible for the controller? Never needed if we are not building ourselves
 else
-    NEED_VIRTUALENV=1 #Do we need a virtualenv with ansible for the controller? (this is a default we will attempt to falsify)
-    if which ansible-playbook; then
-        NEED_VIRTUALENV=0
-    elif [ $SUDO -eq 1 ]; then #we can only install ansible globally if we have root
-        if [ "$OS" != "mac" ]; then #pip is preferred on mac
-            if [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
-                NEED+=("epel") #ansible is in  EPEL
-            fi
-            NEED+=("ansible")
-            NEED_VIRTUALENV=0
-        fi
+    if ! which git; then
+        NEED+=("git")
     fi
-    if [ $NEED_VIRTUALENV -eq 1 ]; then
-        if ! which pip; then
-            if [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
-                NEED+=("epel") #python-pip is in  EPEL
+    if [ "$FLAVOUR" = "docker" ]; then
+        NEED_VIRTUALENV=0 #Do we need a virtualenv with ansible for the controller? Never for docker, all ansible magic happens inside the docker container
+    else
+        NEED_VIRTUALENV=1 #Do we need a virtualenv with ansible for the controller? (this is a default we will attempt to falsify)
+        if which ansible-playbook; then
+            NEED_VIRTUALENV=0
+        elif [ $SUDO -eq 1 ]; then #we can only install ansible globally if we have root
+            if [ "$OS" != "mac" ]; then #pip is preferred on mac
+                if [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
+                    NEED+=("epel") #ansible is in  EPEL
+                fi
+                NEED+=("ansible")
+                NEED_VIRTUALENV=0
             fi
-            NEED+=("pip")
         fi
-        if ! which virtualenv; then
-            NEED+=("virtualenv")
+        if [ $NEED_VIRTUALENV -eq 1 ]; then
+            if ! which pip; then
+                if [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
+                    NEED+=("epel") #python-pip is in  EPEL
+                fi
+                NEED+=("pip")
+            fi
+            if ! which virtualenv; then
+                NEED+=("virtualenv")
+            fi
         fi
     fi
 fi
@@ -760,7 +801,8 @@ CONFIGFILE="$BASEDIR/lamachine-$LM_NAME.yml"
 INSTALLFILE="$BASEDIR/install-$LM_NAME.yml"
 
 
-if [ ! -e "$CONFIGFILE" ]; then
+if [ $BUILD -eq 1 ]; then
+ if [ ! -e "$CONFIGFILE" ]; then
     echo "---
 conf_name: \"$LM_NAME\" #Name of this LaMachine configuration
 flavour: \"$FLAVOUR\" #LaMachine flavour
@@ -855,17 +897,17 @@ mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
         fi
     fi
 
-if [ $INTERACTIVE -eq 1 ]; then
-    echo "${bold}Opening configuration file $CONFIGFILE in editor for final configuration...${normal}"
-    sleep 3
-    if ! "$EDITOR" "$CONFIGFILE"; then
-        echo "aborted by editor..." >&2
-        exit 2
+    if [ $INTERACTIVE -eq 1 ]; then
+        echo "${bold}Opening configuration file $CONFIGFILE in editor for final configuration...${normal}"
+        sleep 3
+        if ! "$EDITOR" "$CONFIGFILE"; then
+            echo "aborted by editor..." >&2
+            exit 2
+        fi
     fi
-fi
 
-fi
-
+ fi
+fi #build
 
 if [ ! -d lamachine-controller ]; then
     mkdir lamachine-controller || fatalerror "Unable to create directory for LaMachine control environment"
@@ -893,46 +935,49 @@ else
     fi
 fi
 
-if [ -z "$SOURCEDIR" ]; then
-    echo "Cloning LaMachine git repo ($GITREPO $BRANCH)..."
-    if [ ! -d LaMachine ]; then
-        git clone $GITREPO -b $BRANCH LaMachine || fatalerror "Unable to clone LaMachine git repository"
-    fi
-    SOURCEDIR=$BASEDIR/lamachine-controller/$LM_NAME/LaMachine
-    cd $SOURCEDIR
-else
-    echo "Updating LaMachine git..."
-    cd $SOURCEDIR
-    if [ "$SOURCEDIR" != "$BASEDIR" ]; then
-        git checkout $BRANCH #only switch branches if we're not already in a git repo the user cloned himself
-    fi
-fi
-git pull #make sure we're up to date
-if [ ! -e $SOURCEDIR/host_vars/$(basename $CONFIGFILE) ]; then
-    mv $CONFIGFILE $SOURCEDIR/host_vars/$(basename $CONFIGFILE) || fatalerror "Unable to copy $CONFIGFILE"
-    if [ "$SOURCEDIR" != "$BASEDIR" ]; then
-        ln -sf $SOURCEDIR/host_vars/$(basename $CONFIGFILE) $CONFIGFILE || fatalerror "Unable to link $CONFIGFILE"
-    fi
-fi
-if [ ! -e $INSTALLFILE ]; then
-    if [ ! -z "$INSTALL" ]; then
-        #use the explicitly provided list
-        echo "- hosts: all" > $SOURCEDIR/install-$LM_NAME.yml
-        echo "  roles: [ lamachine-core, $INSTALL ]" >> $SOURCEDIR/install-$LM_NAME.yml
+if [ $BUILD -eq 1 ]; then
+    if [ -z "$SOURCEDIR" ]; then
+        echo "Cloning LaMachine git repo ($GITREPO $BRANCH)..."
+        if [ ! -d LaMachine ]; then
+            git clone $GITREPO -b $BRANCH LaMachine || fatalerror "Unable to clone LaMachine git repository"
+        fi
+        SOURCEDIR=$BASEDIR/lamachine-controller/$LM_NAME/LaMachine
+        cd $SOURCEDIR
     else
-        #use the template
-        cp $SOURCEDIR/install.yml $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to copy $SOURCEDIR/install.yml"
+        echo "Updating LaMachine git..."
+        cd $SOURCEDIR
+        if [ "$SOURCEDIR" != "$BASEDIR" ]; then
+            git checkout $BRANCH #only switch branches if we're not already in a git repo the user cloned himself
+        fi
     fi
-    if [ "$SOURCEDIR" != "$BASEDIR" ]; then
-        ln -sf $SOURCEDIR/install-$LM_NAME.yml $INSTALLFILE || fatalerror "Unable to link $CONFIGFILE"
+    git pull #make sure we're up to date
+    if [ ! -e $SOURCEDIR/host_vars/$(basename $CONFIGFILE) ]; then
+        mv $CONFIGFILE $SOURCEDIR/host_vars/$(basename $CONFIGFILE) || fatalerror "Unable to copy $CONFIGFILE"
+        if [ "$SOURCEDIR" != "$BASEDIR" ]; then
+            ln -sf $SOURCEDIR/host_vars/$(basename $CONFIGFILE) $CONFIGFILE || fatalerror "Unable to link $CONFIGFILE"
+        fi
     fi
-fi
 
-if [ $INTERACTIVE -eq 1 ] && [ -z "$INSTALL" ]; then
-    echo "${bold}Opening installation file $INSTALLFILE in editor for selection of packages to install...${normal}"
-    sleep 3
-    if ! "$EDITOR" "$INSTALLFILE"; then
-        exit 2
+    if [ ! -e $INSTALLFILE ]; then
+        if [ ! -z "$INSTALL" ]; then
+            #use the explicitly provided list
+            echo "- hosts: all" > $SOURCEDIR/install-$LM_NAME.yml
+            echo "  roles: [ lamachine-core, $INSTALL ]" >> $SOURCEDIR/install-$LM_NAME.yml
+        else
+            #use the template
+            cp $SOURCEDIR/install.yml $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to copy $SOURCEDIR/install.yml"
+        fi
+        if [ "$SOURCEDIR" != "$BASEDIR" ]; then
+            ln -sf $SOURCEDIR/install-$LM_NAME.yml $INSTALLFILE || fatalerror "Unable to link $CONFIGFILE"
+        fi
+    fi
+
+    if [ $INTERACTIVE -eq 1 ] && [ -z "$INSTALL" ]; then
+        echo "${bold}Opening installation file $INSTALLFILE in editor for selection of packages to install...${normal}"
+        sleep 3
+        if ! "$EDITOR" "$INSTALLFILE"; then
+            exit 2
+        fi
     fi
 fi
 
@@ -948,10 +993,23 @@ rc=0
 if [[ "$FLAVOUR" == "vagrant" ]]; then
     echo "Preparing vagrant..."
     #Copy and adapt the Vagrantfile file; storing it inside the lamachine-controller
-    if [ ! -f $SOURCEDIR/Vagrantfile.$LM_NAME ]; then
-        cp -f $SOURCEDIR/Vagrantfile $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to copy Vagrantfile"
+    if [ $BUILD -eq 1 ]; then
+        if [ ! -f $SOURCEDIR/Vagrantfile.$LM_NAME ]; then
+            cp -f $SOURCEDIR/Vagrantfile $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to copy Vagrantfile"
+            sed -i s/lamachine-vm/lamachine-$LM_NAME/g $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to run sed"
+            sed -i s/install.yml/install-$LM_NAME.yml/g $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to run sed"
+        fi
+    else
+        cp -f $SOURCEDIR/Vagrantfile.prebuilt $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to copy Vagrantfile"
         sed -i s/lamachine-vm/lamachine-$LM_NAME/g $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to run sed"
-        sed -i s/install.yml/install-$LM_NAME.yml/g $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to run sed"
+        if [ $INTERACTIVE -eq 1 ]; then
+            echo "${bold}Opening Vagrant configuration in editor for final configuration...${normal}"
+            sleep 3
+            if ! "$EDITOR" "$SOURCEDIR/Vagrantfile.$LM_NAME"; then
+                echo "aborted by editor..." >&2
+                exit 2
+            fi
+        fi
     fi
     #add activation script on the host machine:
     echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nif vagrant up && vagrant ssh; then\nvagrant halt\nexit 0\nelse\nexit 1\nfi" > $BASEDIR/lamachine-$LM_NAME-activate
@@ -973,9 +1031,13 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     rc=${PIPESTATUS[0]}
     echo "======================================================================================"
     if [ $rc -eq 0 ]; then
-        echo "${boldgreen}Build completed succesfully! Rebooting VM...${normal}."
-        bash $BASEDIR/lamachine-$LM_NAME-stop
-        bash $BASEDIR/lamachine-$LM_NAME-start
+        if [ $BUILD -eq 0 ]; then
+            echo "${boldgreen}Build completed succesfully! Rebooting VM...${normal}."
+            bash $BASEDIR/lamachine-$LM_NAME-stop
+            bash $BASEDIR/lamachine-$LM_NAME-start
+        else
+            echo "${boldgreen}Build from pre-built image completed succesfully!${normal}."
+        fi
         echo "${boldgreen}All done, the LaMachine VM has been built and started succesfully${normal}."
         echo "- ${bold}to connect to a started VM, run: lamachine-$LM_NAME-connect${normal} (or: bash ~/bin/lamachine-$LM_NAME-connect)"
         echo "- to power up the VM, run: lamachine-$LM_NAME-start"
@@ -1025,15 +1087,26 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
             exit 2
         fi
     fi
-    echo "Building docker"
-    sed -i "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to run sed"
-    #echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
-    docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME . 2>&1 | tee lamachine-$LM_NAME.log
-    rc=${PIPESTATUS[0]}
+    if [ $BUILD -eq 1 ]; then
+        echo "Building docker image.."
+        sed -i "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to run sed"
+        #echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
+        docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME . 2>&1 | tee lamachine-$LM_NAME.log
+        rc=${PIPESTATUS[0]}
+    else
+        echo "Pulling pre-built docker image.."
+        docker pull $DOCKERREPO
+        rc=$?
+    fi
     if [ $rc -eq 0 ]; then
         echo "======================================================================================"
-        echo "${boldgreen}All done, a docker image has been built!${normal}"
-        echo "- to create and run a *new* interactive container using this image, run: docker run -p 8080:80 -t -i $DOCKERREPO:$LM_NAME"
+        if [ $BUILD -eq 1 ]; then
+            echo "${boldgreen}All done, a docker image has been built!${normal}"
+            echo "- to create and run a *new* interactive container using this image, run: docker run -p 8080:80 -t -i $DOCKERREPO:$LM_NAME"
+        else
+            echo "${boldgreen}All done, a docker image has been downloaded!${normal}"
+            echo "- to create and run a *new* interactive container using this image, run: docker run -p 8080:80 -t -i $DOCKERREPO"
+        fi
     else
         echo "======================================================================================"
         echo "${boldred}The docker build has failed unfortunately.${normal} You have several options:"

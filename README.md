@@ -20,29 +20,33 @@ that expose some of the functionality to a larger audience.
 
 ## Installation
 
-### A) Custom build (recommended)
+### A) Guided installation with custom build option (recommended)
 
-To build your own LaMachine instance, in any of the possible flavours, open a terminal on your Linux, BSD or Mac OS X
-system and run the following command:
+To build your own LaMachine instance, in any of the possible flavours, or to download a pre-built image, open a terminal
+on your Linux, BSD or Mac OS X system and run the following command:
 
 ```
 bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh)
 ```
 
-This will prompt you for some questions on how you would like your LaMachine build and allows you to include precisely
+This will prompt you for some questions on how you would like your LaMachine installation and allows you to include precisely
 the software you want or need and ensures that all is up to date.
 
-Are you on Windows 10? Then you need to run this command in a Linux subsystem in Windows 10/2016 or above; to do this you must first
-install the Linux Subsystem with a distribution of your choice (we recommend Ubuntu) from the Microsoft Store. Follow
-the instructions [here](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide). Are you on an older Windows?
-Then this won't work you have will to use a pre-built Virtual Machine. (installation path C)
+Are you on Windows 10 or 2016? Then you need to run this command in a Linux subsystem; to do this you must first install
+the Linux Subsystem with a distribution of your choice (we recommend Ubuntu) from the Microsoft Store. Follow the
+instructions [here](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide). Are you on an older Windows or you
+are on Windows and want a VM and not a custom build? Then this won't work you have will to use a pre-built Virtual
+Machine as explained in installation path C.
 
 Building LaMachine can take quite some time, depending also on your computer's resources, internet connection, and the
-amount of software you selected to install. Half an hour to an hour is a normal build time.
+amount of software you selected to install. Half an hour to an hour is a normal build time. The bootstrap script
+alternatively also offers the option to download pre-built images (installation path B & C).
 
 ### B) Pre-built container image for Docker
 
 We regularly build a basic LaMachine image an publish it to [Docker Hub](https://hub.docker.com/r/proycon/lamachine/).
+The above installation path A also offers access to this, but you may opt to do it directly:
+
 To download and use it, run:
 
 ```
@@ -63,21 +67,28 @@ docker pull proycon/lamachine:develop
 docker run  -p 8080:80 -t -i proycon/lamachine:develop
 ```
 
-### C) Pre-built Virtual Machine image for Vagrant
+### C) Pre-built Virtual Machine image for Vagrant (recommended for Windows users)
 
 We regularly build a basic LaMachine image and publish it to the [Vagrant Cloud](https://app.vagrantup.com/proycon/).
-To download and use it, run:
+The above installation path A also offers access to this (except on Windows), but you may opt to do it directly.
 
-```
-vagrant init proycon/lamachine
-vagrant up
-vagrant ssh
-```
+To download and use it:
 
-This requires you to already have [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org) installed on your system.
+* Ensure you have  [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org) installed on your system.
+* Open a terminal
+* Navigate to a folder of your choice (this will the the base folder, files inside will be shared with the VM)
+* Run ``vagrant init proycon/lamachine`` from the terminal, this creates a file named ``Vagrantfile``
+* Open ``Vagrantfile`` in a text editor and change the memory and CPU options to suit your system (the more resources
+  the better!).
+   * If you are on Windows and don't have a decent text editor, just use wordpad (not Notepad nor MS Word!)
+* Run ``vagrant up`` from the terminal to boot your VM
+* Run ``vagrant ssh`` from the terminal to connect to the VM
 
 The pre-built image contains only a basic set of common software rather than the full set, run ``lamachine-stable-update --edit``
 inside the virtual machine to select extra software to install.
+
+To stop the VM when you're done, run: ``vagrant halt``. Next time, navigate to the same base folder and run ``vagrant
+up`` and ``vagrant ssh`` again.
 
 ## Included Software
 
