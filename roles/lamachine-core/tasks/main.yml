@@ -167,7 +167,7 @@
                 fi
                 if [ $SOURCED -eq 0 ]; then
                   #not SOURCED, start a subshell
-                  export PS1="(`basename \"$VIRTUAL_ENV\"`) $LM_OLD_PS1" #set prompt manually cause it somehow gets messed up otherwise
+                  export PS1="(`basename \"$VIRTUAL_ENV\"`) \u@\h \W\$ " #set prompt manually cause it somehow gets messed up otherwise
                   export SOURCED #prevent endless recursion
                   bash
                 fi
