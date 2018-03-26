@@ -7,8 +7,7 @@ ARG ANSIBLE_OPTIONS="-vv"
 EXPOSE 80
 USER root
 MAINTAINER Maarten van Gompel <proycon@anaproy.nl>
-LABEL Description="A unified distribution of NLP software. Developed by the Centre of Language and Speech Technology
-(Radboud University Nijmegen) and partners"
+LABEL Description="A unified distribution of NLP software. Developed by the Centre of Language and Speech Technology (Radboud University Nijmegen) and partners"
 VOLUME $DATA_PATH
 RUN apt-get update
 RUN apt-get install -m -y python python-pip sudo apt-utils locales
