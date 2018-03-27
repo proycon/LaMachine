@@ -5,26 +5,46 @@
 # INSTRUCTIONS: Comment or remove categories/roles you do not want to install, dependencies will be automatically
 # resolved even when not explicitly mentioned)
 #
-# NOTE: ensure that all roles are lined up with the same amount of spaces!
+# NOTE: ensure that all enabled roles are lined up with the same amount of spaces!
 #       (all hyphens must be vertically on the same column!)
 #       (don't use tabs)
 #
 ################################################################################################################
 - hosts: all
   roles:
-      - lamachine-core #The LaMachine core, you always need this or nothing works; already includes Python 3
-      - languagemachines-basic #includes basic NLP tools written in C++, such as timbl, frog, ucto, folia by the Language Machines Research group, Centre of Language and Speech Technology, Radboud University Nijmegen
-      - python-core #Core 3rd party scientific python packages (numpy, scipy, pandas, scikit-learn, nltk, and more)
-      - languagemachines-python #contains basic Python-based tools and libraries and web applications/services by the Language Machines Research group, Centre of Language and Speech Technology, Radboud University Nijmegen. (includes pynlpl, CLAM, foliadocserve, FLAT)
-      - languagemachines-python-bindings #contains python-ucto, python-frog, python-timbl (requires the above)
-      - java-core #Java 8, Maven
-      - r-core #R with core R packages (3rd party)
-     # - piccl #Workflows for Post-OCR correction and normalisation and pseudo-modernisation of historical text. Includes TICCL. Requires languagemachines-* (Radboud University & Tilburg University)
-     # - alpino #A dependency parser for dutch (University of Groningen)
-     # - tscan  #Software for feature extraction for readability prediction  (Utrecht University, Tilburg University & Radboud University), requires alpino and languagemachines-*
-     # - gecco  #Generic software for context-aware spelling correction (CLST, Radboud University Nijmegen)
-     # - valkuil  #A Dutch spelling corrector (CLST, Radboud University Nijmegen)
+      - lamachine-core                   ## The LaMachine core ##
+                                              #you always need this or nothing works; already includes Python 3
+      - languagemachines-basic           ## Generic & Dutch NLP tools written in C++ ##
+                                              #by the Language Machines Research group,
+                                              #Centre for Language and Speech Technology, Radboud University Nijmegen
+                                              #provides: timbl, frog, ucto, folia, mbt, wopr, Colibri Core
+      - python-core                      ## Core 3rd party scientific python packages ###
+                                             #(numpy, scipy, pandas, matplotlib, scikit-learn, nltk, and more)
+      - languagemachines-python          ## Python-based NLP tools and libraries and web applications/services ##
+                                              #by the Language Machines Research group,
+                                              #Centre for Language and Speech Technology, Radboud University Nijmegen
+                                             #(this includes pynlpl, pynlpl.formats.folia, CLAM, foliadocserve, FLAT)
+      - languagemachines-python-bindings # Provides Python bindings to C++ software
+                                             #(provides python-ucto, python-frog, python-timbl, colibricore)
+      - java-core                        ## Java 8, Maven ##
+      - r-core                           ## R with core R packages ##
+     # - piccl                            ## PICCL: Workflows for Post-OCR correction and normalisation and pseudo-modernisation of historical text. ##
+                                             # [2.2GB - not supported on Mac OS X]
+                                             # (provides TICCL-Tools)
+     # - alpino                           ## ALPINO: Dependency parser for Dutch ##
+                                             # [only supported on Debian/Ubuntu for now]
+     # - tscan                            ## T-Scan: Software for feature extraction for readability prediction ##
+                                             # [requires Alpino, so only supported on Debian/Ubuntu]
+                                             # (Utrecht University, Tilburg University & Radboud University)
+     # - gecco                            ## Generic software for context-aware spelling correction ##
+                                             # Centre for Language and Speech Technology, Radboud University Nijmegen
+     # - valkuil                          ## A Dutch Spelling corrector ##
+     #                                       # Centre for Language and Speech Technology, Radboud University Nijmegen
 
+
+# NOTE: ensure that all enabled roles are lined up with the same amount of spaces!
+#       (all hyphens must be vertically on the same column!)
+#       (don't use tabs)
 
 
 
