@@ -409,6 +409,9 @@ if [[ "$LOCALITY" == "local" ]]; then
     fi
 fi
 
+touch x || fatalerror "Current/target directory $(pwd) is not writable for the current user! Run the bootstrap somewhere where you can write!"
+rm x
+
 if [ -z "$LOCALENV_TYPE" ]; then
     LOCALENV_TYPE="virtualenv"
 fi
