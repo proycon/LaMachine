@@ -90,6 +90,13 @@ if [ -d .git ] && [ -e bootstrap.sh ]; then
 fi
 
 
+if [ ! -z "$LM_NAME" ]; then
+    fatalerror "Inception error: Do not run the LaMachine bootstrap from within an existing LaMachine! (deactivate first!)"
+fi
+if [ ! -z "$VIRTUAL_ENV" ]; then
+    fatalerror "Inception error: Do not run the LaMachine bootstrap from within an existing Python Virtual Environment! (deactivate first!)"
+fi
+
 ####################################################
 #               Platform Detection
 ####################################################
