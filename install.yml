@@ -29,18 +29,19 @@
       - java-core                        ## Java 8, Maven ##
       - r-core                           ## R with core R packages ##
      # - piccl                            ## PICCL: Workflows for Post-OCR correction and normalisation and pseudo-modernisation of historical text. ##
-                                             # [2.2GB - not supported on Mac OS X]
+                                             # [2.2GB! - not supported on Mac OS X]
                                              # (provides TICCL-Tools)
      # - alpino                           ## ALPINO: Dependency parser for Dutch ##
-                                             # [only supported on Debian/Ubuntu for now]
+                                             # [1.6GB! - only supported on Debian/Ubuntu for now]
      # - tscan                            ## T-Scan: Software for feature extraction for readability prediction ##
                                              # [requires Alpino, so only supported on Debian/Ubuntu]
                                              # (Utrecht University, Tilburg University & Radboud University)
      # - gecco                            ## Generic software for context-aware spelling correction ##
+                                             # [Not supported on Mac OS X]
                                              # Centre for Language and Speech Technology, Radboud University Nijmegen
      # - valkuil                          ## A Dutch Spelling corrector ##
-     #                                       # Centre for Language and Speech Technology, Radboud University Nijmegen
-
+                                             # [1.2GB! - Not supported on Mac OS X, requires at least 32GB RAM]
+                                             # Centre for Language and Speech Technology, Radboud University Nijmegen
 
 # NOTE: ensure that all enabled roles are lined up with the same amount of spaces!
 #       (all hyphens must be vertically on the same column!)
