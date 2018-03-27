@@ -1064,6 +1064,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
         echo " - Enter the LaMachine VM in its uncompleted state, run: bash ~/bin/lamachine-$LM_NAME-connect"
         echo " - Force the LaMachine VM to update itself, run: bash ~/bin/lamachine-$LM_NAME-update"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
+        echo "   The log file has been written to lamachine-$LM_NAME.log"
     fi
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ "$SUDO" -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
@@ -1085,9 +1086,10 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
         echo "======================================================================================"
         echo "${boldred}Building a local LaMachine environment has failed unfortunately.${normal} You have several options:"
         echo " - Start from scratch again with a new bootstrap, possibly tweaking configuration options"
-        echo "-  Attempt to activate the environment (run: lamachine-$LM_NAME-activate) and debug the problem"
-        echo "-  Run lamachine-$LM_NAME-update after activating the environment to see if the problem corrects itself"
+        echo " - Attempt to activate the environment (run: lamachine-$LM_NAME-activate) and debug the problem"
+        echo " - Run lamachine-$LM_NAME-update after activating the environment to see if the problem corrects itself"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
+        echo "   The log file has been written to lamachine-$LM_NAME.log"
         rc=1
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
@@ -1125,6 +1127,9 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
         echo "${boldred}The docker build has failed unfortunately.${normal} You have several options:"
         echo " - Start from scratch again with a new bootstrap, possibly tweaking configuration options"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
+        if [ $BUILD -eq 1 ]; then
+        echo "   The log file has been written to lamachine-$LM_NAME.log"
+        fi
     fi
 else
     echo "No bootstrap for $FLAVOUR implemented yet at this stage, sorry!!">&2
