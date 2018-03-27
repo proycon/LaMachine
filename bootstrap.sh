@@ -84,7 +84,7 @@ fatalerror () {
 #and will contain a lamachine-controller environment
 BASEDIR=$(pwd)
 cd $BASEDIR
-if [ -d .git ]; then
+if [ -d .git ] && [ -e bootstrap.sh ]; then
     #we are in a LaMachine git repository already
     SOURCEDIR=$BASEDIR
 fi
@@ -409,7 +409,7 @@ if [[ "$LOCALITY" == "local" ]]; then
     fi
 fi
 
-touch x || fatalerror "Current/target directory $(pwd) is not writable for the current user! Run the bootstrap somewhere where you can write!"
+touch x || fatalerror "Directory $(pwd) is not writable for the current user! Run the bootstrap somewhere where you can write!"
 rm x
 
 if [ -z "$LOCALENV_TYPE" ]; then
