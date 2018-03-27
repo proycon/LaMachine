@@ -2,7 +2,7 @@
     - name: Version check (Ubuntu)
       fail:
         msg: "Your version of Ubuntu is too old for Lamachine, upgrade to the latest LTS release"
-      when: ansible_distribution|lower == "ubuntu" and ansible_distribution_version|string <= "14.04"
+      when: ansible_distribution|lower == "ubuntu" and ansible_distribution_version|string < "14.04"
 
     - name: Version check (Ubuntu)
       debug:
