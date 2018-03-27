@@ -1081,7 +1081,7 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ $rc -eq 0 ]; then
         echo "======================================================================================"
         echo "${boldgreen}All done, a local LaMachine environment has been built!${normal}"
-        echo "- ${bold}to activate your environment, run: lamachine-$LM_NAME-activate${normal}   (or: bash ~/bin/lamachine-$LM_NAME-activate)"
+        echo "- ${bold}to activate your environment, run: lamachine-$LM_NAME-activate${normal}   (or: source ~/bin/lamachine-$LM_NAME-activate)"
     else
         echo "======================================================================================"
         echo "${boldred}Building a local LaMachine environment has failed unfortunately.${normal} You have several options:"

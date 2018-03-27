@@ -169,7 +169,7 @@
                   #not SOURCED, start a subshell
                   export PS1="(`basename \"$VIRTUAL_ENV\"`) \u@\h:\W\$ " #set prompt manually cause it somehow gets messed up otherwise
                   export SOURCED
-                  bash
+                  bash --norc --noprofile
                 fi
               fi
           fi
