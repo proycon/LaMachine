@@ -856,12 +856,12 @@ locality: \"$LOCALITY\" #local or global?
             echo "lamachine_path: \"$BASEDIR/lamachine-controller/$LM_NAME/LaMachine\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
         fi
         echo "data_path: \"$BASEDIR\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
-        echo "local_prefix: \"$HOMEDIR/lamachine-$LM_NAME\" #Path to the local environment (virtualenv)" >> $CONFIGFILE
+        echo "local_prefix: \"$BASEDIR/lamachine-$LM_NAME\" #Path to the local environment (virtualenv)" >> $CONFIGFILE
         echo "global_prefix: \"/usr/local\" #Path for global installations" >> $CONFIGFILE
         if [ "$locality" == "global" ]; then
             echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         else
-            echo "source_path: \"$HOMEDIR/lamachine-$LM_NAME/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+            echo "source_path: \"$BASEDIR/lamachine-$LM_NAME/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         fi
     fi
     if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]]; then
