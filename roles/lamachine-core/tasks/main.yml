@@ -50,7 +50,7 @@
       blockinfile:
         dest: "{{homedir}}/.bashrc"
         block: |
-          if [[ "$PATH" == *"{{homedir}}/bin"* ]]; then
+          if [[ "$PATH" != *"{{homedir}}/bin"* ]]; then
               export PATH=~/bin:$PATH #extra fallback to ensure the controller environment is not active
           fi
         marker: '# {mark} LAMACHINE MANAGED BLOCK - path'
