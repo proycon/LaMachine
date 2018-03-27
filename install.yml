@@ -1,4 +1,7 @@
 ---
+#################################################################################################################
+#                                   LaMachine Installation Manifest
+#
 # INSTRUCTIONS: Comment or remove categories/roles you do not want to install, dependencies will be automatically
 # resolved even when not explicitly mentioned)
 #
@@ -6,6 +9,7 @@
 #       (all hyphens must be vertically on the same column!)
 #       (don't use tabs)
 #
+################################################################################################################
 - hosts: all
   roles:
       - lamachine-core #The LaMachine core, you always need this or nothing works; already includes Python 3
