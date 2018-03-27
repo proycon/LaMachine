@@ -402,6 +402,7 @@ if [[ "$LOCALITY" == "local" ]]; then
         echo -n "${bold}Where do you want to create the local user environment?${normal} [press ENTER for $(pwd)] "
         read targetdir
         if [ ! -z "$targetdir" ]; then
+            mkdir -p $targetdir >/dev/null 2>/dev/null
             cd $targetdir || fatalerror "Specified directory does not exist"
         fi
     fi
