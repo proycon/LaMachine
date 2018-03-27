@@ -510,11 +510,7 @@ if [[ "$OS" == "mac" ]]; then
     if ! which brew; then
         NEED+=("brew")
     fi
-    if brew info brew-cask | grep "brew-cask" >/dev/null 2>&1 ; then
-        echo "brew-cask found"
-    else
-        NEED+=("brew-cask")
-    fi
+    NEED+=("brew-cask")
 fi
 if [ ! -z "$NEED" ]; then
     echo " Missing dependencies: ${NEED[@]}"
@@ -567,7 +563,7 @@ for package in ${NEED[@]}; do
         elif [ "$OS" = "arch" ]; then
             cmd="sudo pacman $NONINTERACTIVEFLAGS -Sy virtualbox vagrant"
         elif [ "$OS" = "mac" ]; then
-            cmd="brew install brew-cask && brew cask install virtualbox vagrant"
+            cmd="brew tap caskroom/cask && brew cask install virtualbox vagrant"
         else
             cmd=""
         fi
@@ -636,7 +632,7 @@ for package in ${NEED[@]}; do
         brew install brew-cask
     elif [ "$package" = "brew-cask" ]; then
         echo "Installing brew-cask"
-        brew install brew-cask
+        brew tap caskroom/cask
     elif [ "$package" = "git" ]; then
         if [ "$OS" = "debian" ]; then
             cmd="sudo apt-get $NONINTERACTIVEFLAGS install git-core"
