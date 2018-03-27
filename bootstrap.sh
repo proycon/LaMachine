@@ -629,7 +629,7 @@ for package in ${NEED[@]}; do
             esac
         done
         /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-        brew install brew-cask
+        brew tap caskroom/cask
     elif [ "$package" = "brew-cask" ]; then
         echo "Installing brew-cask"
         brew tap caskroom/cask
