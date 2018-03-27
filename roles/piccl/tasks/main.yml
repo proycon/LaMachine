@@ -120,6 +120,7 @@
         fi
       args:
         chdir: "{{lm_prefix}}/opt/PICCL"
+      environment: "{{lm_env}}"
 
     - when: webserver
       block:
