@@ -57,9 +57,7 @@
          - { "pip": pymongo }
          - { "pip": pymysql }
          - { "pip": seaborn }
-         - { "pip": spacy }
          - { "pip": sphinx }
-         - { "pip": tensorflow }
          - { "pip": word2vec }
          - { "pip": xlsxwriter }
          - { "pip": gensim }

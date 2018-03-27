@@ -24,7 +24,7 @@
                                               #by the Language Machines Research group,
                                               #Centre for Language and Speech Technology, Radboud University Nijmegen
                                              #(this includes pynlpl, pynlpl.formats.folia, CLAM, foliadocserve, FLAT, babelente)
-      - languagemachines-python-bindings # Provides Python bindings to C++ software
+      - languagemachines-python-bindings ## Provides Python bindings to C++ software ##
                                              #(provides python-ucto, python-frog, python-timbl, colibricore)
       - java-core                        ## Java 8, Maven ##
       - r-core                           ## R with core R packages ##
@@ -43,6 +43,10 @@
      # - valkuil                          ## A Dutch Spelling corrector ##
                                              # Centre for Language and Speech Technology, Radboud University Nijmegen
                                              # [1.2GB! - Not supported on Mac OS X, requires at least 32GB RAM]
+     # - tensorflow                       ## Tensorflow Deep Learning Library for Python (by Google) ##
+                                             #(>250MB)
+     # - spacy                            ## spaCy is a library for advanced Natural Language Processing in Python and Cython ##
+                                             #(>500MB)
 
 # NOTE: ensure that all enabled roles are lined up with the same amount of spaces!
 #       (all hyphens must be vertically on the same column!)
