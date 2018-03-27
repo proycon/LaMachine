@@ -805,6 +805,16 @@ INSTALLFILE="$BASEDIR/install-$LM_NAME.yml"
 if [ $BUILD -eq 1 ]; then
  if [ ! -e "$CONFIGFILE" ]; then
     echo "---
+###########################################################################
+#           LaMachine Configuration
+#
+# INSTRUCTIONS: Here you can check and set any configuration variables
+#               for your LaMachine build.
+#               Most likely you don't need to change anything
+#               at all and can just accept the values by saving
+#               and closing your editor.
+#
+###########################################################################
 conf_name: \"$LM_NAME\" #Name of this LaMachine configuration
 flavour: \"$FLAVOUR\" #LaMachine flavour
 hostname: \"lamachine-$LM_NAME\" #Name of the host (for VM or docker), changing this is not supported yet at this stage
