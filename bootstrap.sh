@@ -404,6 +404,7 @@ if [[ "$LOCALITY" == "local" ]]; then
         if [ ! -z "$targetdir" ]; then
             mkdir -p $targetdir >/dev/null 2>/dev/null
             cd $targetdir || fatalerror "Specified directory does not exist"
+            BASEDIR="$targetdir"
         fi
     fi
 fi
