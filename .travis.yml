@@ -7,65 +7,65 @@ matrix:
         #  sudo: required
         #  language: generic
         #  env:
-        #    - LM_NAME=travis-stable-conda FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda EXTRAOPT=""
+        #    - CONF_NAME=travis-stable-conda FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda EXTRAOPT=""
         - os: linux
           dist: trusty
           sudo: required
           language: generic
           env:
-            - LM_NAME=travis-stable-venv FLAVOUR=local VERSION=stable LOCALENV_TYPE=virtualenv EXTRAOPT=""
+            - CONF_NAME=travis-stable-venv FLAVOUR=local VERSION=stable LOCALENV_TYPE=virtualenv EXTRAOPT=""
         #- os: linux
         #  dist: trusty
         #  sudo: required
         #  language: generic
         #  env:
-        #    - LM_NAME=travis-stable-conda-noroot FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda EXTRAOPT="--noroot"
+        #    - CONF_NAME=travis-stable-conda-noroot FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda EXTRAOPT="--noroot"
         - os: linux
           dist: trusty
           sudo: required
           language: generic
           env:
-            - LM_NAME=travis-stable-venv-noroot FLAVOUR=local VERSION=stable LOCALENV_TYPE=virtualenv EXTRAOPT="--noroot"
+            - CONF_NAME=travis-stable-venv-noroot FLAVOUR=local VERSION=stable LOCALENV_TYPE=virtualenv EXTRAOPT="--noroot"
         #- os: linux
         #  dist: trusty
         #  sudo: required
         #  language: generic
         #  env:
-        #    - LM_NAME=travis-dev-conda FLAVOUR=local VERSION=development LOCALENV_TYPE=conda EXTRAOPT=""
+        #    - CONF_NAME=travis-dev-conda FLAVOUR=local VERSION=development LOCALENV_TYPE=conda EXTRAOPT=""
         - os: linux
           dist: trusty
           sudo: required
           language: generic
           env:
-            - LM_NAME=travis-dev-venv FLAVOUR=local VERSION=development LOCALENV_TYPE=virtualenv EXTRAOPT=""
+            - CONF_NAME=travis-dev-venv FLAVOUR=local VERSION=development LOCALENV_TYPE=virtualenv EXTRAOPT=""
         #- os: osx
         #  language: generic
         #  env:
-        #    - LM_NAME=travis-stable-conda FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda EXTRAOPT=""
+        #    - CONF_NAME=travis-stable-conda FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda EXTRAOPT=""
         - os: osx
           language: generic
           env:
-            - LM_NAME=travis-stable-venv FLAVOUR=local VERSION=stable LOCALENV_TYPE=virtualenv EXTRAOPT=""
+            - CONF_NAME=travis-stable-venv FLAVOUR=local VERSION=stable LOCALENV_TYPE=virtualenv EXTRAOPT=""
         - os: osx
           language: generic
           env:
-            - LM_NAME=travis-dev-venv FLAVOUR=local VERSION=development LOCALENV_TYPE=virtualenv EXTRAOPT=""
+            - CONF_NAME=travis-dev-venv FLAVOUR=local VERSION=development LOCALENV_TYPE=virtualenv EXTRAOPT=""
         #- os: osx
         #  language: generic
         #  env:
-        #    - LM_NAME=travis-dev-conda FLAVOUR=local VERSION=development LOCALENV_TYPE=conda EXTRAOPT=""
+        #    - CONF_NAME=travis-dev-conda FLAVOUR=local VERSION=development LOCALENV_TYPE=conda EXTRAOPT=""
         - os: linux
           dist: trusty
           sudo: required
           language: generic
           env:
-            - LM_NAME=travis-stable-global FLAVOUR=global VERSION=stable LOCALENV_TYPE="virtualenv"
+            - CONF_NAME=travis-stable-global FLAVOUR=global VERSION=stable LOCALENV_TYPE="virtualenv"
         - os: linux
           dist: trusty
           sudo: required
           language: generic
           env:
-            - LM_NAME=travis-dev-global FLAVOUR=global VERSION=development LOCALENV_TYPE="virtualenv"
+            - CONF_NAME=travis-dev-global FLAVOUR=global VERSION=development LOCALENV_TYPE="virtualenv"
 notifications:
   irc:
     channels:
@@ -79,5 +79,5 @@ install:
     - if [[ $TRAVIS_OS_NAME == "linux" ]] && [[ "$EXTRAOPT" == "--noroot" ]]; then sudo apt-get install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev libgnutls-dev python3 python-virtualenv python3-dev libexttextcat-dev; fi #install global dependencies manually because we pretend not to have root
     - if [[ $TRAVIS_OS_NAME == "osx" ]]; then sudo easy_install pip; fi #prevent bootstrap from querying this interactively
 script:
-    - bash bootstrap.sh --name $LM_NAME --flavour $FLAVOUR --version $VERSION --env $LOCALENV_TYPE --private --minimal --prefer-distro --noninteractive $EXTRAOPT --verbose
+    - bash bootstrap.sh --name $CONF_NAME --flavour $FLAVOUR --version $VERSION --env $LOCALENV_TYPE --private --minimal --prefer-distro --noninteractive $EXTRAOPT --verbose
 
