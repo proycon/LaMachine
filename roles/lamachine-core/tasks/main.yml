@@ -113,9 +113,14 @@
           if [[ ! -z "$VIRTUAL_ENV" ]] && [[ "$VIRTUAL_ENV" != "$LM_LOCAL_PREFIX" ]]; then
               #We seem to already be in a virtualenv (possibly the LaMachine controller!) deactivate it first
               if which deactivate >/dev/null; then
-                  echo "(Deactivating $VIRTUAL_ENV first)"
+                  echo "(Deactivating $VIRTUAL_ENV first)">&2
                   deactivate
               fi
+          fi
+          if [[ ! -z "$CONDA_PREFIX" ]]; then
+            echo "You seem to be in an Anaconda environment already (\$CONDA_PREFIX=$CONDA_PREFIX)">&2
+            echo "This may interfere with LaMachine. Attempting to deactivate it automatically">&2
+            source deactivate || echo "ERROR: DEACTIVATION OF ANACONDA FAILED! Continuing anyway but this may cause unexpected problems!">&2
           fi
           if [[ "$PATH" == *"lamachine-controller"* ]]; then
               export PATH=${PATH/lamachine-controller/DISABLED} #extra fallback to ensure the controller environment is not active

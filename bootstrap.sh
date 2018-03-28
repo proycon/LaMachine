@@ -96,6 +96,9 @@ fi
 if [ ! -z "$VIRTUAL_ENV" ]; then
     fatalerror "Inception error: Do not run the LaMachine bootstrap from within an existing Python Virtual Environment! (deactivate first!)"
 fi
+if [ ! -z "$CONDA_PREFIX" ]; then
+    fatalerror "Inception error: Do not run the LaMachine bootstrap when you are inside an Anaconda environment (run 'source deactivate' first)"
+fi
 
 ####################################################
 #               Platform Detection
