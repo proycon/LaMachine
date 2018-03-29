@@ -26,6 +26,8 @@
                                              #(this includes pynlpl, pynlpl.formats.folia, CLAM, foliadocserve, FLAT, babelente)
       - languagemachines-python-bindings ## Provides Python bindings to C++ software ##
                                              #(provides python-ucto, python-frog, python-timbl, colibricore)
+      - cltl-vu-python                   ## Python software by the Computational Lexicology & Terminology Lab, VU Amsterdam
+                                             #(provides KafNafParserPy)
       - java-core                        ## Java 8, Maven ##
       - r-core                           ## R with core R packages ##
      # - piccl                            ## PICCL: Workflows for Post-OCR correction and normalisation and pseudo-modernisation of historical text. ##
