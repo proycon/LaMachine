@@ -46,11 +46,13 @@
         - hunspell
       when: root and (ansible_distribution|lower == "macosx")
 
-    - name: Installing Gecco
+    - name: Installing Gecco and dependencies
       include_role:
         name: lamachine-python-install
       with_items:
-          - { github_user: "proycon", github_repo: "gecco", pip: "gecco" }
+        - { pip: "aspell-python-py3" }
+        - { pip: "hunspell" }
+        - { github_user: "proycon", github_repo: "gecco", pip: "gecco" }
       loop_control:
            loop_var: package
 

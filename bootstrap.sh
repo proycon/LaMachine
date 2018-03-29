@@ -84,11 +84,21 @@ fatalerror () {
 #and will contain a lamachine-controller environment
 BASEDIR=$(pwd)
 cd $BASEDIR
-if [ -d .git ]; then
+if [ -d .git ] && [ -e bootstrap.sh ]; then
     #we are in a LaMachine git repository already
     SOURCEDIR=$BASEDIR
 fi
 
+
+if [ ! -z "$LM_NAME" ]; then
+    fatalerror "Inception error: Do not run the LaMachine bootstrap from within an existing LaMachine! (deactivate first!)"
+fi
+if [ ! -z "$VIRTUAL_ENV" ]; then
+    fatalerror "Inception error: Do not run the LaMachine bootstrap from within an existing Python Virtual Environment! (deactivate first!)"
+fi
+if [ ! -z "$CONDA_PREFIX" ]; then
+    fatalerror "Inception error: Do not run the LaMachine bootstrap when you are inside an Anaconda environment (run 'source deactivate' first)"
+fi
 
 ####################################################
 #               Platform Detection
@@ -402,10 +412,15 @@ if [[ "$LOCALITY" == "local" ]]; then
         echo -n "${bold}Where do you want to create the local user environment?${normal} [press ENTER for $(pwd)] "
         read targetdir
         if [ ! -z "$targetdir" ]; then
+            mkdir -p $targetdir >/dev/null 2>/dev/null
             cd $targetdir || fatalerror "Specified directory does not exist"
+            BASEDIR="$targetdir"
         fi
     fi
 fi
+
+touch x || fatalerror "Directory $(pwd) is not writable for the current user! Run the bootstrap somewhere where you can write!"
+rm x
 
 if [ -z "$LOCALENV_TYPE" ]; then
     LOCALENV_TYPE="virtualenv"
@@ -508,11 +523,7 @@ if [[ "$OS" == "mac" ]]; then
     if ! which brew; then
         NEED+=("brew")
     fi
-    if brew info brew-cask | grep "brew-cask" >/dev/null 2>&1 ; then
-        echo "brew-cask found"
-    else
-        NEED+=("brew-cask")
-    fi
+    NEED+=("brew-cask")
 fi
 if [ ! -z "$NEED" ]; then
     echo " Missing dependencies: ${NEED[@]}"
@@ -565,7 +576,7 @@ for package in ${NEED[@]}; do
         elif [ "$OS" = "arch" ]; then
             cmd="sudo pacman $NONINTERACTIVEFLAGS -Sy virtualbox vagrant"
         elif [ "$OS" = "mac" ]; then
-            cmd="brew install brew-cask && brew cask install virtualbox vagrant"
+            cmd="brew tap caskroom/cask && brew cask install virtualbox vagrant"
         else
             cmd=""
         fi
@@ -631,10 +642,10 @@ for package in ${NEED[@]}; do
             esac
         done
         /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-        brew install brew-cask
+        brew tap caskroom/cask
     elif [ "$package" = "brew-cask" ]; then
         echo "Installing brew-cask"
-        brew install brew-cask
+        brew tap caskroom/cask
     elif [ "$package" = "git" ]; then
         if [ "$OS" = "debian" ]; then
             cmd="sudo apt-get $NONINTERACTIVEFLAGS install git-core"
@@ -805,6 +816,16 @@ INSTALLFILE="$BASEDIR/install-$LM_NAME.yml"
 if [ $BUILD -eq 1 ]; then
  if [ ! -e "$CONFIGFILE" ]; then
     echo "---
+###########################################################################
+#           LaMachine Configuration
+#
+# INSTRUCTIONS: Here you can check and set any configuration variables
+#               for your LaMachine build.
+#               Most likely you don't need to change anything
+#               at all and can just accept the values by saving
+#               and closing your editor.
+#
+###########################################################################
 conf_name: \"$LM_NAME\" #Name of this LaMachine configuration
 flavour: \"$FLAVOUR\" #LaMachine flavour
 hostname: \"lamachine-$LM_NAME\" #Name of the host (for VM or docker), changing this is not supported yet at this stage
@@ -844,12 +865,12 @@ locality: \"$LOCALITY\" #local or global?
             echo "lamachine_path: \"$BASEDIR/lamachine-controller/$LM_NAME/LaMachine\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
         fi
         echo "data_path: \"$BASEDIR\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
-        echo "local_prefix: \"$HOMEDIR/lamachine-$LM_NAME\" #Path to the local environment (virtualenv)" >> $CONFIGFILE
+        echo "local_prefix: \"$BASEDIR/lamachine-$LM_NAME\" #Path to the local environment (virtualenv)" >> $CONFIGFILE
         echo "global_prefix: \"/usr/local\" #Path for global installations" >> $CONFIGFILE
         if [ "$locality" == "global" ]; then
             echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         else
-            echo "source_path: \"$HOMEDIR/lamachine-$LM_NAME/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+            echo "source_path: \"$BASEDIR/lamachine-$LM_NAME/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
         fi
     fi
     if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]]; then
@@ -931,7 +952,7 @@ if [ ! -d lamachine-controller/$LM_NAME ]; then
 else
     echo "Reusing existing control environment..."
     cd lamachine-controller/$LM_NAME
-    if [[ "$FLAVOUR" != "docker" ]]; then
+    if [ $NEED_VIRTUALENV -eq 1 ]; then
         source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
     fi
 fi
@@ -1054,6 +1075,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
         echo " - Enter the LaMachine VM in its uncompleted state, run: bash ~/bin/lamachine-$LM_NAME-connect"
         echo " - Force the LaMachine VM to update itself, run: bash ~/bin/lamachine-$LM_NAME-update"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
+        echo "   The log file has been written to $(pwd)/lamachine-$LM_NAME.log"
     fi
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ "$SUDO" -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
@@ -1070,14 +1092,15 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ $rc -eq 0 ]; then
         echo "======================================================================================"
         echo "${boldgreen}All done, a local LaMachine environment has been built!${normal}"
-        echo "- ${bold}to activate your environment, run: lamachine-$LM_NAME-activate${normal}   (or: bash ~/bin/lamachine-$LM_NAME-activate)"
+        echo "- ${bold}to activate your environment, run: lamachine-$LM_NAME-activate${normal}   (or: source ~/bin/lamachine-$LM_NAME-activate)"
     else
         echo "======================================================================================"
         echo "${boldred}Building a local LaMachine environment has failed unfortunately.${normal} You have several options:"
         echo " - Start from scratch again with a new bootstrap, possibly tweaking configuration options"
-        echo "-  Attempt to activate the environment (run: lamachine-$LM_NAME-activate) and debug the problem"
-        echo "-  Run lamachine-$LM_NAME-update after activating the environment to see if the problem corrects itself"
+        echo " - Attempt to activate the environment (run: lamachine-$LM_NAME-activate) and debug the problem"
+        echo " - Run lamachine-$LM_NAME-update after activating the environment to see if the problem corrects itself"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
+        echo "   The log file has been written to $(pwd)/lamachine-$LM_NAME.log"
         rc=1
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
@@ -1115,6 +1138,9 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
         echo "${boldred}The docker build has failed unfortunately.${normal} You have several options:"
         echo " - Start from scratch again with a new bootstrap, possibly tweaking configuration options"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
+        if [ $BUILD -eq 1 ]; then
+            echo "   The log file has been written to $(pwd)/lamachine-$LM_NAME.log"
+        fi
     fi
 else
     echo "No bootstrap for $FLAVOUR implemented yet at this stage, sorry!!">&2

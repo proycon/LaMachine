@@ -50,8 +50,8 @@
       blockinfile:
         dest: "{{homedir}}/.bashrc"
         block: |
-          if [[ "$PATH" == *"{{homedir}}/bin"* ]]; then
-              export PATH=~/bin:$PATH #extra fallback to ensure the controller environment is not active
+          if [[ "$PATH" != *"{{homedir}}/bin"* ]]; then
+              export PATH=~/bin:$PATH #add ~/bin to $PATH, that is where the activation scripts are
           fi
         marker: '# {mark} LAMACHINE MANAGED BLOCK - path'
         insertafter: EOF
@@ -113,9 +113,14 @@
           if [[ ! -z "$VIRTUAL_ENV" ]] && [[ "$VIRTUAL_ENV" != "$LM_LOCAL_PREFIX" ]]; then
               #We seem to already be in a virtualenv (possibly the LaMachine controller!) deactivate it first
               if which deactivate >/dev/null; then
-                  echo "(Deactivating $VIRTUAL_ENV first)"
+                  echo "(Deactivating $VIRTUAL_ENV first)">&2
                   deactivate
               fi
+          fi
+          if [[ ! -z "$CONDA_PREFIX" ]]; then
+            echo "You seem to be in an Anaconda environment already (\$CONDA_PREFIX=$CONDA_PREFIX)">&2
+            echo "This may interfere with LaMachine. Attempting to deactivate it automatically">&2
+            source deactivate || echo "ERROR: DEACTIVATION OF ANACONDA FAILED! Continuing anyway but this may cause unexpected problems!">&2
           fi
           if [[ "$PATH" == *"lamachine-controller"* ]]; then
               export PATH=${PATH/lamachine-controller/DISABLED} #extra fallback to ensure the controller environment is not active
@@ -169,7 +174,7 @@
                   #not SOURCED, start a subshell
                   export PS1="(`basename \"$VIRTUAL_ENV\"`) \u@\h:\W\$ " #set prompt manually cause it somehow gets messed up otherwise
                   export SOURCED
-                  bash
+                  bash --norc --noprofile
                 fi
               fi
           fi

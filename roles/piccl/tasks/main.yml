@@ -14,7 +14,7 @@
         - { debian: tesseract-ocr-eng, redhat: tesseract-langpack-eng, arch: tesseract-data-eng }
         - { debian: tesseract-ocr-nld, redhat: tesseract-langpack-nld, arch: tesseract-data-nld }
         - { debian: tesseract-ocr-deu, redhat: tesseract-langpack-deu, arch: tesseract-data-deu }
-        - { debian: tesseract-ocr-deu-frak, redhat: tesseract-langpack-deu-frak, arch: tesseract-data-deu-frak }
+        - { debian: tesseract-ocr-deu-frak, redhat: tesseract-langpack-deu-frak, arch: tesseract-data-deu_frak }
         - { debian: tesseract-ocr-fra, redhat: tesseract-langpack-fra, arch: tesseract-data-fra }
         - { debian: poppler-utils, redhat: poppler, arch: poppler }
         - { debian: djvulibre-bin, redhat: djvulibre, arch: djvulibre }
@@ -120,6 +120,7 @@
         fi
       args:
         chdir: "{{lm_prefix}}/opt/PICCL"
+      environment: "{{lm_env}}"
 
     - when: webserver
       block:
