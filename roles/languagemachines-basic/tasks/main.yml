@@ -55,7 +55,7 @@
               license: GPL
               author: Ko van der Sloot
               summary: Ticcutils, a generic C++ utility library shared by our software.
-              configure_opts: "{% if ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'rhel' %}--with-boost={{lm_prefix}}{% endif %}"
+              configure_opts: "{% if ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'rhel' %}--with-boost={{lm_prefix}}{% endif %} {% if ansible_distribution|lower == 'macosx' %}-DU_USING_ICU_NAMESPACE=1{% endif %}"
               build_environment:
                  TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
             - repo: libfolia
@@ -63,6 +63,7 @@
               summary: C++ Library for the Format for Linguistic Annotation (FoLiA)
               license: GPL
               author: Ko van der Sloot
+              configure_opts: "{% if ansible_distribution|lower == 'macosx' %}-DU_USING_ICU_NAMESPACE=1{% endif %}"
             - repo: uctodata
               user: LanguageMachines
               license: GPL
@@ -104,11 +105,13 @@
               user: LanguageMachines
               license: GPL
               author: Ko van der Sloot, Antal van den Bosch, Maarten van Gompel, Bertjan Busser
+              configure_opts: "{% if ansible_distribution|lower == 'macosx' %}-DU_USING_ICU_NAMESPACE=1{% endif %}"
             - repo: foliautils
               user: LanguageMachines
               license: GPL
               author: Ko van der Sloot, Maarten van Gompel
               summary: Command-line utilities for working with the Format for Linguistic Annotation (FoLiA), powered by libfolia (C++)
+              configure_opts: "{% if ansible_distribution|lower == 'macosx' %}-DU_USING_ICU_NAMESPACE=1{% endif %}"
               build_environment:
                  TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
                  TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/ -ltextcat{% endif %}"
@@ -117,6 +120,7 @@
               user: LanguageMachines
               author: Ko van der Sloot
               license: GPL
+              configure_opts: "{% if ansible_distribution|lower == 'macosx' %}-DU_USING_ICU_NAMESPACE=1{% endif %}"
               exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
             - repo: wopr
               user: LanguageMachines
