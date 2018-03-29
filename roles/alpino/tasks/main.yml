@@ -1,0 +1,77 @@
+---
+    - name: Check for unsupported OS for Alpino
+      fail:
+        msg: "Alpino is only on supported Debian/Ubuntu for now, it may not work on your OS !!!"
+      when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linuxmint")
+
+    - name: Installing global dependencies for Alpino (Debian/Ubuntu)
+      become: true
+      become_user: root
+      apt:
+        name: "{{item}}"
+        state: installed
+      with_items:
+        - libtcl8.6
+        - libtk8.6
+        - libwww-perl
+        - libxslt1.1
+        - tk
+        - unzip
+      when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linuxmint")
+
+
+    - name: "Alpino - Download and install"
+      shell: |
+          #!/bin/bash
+          wget http://www.let.rug.nl/vannoord/alp/Alpino/versions/binary/ -O .alpino_index
+          {% if (force is defined) %}
+          INSTALL=1
+          {% else %}
+          if [ -e .alpino_index_old ]; then
+            if [ "$(sha256sum .alpino_index | cut -d ' ' -f 1 )" = "$(sha256sum .alpino_index_old | cut -d ' ' -f 1 )" ]; then
+              INSTALL=0
+            else
+              INSTALL=1
+            fi
+          else
+            INSTALL=1
+          fi
+          {% endif %}
+          if [ $INSTALL -eq 0 ]; then
+            echo "Alpino already up to date..."
+            exit 123
+          fi
+          rm latest.tar.gz 2>/dev/null
+          wget http://www.let.rug.nl/vannoord/alp/Alpino/versions/binary/latest.tar.gz && tar -xvzf latest.tar.gz -C {{lm_prefix}}/opt/ && mv -f .alpino_index .alpino_index_old && rm latest.tar.gz
+          exit $?
+      args:
+        chdir: "{{ source_path }}"
+      register: install_alpino
+      changed_when: install_alpino.rc != 123
+      failed_when: install_alpino.rc != 0 and install_alpino.rc != 123
+
+    - name: "Adding activation script for Alpino"
+      become: "{{lm_become}}"
+      become_user: root
+      copy:
+        dest: "{{lm_prefix}}/bin/activate.d/alpino.sh"
+        content: |
+          export ALPINO_HOME={{lm_prefix}}/opt/Alpino
+        mode: u+rwx,a+rx
+
+    - name: "Linking Alpino binary from {{lm_prefix}}/bin/Alpino"
+      file:
+        src: "{{lm_prefix}}/opt/Alpino/bin/Alpino"
+        dest: "{{lm_prefix}}/bin/Alpino"
+        state: link
+
+    - name: Register ALPINO
+      include_role:
+         name: lamachine-register
+      vars:
+         package:
+           name: Alpino
+           author: Gertjan van Noord, Gosse Bouma
+           homepage: "http://www.let.rug.nl/vannoord/alp/Alpino/"
+           license: LGPL
+           summary: "Alpino is a dependency parser for Dutch, developed in the context of the PIONIER Project Algorithms for Linguistic Processing."

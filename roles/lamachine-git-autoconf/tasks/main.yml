@@ -1,0 +1,79 @@
+---
+- when: "'exclude_when' not in package or not package.exclude_when"
+  block:
+    - name: "{{package.repo}} - Obtaining from git"
+      import_role:
+        name: lamachine-git
+      vars:
+        package: "{{package}}"
+
+    - name: "{{package.repo}} - Checking whether recompilation is needed"
+      shell: |
+          {% if (force is defined) or (autoconf_git_updated is defined and 'stdout' in autoconf_git_updated and autoconf_git_updated.stdout|int == 1) %}
+          #an earlier compilation was (re)performed so we update everything thereafter as well
+          echo 1 && exit 0
+          echo "Compilation required because of earlier updates...">&2
+          {% endif %}
+          available=$(git rev-parse HEAD)
+          echo "Available commit: $available">&2
+          if [ -f .installed-commit.lamachine ]; then
+            installed=$(cat .installed-commit.lamachine)
+            echo "Installed commit: $installed">&2
+            if [ "$available" = "$installed" ]; then
+              echo "No recompilation necessary...">&2
+              echo 0 && exit 0
+            fi
+          fi
+          echo "Scheduling compilation...">&2
+          if [ -e Makefile ]; then
+            echo "Cleaning up old version first">&2
+            make distclean
+          fi
+          echo 1
+      args:
+        chdir: "{{ source_path }}/{{package.repo}}"
+      register: autoconf_git_updated
+      changed_when: autoconf_git_updated.stdout|int == 1
+
+    - name: "{{package.repo}} - Compiling"
+      import_role:
+        name: lamachine-cpp-automake
+      vars:
+        pkg_source_dir: "{{ source_path }}/{{package.repo}}"
+        pkg_name: "{{package.repo}}"
+      when: autoconf_git_updated.stdout|int == 1
+
+    - name: "{{package.repo}} - Registering current version"
+      shell: "git rev-parse HEAD > .installed-commit.lamachine"
+      args:
+        chdir: "{{ source_path }}/{{package.repo}}"
+      when: autoconf_git_updated.stdout|int == 1 and make_install_result is defined and make_install_result.rc == 0
+
+    - name: "{{package.repo}} - Register in lamachine-list"
+      shell: |
+        #!/bin/bash
+        echo '{{package.repo}}:' >> {{lm_prefix}}/var/lamachine-list.yml
+        echo     '    Name: {{package.repo}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        echo -en  '    Version:    ' >> {{lm_prefix}}/var/lamachine-list.yml
+        git describe --tags > .installed-version.lamachine
+        if [ $? -eq 0 ]; then
+          cat .installed-version.lamachine >> {{lm_prefix}}/var/lamachine-list.yml
+        else
+          cat .installed-commit.lamachine >> {{lm_prefix}}/var/lamachine-list.yml
+        fi
+        {% if "license" in package %}
+        echo     '    License: {{package.license}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% endif %}
+        {% if "summary" in package %}
+        echo     '    Summary: {{package.summary}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% endif %}
+        {% if "author" in package %}
+        echo     '    Author: {{package.author}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% else %}
+        echo     '    Author: {{package.user}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% endif %}
+        echo     "    Home-page: {% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}" >> {{lm_prefix}}/var/lamachine-list.yml
+        echo >> {{lm_prefix}}/var/lamachine-list.yml
+      args:
+        executable: "/bin/bash"
+        chdir: "{{ source_path }}/{{package.repo}}"

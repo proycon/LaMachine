@@ -1,0 +1,126 @@
+---
+
+    - name: Installing Python packages
+      include_role:
+        name: lamachine-python-install
+      with_items:
+          - { github_user: "proycon", github_repo: "pynlpl", pip: "pynlpl", conda: "" }
+          - { github_user: "proycon", github_repo: "clam", pip: "clam", conda: "" }
+          - { github_user: "proycon", github_repo: "folia", pip: "folia-tools", conda: "" }
+          - { github_user: "proycon", github_repo: "foliadocserve", pip: "foliadocserve", conda: "" }
+          - { github_user: "proycon", github_repo: "babelpy", pip: "babelpy", conda: "" }
+          - { github_user: "proycon", github_repo: "babelente", pip: "babelente", conda: "" }
+      loop_control:
+           loop_var: package
+
+    - name: Testing Python packages
+      include_role:
+          name: lamachine-run
+      vars:
+          command: "python3 -c 'import {{ item }}'"
+      with_items:
+          - pynlpl
+          - pynlpl.formats.folia
+      register: test
+      changed_when: test.rc != 0
+
+    - name: Testing whether python-based tools start
+      include_role:
+          name: lamachine-run
+      vars:
+          command: "{{ item }} -h"
+      with_items:
+          - foliavalidator
+          - clamservice
+          - folia2html
+          - folia2txt
+          - foliaquery
+          - babelente
+      register: test
+      changed_when: test.rc != 0
+
+    - when: webserver
+      block:
+        - name: Installing FLAT
+          include_role:
+            name: lamachine-python-install
+          vars:
+            package:
+               github_user: "proycon"
+               github_repo: "flat"
+               pip: "FoLiA-Linguistic-Annotation-Tool"
+
+        - name: Installing webservices
+          include_role:
+            name: lamachine-python-install
+          vars:
+            package:
+               github_user: "proycon"
+               github_repo: "clamservices"
+               pip: "clamservices"
+
+        - name: Link Python package installation in opt/
+          become: "{{lm_become}}"
+          become_user: root
+          shell: |
+            export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
+            if [ ! -e "$DIR" ]; then
+                echo "Unable to find dir"
+                exit 2
+            fi
+            ln -sf $DIR {{lm_prefix}}/opt/{{item}}
+          with_items:
+            - clam
+            - clamservices
+            - django
+            - flat
+          environment: "{{lm_env}}"
+
+        - name: "Install webserver configuration"
+          become: "{{lm_become}}"
+          become_user: root
+          template:
+            src: "nginx/{{item}}.conf"
+            dest: "{{lm_prefix}}/etc/nginx/conf.d/{{item}}.conf"
+            force: yes
+            backup: yes
+            owner: "{{unix_user}}"
+          with_items:
+            - clamservices
+            - flat
+
+        - name: "Install uwsgi configuration"
+          become: "{{lm_become}}"
+          become_user: root
+          template:
+            src: "uwsgi/{{item}}.ini"
+            dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{item}}.ini"
+            force: yes
+            backup: yes
+            owner: "{{unix_user}}"
+            mode: u+rw,a+r
+          with_items:
+            - frog
+            - ucto
+            - timbl
+            - colibricore
+            - flat
+
+        - name: "Install clam configuration"
+          become: "{{lm_become}}"
+          become_user: root
+          template:
+            src: "clam/{{item}}.config.yml"
+            dest: "{{lm_prefix}}/etc/{{item}}.config.yml"
+            force: yes
+            backup: yes
+            owner: "{{unix_user}}"
+            mode: u+rw,a+r
+          with_items:
+            - frog
+            - ucto
+            - timbl
+            - colibricore
+
+        - name: "Setting up FLAT"
+          import_tasks: flat.yml

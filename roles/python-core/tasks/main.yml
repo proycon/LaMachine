@@ -1,0 +1,87 @@
+---
+ - when: locality == "global" and root and prefer_distro is defined and prefer_distro
+   block:
+       - name: "Installing Python packages from distribution instead of pip if preferred (Debian/Ubuntu)"
+         become: yes
+         become_user: root
+         apt:
+             name: "{{item}}"
+             state: latest
+         with_items:
+             - cython3
+             - python3-numpy
+             - python3-scipy
+             - python3-matplotlib
+             - python3-crypto
+             - python3-yaml
+             - python3-requests
+             - python3-requests-oauthlib
+             - python3-flask
+             - python3-cherrypy3
+             - python3-jinja2
+         when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint"
+
+
+
+ - when: localenv_type == "virtualenv"
+   block:
+     - name: "Installing generic 3rd party Python Packages via pip (1)"
+       include_role:
+           name: lamachine-python-install
+       with_items: #more or less in dependency order
+         - { "pip": cython, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": lxml, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": pyyaml, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": numpy, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": matplotlib, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": requests, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": flask, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": cherrypy, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": jinja2, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+       loop_control:
+           loop_var: package
+     - name: "Installing generic 3rd party Python Packages via pip (2)"
+       include_role:
+          name: lamachine-python-install
+       with_items: #more or less in dependency order
+         - { "pip": scipy }
+         - { "pip": scikit-learn }
+         - { "pip": beautifulsoup4 }
+         - { "pip": pandas }
+         - { "pip": ipython }
+         - { "pip": jupyter }
+         - { "pip": nbconvert }
+         - { "pip": nltk }
+         - { "pip": pycrypto }
+         - { "pip": pylint }
+         - { "pip": pymongo }
+         - { "pip": pymysql }
+         - { "pip": seaborn }
+         - { "pip": sphinx }
+         - { "pip": word2vec }
+         - { "pip": xlsxwriter }
+         - { "pip": gensim }
+         - { "pip": pillow }
+         - { "pip": keras }
+         - { "pip": fasttext }
+         - { "pip": xgboost }
+         - { "pip": tqdm }
+         - { "pip": django, "exclude_when": "{% if webserver %}false{% else %}true{% endif %}" }
+         - { "pip": uwsgi, "exclude_when": "{% if webserver and not (root and locality=='global' and (ansible_distribution|lower == 'debian' or ansible_distribution|lower == 'ubuntu' or ansible_distribution|lower == 'linuxmint')) %}false{% else %}true{% endif %}" } #uwsgi will already be installed globally if on debian/ubuntu in global mode
+       loop_control:
+           loop_var: package
+       when: minimal is not defined or not minimal
+
+#############################################################
+#currently experimental/unused conda related stuff:
+#
+ - when: locality == "local"
+   block:
+     - name: "Installing generic 3rd party Python Packages via conda"
+       shell: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} beautifulsoup4 cython flask ipython jupyter lxml matplotlib nbconvert nltk numpy pandas pycrypto pylint pymongo pymysql requests scikit-learn scipy seaborn spacy sphinx tensorflow word2vec xlsxwriter yaml gensim pillow keras"
+       when: localenv_type == "conda"
+       register: condainstall
+       changed_when: '"All requested packages already installed" not in condainstall.stdout'
+     - name: "Making sure all conda packages are up to date"
+       shell: "{{local_prefix}}/bin/conda update -mqy -p {{local_prefix}} --all"
+       when: localenv_type == "conda"

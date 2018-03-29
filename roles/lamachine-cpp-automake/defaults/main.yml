@@ -1,0 +1,3 @@
+---
+default_environment: #just a dummy really
+    LM_BUILD: 1

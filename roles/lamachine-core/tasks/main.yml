@@ -1,0 +1,430 @@
+---
+
+    - name: "Configuration Overview"
+      debug:
+          var: "{{item}}"
+      with_items:
+          - conf_name
+          - ansible_distribution
+          - ansible_distribution_version
+          - hostname
+          - version
+          - lamachine_path
+          - localenv_type
+          - local_prefix
+          - global_prefix
+          - source_path
+          - locality
+          - root
+          - unix_user
+          - homedir
+          - prefer_distro
+          - minimal
+
+    - name: Checking force option
+      debug:
+          msg: Forcing recompilation of all packages
+      when: force is defined
+
+
+    - name: Create home bin directory
+      file:
+          path: "{{homedir}}/bin"
+          mode: u+rwx,a+rx
+          state: directory
+
+    - name: Create global prefix directory
+      file:
+          path: "{{global_prefix}}"
+          mode: u+rwx,a+rx
+          state: directory
+      when: locality == "global"
+
+    - name: Ensure home directory is world-traversable
+      file:
+          path: "{{homedir}}"
+          mode: u+rwx,a+x
+      when: locality == "global"
+
+    - name: Ensure home/bin is in $PATH by default #necessary because this is where our activation script will reside
+      blockinfile:
+        dest: "{{homedir}}/.bashrc"
+        block: |
+          if [[ "$PATH" != *"{{homedir}}/bin"* ]]; then
+              export PATH=~/bin:$PATH #add ~/bin to $PATH, that is where the activation scripts are
+          fi
+        marker: '# {mark} LAMACHINE MANAGED BLOCK - path'
+        insertafter: EOF
+        create: yes
+        mode: u+rwx
+
+    - name: Set LaMachine update script
+      copy:
+        dest: "{{homedir}}/bin/lamachine-{{ conf_name }}-update"
+        content: |
+          #!/bin/bash
+          cd {{lamachine_path}}
+          if [ -d .git ]; then
+            git pull
+          fi
+          FIRST=1
+          if [ "$1" = "--edit" ]; then
+            if [ -z "$EDITOR" ]; then
+              export EDITOR=nano
+            fi
+            if [ -e {{lamachine_path}}/host_vars/localhost.yml ]; then
+                $EDITOR {{lamachine_path}}/host_vars/localhost.yml && cp -f {{lamachine_path}}/host_vars/localhost.yml {{lamachine_path}}/host_vars/lamachine-{{conf_name}}.yml
+            else
+                $EDITOR {{lamachine_path}}/host_vars/lamachine-{{conf_name}}.yml
+            fi
+            $EDITOR install-{{conf_name}}.yml
+            FIRST=2
+          fi
+          OPTS=""
+          if [ {{root|int}} -eq 1 ]; then
+             OPTS="--ask-become-pass"
+          fi
+          ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee lamachine-{{conf_name}}.log
+        mode: u+rwx,a+rx
+
+    - name: Set generic update script
+      copy:
+        dest: "{{homedir}}/bin/lamachine-update"
+        content: |
+            #!/bin/bash
+            if [ -z "$LM_NAME" ]; then
+                echo "You are not in a LaMachine environment! Unable to update, activate one first!">&2
+                exit 2
+            else
+               if which lamachine-$LM_NAME-update; then
+                    lamachine-$LM_NAME-update $@
+               else
+                    echo "Unable to find update script lamachine-$LM_NAME-update!">&2
+                    exit 3
+               fi
+            fi
+        mode: u+rwx,a+rx
+
+    - name: Create LaMachine activation script
+      copy:
+        dest: "{{homedir}}/bin/lamachine-{{ conf_name }}-activate"
+        content: |
+          #!/bin/bash
+          if [[ ! -z "$VIRTUAL_ENV" ]] && [[ "$VIRTUAL_ENV" != "$LM_LOCAL_PREFIX" ]]; then
+              #We seem to already be in a virtualenv (possibly the LaMachine controller!) deactivate it first
+              if which deactivate >/dev/null; then
+                  echo "(Deactivating $VIRTUAL_ENV first)">&2
+                  deactivate
+              fi
+          fi
+          if [[ ! -z "$CONDA_PREFIX" ]]; then
+            echo "You seem to be in an Anaconda environment already (\$CONDA_PREFIX=$CONDA_PREFIX)">&2
+            echo "This may interfere with LaMachine. Attempting to deactivate it automatically">&2
+            source deactivate || echo "ERROR: DEACTIVATION OF ANACONDA FAILED! Continuing anyway but this may cause unexpected problems!">&2
+          fi
+          if [[ "$PATH" == *"lamachine-controller"* ]]; then
+              export PATH=${PATH/lamachine-controller/DISABLED} #extra fallback to ensure the controller environment is not active
+          fi
+          export LM_NAME={{conf_name}}
+          export LM_LOCALITY={{locality}}
+          export LM_GLOBAL_PREFIX={{global_prefix}}
+          export LM_LOCALENV_TYPE={{localenv_type}}
+          export LM_DATA_PATH={{data_path}}
+          export LM_PATH={{lamachine_path}}
+          export LM_SOURCEPATH={{source_path}}
+          unset PYTHONPATH #would most likely mess thing up otherwise
+          if [[ "{{ ansible_distribution|lower }}" == "macosx" ]]; then
+          export CLANG_CXX_LIBRARY="libc++" #needed for python bindings in lamachine-python-install
+             export MACOSX_DEPLOYMENT_TARGET="{{ ansible_distribution_version }}"
+          fi
+          if [[ "$LM_LOCALITY" == "local" ]]; then
+              export LM_LOCAL_PREFIX={{local_prefix}}
+              export LM_PREFIX={{local_prefix}}
+              export LM_OLD_PS1="$PS1"
+              if [ -d $LM_LOCAL_PREFIX ]; then
+                  if [[ "$LM_LOCALENV_TYPE" == "conda" ]]; then
+                      source activate lamachine-{{conf_name}}
+                      export VIRTUAL_ENV=$LM_LOCAL_PREFIX #backward compatibility
+                  else
+                      source "$LM_LOCAL_PREFIX/bin/activate"
+                  fi
+              fi
+          else
+              export LM_PREFIX={{global_prefix}}
+              EXTRAACTIVATE=$(find {{global_prefix}}/bin/activate.d -type f -name "*.sh")
+              for f in $EXTRAACTIVATE; do
+                  source $f
+              done
+          fi
+          if [[ "$LAMACHINE_QUIET" != "1" ]]; then
+            cat $LM_PREFIX/etc/motd
+          fi
+          if [[ "$LM_LOCALITY" == "local" ]] && [[ "$LM_LOCALENV_TYPE" == "virtualenv" ]]; then
+              if [ -z "$SOURCED" ]; then #protection against endless recursion
+                SOURCED=0
+                if [ -n "$ZSH_EVAL_CONTEXT" ]; then
+                  case $ZSH_EVAL_CONTEXT in *:file) SOURCED=1;; esac
+                elif [ -n "$BASH_VERSION" ]; then
+                  [ "$0" != "$BASH_SOURCE" ] && SOURCED=1
+                else # All other shells: examine $0 for known shell binary filenames
+                  # Detects `sh` and `dash`; add additional shell filenames as needed.
+                  case ${0##*/} in sh|dash) SOURCED=1;; esac
+                fi
+                if [ $SOURCED -eq 0 ]; then
+                  #not SOURCED, start a subshell
+                  export PS1="(`basename \"$VIRTUAL_ENV\"`) \u@\h:\W\$ " #set prompt manually cause it somehow gets messed up otherwise
+                  export SOURCED
+                  bash --norc --noprofile
+                fi
+              fi
+          fi
+        mode: u+rwx,a+rx
+
+
+    - name: Link activation script to global environment
+      become: yes
+      become_user: root
+      file:
+        src: "{{homedir}}/bin/lamachine-{{conf_name}}-activate"
+        dest: "{{global_prefix}}/bin/lamachine-{{conf_name}}-activate"
+        state: link
+      when: locality == "global"
+
+    - name: Link update script to global environment
+      become: yes
+      become_user: root
+      file:
+        src: "{{homedir}}/bin/lamachine-{{conf_name}}-update"
+        dest: "{{global_prefix}}/bin/lamachine-{{conf_name}}-update"
+        state: link
+      when: locality == "global"
+
+    - name: Link generic update script to global environment
+      become: yes
+      become_user: root
+      file:
+        src: "{{homedir}}/bin/lamachine-update"
+        dest: "{{global_prefix}}/bin/lamachine-update"
+        state: link
+      when: locality == "global"
+
+    - import_tasks: debian.yml
+      when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint") and root
+
+    - import_tasks: redhat.yml
+      when: (ansible_distribution|lower == 'redhat' or ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'fedora') and root
+
+    - import_tasks: arch.yml
+      when: (ansible_distribution|lower == 'archlinux') and root
+
+    - import_tasks: macosx.yml
+      when: (ansible_distribution|lower == 'macosx')
+
+    - import_tasks: conda.yml
+      when: localenv_type == 'conda' and locality == "local"
+
+    - import_tasks: virtualenv.yml
+      when: localenv_type == 'virtualenv' and locality == "local"
+
+
+    - name: Enable activation script globally
+      become: yes
+      become_user: root
+      copy:
+        dest: "/etc/profile.d/lamachine-activate.sh"
+        content: |
+          #!/bin/bash
+          export PATH={{global_prefix}}/bin:$PATH
+          source {{global_prefix}}/bin/lamachine-{{conf_name}}-activate
+        mode: a+rx
+      when: locality == "global"
+
+    - name: Link default activation script (local)
+      file:
+         src: "{{homedir}}/bin/lamachine-{{conf_name}}-activate"
+         dest: "{{homedir}}/bin/lamachine-activate"
+         state: link
+
+    - name: Link default activation script (global)
+      become: yes
+      become_user: root
+      file:
+         src: "{{homedir}}/bin/lamachine-{{conf_name}}-activate"
+         dest: "{{global_prefix}}/bin/lamachine-activate"
+         state: link
+      when: locality == "global"
+
+    - name: Create local Ansible hosts file
+      copy:
+        dest: "{{lamachine_path}}/hosts.{{ conf_name }}"
+        content: "{{hostname}} ansible_connection=local"
+        force: "no"
+
+
+    - name: Backward compatibility update script
+      file:
+        src: "{{homedir}}/bin/lamachine-{{ conf_name }}-update"
+        dest: "{{homedir}}/bin/lamachine-update.sh"
+        force: true
+        state: link
+
+    - name: Create source directory
+      become: "{% if locality == 'global' %}yes{% else %}no{% endif %}"
+      become_user: root
+      file:
+          path: "{{ source_path }}"
+          state: directory
+          owner: "{{unix_user}}"
+
+    - name: Create directories
+      become: "{{lm_become}}"
+      become_user: root
+      file:
+          path: "{{ lm_prefix }}/{{item}}"
+          state: directory
+          owner: "{{unix_user}}"
+          mode: u+rwx,a+rx
+      with_items:
+          - bin
+          - "bin/activate.d"
+          - etc
+          - lib
+          - include
+          - sbin
+          - share
+          - opt
+          - var
+          - "var/log"
+
+    - name: Install motd
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: motd
+        dest: "{{lm_prefix}}/etc/motd"
+        force: yes
+        backup: yes
+
+    - name: Link to LaMachine controller from local prefix
+      file:
+        src: "{{lamachine_path}}"
+        dest: "{{local_prefix}}/LaMachine"
+        force: true
+        state: link
+      when: locality == "local"
+
+    - name: Link to LaMachine controller from global prefix
+      become: yes
+      become_user: root
+      file:
+        src: "{{lamachine_path}}"
+        dest: "{{global_prefix}}/LaMachine"
+        force: true
+        state: link
+      when: locality == "global"
+
+
+    - name: Adding global library path to ldconfig
+      become: yes
+      copy:
+        dest: "/etc/ld.so.conf.d/lamachine-{{conf_name}}.conf"
+        content: "{{global_prefix}}/lib"
+      when: root and locality == "global" and ansible_distribution|lower != 'macosx'
+
+    - name: Running ldconfig
+      become: yes
+      command: ldconfig -v
+      when: root and locality == "global" and ansible_distribution|lower != 'macosx'
+
+    - name: Compiling boost from source for CentOS/RHEL
+      shell: |
+          #!/bin/bash
+          if [ ! -d boost_1_66_0 ]; then
+              wget -q https://dl.bintray.com/boostorg/release/1.66.0/source/boost_1_66_0.tar.gz || exit 2
+              tar xf boost_1_66_0.tar.gz || exit 2
+              cd boost_1_66_0
+              ./bootstrap.sh  --with-python=python3.6 --with-python-version=3.6 --prefix="{{lm_prefix}}" || exit 2
+              ./b2 install --config=project-config.jam --prefix="{{lm_prefix}}" --with=all
+              if [ ! -e "{{lm_prefix}}/include/boost" ]; then
+                ln -s "{{source_path}}/boost_1_66_0/boost" "{{lm_prefix}}/include/boost"
+                exit $?
+              fi
+              exit 0
+          else
+              exit 0
+          fi
+      args:
+          executable: /bin/bash
+          chdir: "{{source_path}}"
+      when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+
+    - name: Installing ansible locally (conda)
+      pip:
+          name: "ansible"
+          state: latest
+          executable: "{{ local_prefix }}/bin/pip"
+      when: locality == "local" and localenv_type == "conda"
+
+    - name: Installing ansible locally (virtualenv)
+      pip:
+          name: "ansible"
+          state: latest
+          virtualenv: "{{ local_prefix }}"
+      when: locality == "local" and localenv_type == "virtualenv"
+
+    - name: Sending anonymous usage analytics to LaMachine creators
+      shell: |
+          #!/bin/bash
+          #Sending some statistics to us so we know how often and on what systems LaMachine is used
+          #recipient: Language Machines, Centre for Language Studies, Radboud University Nijmegen
+          #
+          #Transmitted are:
+          # - The form in which you run LaMachine (vagrant/virtualenv/docker)
+          # - Is it a new LaMachine installation or an update
+          # - Stable or Development?
+          # - The OS you are running on and its version
+          # - Your Python version
+          #
+          #This information will never be used for any form of advertising
+          #Your IP will only be used to compute country of origin, resulting reports will never contain personally identifiable information
+          PYTHONVERSION=`python3 -c 'import sys; print(".".join(map(str, sys.version_info[:3])))'`
+          if [ ! -e .reply ]; then
+            MODE=new
+          else
+            MODE=update
+          fi
+          wget --timeout 10 -O - -q "http://applejack.science.ru.nl/lamachinetracker.php/{{ locality }}{% if locality == 'local' %}-{{ localenv_type }}{% else %}{% if flavour is defined %}-{{ flavour }}{% endif %}{% endif %}/$MODE/{{ version }}/$PYTHONVERSION/{{ ansible_distribution|lower }}/{{ ansible_distribution|lower }}/{{ ansible_distribution_version }}"  > .reply
+      args:
+          chdir: "{{source_path}}"
+      when: private is not defined or not private
+
+    - name: "Finding global pip3"
+      shell: which pip3
+      register: pip
+      when: locality == "global"
+
+    - name: Install LaMachine list script
+      copy:
+        dest: "{{lm_prefix}}/bin/lamachine-list"
+        content: |
+          #!/bin/bash
+          if [ "$1" = "-s" ]; then
+            cat {{lm_prefix}}/var/lamachine-list.yml | grep -e "^\w" | sed "s/://" | sort | less
+          else
+            cat {{lm_prefix}}/var/lamachine-list.yml | less
+          fi
+        mode: u+rwx,a+rx
+
+    - name: Reinitialize LaMachine list
+      copy:
+        dest: "{{lm_prefix}}/var/lamachine-list.yml"
+        content: |
+          ---
+        mode: u+rwx,a+rx
+
+    - import_tasks: webserver.yml
+      when: webserver is defined and webserver == true
+
+
+
+

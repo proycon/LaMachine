@@ -1,0 +1,10 @@
+#You can add a host to multiple groups if you want
+#to combine multiple software
+
+#hosts
+localhost ansible_connection=local ansible_python_interpreter="/usr/bin/env python"
+
+
+
+
+

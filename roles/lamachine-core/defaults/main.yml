@@ -1,0 +1,21 @@
+---
+conf_name: "default"
+version: "stable" #stable, development or custom
+lamachine_path: "." #path to cloned LaMachine git repo
+homedir: "/home/{{unix_user}}"
+local_prefix: "{{homedir}}/lamachine-{{conf_name}}" #where local packages are installed
+global_prefix: "/usr/local" #where global packages are installed
+locality: "global" #Install everything globally
+localenv_type: "conda" #Local environment type, can be conda or virtualenv
+shared: false #Is this machine shared with other non-LaMachine applications/uses?
+webserver: false
+http_port: 80 #webserver port
+# localenv defaults
+# defaults file for miniconda
+miniconda_mirror : https://repo.continuum.io/miniconda
+miniconda_python_ver : 3
+miniconda_ver: "latest"
+miniconda_platform : '{% if ansible_system == "Darwin" %}MacOSX{% else %}{{ansible_system}}{% endif %}-{{ansible_machine}}'
+miniconda_name : 'Miniconda{{miniconda_python_ver}}-{{miniconda_ver}}-{{miniconda_platform}}'
+miniconda_installer_sh : '{{miniconda_name}}.sh'
+miniconda_installer_url : '{{miniconda_mirror}}/{{miniconda_installer_sh}}'

@@ -1,0 +1,6 @@
+---
+dependencies:
+  - { role: languagemachines-basic }
+  - { role: languagemachines-python }
+  - { role: languagemachines-python-bindings }
+  - { role: gecco }

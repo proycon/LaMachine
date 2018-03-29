@@ -1,0 +1,87 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+#
+
+
+#####################################################################
+## LaMachine Vagrant init file
+##
+## INSTRUCTIONS: Please adjust the settings vb.memory and vb.cpus
+## for your system. The more resources the better. Software
+## in LaMachine can be quite computationally intensive.
+#####################################################################
+
+require 'yaml'
+
+Vagrant.require_version ">= 1.7.0"
+
+current_dir = File.dirname(File.expand_path(__FILE__))
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure(2) do |config|
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://atlas.hashicorp.com/search.
+  # We use the LaMachine box here
+  config.vm.box = "proycon/lamachine"
+  config.vm.define "lamachine-vm"
+
+  config.vm.hostname = "lamachine-stable"
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  #
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  config.vm.network "forwarded_port", guest: 8080, host: 80  #Lamachine webserver
+
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  # config.vm.network "private_network", ip: "192.168.33.10"
+
+  # Create a public network, which generally matched to bridged network.
+  # Bridged networks make the machine appear as another physical device on
+  # your network.
+  # config.vm.network "public_network"
+
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  config.vm.synced_folder Dir.home, "/data"
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # Example for VirtualBox:
+  #
+  config.vm.provider "virtualbox" do |vb|
+     # Customize the amount of memory on the VM:
+     vb.name = "lamachine-stable"
+     vb.memory = 3072 #<--------- you will want to increase the memory limit for many applications!!
+                      #           this is a barely functional minimum, we recommend at least 8GB
+     vb.cpus = 2 #<------- you will want to increase the amount of CPUs if possible!!
+     vb.customize ["modifyvm", :id, "--nictype1", "Am79C973"]
+  end
+
+  #
+  # View the documentation for the provider you are using for more
+  # information on available options.
+
+  # This plugin needs to be installed: vagrant plugin install vagrant-vbguest
+  #
+  # set auto_update to false, if you do NOT want to check the correct
+  # additions version when booting this machine
+  #config.vbguest.auto_update = true
+
+
+  # Disable automatic box update checking. If you disable this, then
+  # boxes will only be checked for updates when the user runs
+  # `vagrant box outdated`. This is not recommended.
+  # config.vm.box_check_update = false
+  #
+end

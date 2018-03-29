@@ -1,0 +1,9 @@
+---
+     - name: "Installing Tensorflow"
+       include_role:
+          name: lamachine-python-install
+       with_items:
+         - { pip: tensorflow }
+       loop_control:
+           loop_var: package
+

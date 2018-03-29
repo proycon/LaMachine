@@ -16,6 +16,20 @@ GREEN='\033[1;32m'
 RED='\033[1;31m'
 RESET='\033[0m'
 
+if [ ! -z "$VIRTUAL_ENV" ]; then
+    if [ -f "$VIRTUAL_ENV/src/LaMachine/.minimal" ]; then
+        MINIMAL=1
+    else
+        MINIMAL=0
+    fi
+else
+    if [ -f /usr/src/.minimal ]; then
+        MINIMAL=1
+    else
+        MINIMAL=0
+    fi
+fi
+
 
 runtest () {
     EXEC=$1
@@ -89,7 +103,9 @@ runtest_python colibricore
 if [ "$OS" != "mac" ]; then
     runtest gecco --helpmodules
 fi
-runtest nextflow info LanguageMachines/PICCL
+if [ $MINIMAL -eq 0 ]; then
+    runtest nextflow info LanguageMachines/PICCL
+fi
 
 if [ $FAILURES -eq 0 ]; then
     echo -e "[LaMachine Test] $GREEN All tests passed, good! $RESET"

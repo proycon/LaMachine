@@ -1,0 +1,43 @@
+---
+
+- name: "{{pkg_name}} - Invoke bootstrap if it exists"
+  shell: |
+    #!/bin/bash
+    if [ -f ./bootstrap.sh ]; then
+      bash ./bootstrap.sh
+      exit $?
+    elif [ -f ./bootstrap ]; then
+      bash bootstrap
+      exit $?
+    else
+      exit 0 #no bootstrap, should be fine?
+    fi
+  args:
+      chdir: "{{ pkg_source_dir }}"
+  register: bootstrap_result
+
+- name: "{{pkg_name}} - Invoke configure"
+  command: "./configure --prefix={{lm_prefix}} {% if 'configure_opts' in package %}{{package.configure_opts}}{% endif %}"
+  args:
+      chdir: "{{ pkg_source_dir }}"
+  environment: "{% if 'build_environment' in package %}{{ package.build_environment }}{% else %}{{default_environment}}{% endif %}"
+  register: configure_result
+
+- name: "{{pkg_name}} - Invoke make"
+  command: "make {% if 'make_opts' in package %}{{package.make_opts}}{% endif %}"
+  args:
+       chdir: "{{ pkg_source_dir }}"
+  environment: "{% if 'build_environment' in package %}{{ package.build_environment }}{% else %}{{default_environment}}{% endif %}"
+  when: configure_result.rc == 0
+  register: make_result
+
+- name: "{{pkg_name}} - Invoke make install"
+  become: "{{lm_become}}"
+  become_user: root
+  become_method: sudo
+  command: "make install {% if 'make_install_opts' in package %}{{package.make_install_opts}}{% endif %}"
+  args:
+       chdir: "{{ pkg_source_dir }}"
+  environment: "{% if 'build_environment' in package %}{{ package.build_environment }}{% else %}{{default_environment}}{% endif %}"
+  register: make_install_result
+  when: configure_result.rc == 0 and make_result.rc == 0
