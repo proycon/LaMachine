@@ -1,10 +1,10 @@
 ---
     - name: "Installing Spacy"
-       include_role:
+      include_role:
           name: lamachine-python-install
-       with_items:
-         - { pip: spacy }
-       loop_control:
+      with_items:
+          - { pip: spacy }
+      loop_control:
            loop_var: package
 
     - name: "Installing Spacy data"
