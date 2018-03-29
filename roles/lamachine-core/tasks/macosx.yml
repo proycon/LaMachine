@@ -16,27 +16,32 @@
         upgrade_all: yes
       ignore_errors: yes
 
-    - name: Installing common base packages (Homebrew)
-      homebrew:
-        name: "{{item}}"
-        state: present
-      with_items:
-        - pkg-config
-        - autoconf
-        - automake
-        - libtool
-        - autoconf-archive
-        - xml2
-        - libxslt
-        - icu4c
-        - libtextcat
-        - libtar
-        - python
-        - wget
-        - ansible
-        - boost
-        - boost-python3
-      when: nosysupdate is not defined or nosysupdate == false
+    - block:
+        - name: Installing common base packages (Homebrew)
+          homebrew:
+            name: "{{item}}"
+            state: present
+          with_items:
+            - pkg-config
+            - autoconf
+            - automake
+            - libtool
+            - autoconf-archive
+            - xml2
+            - libxslt
+            - icu4c
+            - libtextcat
+            - libtar
+            - python
+            - wget
+            - ansible
+            - boost
+            - boost-python3
+          when: nosysupdate is not defined or nosysupdate == false
+      rescue:
+        - name: "Error invoking Homebrew"
+          fail:
+             msg: "Your homebrew installation failed to install the base packages. This most likely means Homebrew on your system is in a broken state (possibly after an OS X update?). You will have to fix this first yourself prior to installing LaMachine."
 
     - name: (Re)install virtualenv
       become: yes
