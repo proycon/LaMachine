@@ -702,7 +702,7 @@ for package in ${NEED[@]}; do
         fi
     elif [ "$package" = "ansible" ]; then
         if [ "$OS" = "debian" ]; then
-            if [ "$DISTRIB_ID" = "ubuntu" ]; then
+            if [ "$DISTRIB_ID" = "ubuntu" ] || [ "$DISTRIB_ID" = "linuxmint" ]; then
                 #add PPA
                 cmd="sudo apt-get update && sudo apt-get $NONINTERACTIVEFLAGS install software-properties-common && sudo apt-add-repository -y ppa:ansible/ansible && sudo apt-get update && sudo apt-get $NONINTERACTIVEFLAGS install ansible"
             else
