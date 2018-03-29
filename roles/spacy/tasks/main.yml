@@ -1,5 +1,5 @@
 ---
-     - name: "Installing Spacy"
+    - name: "Installing Spacy"
        include_role:
           name: lamachine-python-install
        with_items:
