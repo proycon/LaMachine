@@ -1,0 +1,20 @@
+---
+
+    - name: Installing Python packages
+      include_role:
+        name: lamachine-python-install
+      with_items:
+          - { github_user: "cltl", github_repo: "KafNafParserPy", pip: "KafNafParserPy" }
+      loop_control:
+           loop_var: package
+
+    - name: Testing Python packages
+      include_role:
+          name: lamachine-run
+      vars:
+          command: "python3 -c 'import KafNafParserPy'"
+      with_items:
+          - KafNafParserPy
+      register: test
+      changed_when: test.rc != 0
+
