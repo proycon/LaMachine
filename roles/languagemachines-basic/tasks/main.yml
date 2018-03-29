@@ -73,6 +73,7 @@
               summary: "Unicode tokeniser. Ucto tokenizes text files: it separates words from punctuation, and splits sentences."
               license: GPL
               author: Maarten van Gompel, Ko van der Sloot
+              configure_opts: "{% if ansible_distribution|lower == 'macosx' %}-DU_USING_ICU_NAMESPACE=1{% endif %}"
               build_environment:
                  TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
                  TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/ -ltextcat{% endif %}"
