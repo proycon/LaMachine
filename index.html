@@ -51,23 +51,23 @@
                     <div class="option-label">Your Operating System?</div>
                     <div class="option-set">
                         <div class="btn selected" id="os_posix">Linux, BSD, or Mac OS X</div>
-                        <div class="btn" id="os_win10">Windows 10, Window 2016 (or later)</div>
+                        <div class="btn" id="os_win10">Windows 10 / 2016</div>
                         <div class="btn" id="os_win7">Older Windows</div>
                     </div>
                 </div>
-                <div class="option-row os" data-key="mode">
+                <div class="option-row mode" data-key="mode">
                     <div class="option-label">Custom build or pre-built?</div>
                     <div class="option-set">
-                        <div class="btn selected" id="mode_custom">Build your own custom LaMachine (recommend)</div>
+                        <div class="btn selected" id="mode_custom">Own build (recommend)</div>
                         <div class="btn" id="mode_docker">Pre-built Docker image</div>
-                        <div class="btn" id="mode_vagrant">Pre-built VM image (Vagrant)</div>
+                        <div class="btn" id="mode_vagrant">Pre-built VM image</div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="command">
             <div class="label">Open a terminal and run the following:</div>
-            <div class="text">bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh)</div>
+            <div class="text">bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/master/bootstrap.sh)</div>
         </div>
         <div class="help">
             Open a terminal and run the above command to get started!
@@ -141,6 +141,7 @@
                         <li><a href="http://pandas.pydata.org">Pandas</a></li>
                         <li><a href="http://scikit-learn.org">Scikit-learn</a></li>
                         <li><a href="http://www.nltk.org">NLTK</a></li>
+                        <li><a href="https://spacy.io">Spacy</a></li>
                     </ul></li>
                     <li><a href="https://jupyter.org">Jupyter</a></li>
                     <li><a href="https://r-project.org">R</a></li>
@@ -157,6 +158,16 @@
 
    <section class="support normalwrap wrap">
        <div class="container">
+             <a name="contribute"></a>
+             <h3>Contribute</h3>
+             <p>
+             LaMachine is open to participation by other open-source NLP software! Please read our <a href="https://github.com/proycon/LaMachine/blob/master/CONTRIBUTING.md">Contributor Guidelines</a>.
+             </p>
+       </div>
+    </section>
+
+   <section class="support normalwrap wrap">
+       <div class="container">
              <a name="support"></a>
              <h3>Support</h3>
              <p>
@@ -168,15 +179,17 @@
    </div>
    <script>
        function setcommand() {
-           cmd_bootstrap = "bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh)";
+           cmd_bootstrap = "bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/master/bootstrap.sh)";
+           $('div.help').html("");
+           $('div.help').css('color','black');
            if (mode == "custom") {
                $('div.command div.text').html(cmd_bootstrap);
                if (os == "win10") {
                    $('div.help').html("You need to run this command in a Linux subsystem in Windows 10, therefore you must first install the Linux Subsystem with a distribution of your choice (we recommend Ubuntu) from the Microsoft Store. Follow the instructions <a href=\"https://msdn.microsoft.com/en-us/commandline/wsl/install_guide\">here</a>. Alternatively, use a pre-built VM image.");
                    $('div.help').css('color','red');
-               } else {
-                   $('div.command div.text').html("");
-                   $('div.help').html("Building a custom LaMachine is not supported on older versions of Windows as it requires the Linux subsystem! Use a pre-built VM instead.");
+               } else if (os == "win7") {
+                   $('div.command div.text').html("N/A!");
+                   $('div.help').html("Not supported on older Windows, please use a pre-built VM image instead.");
                    $('div.help').css('color','red');
                }
            } else if (mode == "docker") {
@@ -185,53 +198,63 @@
                $('div.help').css('color','black');
            } else if (mode == "vagrant") {
                $('div.command div.text').html("vagrant init proycon/lamachine && vagrant up && vagrant ssh");
-               var s = "For this to work, you need to have <a href=\"https://www.vagrantup.com\">Vagrant</a> and <a href=\"https://www.virtualbox.org\">VirtualBox</a> installed on your system."
+               var s = "For this to work, you need to have <a href=\"https://www.vagrantup.com\">Vagrant</a> and <a href=\"https://www.virtualbox.org\">VirtualBox</a> installed on your system.";
                if (os == "posix") {
-                   s = s + ". If you are on Debian/Ubuntu Linux, just run <tt>sudo apt-get install vagrant virtualbox</tt>. "
+                   s = s + ". If you are on Debian/Ubuntu Linux, just run <tt>sudo apt-get install vagrant virtualbox</tt>. ";
                }
                $('div.help').html(s );
                $('div.help').css('color','black');
            }
        }
-       $.load(function(){
+       $(document).ready(function(){
            if (navigator.appVersion.indexOf("Win")!=-1) {
                os="win10";
                mode="vagrant";
            } else {
                os="posix";
+               mode='custom';
            }
            $('#os_' + os).click();
-       }
+           $('#mode_' + mode).click();
+       });
        $('#os_posix').click(function(){
            os = 'posix';
            setcommand();
+           $('div.os .btn').removeClass("selected");
+           $(this).addClass("selected");
        });
        $('#os_win10').click(function(){
            os = 'win10';
            setcommand();
+           $('div.os .btn').removeClass("selected");
+           $(this).addClass("selected");
        });
        $('#os_win7').click(function(){
            os = 'win7';
            setcommand();
+           $('div.os .btn').removeClass("selected");
+           $(this).addClass("selected");
        });
        $('#mode_custom').click(function(){
            mode = 'custom';
            setcommand();
+           $('div.mode .btn').removeClass("selected");
+           $(this).addClass("selected");
        });
        $('#mode_docker').click(function(){
            mode = 'docker';
            setcommand();
-       });
-       $('#mode_vagrant').click(function(){
-           mode = 'vagrant';
-           setcommand();
-       });
-       $('div.os .btn').click(function(){
-           $('.btn').removeClass("selected");
+           $('div.mode .btn').removeClass("selected");
            $(this).addClass("selected");
        });
-       $('div.mode .btn').click(function(){
-           $('.btn').removeClass("selected");
+       $('#mode_vagrant').click(function(){
+           if (os == "posix") {
+               mode = "custom";
+           } else {
+               mode = 'vagrant';
+           }
+           setcommand();
+           $('div.mode .btn').removeClass("selected");
            $(this).addClass("selected");
        });
    </script>

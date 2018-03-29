@@ -546,6 +546,9 @@ section.normalwrap .container {
 .install-wizard .options-sets .option-row.os .btn {
     width: 47%;
     margin-right: 2%}
+.install-wizard .options-sets .option-row.mode .btn {
+    width: 47%;
+    margin-right: 2%}
 .install-wizard .options-sets .option-row.pm .btn {
     width: 30.3333333333%;
     margin-right: 2%}
