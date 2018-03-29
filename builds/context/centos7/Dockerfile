@@ -13,7 +13,7 @@ RUN echo "lamachine:lamachine" | chpasswd
 RUN echo "lamachine ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER lamachine
 WORKDIR /home/lamachine
-RUN wget https://raw.githubusercontent.com/proycon/LaMachine/lamachine2/bootstrap.sh
+RUN wget https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh
 RUN chmod a+x bootstrap.sh
 RUN ./bootstrap.sh --flavour local --branch $BRANCH --version $VERSION --env virtualenv --noninteractive --private --verbose --name $NAME
 CMD /bin/bash -l /home/lamachine/lamachine-$NAME-activate
