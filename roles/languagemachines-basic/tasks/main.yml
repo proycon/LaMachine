@@ -64,7 +64,8 @@
               summary: C++ Library for the Format for Linguistic Annotation (FoLiA)
               license: GPL
               author: Ko van der Sloot
-              make_opts: "{% if ansible_distribution|lower == 'macosx' %}-DU_USING_ICU_NAMESPACE=1{% endif %}"
+              build_environment:
+                 CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D U_USING_ICU_NAMESPACE=1{% endif %}"
             - repo: uctodata
               user: LanguageMachines
               license: GPL
