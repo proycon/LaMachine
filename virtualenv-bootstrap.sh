@@ -212,7 +212,7 @@ NONINTERACTIVE=0
 MINIMAL=0
 DEV=0
 PRIVATE=0
-BRANCH="master" #LaMachine branch
+BRANCH="lamachine1" #LaMachine branch
 if [ ! -z "$VIRTUAL_ENV" ]; then
     #already in a virtual env
     if [ -f "$VIRTUAL_ENV/src/LaMachine/.dev" ]; then
@@ -249,11 +249,11 @@ do
     fi
     if [[ "$OPT" == "dev" ]]; then
         DEV=1
-        BRANCH="develop"
+        BRANCH="lamachine1"
     fi
     if [[ "$OPT" == "stable" ]]; then
         DEV=0
-        BRANCH="master"
+        BRANCH="lamachine1"
     fi
     if [[ "$OPT" == "private" ]]; then
         PRIVATE=1
@@ -286,7 +286,7 @@ do
         echo "  version=<file>   - Install specific versions of all software, versions are in the specified file. LaMachine's generates a VERSION file on each installation/update that is valid input for this option."
         echo "  private          - Do not send anonymous statistics about this copy of LaMachine to Radboud University (opt-out)"
         echo "  noninteractive   - Never query the user for input"
-        echo "  branch=<branch>  - Use the following branch of the LaMachine git repository (default: master)"
+        echo "  branch=<branch>  - Use the following branch of the LaMachine git repository (default: lamachine1)"
         echo "  minimal          - do not install third party software that is not a direct dependency and exclude certain large software packages"
         echo "  full             - install the full default package (opposite of minimal, default)"
         echo "  all              - install all optional software as well (i.e. more than full)"

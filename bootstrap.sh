@@ -209,10 +209,10 @@ SRCDIR=`pwd`
 FORCE=0
 DEV=0 #prefer stable releases
 if [ -f .dev ]; then
-    BRANCH="develop"
+    BRANCH="lamachine1"
     DEV=1 #install development versions
 else
-    BRANCH="master"
+    BRANCH="lamachine1"
     DEV=0 #install development versions
 fi
 if [ -f .private ]; then
@@ -284,7 +284,7 @@ do
         echo "  minimal          - do not install third party software that is not a direct dependency and exclude certain large software packages"
         echo "  full             - install the full default package (opposite of minimal, default)"
         echo "  all              - install all optional software as well (i.e. more than full)"
-        echo "  branch=<branch>  - Use the following branch of the LaMachine git repository (default: master)"
+        echo "  branch=<branch>  - Use the following branch of the LaMachine git repository (default: lamachine1)"
     fi
 done
 
