@@ -65,6 +65,7 @@ usage () {
     echo " ${bold}--dockerrepo${normal} - Docker repository name (default: proycon/lamachine)"
     echo " ${bold}--install${normal} - Provide an explicit comma separated list of LaMachine roles to install (instead of querying interactively or just taking the default)"
     echo " ${bold}--vmmem${normal} - Memory to reserve for virtual machine"
+    echo " ${bold}--external${normal} - Use an external/shared/remote controller for updating LaMachine. This is useful for development/testing purposes and remote production environment"
 }
 
 USERNAME=$(whoami)
@@ -166,6 +167,7 @@ PREFER_DISTRO=0
 VMMEM=4096
 VAGRANTBOX="debian/contrib-stretch64" #base distribution for VM
 DOCKERREPO="proycon/lamachine"
+CONTROLLER="internal"
 BUILD=1
 
 echo "Detected OS: $OS"
@@ -270,6 +272,10 @@ while [[ $# -gt 0 ]]; do
         ;;
         --minimal)
         MINIMAL=1
+        shift
+        ;;
+        --external)
+        CONTROLLER="external"
         shift
         ;;
         --prefer-distro)
@@ -807,6 +813,11 @@ if [ -z "$LM_NAME" ]; then
     LM_NAME="${LM_NAME%\\n}"
 fi
 
+if [ -z "$LM_NAME" ]; then
+    echo "${bold}Use an external controller for updates?${normal}"
+fi
+
+
 LM_NAME=${LM_NAME/ /} #strip any spaces because users won't listen anyway
 
 CONFIGFILE="$BASEDIR/lamachine-$LM_NAME.yml"
@@ -832,11 +843,12 @@ hostname: \"lamachine-$LM_NAME\" #Name of the host (for VM or docker), changing 
 version: \"$VERSION\" #stable, development or custom
 localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv), only used when locality == local
 locality: \"$LOCALITY\" #local or global?
+controller: \"$CONTROLLER\" #internal or external? Is this installation managed inside or outside the environment/host?
 " > $CONFIGFILE
     if [[ $FLAVOUR == "vagrant" ]]; then
         echo "unix_user: \"vagrant\" #(don't change this)" >> $CONFIGFILE
         echo "homedir: \"/home/vagrant\"" >> $CONFIGFILE
-        echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is stored/shared" >> $CONFIGFILE
+        echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is originally stored/shared" >> $CONFIGFILE
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
         echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
         echo "global_prefix: \"/usr/local\" #Path for global installations" >> $CONFIGFILE
@@ -849,7 +861,7 @@ locality: \"$LOCALITY\" #local or global?
     elif [[ $FLAVOUR == "docker" ]]; then
         echo "unix_user: \"lamachine\"" >> $CONFIGFILE
         echo "homedir: \"/home/lamachine\"" >> $CONFIGFILE
-        echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is stored/shared" >> $CONFIGFILE
+        echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared" >> $CONFIGFILE
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
         echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
         echo "global_prefix: \"/usr/local\" #Path for global installations" >> $CONFIGFILE
@@ -860,9 +872,9 @@ locality: \"$LOCALITY\" #local or global?
         HOMEDIR=$(echo ~)
         echo "homedir: \"$HOMEDIR\"" >> $CONFIGFILE
         if [ ! -z "$SOURCEDIR" ]; then
-            echo "lamachine_path: \"$SOURCEDIR\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
+            echo "lamachine_path: \"$SOURCEDIR\" #Path where LaMachine source is initially stored/shared (don't change this)." >> $CONFIGFILE
         else
-            echo "lamachine_path: \"$BASEDIR/lamachine-controller/$LM_NAME/LaMachine\" #Path where LaMachine source is stored/shared (don't change this)" >> $CONFIGFILE
+            echo "lamachine_path: \"$BASEDIR/lamachine-controller/$LM_NAME/LaMachine\" #Path where LaMachine source is initially stored/shared (don't change this)" >> $CONFIGFILE
         fi
         echo "data_path: \"$BASEDIR\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
         echo "local_prefix: \"$BASEDIR/lamachine-$LM_NAME\" #Path to the local environment (virtualenv)" >> $CONFIGFILE
@@ -1145,6 +1157,12 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
 else
     echo "No bootstrap for $FLAVOUR implemented yet at this stage, sorry!!">&2
     rc=1
+fi
+if [ "$CONTROLLER" = "self" ]; then
+    cd ../..
+    rm -rf "lamachine-controller/$LM_NAME"
+    rm "$BASEDIR/lamachine-$LM_NAME.yml"
+    rm "$BASEDIR/install-$LM_NAME.yml"
 fi
 if [ $NEED_VIRTUALENV -eq 1 ]; then
     deactivate #deactivate the controller before quitting

@@ -213,4 +213,4 @@
       src: "{{item}}"
       dest: "{{ lm_prefix}}/var/www-data/docroot"
     with_fileglob:
-      - "{{lamachine_path}}/webserver/docroot/*"
+      - "{{source_path}}/LaMachine/webserver/docroot/*"

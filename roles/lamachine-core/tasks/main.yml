@@ -63,11 +63,15 @@
         dest: "{{homedir}}/bin/lamachine-{{ conf_name }}-update"
         content: |
           #!/bin/bash
-          if [ -e "{{lamachine_path}}" ]; then
-              cd "{{lamachine_path}}"
+          if [ -e "{{lm_path}}" ]; then
+              cd "{{lm_path}}"
           else
-              echo "The LaMachine control directory ({{lamachine_path}}) was not found">&2
-              echo "This may mean this LaMachine instalation is controller from another machine.">&2
+              echo "The LaMachine control directory was not found.">&2
+              echo "this generally means this lamachine installation is externally managed.">&2
+              exit 2
+          fi
+          if [ ! touch .lastupdate ]; then
+              echo "Insufficient permission to update">&2
               exit 2
           fi
           if [ -d .git ]; then
@@ -78,10 +82,10 @@
             if [ -z "$EDITOR" ]; then
               export EDITOR=nano
             fi
-            if [ -e "{{lamachine_path}}/host_vars/localhost.yml" ]; then
-                $EDITOR "{{lamachine_path}}/host_vars/localhost.yml" && cp -f "{{lamachine_path}}/host_vars/localhost.yml" "{{lamachine_path}}/host_vars/lamachine-{{conf_name}}.yml"
+            if [ -e "host_vars/localhost.yml" ]; then
+                $EDITOR "host_vars/localhost.yml" && cp -f "host_vars/localhost.yml" "host_vars/lamachine-{{conf_name}}.yml"
             else
-                $EDITOR "{{lamachine_path}}/host_vars/lamachine-{{conf_name}}.yml"
+                $EDITOR "host_vars/lamachine-{{conf_name}}.yml"
             fi
             $EDITOR "install-{{conf_name}}.yml"
             FIRST=2
@@ -90,7 +94,7 @@
           if [ {{root|int}} -eq 1 ]; then
              OPTS="--ask-become-pass"
           fi
-          ansible-playbook -i "{{lamachine_path}}/hosts.{{conf_name}}" "install-{{conf_name}}.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee lamachine-{{conf_name}}.log
+          ansible-playbook -i "hosts.{{conf_name}}" "install-{{conf_name}}.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee lamachine-{{conf_name}}.log
         mode: u+rwx,a+rx
 
     - name: Set generic update script
@@ -136,7 +140,6 @@
           export LM_GLOBAL_PREFIX={{global_prefix}}
           export LM_LOCALENV_TYPE={{localenv_type}}
           export LM_DATA_PATH={{data_path}}
-          export LM_PATH={{lamachine_path}}
           export LM_SOURCEPATH={{source_path}}
           unset PYTHONPATH #would most likely mess thing up otherwise
           if [[ "{{ ansible_distribution|lower }}" == "macosx" ]]; then
@@ -262,10 +265,10 @@
 
     - name: Create local Ansible hosts file
       copy:
-        dest: "{{lamachine_path}}/hosts.{{ conf_name }}"
+        dest: "{{source_path}}/LaMachine/hosts.{{ conf_name }}"
         content: "{{hostname}} ansible_connection=local"
         force: "no"
-
+      when: controller is defined and controller == "internal"
 
     - name: Backward compatibility update script
       file:
@@ -311,24 +314,23 @@
         force: yes
         backup: yes
 
-    - name: Link to LaMachine controller from local prefix
-      file:
-        src: "{{lamachine_path}}"
-        dest: "{{local_prefix}}/LaMachine"
-        force: true
-        state: link
-      when: locality == "local"
+    - name: Check existence of LaMachine source dir (migration v2.0.0 -> v2.0.1)
+      stat:
+         path: "{{ lm_prefix }}/LaMachine"
+      register: lamachine_v2_0_0_source
 
-    - name: Link to LaMachine controller from global prefix
-      become: yes
+    - name: Copy LaMachine controller to prefix
+      become: "{{lm_become}}"
       become_user: root
-      file:
+      copy:
         src: "{{lamachine_path}}"
-        dest: "{{global_prefix}}/LaMachine"
-        force: true
-        state: link
-      when: locality == "global"
+        dest: "{{source_path}}/LaMachine" #equals to {{lm_path}} by definition
+      when: (controller is defined and controller == "internal") or lamachine_v2_0_0_source.exists
 
+    - name: LaMachine source dir migration (v2.0.0 -> v2.0.1)
+      file:
+         path: "{{ lm_prefix }}/LaMachine"
+         state: absent
 
     - name: Adding global library path to ldconfig
       become: yes

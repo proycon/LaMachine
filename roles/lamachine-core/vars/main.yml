@@ -1,6 +1,7 @@
 ---
 lm_prefix: "{% if locality == 'global' %}{{global_prefix}}{% else %}{{local_prefix}}{%endif%}"
 lm_become: "{% if locality == 'global' and root %}yes{% else %}no{% endif %}"
+lm_path: "{% if controller is defined %}{% if controller == 'internal' %}{{ source_path }}/LaMachine{% else %}{{ lamachine_path }}{% endif %}{% else %}{{ lamachine_path }}{% endif %}"
 localenv:
      VIRTUAL_ENV: "{{local_prefix}}"
      PATH: "{{local_prefix}}/bin:{{ansible_env.PATH}}"

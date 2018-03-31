@@ -87,12 +87,15 @@ We distinguish the following variables, all of which you can read and use in you
   * ``root``	 - A boolean indicating whether LaMachine has root permission on the system (necessarily true if ``locality == "global"``)
   * ``unix_user`` - The unix user that owns and runs LaMachine.
 * *Paths:*
-  * ``lm_prefix`` - The path where LaMachine installs its software. This equals too
+  * ``lm_prefix`` - The path where LaMachine installs its software. This equals to either:
     * ``local_prefix`` - The local installation path (i.e., the path of the virtual enviroment)
     * ``global_prefix`` - The global installation path (by default ``/usr/local``)
   * ``homedir`` - The path to the home directory for the user that owns and runs LaMachine
-  * ``lamachine_path`` - The path to where the LaMachine repository (with all the ansible roles and templates) is cloned on disk
   * ``source_path`` - The path to where sources for packages will be downloaded
+  * ``lm_path`` - The path to the LaMachine source repository (where are the ansible roles, templates and configurations are). This equals to either:
+      * ``lamachine_path`` - The path upon first installation or remote location where the installation is managed (if controller == `external`)
+      * ``source_path``/LaMachine - The path inside LaMachine (if controller == 'internal')
+  * ``controller`` - Set to either ``internal`` or ``external``. Indicates whether the LaMachine installation manages itself (i.e. upgrades are done from within the LaMachine environment), or whether it is externally managed. Externally managed installation are useful in development environments or for provisioning of remote machines.
   * ``data_path`` - The path where the end-user can store data (this is typically shared with the host system, if applicable)
 * *Network:*
   * ``hostname`` - The hostname of the system
