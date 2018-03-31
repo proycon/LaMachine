@@ -63,7 +63,13 @@
         dest: "{{homedir}}/bin/lamachine-{{ conf_name }}-update"
         content: |
           #!/bin/bash
-          cd {{lamachine_path}}
+          if [ -e "{{lamachine_path}}" ]; then
+              cd "{{lamachine_path}}"
+          else
+              echo "The LaMachine control directory ({{lamachine_path}}) was not found">&2
+              echo "This may mean this LaMachine instalation is controller from another machine.">&2
+              exit 2
+          fi
           if [ -d .git ]; then
             git pull
           fi
@@ -72,19 +78,19 @@
             if [ -z "$EDITOR" ]; then
               export EDITOR=nano
             fi
-            if [ -e {{lamachine_path}}/host_vars/localhost.yml ]; then
-                $EDITOR {{lamachine_path}}/host_vars/localhost.yml && cp -f {{lamachine_path}}/host_vars/localhost.yml {{lamachine_path}}/host_vars/lamachine-{{conf_name}}.yml
+            if [ -e "{{lamachine_path}}/host_vars/localhost.yml" ]; then
+                $EDITOR "{{lamachine_path}}/host_vars/localhost.yml" && cp -f "{{lamachine_path}}/host_vars/localhost.yml" "{{lamachine_path}}/host_vars/lamachine-{{conf_name}}.yml"
             else
-                $EDITOR {{lamachine_path}}/host_vars/lamachine-{{conf_name}}.yml
+                $EDITOR "{{lamachine_path}}/host_vars/lamachine-{{conf_name}}.yml"
             fi
-            $EDITOR install-{{conf_name}}.yml
+            $EDITOR "install-{{conf_name}}.yml"
             FIRST=2
           fi
           OPTS=""
           if [ {{root|int}} -eq 1 ]; then
              OPTS="--ask-become-pass"
           fi
-          ansible-playbook -i {{lamachine_path}}/hosts.{{conf_name}} install-{{conf_name}}.yml -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee lamachine-{{conf_name}}.log
+          ansible-playbook -i "{{lamachine_path}}/hosts.{{conf_name}}" "install-{{conf_name}}.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee lamachine-{{conf_name}}.log
         mode: u+rwx,a+rx
 
     - name: Set generic update script
