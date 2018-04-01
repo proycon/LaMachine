@@ -221,9 +221,9 @@
     - name: Copy LaMachine controller to prefix
       become: "{{lm_become}}"
       become_user: root
-      copy:
-        src: "{{lamachine_path}}"
-        dest: "{{source_path}}/LaMachine" #equals to {{lm_path}} by definition
+      shell: |
+          echo "{{lamachine_path}} -> {{source_path}}/LaMachine"
+          cp -Rpd "{{lamachine_path}}" "{{source_path}}/LaMachine"
       when: (controller is defined and controller == "internal") or lamachine_v2_0_0_source.exists
 
     - name: LaMachine source dir migration (v2.0.0 -> v2.0.1)
