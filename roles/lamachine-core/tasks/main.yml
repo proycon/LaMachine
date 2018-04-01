@@ -222,9 +222,18 @@
       become: "{{lm_become}}"
       become_user: root
       shell: |
-          echo "{{lamachine_path}} -> {{source_path}}/LaMachine"
-          cp -Rpd "{{lamachine_path}}" "{{source_path}}/LaMachine"
+          if [[ -d "{{lamachine_path}}" ]] && [[ ! -e "{{source_path}}/LaMachine" ]]; then
+            echo "Copy {{lamachine_path}} -> {{source_path}}/LaMachine">&2
+            cp -Rpd "{{lamachine_path}}" "{{source_path}}/LaMachine"
+            exit $?
+          else
+            exit 123
+          fi
+      args:
+        executable: /bin/bash
+      register: controllercopy
       when: (controller is defined and controller == "internal") or lamachine_v2_0_0_source.exists
+      changed_when: controllercopy.rc > 0 and controllercopy.rc != 123
 
     - name: LaMachine source dir migration (v2.0.0 -> v2.0.1)
       file:
