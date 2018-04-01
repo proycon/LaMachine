@@ -222,7 +222,7 @@
       become: "{{lm_become}}"
       become_user: root
       shell: |
-          if [[ -d "{{lamachine_path}}" ]] && [[ ! -e "{{source_path}}/LaMachine" ]]; then
+          if [[ -e "{{lamachine_path}}/bootstrap.sh" ]] && [[ ! -e "{{source_path}}/LaMachine/bootstrap.sh" ]]; then
             echo "Copy {{lamachine_path}} -> {{source_path}}/LaMachine">&2
             cp -Rpd "{{lamachine_path}}" "{{source_path}}/LaMachine"
             exit $?
