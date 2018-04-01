@@ -168,12 +168,6 @@
          state: link
       when: locality == "global"
 
-    - name: Create local Ansible hosts file
-      copy:
-        dest: "{{source_path}}/LaMachine/hosts.{{ conf_name }}"
-        content: "{{hostname}} ansible_connection=local"
-        force: "no"
-      when: controller is defined and controller == "internal"
 
     - name: Backward compatibility update script
       file:
@@ -236,6 +230,13 @@
       file:
          path: "{{ lm_prefix }}/LaMachine"
          state: absent
+
+    - name: Create local Ansible hosts file
+      copy:
+        dest: "{{source_path}}/LaMachine/hosts.{{ conf_name }}"
+        content: "{{hostname}} ansible_connection=local"
+        force: "no"
+      when: controller is defined and controller == "internal"
 
     - name: Adding global library path to ldconfig
       become: yes
