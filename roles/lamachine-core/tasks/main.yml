@@ -55,12 +55,13 @@
           fi
         marker: '# {mark} LAMACHINE MANAGED BLOCK - path'
         insertafter: EOF
-        create: no
+        create: yes
         mode: u+rwx
       with_items:
         - "{{homedir}}/.bashrc"
         - "{{homedir}}/.bash_profile" #login-shell (Mac OS X)
         - "{{homedir}}/.zshrc"
+
 
     - name: Set LaMachine update script
       template:
