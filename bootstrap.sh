@@ -66,6 +66,7 @@ usage () {
     echo " ${bold}--install${normal} - Provide an explicit comma separated list of LaMachine roles to install (instead of querying interactively or just taking the default)"
     echo " ${bold}--vmmem${normal} - Memory to reserve for virtual machine"
     echo " ${bold}--external${normal} - Use an external/shared/remote controller for updating LaMachine. This is useful for development/testing purposes and remote production environment"
+    echo " ${bold}--hostname${normal} - Hostname (or fully qualified domain name) for the target system"
 }
 
 USERNAME=$(whoami)
@@ -203,7 +204,7 @@ while [[ $# -gt 0 ]]; do
         shift # past value
         ;;
         -c|--config)
-        CONFIGFILE="$2"
+        STAGEDCONFIG="$2"
         shift # past argument
         shift # past value
         ;;
@@ -287,6 +288,11 @@ while [[ $# -gt 0 ]]; do
         shift
         shift
         ;;
+        --hostname)
+        HOSTNAME="$2"
+        shift
+        shift
+        ;;
         --vmmem) #extra ansible parameters
         VMMEM=$2
         shift
@@ -339,7 +345,7 @@ if [ -z "$FLAVOUR" ]; then
         echo "       modifies the existing system and may"
         echo "       interact with existing packages"
         echo "  5) On a remote server"
-        echo "       modifies the existing remote system!"
+        echo "       modifies an existing remote system!"
         echo "       (uses ansible)"
         echo -n "${bold}Your choice?${normal} [12345] "
         read choice
@@ -807,25 +813,48 @@ for package in ${NEED[@]}; do
 done
 
 if [ -z "$LM_NAME" ]; then
-    echo "Your LaMachine installation is identified by a name (used as hostname, local env name, VM name) etc.."
+    echo "Your LaMachine installation is identified by a name (local env name, VM name) etc.."
+    echo "(This does not need to match the hostname or domain name, which is a separate configuration setting)"
     echo -n "${bold}Enter a name for your LaMachine installation (no spaces!):${normal} "
     read LM_NAME
     LM_NAME="${LM_NAME%\\n}"
 fi
 
-if [ -z "$LM_NAME" ]; then
-    echo "${bold}Use an external controller for updates?${normal}"
-fi
 
 
 LM_NAME=${LM_NAME/ /} #strip any spaces because users won't listen anyway
+if [ -z "$LM_NAME" ]; then
+    echo "${boldred}No names provided${normal}" >&2
+    exit 2
+fi
 
-CONFIGFILE="$BASEDIR/lamachine-$LM_NAME.yml"
-INSTALLFILE="$BASEDIR/install-$LM_NAME.yml"
+
+DETECTEDHOSTNAME=$(hostname --fqdn)
+if [ -z "$DETECTEDHOSTNAME" ]; then
+    DETECTEDHOSTNAME="$LM_NAME"
+fi
+if [ -z "$HOSTNAME" ] && [ $INTERACTIVE -eq 0 ]; then
+    HOSTNAME=$DETECTEDHOSTNAME
+fi
+
+if [ -z "$HOSTNAME" ]; then
+    echo "The hostname or fully qualified domain name (FDQN) determines how your LaMachine installation can be referenced on a network."
+    if [ "$FLAVOUR" = "remote" ]; then
+        echo "This determines the remote machine LaMachine will be installed on!"
+    fi
+    echo -n "${bold}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal}"
+    read HOSTNAME
+    if [ -z "$HOSTNAME" ]; then
+        HOSTNAME=$DETECTEDHOSTNAME
+    fi
+fi
+
+STAGEDCONFIG="$BASEDIR/lamachine-$LM_NAME.yml"
+STAGEDMANIFEST="$BASEDIR/install-$LM_NAME.yml"
 
 
 if [ $BUILD -eq 1 ]; then
- if [ ! -e "$CONFIGFILE" ]; then
+ if [ ! -e "$STAGEDCONFIG" ]; then
     echo "---
 ###########################################################################
 #           LaMachine Configuration
@@ -836,105 +865,108 @@ if [ $BUILD -eq 1 ]; then
 #               at all and can just accept the values by saving
 #               and closing your editor.
 #
+#               Note that most of these variables can not be changed
+#               once they have been set.
+#
 ###########################################################################
 conf_name: \"$LM_NAME\" #Name of this LaMachine configuration
 flavour: \"$FLAVOUR\" #LaMachine flavour
-hostname: \"lamachine-$LM_NAME\" #Name of the host (for VM or docker), changing this is not supported yet at this stage
+hostname: \"$HOSTNAME\" #Name of the host (or fully qualified domain name) (changing this won't automatically change the system hostname!)
 version: \"$VERSION\" #stable, development or custom
 localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv), only used when locality == local
 locality: \"$LOCALITY\" #local or global?
 controller: \"$CONTROLLER\" #internal or external? Is this installation managed inside or outside the environment/host?
-" > $CONFIGFILE
+" > $STAGEDCONFIG
     if [[ $FLAVOUR == "vagrant" ]]; then
-        echo "unix_user: \"vagrant\" #(don't change this)" >> $CONFIGFILE
-        echo "homedir: \"/home/vagrant\"" >> $CONFIGFILE
-        echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is originally stored/shared" >> $CONFIGFILE
-        echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
-        echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
-        echo "global_prefix: \"/usr/local\" #Path for global installations" >> $CONFIGFILE
-        echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+        echo "unix_user: \"vagrant\" #(don't change this)" >> $STAGEDCONFIG
+        echo "homedir: \"/home/vagrant\"" >> $STAGEDCONFIG
+        echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is originally stored/shared" >> $STAGEDCONFIG
+        echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
+        echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $STAGEDCONFIG
+        echo "global_prefix: \"/usr/local\" #Path for global installations" >> $STAGEDCONFIG
+        echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
         if [ "$VAGRANTBOX" == "centos/7" ]; then
-            echo "ansible_python_interpreter: \"/usr/bin/python\" #Python interpreter for Vagrant to use with Ansible" >> $CONFIGFILE
+            echo "ansible_python_interpreter: \"/usr/bin/python\" #Python interpreter for Vagrant to use with Ansible" >> $STAGEDCONFIG
         else
-            echo "ansible_python_interpreter: \"/usr/bin/python3\" #Python interpreter for Vagrant to use with Ansible. This interpreter must be already available in vagrant box $VAGRANTBOX, you may want to set it to python2 instead" >> $CONFIGFILE
+            echo "ansible_python_interpreter: \"/usr/bin/python3\" #Python interpreter for Vagrant to use with Ansible. This interpreter must be already available in vagrant box $VAGRANTBOX, you may want to set it to python2 instead" >> $STAGEDCONFIG
         fi
     elif [[ $FLAVOUR == "docker" ]]; then
-        echo "unix_user: \"lamachine\"" >> $CONFIGFILE
-        echo "homedir: \"/home/lamachine\"" >> $CONFIGFILE
-        echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared" >> $CONFIGFILE
-        echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $CONFIGFILE
-        echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
-        echo "global_prefix: \"/usr/local\" #Path for global installations" >> $CONFIGFILE
-        echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+        echo "unix_user: \"lamachine\"" >> $STAGEDCONFIG
+        echo "homedir: \"/home/lamachine\"" >> $STAGEDCONFIG
+        echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared" >> $STAGEDCONFIG
+        echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
+        echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $STAGEDCONFIG
+        echo "global_prefix: \"/usr/local\" #Path for global installations" >> $STAGEDCONFIG
+        echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
     else
-        echo "unix_user: \"$USERNAME\"" >> $CONFIGFILE
+        echo "unix_user: \"$USERNAME\"" >> $STAGEDCONFIG
         WEBUSER=$USERNAME
         HOMEDIR=$(echo ~)
-        echo "homedir: \"$HOMEDIR\"" >> $CONFIGFILE
+        echo "homedir: \"$HOMEDIR\"" >> $STAGEDCONFIG
         if [ ! -z "$SOURCEDIR" ]; then
-            echo "lamachine_path: \"$SOURCEDIR\" #Path where LaMachine source is initially stored/shared (don't change this)." >> $CONFIGFILE
+            echo "lamachine_path: \"$SOURCEDIR\" #Path where LaMachine source is initially stored/shared (don't change this)." >> $STAGEDCONFIG
         else
-            echo "lamachine_path: \"$BASEDIR/lamachine-controller/$LM_NAME/LaMachine\" #Path where LaMachine source is initially stored/shared (don't change this)" >> $CONFIGFILE
+            echo "lamachine_path: \"$BASEDIR/lamachine-controller/$LM_NAME/LaMachine\" #Path where LaMachine source is initially stored/shared (don't change this)" >> $STAGEDCONFIG
         fi
-        echo "data_path: \"$BASEDIR\" #Data path (in LaMachine) that is tied to host_data_path" >> $CONFIGFILE
-        echo "local_prefix: \"$BASEDIR/lamachine-$LM_NAME\" #Path to the local environment (virtualenv)" >> $CONFIGFILE
-        echo "global_prefix: \"/usr/local\" #Path for global installations" >> $CONFIGFILE
+        echo "data_path: \"$BASEDIR\" #Data path (in LaMachine) that is tied to host_data_path" >> $STAGEDCONFIG
+        echo "local_prefix: \"$BASEDIR/lamachine-$LM_NAME\" #Path to the local environment (virtualenv)" >> $STAGEDCONFIG
+        echo "global_prefix: \"/usr/local\" #Path for global installations" >> $STAGEDCONFIG
         if [ "$locality" == "global" ]; then
-            echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+            echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
         else
-            echo "source_path: \"$BASEDIR/lamachine-$LM_NAME/src\" #Path where sources will be stored/compiled" >> $CONFIGFILE
+            echo "source_path: \"$BASEDIR/lamachine-$LM_NAME/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
         fi
     fi
     if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]]; then
-        echo "root: true #Do you have root on the target system?" >> $CONFIGFILE
+        echo "root: true #Do you have root on the target system?" >> $STAGEDCONFIG
     elif [ $SUDO -eq 1 ]; then
-        echo "root: true #Do you have root on the target system?" >> $CONFIGFILE
+        echo "root: true #Do you have root on the target system?" >> $STAGEDCONFIG
     elif [ $SUDO -eq 0 ]; then
-        echo "root: false #Do you have root on the target system?" >> $CONFIGFILE
+        echo "root: false #Do you have root on the target system?" >> $STAGEDCONFIG
     fi
     if [[ $FLAVOUR == "vagrant" ]]; then
-        echo "vagrant_box: \"$VAGRANTBOX\" #Base box for vagrant (changing this may break things if packages are not compatible!)" >>$CONFIGFILE
-        echo "vm_memory: $VMMEM #Memory allocated to the VM; in MB (the more the better! but too high and the VM won't start)">> $CONFIGFILE
-        echo "vm_cpus: 2 #CPU cores allocated to the VM">>$CONFIGFILE
+        echo "vagrant_box: \"$VAGRANTBOX\" #Base box for vagrant (changing this may break things if packages are not compatible!)" >>$STAGEDCONFIG
+        echo "vm_memory: $VMMEM #Memory allocated to the VM; in MB (the more the better! but too high and the VM won't start)">> $STAGEDCONFIG
+        echo "vm_cpus: 2 #CPU cores allocated to the VM">>$STAGEDCONFIG
     fi
     if [ $PRIVATE -eq 1 ]; then
-        echo "private: true #opt-out of sending back anonymous analytics regarding your LaMachine build " >> $CONFIGFILE
+        echo "private: true #opt-out of sending back anonymous analytics regarding your LaMachine build " >> $STAGEDCONFIG
     else
-        echo "private: false #when false, allows sending back anonymous analytics regarding your LaMachine build (recommended)" >> $CONFIGFILE
+        echo "private: false #when false, allows sending back anonymous analytics regarding your LaMachine build (recommended)" >> $STAGEDCONFIG
     fi
     if [ $MINIMAL -eq 1 ]; then
-        echo "minimal: true #install less than normal for certain categories (this might break things)" >> $CONFIGFILE
+        echo "minimal: true #install less than normal for certain categories (this might break things)" >> $STAGEDCONFIG
     else
-        echo "minimal: false #install less than normal for certain categories (this might break things)" >> $CONFIGFILE
+        echo "minimal: false #install less than normal for certain categories (this might break things)" >> $STAGEDCONFIG
     fi
     if [ $PREFER_DISTRO -eq 1 ]; then
-        echo "prefer_distro: true #prefer using the distribution's packages as much as possible rather than distribution channels such as pip (this will install more conservative versions but may break certain things)" >> $CONFIGFILE
+        echo "prefer_distro: true #prefer using the distribution's packages as much as possible rather than distribution channels such as pip (this will install more conservative versions but may break certain things)" >> $STAGEDCONFIG
     else
-        echo "prefer_distro: false #prefer using the distribution's packages as much as possible rather than distribution channels such as pip (this will install more conservative versions but may break certain things)" >> $CONFIGFILE
+        echo "prefer_distro: false #prefer using the distribution's packages as much as possible rather than distribution channels such as pip (this will install more conservative versions but may break certain things)" >> $STAGEDCONFIG
     fi
     if [ $OS = "mac" ]; then
-        echo "webserver: false #include a webserver" >> $CONFIGFILE
+        echo "webserver: false #include a webserver" >> $STAGEDCONFIG
     else
-        echo "webserver: true #include a webserver" >> $CONFIGFILE
+        echo "webserver: true #include a webserver" >> $STAGEDCONFIG
     fi
 echo "http_port: 80 #webserver port (for VM or docker)
 mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
-" >> $CONFIGFILE
+" >> $STAGEDCONFIG
     if [[ $FLAVOUR == "local" ]]; then
-        echo "web_user: \"$USERNAME\"" >> $CONFIGFILE
+        echo "web_user: \"$USERNAME\"" >> $STAGEDCONFIG
     else
-        echo "web_user: \"www-data\"" >> $CONFIGFILE
+        echo "web_user: \"www-data\"" >> $STAGEDCONFIG
     fi
     if [ $OS = "arch" ]; then
         if [[ $FLAVOUR == "local" ]] || [[ $FLAVOUR == "global" ]]; then
-            echo "ansible_python_interpreter: \"/bin/python2\" #Python interpreter for Vagrant to use with Ansible" >> $CONFIGFILE
+            echo "ansible_python_interpreter: \"/bin/python2\" #Python interpreter for Vagrant to use with Ansible" >> $STAGEDCONFIG
         fi
     fi
 
     if [ $INTERACTIVE -eq 1 ]; then
-        echo "${bold}Opening configuration file $CONFIGFILE in editor for final configuration...${normal}"
+        echo "${bold}Opening configuration file $STAGEDCONFIG in editor for final configuration...${normal}"
         sleep 3
-        if ! "$EDITOR" "$CONFIGFILE"; then
+        if ! "$EDITOR" "$STAGEDCONFIG"; then
             echo "aborted by editor..." >&2
             exit 2
         fi
@@ -985,34 +1017,41 @@ if [ $BUILD -eq 1 ]; then
         fi
     fi
     git pull #make sure we're up to date
-    if [ ! -e $SOURCEDIR/host_vars/$(basename $CONFIGFILE) ]; then
-        mv $CONFIGFILE $SOURCEDIR/host_vars/$(basename $CONFIGFILE) || fatalerror "Unable to copy $CONFIGFILE"
+    if [ ! -e "$SOURCEDIR/host_vars/$HOSTNAME.yml" ]; then
+        #copying staged configuration to final location
+        mv $STAGEDCONFIG "$SOURCEDIR/host_vars/$HOSTNAME.yml" || fatalerror "Unable to copy $STAGEDCONFIG"
         if [ "$SOURCEDIR" != "$BASEDIR" ]; then
-            ln -sf $SOURCEDIR/host_vars/$(basename $CONFIGFILE) $CONFIGFILE || fatalerror "Unable to link $CONFIGFILE"
+            ln -sf "$SOURCEDIR/host_vars/$HOSTNAME.yml" $STAGEDCONFIG || fatalerror "Unable to link $STAGEDCONFIG"
         fi
+    else
+        echo "${boldblue}Configuration file already installed...${normal}"
     fi
 
-    if [ ! -e $INSTALLFILE ]; then
+    if [ ! -e $STAGEDMANIFEST ]; then
         if [ ! -z "$INSTALL" ]; then
             #use the explicitly provided list
-            echo "- hosts: all" > $SOURCEDIR/install-$LM_NAME.yml
-            echo "  roles: [ lamachine-core, $INSTALL ]" >> $SOURCEDIR/install-$LM_NAME.yml
+            if [ "$FLAVOUR" = "remote" ]; then
+                echo "- hosts: $HOSTNAME" > $STAGEDMANIFEST
+            else
+                echo "- hosts: all" > $STAGEDMANIFEST
+            fi
+            echo "  roles: [ lamachine-core, $INSTALL ]" >> $STAGEDMANIFEST
         else
             #use the template
-            cp $SOURCEDIR/install.yml $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to copy $SOURCEDIR/install.yml"
-        fi
-        if [ "$SOURCEDIR" != "$BASEDIR" ]; then
-            ln -sf $SOURCEDIR/install-$LM_NAME.yml $INSTALLFILE || fatalerror "Unable to link $CONFIGFILE"
+            cp $SOURCEDIR/install-template.yml $STAGEDMANIFEST || fatalerror "Unable to copy $SOURCEDIR/install-template.yml"
         fi
     fi
 
     if [ $INTERACTIVE -eq 1 ] && [ -z "$INSTALL" ]; then
-        echo "${bold}Opening installation file $INSTALLFILE in editor for selection of packages to install...${normal}"
+        echo "${bold}Opening installation file $STAGEDMANIFEST in editor for selection of packages to install...${normal}"
         sleep 3
-        if ! "$EDITOR" "$INSTALLFILE"; then
+        if ! "$EDITOR" "$STAGEDMANIFEST"; then
             exit 2
         fi
     fi
+
+    #copy staged install to final location
+    cp $STAGEDMANIFEST $SOURCEDIR/install.yml || fatalerror "Unable to link $STAGEDCONFIG"
 fi
 
 HOMEDIR=$(echo ~)
@@ -1028,49 +1067,41 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     echo "Preparing vagrant..."
     #Copy and adapt the Vagrantfile file; storing it inside the lamachine-controller
     if [ $BUILD -eq 1 ]; then
-        if [ ! -f $SOURCEDIR/Vagrantfile.$LM_NAME ]; then
-            cp -f $SOURCEDIR/Vagrantfile $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to copy Vagrantfile"
-            sed -i s/lamachine-vm/lamachine-$LM_NAME/g $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to run sed"
-            sed -i s/install.yml/install-$LM_NAME.yml/g $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to run sed"
+        if [ ! -f $SOURCEDIR/Vagrantfile ]; then
+            cp -f $SOURCEDIR/Vagrantfile.template $SOURCEDIR/Vagrantfile || fatalerror "Unable to copy Vagrantfile"
+            sed -i s/lamachine-vm/$HOSTNAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         fi
     else
-        cp -f $SOURCEDIR/Vagrantfile.prebuilt $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to copy Vagrantfile"
-        sed -i s/lamachine-vm/lamachine-$LM_NAME/g $SOURCEDIR/Vagrantfile.$LM_NAME || fatalerror "Unable to run sed"
+        cp -f $SOURCEDIR/Vagrantfile.prebuilt $SOURCEDIR/Vagrantfile || fatalerror "Unable to copy Vagrantfile"
+        sed -i s/lamachine-vm/$HOSTNAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         if [ $INTERACTIVE -eq 1 ]; then
             echo "${bold}Opening Vagrant configuration in editor for final configuration...${normal}"
             sleep 3
-            if ! "$EDITOR" "$SOURCEDIR/Vagrantfile.$LM_NAME"; then
+            if ! "$EDITOR" "$SOURCEDIR/Vagrantfile"; then
                 echo "aborted by editor..." >&2
                 exit 2
             fi
         fi
     fi
     #add activation script on the host machine:
-    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nif vagrant up && vagrant ssh; then\nvagrant halt\nexit 0\nelse\nexit 1\nfi" > $BASEDIR/lamachine-$LM_NAME-activate
-    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant halt \$@; exit \$?" > $BASEDIR/lamachine-$LM_NAME-stop
-    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant up; exit \$?" > $BASEDIR/lamachine-$LM_NAME-start
-    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant ssh; exit \$?" > $BASEDIR/lamachine-$LM_NAME-connect
-    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant ssh -c 'lamachine-update'; exit \$?" > $BASEDIR/lamachine-$LM_NAME-update
-    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant destroy \$@; exit \$?" > $BASEDIR/lamachine-$LM_NAME-destroy
-    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR VAGRANT_VAGRANTFILE=Vagrantfile.$LM_NAME\nvagrant package \$@; exit \$?" > $BASEDIR/lamachine-$LM_NAME-export
-    chmod a+x $BASEDIR/lamachine-$LM_NAME-*
-    ln -sf $BASEDIR/lamachine-$LM_NAME-activate $HOMEDIR/bin/
-    ln -sf $BASEDIR/lamachine-$LM_NAME-start $HOMEDIR/bin/
-    ln -sf $BASEDIR/lamachine-$LM_NAME-stop $HOMEDIR/bin/
-    ln -sf $BASEDIR/lamachine-$LM_NAME-connect $HOMEDIR/bin/
-    ln -sf $BASEDIR/lamachine-$LM_NAME-update $HOMEDIR/bin/
-    ln -sf $BASEDIR/lamachine-$LM_NAME-destroy $HOMEDIR/bin/
-    ln -sf $BASEDIR/lamachine-$LM_NAME-package $HOMEDIR/bin/
-    ln -sf $BASEDIR/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR\nif vagrant up && vagrant ssh; then\nvagrant halt\nexit 0\nelse\nexit 1\nfi" > $HOMEDIR/bin/lamachine-$LM_NAME-activate
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR\nvagrant halt \$@; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-stop
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR\nvagrant up; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-start
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR\nvagrant ssh; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-connect
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR\nvagrant ssh -c 'lamachine-update'; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-update
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR\nvagrant destroy \$@; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-destroy
+    echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR\nvagrant package \$@; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-export
+    chmod a+x $HOMEDIR/bin/lamachine-$LM_NAME-*
+    ln -sf $HOMEDIR/bin/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
     #run the activation script (this will do the actual initial provision as well)
-    bash $BASEDIR/lamachine-$LM_NAME-start 2>&1 | tee lamachine-$LM_NAME.log
+    bash $HOMEDIR/bin/lamachine-$LM_NAME-start 2>&1 | tee lamachine-$LM_NAME.log
     rc=${PIPESTATUS[0]}
     echo "======================================================================================"
     if [ $rc -eq 0 ]; then
         if [ $BUILD -eq 0 ]; then
             echo "${boldgreen}Build completed succesfully! Rebooting VM...${normal}."
-            bash $BASEDIR/lamachine-$LM_NAME-stop
-            bash $BASEDIR/lamachine-$LM_NAME-start
+            bash $HOMEDIR/bin/lamachine-$LM_NAME-stop
+            bash $HOMEDIR/bin/lamachine-$LM_NAME-start
         else
             echo "${boldgreen}Build from pre-built image completed succesfully!${normal}."
         fi
@@ -1083,7 +1114,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
         echo "  note that the VM will be stopped as soon as you disconnect again."
     else
         echo "${boldred}The LaMachine VM bootstrap has failed unfortunately.${normal} You have several options:"
-        echo " - Start from scratch again with a new bootstrap, possibly tweaking configuration options"
+        echo " - Retry the bootstrap, possibly tweaking configuration options"
         echo " - Enter the LaMachine VM in its uncompleted state, run: bash ~/bin/lamachine-$LM_NAME-connect"
         echo " - Force the LaMachine VM to update itself, run: bash ~/bin/lamachine-$LM_NAME-update"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
@@ -1095,10 +1126,10 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     else
         ASKSUDO=""
     fi
-    cmd="ansible-playbook $ASKSUDO -i $SOURCEDIR/hosts.$LM_NAME install-$LM_NAME.yml $ANSIBLE_OPTIONS"
+    cmd="ansible-playbook $ASKSUDO -i $SOURCEDIR/hosts.ini $SOURCEDIR/install.yml $ANSIBLE_OPTIONS"
     cwd=$(pwd)
     echo "Running ansible command from $cwd: $cmd" >&2
-    echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
+    echo "$HOSTNAME ansible_connection=local" > $SOURCEDIR/hosts.ini
     $cmd 2>&1 | tee lamachine-$LM_NAME.log
     rc=${PIPESTATUS[0]}
     if [ $rc -eq 0 ]; then
@@ -1108,7 +1139,7 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     else
         echo "======================================================================================"
         echo "${boldred}Building a local LaMachine environment has failed unfortunately.${normal} You have several options:"
-        echo " - Start from scratch again with a new bootstrap, possibly tweaking configuration options"
+        echo " - Retry the bootstrap, possibly tweaking configuration options"
         echo " - Attempt to activate the environment (run: lamachine-$LM_NAME-activate) and debug the problem"
         echo " - Run lamachine-$LM_NAME-update after activating the environment to see if the problem corrects itself"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
@@ -1127,7 +1158,7 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
     fi
     if [ $BUILD -eq 1 ]; then
         echo "Building docker image.."
-        sed -i "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install-$LM_NAME.yml || fatalerror "Unable to run sed"
+        sed -i "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install.yml || fatalerror "Unable to run sed"
         #echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
         docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME . 2>&1 | tee lamachine-$LM_NAME.log
         rc=${PIPESTATUS[0]}
@@ -1148,21 +1179,47 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
     else
         echo "======================================================================================"
         echo "${boldred}The docker build has failed unfortunately.${normal} You have several options:"
-        echo " - Start from scratch again with a new bootstrap, possibly tweaking configuration options"
+        echo " - Retry the bootstrap, possibly tweaking configuration options"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
         if [ $BUILD -eq 1 ]; then
             echo "   The log file has been written to $(pwd)/lamachine-$LM_NAME.log"
         fi
     fi
+elif [ "$FLAVOUR" = "remote" ]; then
+    echo "$HOSTNAME" > $SOURCEDIR/hosts.ini
+    git checkout -b $LM_NAME
+    git add host_vars/$HOSTNAME.yml
+    git add install.yml
+    git add hosts.ini
+    git commit -a -m "Added configuration for $LM_NAME"
+    echo "${boldgreen}The following files for remote provisioning using Ansible have been generated:${normal}"
+    echo " - $SOURCEDIR/host_vars/$HOSTNAME.yml - This is contains the LaMachine configuration variables for your specified host"
+    echo " - $SOURCEDIR/install.yml - This is the main playbook, aka the LaMachine installation manifest"
+    echo " - $SOURCEDIR/hosts.ini - The host inventory file for Ansible, containing only $HOSTNAME"
+    echo "These have been added to the git repository in $SOURCEDIR, in a branch named $LM_NAME (checked out now)"
+    cmd="ansible-playbook -i $SOURCEDIR/hosts.ini $SOURCEDIR/install.yml"
+    echo -e "#!/bin/bash\ncd $SOURCEDIR\ngit fetch origin master && git merge master\n$cmd; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-update
+    chmod a+x $HOMEDIR/bin/lamachine-$LM_NAME-update
+    echo "To provision the remote machine, run: $cmd"
+    echo "or ~/bin/lamachine-$LM_NAME-update, which does this for you."
+    while true; do
+        echo -n "${bold}Do you want to bootstrap the remote machine now?${normal} [yn] "
+        read yn
+        case $yn in
+            [Yy]* ) eval $cmd; rc=$?; break;;
+            [Nn]* ) rc=0; break;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
 else
     echo "No bootstrap for $FLAVOUR implemented yet at this stage, sorry!!">&2
     rc=1
 fi
-if [ "$CONTROLLER" = "self" ]; then
+if [ "$CONTROLLER" = "internal" ] && [ $rc -eq 0 ]; then  #only clean up if everything went well
     cd ../..
     rm -rf "lamachine-controller/$LM_NAME"
-    rm "$BASEDIR/lamachine-$LM_NAME.yml"
-    rm "$BASEDIR/install-$LM_NAME.yml"
+    rm $STAGEDCONFIG
+    rm $STAGEDMANIFEST
 fi
 if [ $NEED_VIRTUALENV -eq 1 ]; then
     deactivate #deactivate the controller before quitting

@@ -249,7 +249,7 @@
 
     - name: Create local Ansible hosts file
       copy:
-        dest: "{{source_path}}/LaMachine/hosts.{{ conf_name }}"
+        dest: "{{source_path}}/LaMachine/hosts.ini"
         content: "{{hostname}} ansible_connection=local"
         force: "no"
       when: controller is defined and controller == "internal"

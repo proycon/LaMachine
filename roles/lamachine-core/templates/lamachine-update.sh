@@ -33,4 +33,10 @@ OPTS=""
 if [ {{root|int}} -eq 1 ]; then
  OPTS="--ask-become-pass"
 fi
-ansible-playbook -i "hosts.{{conf_name}}" "install-{{conf_name}}.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}.log"
+if [ -e "hosts.{{conf_name}}" ]; then
+    #LaMachine v2.0.0
+    ansible-playbook -i "hosts.{{conf_name}}" "install-{{conf_name}}.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}.log"
+else
+    #LaMachine v2.0.1+
+    ansible-playbook -i "hosts.ini" "install.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}.log"
+fi
