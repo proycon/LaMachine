@@ -1018,15 +1018,8 @@ if [ $BUILD -eq 1 ]; then
         fi
     fi
     git pull #make sure we're up to date
-    if [ ! -e "$SOURCEDIR/host_vars/$HOSTNAME.yml" ]; then
-        #copying staged configuration to final location
-        mv $STAGEDCONFIG "$SOURCEDIR/host_vars/$HOSTNAME.yml" || fatalerror "Unable to copy $STAGEDCONFIG"
-        if [ "$SOURCEDIR" != "$BASEDIR" ]; then
-            ln -sf "$SOURCEDIR/host_vars/$HOSTNAME.yml" $STAGEDCONFIG || fatalerror "Unable to link $STAGEDCONFIG"
-        fi
-    else
-        echo "${boldblue}Configuration file already installed...${normal}"
-    fi
+    #copying staged configuration to final location
+    cp $STAGEDCONFIG "$SOURCEDIR/host_vars/$HOSTNAME.yml" || fatalerror "Unable to copy $STAGEDCONFIG"
 
     if [ ! -e $STAGEDMANIFEST ]; then
         if [ ! -z "$INSTALL" ]; then
@@ -1052,7 +1045,7 @@ if [ $BUILD -eq 1 ]; then
     fi
 
     #copy staged install to final location
-    cp $STAGEDMANIFEST $SOURCEDIR/install.yml || fatalerror "Unable to link $STAGEDCONFIG"
+    cp $STAGEDMANIFEST $SOURCEDIR/install.yml || fatalerror "Unable to copy $STAGEDMANIFEST"
 fi
 
 HOMEDIR=$(echo ~)
