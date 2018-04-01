@@ -335,3 +335,7 @@ No, your Linux distribution needs to be up to date and supported.
 
 Yes! [See the contribution guidelines](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md)
 
+#### Q: Docker gives an error: "flag provided but not defined: --build-arg"
+
+Your Docker is too old, upgrade to at least 1.9
+
