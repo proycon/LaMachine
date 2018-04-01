@@ -9,7 +9,7 @@ else
   echo "this generally means this lamachine installation is externally managed.">&2
   exit 2
 fi
-if [ ! touch .lastupdate ]; then
+if ! touch .lastupdate; then
   echo "Insufficient permission to update">&2
   exit 2
 fi
