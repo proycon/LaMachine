@@ -70,6 +70,7 @@ usage () {
 }
 
 USERNAME=$(whoami)
+unset HOSTNAME
 
 fatalerror () {
     echo "${bold}================ FATAL ERROR ==============${normal}" >&2
