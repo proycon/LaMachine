@@ -241,6 +241,7 @@
         executable: /bin/bash
       register: controllercopy
       when: (controller is defined and controller == "internal") or lamachine_v2_0_0_source.stat.exists
+      failed_when: controllercopy.rc > 0 and controllercopy.rc != 123
       changed_when: controllercopy.rc > 0 and controllercopy.rc != 123
 
     - name: LaMachine source dir migration (v2.0.0 -> v2.0.1)
