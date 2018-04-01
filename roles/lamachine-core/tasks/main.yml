@@ -223,9 +223,16 @@
       become_user: root
       shell: |
           if [[ -e "{{lamachine_path}}/bootstrap.sh" ]] && [[ ! -e "{{source_path}}/LaMachine/bootstrap.sh" ]]; then
-            echo "Copy {{lamachine_path}} -> {{source_path}}/LaMachine">&2
-            cp -Rpd "{{lamachine_path}}" "{{source_path}}/LaMachine"
-            exit $?
+            if [[ "{{source_path}}" != "{{lamachine_path}}/"* ]]; then
+              echo "Copy {{lamachine_path}} -> {{source_path}}/LaMachine">&2
+              cp -Rpd "{{lamachine_path}}" "{{source_path}}/LaMachine"
+              exit $?
+            else
+              #source path is nested inside lamachine_path (usually bootstrap.sh was run inside a LaMachine git clone)
+              #copy would recurse endlessly, link instead:
+              ln -s "{{lamachine_path}}" "{{source_path}}/LaMachine"
+              exit $?
+            fi
           else
             exit 123
           fi
