@@ -58,9 +58,9 @@
         create: no
         mode: u+rwx
       with_items:
-        - "{{homedir})/.bashrc"
-        - "{{homedir})/.bash_profile" #login-shell (Mac OS X)
-        - "{{homedir})/.zshrc"
+        - "{{homedir}}/.bashrc"
+        - "{{homedir}}/.bash_profile" #login-shell (Mac OS X)
+        - "{{homedir}}/.zshrc"
 
     - name: Set LaMachine update script
       template:
