@@ -244,6 +244,8 @@
       changed_when: controllercopy.rc > 0 and controllercopy.rc != 123
 
     - name: LaMachine source dir migration (v2.0.0 -> v2.0.1)
+      become: "{{lm_become}}"
+      become_user: root
       file:
          path: "{{ lm_prefix }}/LaMachine"
          state: absent
