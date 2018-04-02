@@ -21,12 +21,23 @@ if [ "$1" = "--edit" ]; then
 if [ -z "$EDITOR" ]; then
   export EDITOR=nano
 fi
-if [ -e "host_vars/localhost.yml" ]; then
-    $EDITOR "host_vars/localhost.yml" && cp -f "host_vars/localhost.yml" "host_vars/lamachine-{{conf_name}}.yml"
-else
-    $EDITOR "host_vars/lamachine-{{conf_name}}.yml"
+if [ -e "host_vars/{{hostname}}.yml" ]; then
+    #LaMachine v2.1.0+
+    $EDITOR "host_vars/{{hostname}}.yml"
+elif [ -e "host_vars/localhost.yml" ]; then
+    #fallback
+    $EDITOR "host_vars/localhost.yml"
+elif [ -e "host_vars/lamachine-$LM_NAME.yml" ]; then
+    #LaMachine v2.0.0
+    $EDITOR "host_vars/lamachine-$LM_NAME.yml"
 fi
-$EDITOR "install-{{conf_name}}.yml"
+if [ -e "hosts.{{conf_name}}" ]; then
+    #LaMachine v2.0.0
+    $EDITOR "install-{{conf_name}}.yml"
+else
+    #LaMachine v2.1.0+
+    $EDITOR "install.yml"
+fi
 FIRST=2
 fi
 OPTS=""
@@ -37,6 +48,6 @@ if [ -e "hosts.{{conf_name}}" ]; then
     #LaMachine v2.0.0
     ansible-playbook -i "hosts.{{conf_name}}" "install-{{conf_name}}.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}.log"
 else
-    #LaMachine v2.0.1+
+    #LaMachine v2.1.0+
     ansible-playbook -i "hosts.ini" "install.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}.log"
 fi
