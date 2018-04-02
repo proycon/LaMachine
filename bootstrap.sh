@@ -1192,7 +1192,7 @@ elif [ "$FLAVOUR" = "remote" ]; then
     echo " - $SOURCEDIR/hosts.ini - The host inventory file for Ansible, containing only $HOSTNAME"
     echo "These have been added to the git repository in $SOURCEDIR, in a branch named $LM_NAME (checked out now)"
     cmd="ansible-playbook -i $SOURCEDIR/hosts.ini $SOURCEDIR/install.yml"
-    echo -e "#!/bin/bash\ncd $SOURCEDIR\ngit fetch origin master && git merge master\n$cmd; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-update
+    echo -e "#!/bin/bash\ncd $SOURCEDIR\ngit fetch origin master && git merge origin/master\n$cmd; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-update
     chmod a+x $HOMEDIR/bin/lamachine-$LM_NAME-update
     echo "To provision the remote machine, run: $cmd"
     echo "or ~/bin/lamachine-$LM_NAME-update, which does this for you."
