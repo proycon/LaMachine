@@ -58,14 +58,14 @@
               configure_opts: "{% if ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'rhel' %}--with-boost={{lm_prefix}}{% endif %}"
               build_environment:
                  TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
-                 CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D U_USING_ICU_NAMESPACE=1{% endif %}"
+                 CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
             - repo: libfolia
               user: LanguageMachines
               summary: C++ Library for the Format for Linguistic Annotation (FoLiA)
               license: GPL
               author: Ko van der Sloot
               build_environment:
-                 CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D U_USING_ICU_NAMESPACE=1{% endif %}"
+                 CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
             - repo: uctodata
               user: LanguageMachines
               license: GPL
@@ -78,7 +78,7 @@
               build_environment:
                  TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
                  TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/ -ltextcat{% endif %}"
-                 CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D HAVE_OLD_TEXTCAT -D U_USING_ICU_NAMESPACE=1{% endif %}"
+                 CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D HAVE_OLD_TEXTCAT{% endif %} -D U_USING_ICU_NAMESPACE=1"
             - repo: timbl
               user: LanguageMachines
               license: GPL
@@ -108,7 +108,7 @@
               license: GPL
               author: Ko van der Sloot, Antal van den Bosch, Maarten van Gompel, Bertjan Busser
               build_environment:
-                 CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D U_USING_ICU_NAMESPACE=1{% endif %}"
+                 CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
             - repo: foliautils
               user: LanguageMachines
               license: GPL
@@ -117,13 +117,13 @@
               build_environment:
                  TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
                  TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/ -ltextcat{% endif %}"
-                 CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D HAVE_OLD_TEXTCAT -D U_USING_ICU_NAMESPACE=1{% endif %}"
+                 CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D HAVE_OLD_TEXTCAT{% endif %} -D U_USING_ICU_NAMESPACE=1"
             - repo: toad
               user: LanguageMachines
               author: Ko van der Sloot
               license: GPL
               build_environment:
-                 CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D U_USING_ICU_NAMESPACE=1{% endif %}"
+                 CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
               exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
             - repo: wopr
               user: LanguageMachines
