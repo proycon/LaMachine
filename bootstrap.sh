@@ -835,7 +835,11 @@ if [ -z "$DETECTEDHOSTNAME" ]; then
     DETECTEDHOSTNAME="$LM_NAME"
 fi
 if [ -z "$HOSTNAME" ] && [ $INTERACTIVE -eq 0 ]; then
-    HOSTNAME=$DETECTEDHOSTNAME
+    if [ "$FLAVOUR" = "vagrant" ] || [ "$FLAVOUR" = "docker" ]; then
+        HOSTNAME=lamachine-$LM_NAME
+    else
+        HOSTNAME=$DETECTEDHOSTNAME
+    fi
 fi
 
 if [ -z "$HOSTNAME" ]; then
@@ -1063,12 +1067,12 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     if [ $BUILD -eq 1 ]; then
         if [ ! -f $SOURCEDIR/Vagrantfile ]; then
             cp -f $SOURCEDIR/Vagrantfile.template $SOURCEDIR/Vagrantfile || fatalerror "Unable to copy Vagrantfile"
-            sed -i s/lamachine-vm/lamachine-$LM_NAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+            sed -i s/lamachine-vm/$HOSTNAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
             sed -i s/HOSTNAME/$HOSTNAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         fi
     else
         cp -f $SOURCEDIR/Vagrantfile.prebuilt $SOURCEDIR/Vagrantfile || fatalerror "Unable to copy Vagrantfile"
-        sed -i s/lamachine-vm/lamachine-$LM_NAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+        sed -i s/lamachine-vm/$HOSTNAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         sed -i s/HOSTNAME/$HOSTNAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         if [ $INTERACTIVE -eq 1 ]; then
             echo "${bold}Opening Vagrant configuration in editor for final configuration...${normal}"
