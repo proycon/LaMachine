@@ -132,9 +132,10 @@ We distinguish the following variables, all of which you can read and use in you
 * *Network:*
   * ``hostname`` - The hostname of the system
   * ``webserver`` - (boolean) Include a webserver or not
-    * ``no_nginx`` - If you do not want to use the provided nginx webserver, you can set ``no_nginx`` to ``true``.  You'll have to set up any alternative webserver yourself though.
+    * ``webservertype`` - The type of webserver, defaults to ``nginx``. LaMAchine does not install any other webserver, so if you change this nginx won't be installed but you have to set up any alternative webserver (e.g. Apache) yourself.
   * ``http_port`` - port the webserver will listen on
   * ``web_user`` - The unix user that runs the webserver and webservices
+  * ``services`` - This is a list of services to provide, by default it is set to ``[ all ]``, meaning all services provided by the software categories you install will be enabled, you can remove ``all`` and provide only specific services.
 * *Other:*
   * ``private`` - (boolean) Send basic analytics back to us
   * ``minimal`` - (boolean) A minimal installation is requested (might break some stuff)

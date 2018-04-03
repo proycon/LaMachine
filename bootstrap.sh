@@ -956,6 +956,7 @@ controller: \"$CONTROLLER\" #internal or external? Is this installation managed 
     fi
 echo "http_port: 80 #webserver port (for VM or docker)
 mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
+services: [ all ]  #List of services to provide, if set to [ all ], all possible services from the software categories you install will be provided. You can remove this and list specific services you want to enable. This is especially needed in case of a LaMachine installation that intends to only provide a single service.
 " >> $STAGEDCONFIG
     if [[ $FLAVOUR == "local" ]]; then
         echo "web_user: \"$USERNAME\"" >> $STAGEDCONFIG

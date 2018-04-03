@@ -4,12 +4,12 @@
       name: "{{item}}"
       state: latest
     with_items: [nginx]
-    when: (ansible_distribution|lower == "macosx" and (no_nginx is not defined or not no_nginx))
+    when: (ansible_distribution|lower == "macosx" and webservertype == "nginx")
 
   - when: root and locality=="global"
     block:
 
-      - when: (no_nginx is not defined or not no_nginx)
+      - when: webservertype == "nginx"
         block:
           - name: Installing webserver globally (Debian/Ubuntu)
             become: true
@@ -198,7 +198,7 @@
           dest: "{{lm_prefix}}/etc/nginx/nginx.conf"
           force: yes
           backup: yes
-        when: no_nginx is not defined or not no_nginx
+        when: webservertype == "nginx"
 
       - name: Adding webserver start script (local)
         copy:

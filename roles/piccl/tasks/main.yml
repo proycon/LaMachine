@@ -122,7 +122,7 @@
         chdir: "{{lm_prefix}}/opt/PICCL"
       environment: "{{lm_env}}"
 
-    - when: webserver
+    - when: webserver and ("piccl" in services or "all" in services)
       block:
         - name: Installing PICCL webservice
           include_role:
@@ -143,6 +143,7 @@
             force: yes
             backup: yes
             owner: "{{unix_user}}"
+          when: webservertype == "nginx"
 
         - name: "Install uwsgi configuration for PICCL"
           become: "{{lm_become}}"

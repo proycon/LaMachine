@@ -80,16 +80,14 @@
           become: "{{lm_become}}"
           become_user: root
           template:
-            src: "nginx/{{item}}.conf"
-            dest: "{{lm_prefix}}/etc/nginx/conf.d/{{item}}.conf"
+            src: "nginx/clamservices.conf"
+            dest: "{{lm_prefix}}/etc/nginx/conf.d/clamservices.conf"
             force: yes
             backup: yes
             owner: "{{unix_user}}"
-          with_items:
-            - clamservices
-            - flat
+          when: webservertype == "nginx" and ("all" in services or "ucto"  in services or "frog" in services or "timbl" in services or "colibricore" in services)
 
-        - name: "Install uwsgi configuration"
+        - name: "Install uwsgi configurations,"
           become: "{{lm_become}}"
           become_user: root
           template:
@@ -99,12 +97,12 @@
             backup: yes
             owner: "{{unix_user}}"
             mode: u+rw,a+r
+          when: '"all" in services or item in services'
           with_items:
             - frog
             - ucto
             - timbl
             - colibricore
-            - flat
 
         - name: "Install clam configuration"
           become: "{{lm_become}}"
@@ -116,6 +114,7 @@
             backup: yes
             owner: "{{unix_user}}"
             mode: u+rw,a+r
+          when: '"all" in services or item in services'
           with_items:
             - frog
             - ucto
@@ -124,3 +123,4 @@
 
         - name: "Setting up FLAT"
           import_tasks: flat.yml
+          when: '"all" in services or "flat" in services'
