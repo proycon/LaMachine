@@ -113,7 +113,9 @@ the installation procedure.
     * [TICCLTools](https://github.com/LanguageMachines/ticcltools) - Tools that together constitute the bulk of TICCL: Text Induced Corpus-Cleanup.
     * [PICCL](https://github.com/LanguageMachines/PICCL) - PICCL: A set of workflows for corpus building through OCR, post-correction (using TICCL) and Natural Language Processing.
 * by the University of Groningen
-    * [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/), a dependency parser and tagger for Dutch
+    * [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) - a dependency parser and tagger for Dutch
+* by the Vrije Universiteit Amsterdam
+    * [KafNafParserPy](https://github.com/cltl/KafNafParserPy) - A python module to parse NAF files
 * by Utrecht University
     * [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction (initially developed at TiCC, Tilburg University).
 * Major third party software (not exhaustive!):
@@ -190,15 +192,16 @@ How to start LaMachine differs a bit depending on your flavour.
 ### Local Environment
 
 Run the generated activation script to activate the local environment (here we assume your LaMachine VM is called **stable**!):
-* Run``lamachine-stable-activate``
+* Run ``source lamachine-stable-activate`` or ``lamachine-stable-activate``, this script should be located in your
+  ``~/bin`` directory.
 
 ### Virtual Machine
 
 If you built your own LaMachine you have various scripts at your disposal (here we assume your LaMachine VM is called **stable**!):
-* Run``lamachine-stable-start`` to start the VM
-* Run``lamachine-stable-connect`` to connect to a running VM and obtain a command line shell (over ssh)
-* Run``lamachine-stable-stop`` to stop the VM
-* Run``lamachine-stable-destroy`` to completely delete the VM again
+* Run ``lamachine-stable-start`` to start the VM
+* Run ``lamachine-stable-connect`` to connect to a running VM and obtain a command line shell (over ssh)
+* Run ``lamachine-stable-stop`` to stop the VM
+* Run ``lamachine-stable-destroy`` to completely delete the VM again
 * ``lamachine-stable-activate`` is a shortcut that starts the VM and connects automatically, and stops the VM when you
   disconnect again.
 
@@ -334,4 +337,15 @@ No, your Linux distribution needs to be up to date and supported.
 #### Q: Can I include my own software in LaMachine?
 
 Yes! [See the contribution guidelines](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md)
+
+#### Q: Docker gives an error: "flag provided but not defined: --build-arg"
+
+Your Docker is too old, upgrade to at least 1.9
+
+#### Q: I have another problem, can I report it?
+
+Yes! Please report it in our [Issue Tracker](https://github.com/proycon/LaMachine/issues) after checking that the problem has
+not already been reported (and solved perhaps) by someone else. Note that this is only for problems relating to the
+installation and availability of the software; for bugs or feature requests on any of the participating software
+(including our own), you should use the issue trackers pertaining to those software projects.
 

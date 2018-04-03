@@ -17,7 +17,7 @@
   Perl, [CRAN](https://www.cran.org) for R, [Maven](https://search.maven.org) for Java); use it to publish stable releases.
   LaMachine can in turn obtain it from these
   repositories.
-* Your software should have at some form of documentation, at least a decent README
+* Your software should have some form of documentation, at least a decent README
 * Any Python software should support Python 3 (and not just 2.7)
 * The software should be maintained and should work on modern linux distributions.
   LaMachine is not intended for legacy or archiving purposes.
@@ -55,7 +55,7 @@ are called *playbooks* by Ansible, or more specifically they are called *roles* 
 Roles are defined in a simple [YAML syntax](http://docs.ansible.com/ansible/latest/YAMLSyntax.html) in combination with
 a powerful [templating language](http://docs.ansible.com/ansible/latest/playbooks_templating.html).
 
-A role or playbook defines tasks, each task is an installation or configuration
+A role or playbook defines *tasks*, each task is an installation or configuration
 step. A task has a name and references a certain Ansible module based on the
 type of work to do, there is for example a ``copy`` module to copy files onto
 the destination system, a ``file`` module to create files/directories and set
@@ -64,15 +64,47 @@ specific parameters (this is heavily used in LaMachine), and hundreds more.
 A task may also define [a condition](http://docs.ansible.com/ansible/latest/playbooks_conditionals.html)
 for its execution through a ``when`` statement.
 
-LaMachine provides a full framework with various predefined *roles* and preset
-*variables*.  The framework allows for installation in various forms (docker, VM, local, global). A single
-``bootstrap.sh`` script is used build any desired form; it does the necessary preprocessing and finally invokes Ansible.
+LaMachine provides a full framework with various predefined *roles* and preset *variables*.  The framework allows for
+installation in various forms (docker, VM, local, global). A single ``bootstrap.sh`` script is used build any desired
+form; it does the necessary preprocessing and finally always invokes Ansible.  We will look into that first.
 
-First we take a look at the variables defined in LaMachine:
+### The bootstrap process
+
+The LaMachine bootstrap consists of a single bash script that is capable of downloading almost all necessary dependencies and
+kicking of the installation process in whatever form the user choses. The script can be downloaded
+and piped directly to the shell, allowing a *single command* to be sufficient to get everything downloaded and started.
+
+By default, the script interactively queries the user for his
+installation preferences and creates at least the following files:
+
+ * **Installation Manifest** - (``install.yml``) - This is the main ansible playbook that contains the packages to install
+   or roles to perform.
+ * **Host Configuration File** - (``host_vars/$HOSTNAME.yml``) - This contains the
+   configuration variables for your LaMachine installation.
+ * If a Virtual Machine is chosen, a ``Vagrantfile`` will be generated.
+ * If a Docker container is to be constructed, then the provided ``Dockerfile`` will be used.
+ * A ``hosts.ini`` file may be generated, this is the Ansible inventory.
+
+The bootstrap initially creates a directory in  ``lamachine-controller/`` (which in turn is created in the directory
+where you run the bootstrap). This controller directory will hold a git clone of the LaMachine
+repository with all the aforemention generated files. The installation manifest and host configuration file will initially be staged
+in the current working directory and presented in a text editor a text editor so end-users can adapt these files to
+their liking (both are heavily commented with instructions). Afterwards they are copied into the LaMachine controller.
+In most cases, the LaMachine controller performs a temporary role during the bootstrap process, the controller will be
+copied into the LaMachine environment, allowing the environment to be updatable; we call this the *internal* controller.
+In some advanced situations however, you may prefer an *external* controller. This means the ``lamachine-controller``
+directory is kept and used to updated a LaMachine installation from the outside. This is used for managing *remote*
+systems directly using Ansible, but may also be useful in development settings.
+
+Note that the bootstrap procedure can also be run in a non-interactive fashion and parameters can be passed on the command line,
+see ``bootstrap.sh --help`` for details.
+
+First we take a look at the variables available to LaMachine and defined in the host configuration file, afterwards we
+look at the installation manifest and learn how to add software to LaMachine.
 
 ### Variables
 
-The variables are generally set by the end-user in the LaMachine configuration
+The variables are generally set by the end-user in the LaMachine host configuration file
 when building or updating LaMachine. These determine the type of environment to
 build, as LaMachine offers quite some flexibility through its different
 flavours, versions, and is meant to work on multiple Linux distributions.
@@ -86,19 +118,24 @@ We distinguish the following variables, all of which you can read and use in you
 * *Permissions:*
   * ``root``	 - A boolean indicating whether LaMachine has root permission on the system (necessarily true if ``locality == "global"``)
   * ``unix_user`` - The unix user that owns and runs LaMachine.
+  * ``controller`` - Set to either ``internal`` or ``external``. Indicates whether the LaMachine installation manages itself (i.e. upgrades are done from within the LaMachine environment), or whether it is externally managed. Externally managed installation are useful in development environments or for provisioning of remote machines.
 * *Paths:*
-  * ``lm_prefix`` - The path where LaMachine installs its software. This equals too
+  * ``lm_prefix`` - The path where LaMachine installs its software. This equals to either:
     * ``local_prefix`` - The local installation path (i.e., the path of the virtual enviroment)
     * ``global_prefix`` - The global installation path (by default ``/usr/local``)
   * ``homedir`` - The path to the home directory for the user that owns and runs LaMachine
-  * ``lamachine_path`` - The path to where the LaMachine repository (with all the ansible roles and templates) is cloned on disk
   * ``source_path`` - The path to where sources for packages will be downloaded
+  * ``lm_path`` - The path to the LaMachine source repository (where are the ansible roles, templates and configurations are). This equals to either:
+      * ``lamachine_path`` - The path upon first installation or remote location where the installation is managed (if controller == `external`)
+      * ``source_path``/LaMachine - The path inside LaMachine (if controller == 'internal')
   * ``data_path`` - The path where the end-user can store data (this is typically shared with the host system, if applicable)
 * *Network:*
   * ``hostname`` - The hostname of the system
   * ``webserver`` - (boolean) Include a webserver or not
+    * ``webservertype`` - The type of webserver, defaults to ``nginx``. LaMAchine does not install any other webserver, so if you change this nginx won't be installed but you have to set up any alternative webserver (e.g. Apache) yourself.
   * ``http_port`` - port the webserver will listen on
   * ``web_user`` - The unix user that runs the webserver and webservices
+  * ``services`` - This is a list of services to provide, by default it is set to ``[ all ]``, meaning all services provided by the software categories you install will be enabled, you can remove ``all`` and provide only specific services.
 * *Other:*
   * ``private`` - (boolean) Send basic analytics back to us
   * ``minimal`` - (boolean) A minimal installation is requested (might break some stuff)
@@ -238,4 +275,15 @@ we encourage you to set up a task that produces an error if the platform is unsu
 
 ## Testing
 
-(todo)
+If you are doing development on LaMachine, you will be working from a cloned LaMachine repository on a particular git
+branch. We recommend to fork it on github and then clone your fork. Make sure you navigate to the root of the git
+repository, and then simply invoke ``./bootstrap.sh`` to build a LaMachine build. LaMachine will simply reuse your git
+repository for the controller environment rather than download and create a new one, allowing you to test your
+additions.
+
+Once you are ready, issue a pull request on https://github.com/proycon/LaMachine/ to merge your changed into the
+``develop`` branch.
+
+Various predefined tests are also available for multiple linux distributions, through vagrant and docker. The test
+script is ``builds/test.py`` and the build are defined in ``builds/build.py``. Note that the former script references a particular
+LaMachine git repository and branch, so may need to be adapted to fit your situation.
