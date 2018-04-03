@@ -1159,8 +1159,8 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
     if [ $BUILD -eq 1 ]; then
         echo "Building docker image.."
         sed -i "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install.yml || fatalerror "Unable to run sed"
-        #echo "lamachine-$LM_NAME ansible_connection=local" > $SOURCEDIR/hosts.$LM_NAME
-        docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME . 2>&1 | tee lamachine-$LM_NAME.log
+        #echo "$HOSTNAME ansible_connection=local" > $SOURCEDIR/hosts.ini #not needed
+        docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME --build-arg HOSTNAME=$HOSTNAME . 2>&1 | tee lamachine-$LM_NAME.log
         rc=${PIPESTATUS[0]}
     else
         echo "Pulling pre-built docker image.."

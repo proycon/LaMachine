@@ -3,6 +3,7 @@ ARG UNIX_USER=lamachine
 ARG LAMACHINE_PATH=/lamachine
 ARG DATA_PATH=/data
 ARG LM_NAME=docker
+ARG HOSTNAME=lamachine-docker
 ARG ANSIBLE_OPTIONS="-vv"
 EXPOSE 80
 USER root
@@ -20,8 +21,8 @@ RUN adduser $UNIX_USER sudo
 RUN echo "$UNIX_USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 RUN mkdir $LAMACHINE_PATH
 COPY . $LAMACHINE_PATH
-COPY host_vars/lamachine-$LM_NAME.yml $LAMACHINE_PATH/host_vars/localhost.yml
+COPY host_vars/$HOSTNAME.yml $LAMACHINE_PATH/host_vars/localhost.yml
 RUN chown -R $UNIX_USER $LAMACHINE_PATH
 USER $UNIX_USER
-RUN ansible-playbook $ANSIBLE_OPTIONS $LAMACHINE_PATH/install-$LM_NAME.yml -c local
+RUN ansible-playbook $ANSIBLE_OPTIONS $LAMACHINE_PATH/install.yml -c local
 CMD /bin/bash -l
