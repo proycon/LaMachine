@@ -274,4 +274,14 @@ we encourage you to set up a task that produces an error if the platform is unsu
 
 ## Testing
 
-(todo)
+If you are doing development on LaMachine, you will be working from a cloned LaMachine repository on a particular git
+branch. Make sure you navigate to the root of the git repository, and then simply invoke ``./bootstrap.sh`` to build a LaMachine
+build. LaMachine will simply reuse your git repository for the controller environment rather than download and create a
+new one, allowing you to test your additions.
+
+Once you are ready, issue a pull request on https://github.com/proycon/LaMachine/ to merge your changed into the
+``develop`` branch.
+
+Various predefined tests are also available for multiple linux distributions, through vagrant and docker. The test
+script is ``builds/test.py`` and the build are defined in ``builds/build.py``. Note that the former script references a particular
+LaMachine git repository and branch, so may need to be adapted to fit your situation.
