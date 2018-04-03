@@ -858,7 +858,7 @@ if [ $BUILD -eq 1 ]; then
  if [ ! -e "$STAGEDCONFIG" ]; then
     echo "---
 ###########################################################################
-#           LaMachine Configuration
+#           LaMachine Host Configuration
 #
 # INSTRUCTIONS: Here you can check and set any configuration variables
 #               for your LaMachine build.
