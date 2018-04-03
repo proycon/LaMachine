@@ -829,17 +829,13 @@ if [ -z "$LM_NAME" ]; then
     exit 2
 fi
 
-
 DETECTEDHOSTNAME=$(hostname --fqdn)
-if [ -z "$DETECTEDHOSTNAME" ]; then
+if [ -z "$DETECTEDHOSTNAME" ] || [ "$FLAVOUR" = "vagrant" ] || [ "$FLAVOUR" = "docker" ]; then
     DETECTEDHOSTNAME="$LM_NAME"
 fi
+
 if [ -z "$HOSTNAME" ] && [ $INTERACTIVE -eq 0 ]; then
-    if [ "$FLAVOUR" = "vagrant" ] || [ "$FLAVOUR" = "docker" ]; then
-        HOSTNAME=lamachine-$LM_NAME
-    else
-        HOSTNAME=$DETECTEDHOSTNAME
-    fi
+    HOSTNAME=$DETECTEDHOSTNAME
 fi
 
 if [ -z "$HOSTNAME" ]; then
