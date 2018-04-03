@@ -1217,9 +1217,9 @@ else
 fi
 if [ "$CONTROLLER" = "internal" ] && [ $rc -eq 0 ]; then  #only clean up if everything went well
     cd ../..
-    rm -rf "lamachine-controller/$LM_NAME"
-    rm $STAGEDCONFIG
-    rm $STAGEDMANIFEST
+    rm -rf "lamachine-controller/$LM_NAME" 2>/dev/null
+    rm $STAGEDCONFIG 2>/dev/null
+    rm $STAGEDMANIFEST 2>/dev/null
 fi
 if [ $NEED_VIRTUALENV -eq 1 ]; then
     deactivate #deactivate the controller before quitting
