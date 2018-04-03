@@ -275,9 +275,10 @@ we encourage you to set up a task that produces an error if the platform is unsu
 ## Testing
 
 If you are doing development on LaMachine, you will be working from a cloned LaMachine repository on a particular git
-branch. Make sure you navigate to the root of the git repository, and then simply invoke ``./bootstrap.sh`` to build a LaMachine
-build. LaMachine will simply reuse your git repository for the controller environment rather than download and create a
-new one, allowing you to test your additions.
+branch. We recommend to fork it on github and then clone your fork. Make sure you navigate to the root of the git
+repository, and then simply invoke ``./bootstrap.sh`` to build a LaMachine build. LaMachine will simply reuse your git
+repository for the controller environment rather than download and create a new one, allowing you to test your
+additions.
 
 Once you are ready, issue a pull request on https://github.com/proycon/LaMachine/ to merge your changed into the
 ``develop`` branch.
