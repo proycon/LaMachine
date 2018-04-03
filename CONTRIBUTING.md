@@ -100,6 +100,7 @@ We distinguish the following variables, all of which you can read and use in you
 * *Network:*
   * ``hostname`` - The hostname of the system
   * ``webserver`` - (boolean) Include a webserver or not
+    * ``no_nginx`` - If you do not want to use the provided nginx webserver, you can set ``no_nginx`` to ``true``.  You'll have to set up any alternative webserver yourself though.
   * ``http_port`` - port the webserver will listen on
   * ``web_user`` - The unix user that runs the webserver and webservices
 * *Other:*
