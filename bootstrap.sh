@@ -843,7 +843,7 @@ if [ -z "$HOSTNAME" ]; then
     if [ "$FLAVOUR" = "remote" ]; then
         echo "This determines the remote machine LaMachine will be installed on!"
     fi
-    echo -n "${bold}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal}"
+    echo -n "${bold}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal} "
     read HOSTNAME
     if [ -z "$HOSTNAME" ]; then
         HOSTNAME=$DETECTEDHOSTNAME

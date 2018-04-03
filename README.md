@@ -113,7 +113,9 @@ the installation procedure.
     * [TICCLTools](https://github.com/LanguageMachines/ticcltools) - Tools that together constitute the bulk of TICCL: Text Induced Corpus-Cleanup.
     * [PICCL](https://github.com/LanguageMachines/PICCL) - PICCL: A set of workflows for corpus building through OCR, post-correction (using TICCL) and Natural Language Processing.
 * by the University of Groningen
-    * [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/), a dependency parser and tagger for Dutch
+    * [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) - a dependency parser and tagger for Dutch
+* by the Vrije Universiteit Amsterdam
+    * [KafNafParserPy](https://github.com/cltl/KafNafParserPy) - A python module to parse NAF files
 * by Utrecht University
     * [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction (initially developed at TiCC, Tilburg University).
 * Major third party software (not exhaustive!):
