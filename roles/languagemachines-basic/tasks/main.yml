@@ -130,6 +130,8 @@
               author: Peter Berck
               license: GPL
               exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
+              build_environment:
+                 CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
           loop_control:
               loop_var: package
       when: not (ansible_distribution|lower == 'macosx' and root and version == "stable") and not (ansible_distribution|lower == 'arch' and root and version == "stable")
