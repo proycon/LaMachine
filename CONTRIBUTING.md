@@ -17,7 +17,7 @@
   Perl, [CRAN](https://www.cran.org) for R, [Maven](https://search.maven.org) for Java); use it to publish stable releases.
   LaMachine can in turn obtain it from these
   repositories.
-* Your software should have at some form of documentation, at least a decent README
+* Your software should have some form of documentation, at least a decent README
 * Any Python software should support Python 3 (and not just 2.7)
 * The software should be maintained and should work on modern linux distributions.
   LaMachine is not intended for legacy or archiving purposes.
