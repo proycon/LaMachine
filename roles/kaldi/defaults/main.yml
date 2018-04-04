@@ -1,0 +1,4 @@
+---
+kaldi_source: "https://github.com/kaldi-asr/kaldi.git"
+kaldi_branch: master
+

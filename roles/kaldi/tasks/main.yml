@@ -1,0 +1,42 @@
+---
+
+  - name: "Checking out Kaldi"
+    git:
+      repo: "{{kaldi_source}}"
+      dest: "{{lm_prefix}}/opt/kaldi"
+      version: "{{kaldi_branch}}"
+      force: yes
+
+  - name: Compiling kaldi/tools
+    shell: make
+    args :
+      chdir: "{{lm_prefix}}/kaldi/tools"
+    environment:
+      KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
+
+  - name: Compiling kaldi/src
+    shell: make
+    args:
+      chdir: "{{lm_prefix}}/kaldi/src"
+    environment:
+      KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
+
+  - name: "Adding activation script for Alpino"
+    become: "{{lm_become}}"
+    become_user: root
+    copy:
+      dest: "{{lm_prefix}}/bin/activate.d/kaldi.sh"
+      content: |
+        export KALDI_ROOT={{lm_prefix}}/opt/kaldi
+      mode: u+rwx,a+rx
+
+  - name: Register Kaldi
+    include_role:
+       name: lamachine-register
+    vars:
+       package:
+         name: Kaldi
+         author: (multiple)
+         homepage: "http://kaldi-asr.org/"
+         license: Apache
+         summary: "Automatic Speech Recognition Toolkit"
