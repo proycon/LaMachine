@@ -910,12 +910,12 @@ controller: \"$CONTROLLER\" #internal or external? Is this installation managed 
             echo "lamachine_path: \"$BASEDIR/lamachine-controller/$LM_NAME/LaMachine\" #Path where LaMachine source is initially stored/shared (don't change this)" >> $STAGEDCONFIG
         fi
         echo "data_path: \"$BASEDIR\" #Data path (in LaMachine) that is tied to host_data_path" >> $STAGEDCONFIG
-        echo "local_prefix: \"$BASEDIR/lamachine-$LM_NAME\" #Path to the local environment (virtualenv)" >> $STAGEDCONFIG
+        echo "local_prefix: \"$BASEDIR/$LM_NAME\" #Path to the local environment (virtualenv)" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations" >> $STAGEDCONFIG
         if [ "$locality" == "global" ]; then
             echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
         else
-            echo "source_path: \"$BASEDIR/lamachine-$LM_NAME/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
+            echo "source_path: \"$BASEDIR/$LM_NAME/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
         fi
     fi
     if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]]; then
