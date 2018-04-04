@@ -11,7 +11,7 @@
         name: lamachine-package-install
       with_items:
         - { debian: tesseract-ocr, redhat: tesseract, arch: tesseract }
-        - { debian: tesseract-ocr-eng, redhat: tesseract-langpack-eng, arch: tesseract-data-eng }
+        - { debian: tesseract-ocr-eng, arch: tesseract-data-eng } #English is already included on redhat? no package tesseract-data-eng
         - { debian: tesseract-ocr-nld, redhat: tesseract-langpack-nld, arch: tesseract-data-nld }
         - { debian: tesseract-ocr-deu, redhat: tesseract-langpack-deu, arch: tesseract-data-deu }
         - { debian: tesseract-ocr-deu-frak, redhat: tesseract-langpack-deu-frak, arch: tesseract-data-deu_frak }
