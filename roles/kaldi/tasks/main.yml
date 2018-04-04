@@ -1,5 +1,19 @@
 ---
 
+  - name: Check for unsupported OS for Kaldi
+    debug:
+      msg: "Kaldi is not supported on Mac OS X"
+    when: ansible_distribution|lower == "macosx"
+
+  - name: Installing global dependencies for Kaldi and alex-asr
+    include_role:
+      name: lamachine-package-install
+    with_items:
+      - { debian: libatlas-base-dev, redhat: atlas-devel }
+      - { debian: gfortran, redhat: libgfortran, arch: gcc-fortran }
+    loop_control:
+        loop_var: package
+
   - name: "Checking out Kaldi"
     git:
       repo: "{{kaldi_source}}"
@@ -8,20 +22,20 @@
       force: yes
 
   - name: Compiling kaldi/tools
-    shell: make
+    shell: make -j $(nproc)
     args :
       chdir: "{{lm_prefix}}/kaldi/tools"
     environment:
       KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
 
   - name: Compiling kaldi/src
-    shell: make
+    shell: make -j $(nproc)
     args:
       chdir: "{{lm_prefix}}/kaldi/src"
     environment:
       KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
 
-  - name: "Adding activation script for Alpino"
+  - name: "Adding activation script for Kaldi"
     become: "{{lm_become}}"
     become_user: root
     copy:
@@ -40,3 +54,12 @@
          homepage: "http://kaldi-asr.org/"
          license: Apache
          summary: "Automatic Speech Recognition Toolkit"
+
+  - name: Installing Alex-ASR
+    include_role:
+      name: lamachine-python-install
+    vars:
+      package:
+         github_user: "UFAL-DSG"
+         github_repo: "alex-asr"
+         pip: "alex_asr"
