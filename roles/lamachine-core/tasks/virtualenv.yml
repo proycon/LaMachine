@@ -16,8 +16,9 @@
         dest: "{{local_prefix}}/bin/activate"
         block: |
           export LD_LIBRARY_PATH={{local_prefix}}/lib/
-          EXTRAACTIVATE=$(find $VIRTUAL_ENV/bin/activate.d -type f -name "*.sh")
-          for f in $EXTRAACTIVATE; do
+          EXTRAACTIVATE=$(find $VIRTUAL_ENV/bin/activate.d -print0 -type f -name "*.sh")
+          IFS="\0"
+          for f in "$EXTRAACTIVATE"; do
               source $f
           done
         marker: '# {mark} LAMACHINE MANAGED BLOCK - lamachine environment'

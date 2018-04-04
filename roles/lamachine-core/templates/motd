@@ -1,12 +1,12 @@
 ==============================================================================
-           ,              LaMachine v2 - Unified NLP Software distribution
+           ,              LaMachine v2.1 - Unified NLP Software distribution
           ~)                    (https://proycon.github.io/LaMachine)
            (----í
             /| |\         Centre for Language and Speech Technology
            / / /|	             Radboud University Nijmegen
 ==============================================================================
  Build Name: {{ conf_name }}
- Version: {{ version }} (v2.1)   Build time: {{ ansible_date_time.date }} {{ ansible_date_time.time }} {{ansible_date_time.tz}}
+ Version: {{ version }}      Build time: {{ ansible_date_time.date }} {{ ansible_date_time.time }} {{ansible_date_time.tz}}
 
 Welcome to LaMachine!
   - run lamachine-list to see a verbose list of all installed software
