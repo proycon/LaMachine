@@ -938,13 +938,13 @@ controller: \"$CONTROLLER\" #internal or external? Is this installation managed 
         else
             echo "data_path: \"$BASEDIR\" #Shared data path, change this if needed!" >> $STAGEDCONFIG
         fi
-        if [ "$locality" == "local" ]; then
+        if [[ "$locality" == "local" ]]; then
             echo "local_prefix: \"$BASEDIR/$LM_NAME\" #Path to the local environment (virtualenv)" >> $STAGEDCONFIG
             echo "global_prefix: \"/usr/local\" #Path for global installations (not used in your configuration)" >> $STAGEDCONFIG
         else
             echo "global_prefix: \"/usr/local\" #Path for global installations" >> $STAGEDCONFIG
         fi
-        if [ "$locality" == "global" ]; then
+        if [[ "$locality" == "global" ]]; then
             echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
         else
             echo "source_path: \"$BASEDIR/$LM_NAME/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
