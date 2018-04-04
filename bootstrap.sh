@@ -363,6 +363,8 @@ fi
 
 if [[ "$FLAVOUR" == "vm" ]]; then #alias
     FLAVOUR="vagrant"
+elif [[ "$FLAVOUR" == "remote" ]]; then #alias
+    CONTROLLER="external"
 fi
 
 if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
@@ -876,7 +878,7 @@ hostname: \"$HOSTNAME\" #Name of the host (or fully qualified domain name) (chan
 version: \"$VERSION\" #stable, development or custom
 localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv), only used when locality == local
 locality: \"$LOCALITY\" #local or global?
-controller: \"$CONTROLLER\" #internal or external? Is this installation managed inside or outside the environment/host?
+controller: \"$CONTROLLER\" #internal or external? Is this installation managed inside or outside the environment/host? You can't change this value here, run bootstrap with --external to set this.
 " > $STAGEDCONFIG
     if [[ $FLAVOUR == "vagrant" ]]; then
         echo "unix_user: \"vagrant\" #(don't change this)" >> $STAGEDCONFIG
