@@ -42,7 +42,7 @@ if [[ "$LM_LOCALITY" == "local" ]]; then
     fi
 else
     export LM_PREFIX={{global_prefix}}
-    EXTRAACTIVATE=$(find {{global_prefix}}/bin/activate.d -print0 -type f -name "*.sh")
+    EXTRAACTIVATE=$(find {{global_prefix}}/bin/activate.d -type f -name "*.sh" -print0)
     IFS="\0"
     for f in "$EXTRAACTIVATE"; do
         source $f
