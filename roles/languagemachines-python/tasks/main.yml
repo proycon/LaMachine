@@ -95,7 +95,8 @@
             dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{item}}.ini"
             force: yes
             backup: yes
-            owner: "{{unix_user}}"
+            owner: "{{web_user}}"
+            group: "{{web_user}}"
             mode: u+rw,a+r
           when: '"all" in services or item in services'
           with_items:
