@@ -1066,6 +1066,9 @@ if [ $BUILD -eq 1 ]; then
         else
             #use the template
             cp $SOURCEDIR/install-template.yml $STAGEDMANIFEST || fatalerror "Unable to copy $SOURCEDIR/install-template.yml"
+            if [ "$FLAVOUR" = "remote" ]; then
+                sed -i "s/hosts: all/hosts: $HOSTNAME/g" $STAGEDMANIFEST || fatalerror "Unable to run sed"
+            fi
         fi
     fi
 
