@@ -6,6 +6,7 @@ lamachine_path: "." #path to cloned LaMachine git repo
 homedir: "/home/{{unix_user}}"
 local_prefix: "{{homedir}}/lamachine-{{conf_name}}" #where local packages are installed
 global_prefix: "/usr/local" #where global packages are installed
+data_path: "/data"
 locality: "global" #Install everything globally
 localenv_type: "virtualenv" #Local environment type, can be conda or virtualenv
 webserver: false

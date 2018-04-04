@@ -67,8 +67,10 @@ usage () {
     echo " ${bold}--vmmem${normal} - Memory to reserve for virtual machine"
     echo " ${bold}--external${normal} - Use an external/shared/remote controller for updating LaMachine. This is useful for development/testing purposes and remote production environment"
     echo " ${bold}--hostname${normal} - Hostname (or fully qualified domain name) for the target system"
+    echo " ${bold}--username${normal} - Username (or fully qualified domain name) for the target system"
 }
 
+USER_SET=0 #explicitly set?
 USERNAME=$(whoami)
 HOSTNAME=""
 
@@ -294,6 +296,12 @@ while [[ $# -gt 0 ]]; do
         shift
         shift
         ;;
+        --username)
+        USER_SET=1
+        USERNAME="$2"
+        shift
+        shift
+        ;;
         --vmmem) #extra ansible parameters
         VMMEM=$2
         shift
@@ -363,6 +371,8 @@ fi
 
 if [[ "$FLAVOUR" == "vm" ]]; then #alias
     FLAVOUR="vagrant"
+elif [[ "$FLAVOUR" == "remote" ]]; then #alias
+    CONTROLLER="external"
 fi
 
 if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
@@ -850,9 +860,20 @@ if [ -z "$HOSTNAME" ]; then
     fi
 fi
 
+if [[ "$FLAVOUR" == "remote" ]]; then
+    if [ $USER_SET -eq 0 ] && [ $INTERACTIVE -eq 1 ]; then
+        echo "To provision the remote machine, LaMachine needs to be able to connect over ssh as specific user."
+        echo "The user must exist and ideally passwordless ssh keypairs should be available. Note that connecting and running"
+        echo "as root is explicitly forbidden. The user, on the other hand, does require sudo rights on the remote machine."
+        echo -n "${bold}What user should LaMachine use to provision the remote machine?${normal} "
+        read USERNAME
+    fi
+fi
+
 STAGEDCONFIG="$BASEDIR/lamachine-$LM_NAME.yml"
 STAGEDMANIFEST="$BASEDIR/install-$LM_NAME.yml"
 
+HOMEDIR=$(echo ~)
 
 if [ $BUILD -eq 1 ]; then
  if [ ! -e "$STAGEDCONFIG" ]; then
@@ -870,22 +891,22 @@ if [ $BUILD -eq 1 ]; then
 #               once they have been set.
 #
 ###########################################################################
-conf_name: \"$LM_NAME\" #Name of this LaMachine configuration
-flavour: \"$FLAVOUR\" #LaMachine flavour
+conf_name: \"$LM_NAME\" #Name of this LaMachine configuration (don't change this once set)
+flavour: \"$FLAVOUR\" #LaMachine flavour (don't change this once set)
 hostname: \"$HOSTNAME\" #Name of the host (or fully qualified domain name) (changing this won't automatically change the system hostname!)
 version: \"$VERSION\" #stable, development or custom
-localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv), only used when locality == local
-locality: \"$LOCALITY\" #local or global?
-controller: \"$CONTROLLER\" #internal or external? Is this installation managed inside or outside the environment/host?
+localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv), only used when locality == local (don't change this once set)
+locality: \"$LOCALITY\" #local or global? (don't change this once set)
+controller: \"$CONTROLLER\" #internal or external? Is this installation managed inside or outside the environment/host? You can't change this value here, run bootstrap with --external to force this to external.
 " > $STAGEDCONFIG
     if [[ $FLAVOUR == "vagrant" ]]; then
-        echo "unix_user: \"vagrant\" #(don't change this)" >> $STAGEDCONFIG
+        echo "unix_user: \"vagrant\" #(don't change this unless you know what you're doing)" >> $STAGEDCONFIG
         echo "homedir: \"/home/vagrant\"" >> $STAGEDCONFIG
         echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is originally stored/shared" >> $STAGEDCONFIG
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
-        echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $STAGEDCONFIG
-        echo "global_prefix: \"/usr/local\" #Path for global installations" >> $STAGEDCONFIG
-        echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
+        echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path, you can change this" >> $STAGEDCONFIG
+        echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
+        echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
         if [ "$VAGRANTBOX" == "centos/7" ]; then
             echo "ansible_python_interpreter: \"/usr/bin/python\" #Python interpreter for Vagrant to use with Ansible" >> $STAGEDCONFIG
         else
@@ -896,29 +917,40 @@ controller: \"$CONTROLLER\" #internal or external? Is this installation managed 
         echo "homedir: \"/home/lamachine\"" >> $STAGEDCONFIG
         echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared" >> $STAGEDCONFIG
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
-        echo "data_path: \"/data\" #Data path (in LaMachine) that is tied to host_data_path" >> $STAGEDCONFIG
-        echo "global_prefix: \"/usr/local\" #Path for global installations" >> $STAGEDCONFIG
-        echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
+        echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path" >> $STAGEDCONFIG
+        echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
+        echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
     else
         echo "unix_user: \"$USERNAME\"" >> $STAGEDCONFIG
         WEBUSER=$USERNAME
-        HOMEDIR=$(echo ~)
-        echo "homedir: \"$HOMEDIR\"" >> $STAGEDCONFIG
+        if [[ "$FLAVOUR" == "remote" ]] || [[ "$locality" == "global" ]]; then
+            echo "homedir: \"/home/$USERNAME\" #the home directory of the aforementioned user" >> $STAGEDCONFIG
+        else
+            echo "homedir: \"$HOMEDIR\" #the home directory of the aforementioned user" >> $STAGEDCONFIG
+        fi
         if [ ! -z "$SOURCEDIR" ]; then
             echo "lamachine_path: \"$SOURCEDIR\" #Path where LaMachine source is initially stored/shared (don't change this)." >> $STAGEDCONFIG
         else
             echo "lamachine_path: \"$BASEDIR/lamachine-controller/$LM_NAME/LaMachine\" #Path where LaMachine source is initially stored/shared (don't change this)" >> $STAGEDCONFIG
         fi
-        echo "data_path: \"$BASEDIR\" #Data path (in LaMachine) that is tied to host_data_path" >> $STAGEDCONFIG
-        echo "local_prefix: \"$BASEDIR/$LM_NAME\" #Path to the local environment (virtualenv)" >> $STAGEDCONFIG
-        echo "global_prefix: \"/usr/local\" #Path for global installations" >> $STAGEDCONFIG
-        if [ "$locality" == "global" ]; then
+        if [[ "$FLAVOUR" == "remote" ]]; then
+            echo "data_path: \"/data\" #Shared data path (in LaMachine), you can use this as a mountpoint for a shared volume (but will have to do the mounting yourself)" >> $STAGEDCONFIG
+        else
+            echo "data_path: \"$BASEDIR\" #Shared data path, change this if needed!" >> $STAGEDCONFIG
+        fi
+        if [[ "$locality" == "local" ]]; then
+            echo "local_prefix: \"$BASEDIR/$LM_NAME\" #Path to the local environment (virtualenv)" >> $STAGEDCONFIG
+            echo "global_prefix: \"/usr/local\" #Path for global installations (not used in your configuration)" >> $STAGEDCONFIG
+        else
+            echo "global_prefix: \"/usr/local\" #Path for global installations" >> $STAGEDCONFIG
+        fi
+        if [[ "$locality" == "global" ]]; then
             echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
         else
             echo "source_path: \"$BASEDIR/$LM_NAME/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
         fi
     fi
-    if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]]; then
+    if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "remote" ]]; then
         echo "root: true #Do you have root on the target system?" >> $STAGEDCONFIG
     elif [ $SUDO -eq 1 ]; then
         echo "root: true #Do you have root on the target system?" >> $STAGEDCONFIG
@@ -957,7 +989,7 @@ services: [ all ]  #List of services to provide, if set to [ all ], all possible
     if [[ $FLAVOUR == "local" ]]; then
         echo "web_user: \"$USERNAME\"" >> $STAGEDCONFIG
     else
-        echo "web_user: \"www-data\"" >> $STAGEDCONFIG
+        echo "web_user: \"www-data\" #The user for the webserver, change this on first install if needed!!!" >> $STAGEDCONFIG
     fi
     if [ $OS = "arch" ]; then
         if [[ $FLAVOUR == "local" ]] || [[ $FLAVOUR == "global" ]]; then
@@ -1034,6 +1066,9 @@ if [ $BUILD -eq 1 ]; then
         else
             #use the template
             cp $SOURCEDIR/install-template.yml $STAGEDMANIFEST || fatalerror "Unable to copy $SOURCEDIR/install-template.yml"
+            if [ "$FLAVOUR" = "remote" ]; then
+                sed -i "s/hosts: all/hosts: $HOSTNAME/g" $STAGEDMANIFEST || fatalerror "Unable to run sed"
+            fi
         fi
     fi
 
@@ -1183,7 +1218,7 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
         fi
     fi
 elif [ "$FLAVOUR" = "remote" ]; then
-    echo "$HOSTNAME" > $SOURCEDIR/hosts.ini
+    echo "$HOSTNAME ansible_connection=ssh ansible_user=$USERNAME" > $SOURCEDIR/hosts.ini
     git checkout -b $LM_NAME
     git add host_vars/$HOSTNAME.yml
     git add install.yml
