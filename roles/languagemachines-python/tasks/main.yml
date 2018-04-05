@@ -85,6 +85,7 @@
             force: yes
             backup: yes
             owner: "{{unix_user}}"
+            group: "{{unix_group}}"
           when: webservertype == "nginx" and ("all" in services or "ucto"  in services or "frog" in services or "timbl" in services or "colibricore" in services)
 
         - name: "Install uwsgi configurations,"
@@ -95,8 +96,8 @@
             dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{item}}.ini"
             force: yes
             backup: yes
-            owner: "{{web_user}}"
-            group: "{{web_user}}"
+            owner: "{{web_user}}" #permissions need to match the runner
+            group: "{{web_group}}"
             mode: u+rw,a+r
           when: '"all" in services or item in services'
           with_items:
@@ -114,6 +115,7 @@
             force: yes
             backup: yes
             owner: "{{unix_user}}"
+            group: "{{unix_group}}"
             mode: u+rw,a+r
           when: '"all" in services or item in services'
           with_items:

@@ -297,8 +297,8 @@ For a secure experience using LaMachine, take all of the following into account:
   security reasons.
 * The current webserver configuration does not yet enable authentication for any of the webservices, so do *NOT* expose it directly to the internet without setting up authentication yourself.
 * If you are sure you don't need a webserver/webservices, disable it in the configuration upon first build.
-* The virtual machines tend to come with a preset username and password ``(vagrant:vagrant)``, you will need to change
-  this.
+* The virtual machines tend to come with a preset username and password ``(vagrant:vagrant)``, the lamachine user in Docker containers has
+  the password ``lamachine``, you will need to change this.
 * Do not run development versions in a production environment, always use the stable release.
 * Do not run an outdated LaMachine installation, ensure you regularly run ``lamachine-update`` for updates! Bugs and
   potential vulnerabilities may have been patched in the meantime.

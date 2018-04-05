@@ -105,11 +105,11 @@
         when: (ansible_distribution|lower == "archlinux")
 
 
-      - name: "Ensure {{web_user}} group exists"
+      - name: "Ensure {{web_group}} group exists"
         become: true
         become_user: root
         group:
-          name: "{{web_user}}"
+          name: "{{web_group}}"
           state: present
 
       - name: "Ensure {{web_user}} user exists"
@@ -117,16 +117,16 @@
         become_user: root
         user:
           name: "{{web_user}}"
-          group: "{{web_user}}"
+          group: "{{web_group}}"
           createhome: no
           state: present
 
-      - name: "Ensure {{unix_user}} user is also in {{web_user}} group"
+      - name: "Ensure {{unix_user}} user is also in {{web_group}} group"
         become: true
         become_user: root
         user:
           name: "{{unix_user}}"
-          groups: "{{web_user}}"
+          groups: "{{web_group}}"
           append: yes
 
 
@@ -138,7 +138,7 @@
             path: "{{ lm_prefix }}/{{item}}"
             state: directory
             owner: "{{unix_user}}"
-            group: "{{web_user}}"
+            group: "{{web_group}}"
             mode: u+rwx,g+rwsx,a+rx
         with_items:
             - "var/log/uwsgi"

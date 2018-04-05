@@ -74,6 +74,7 @@ usage () {
 
 USER_SET=0 #explicitly set?
 USERNAME=$(whoami)
+GROUP=$(id -gn $USERNAME)
 HOSTNAME=""
 
 fatalerror () {
@@ -916,7 +917,9 @@ locality: \"$LOCALITY\" #local or global? (don't change this once set)
 controller: \"$CONTROLLER\" #internal or external? Is this installation managed inside or outside the environment/host? You can't change this value here, run bootstrap with --external to force this to external.
 " > $STAGEDCONFIG
     if [[ $FLAVOUR == "vagrant" ]]; then
+        GROUP="vagrant"
         echo "unix_user: \"vagrant\" #(don't change this unless you know what you're doing)" >> $STAGEDCONFIG
+        echo "unix_group: \"vagrant\" #(don't change this unless you know what you're doing)" >> $STAGEDCONFIG
         echo "homedir: \"/home/vagrant\"" >> $STAGEDCONFIG
         echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is originally stored/shared" >> $STAGEDCONFIG
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
@@ -929,7 +932,9 @@ controller: \"$CONTROLLER\" #internal or external? Is this installation managed 
             echo "ansible_python_interpreter: \"/usr/bin/python3\" #Python interpreter for Vagrant to use with Ansible. This interpreter must be already available in vagrant box $VAGRANTBOX, you may want to set it to python2 instead" >> $STAGEDCONFIG
         fi
     elif [[ $FLAVOUR == "docker" ]]; then
+        GROUP="lamachine"
         echo "unix_user: \"lamachine\"" >> $STAGEDCONFIG
+        echo "unix_group: \"lamachine\" #must be same as unix_user, changing this is not supported yet" >> $STAGEDCONFIG
         echo "homedir: \"/home/lamachine\"" >> $STAGEDCONFIG
         echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared" >> $STAGEDCONFIG
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
@@ -938,6 +943,7 @@ controller: \"$CONTROLLER\" #internal or external? Is this installation managed 
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
     else
         echo "unix_user: \"$USERNAME\"" >> $STAGEDCONFIG
+        echo "unix_group: \"$GROUP\"" >> $STAGEDCONFIG
         WEBUSER=$USERNAME
         if [[ "$FLAVOUR" == "remote" ]] || [[ "$locality" == "global" ]]; then
             echo "homedir: \"/home/$USERNAME\" #the home directory of the aforementioned user" >> $STAGEDCONFIG
@@ -1004,8 +1010,10 @@ services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all po
 " >> $STAGEDCONFIG
     if [[ $FLAVOUR == "local" ]]; then
         echo "web_user: \"$USERNAME\"" >> $STAGEDCONFIG
+        echo "web_group: \"$GROUP\"" >> $STAGEDCONFIG
     else
         echo "web_user: \"www-data\" #The user for the webserver, change this on first install if needed!!!" >> $STAGEDCONFIG
+        echo "web_group: \"www-data\" #The group for the webserver, change this on first install if needed!!!" >> $STAGEDCONFIG
     fi
     if [ $OS = "arch" ]; then
         if [[ $FLAVOUR == "local" ]] || [[ $FLAVOUR == "global" ]]; then

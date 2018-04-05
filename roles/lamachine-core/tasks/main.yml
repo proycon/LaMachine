@@ -185,6 +185,8 @@
           path: "{{ source_path }}"
           state: directory
           owner: "{{unix_user}}"
+          group: "{{unix_group}}"
+          mode: u+rwx,g+rwsx,a+rx
 
     - name: Create shared data directory
       become: "{{lm_become}}"
@@ -193,6 +195,8 @@
           path: "{{ data_path }}"
           state: directory
           owner: "{{unix_user}}"
+          group: "{{unix_group}}"
+          mode: u+rwx,g+rwsx,a+rx
 
     - name: Create directories
       become: "{{lm_become}}"
@@ -201,7 +205,8 @@
           path: "{{ lm_prefix }}/{{item}}"
           state: directory
           owner: "{{unix_user}}"
-          mode: u+rwx,a+rx
+          group: "{{unix_group}}"
+          mode: u+rwx,g+rwsx,a+rx
       with_items:
           - bin
           - "bin/activate.d"
