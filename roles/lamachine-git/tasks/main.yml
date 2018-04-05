@@ -42,10 +42,10 @@
           include_role:
              name: lamachine-register
           vars:
-             package:
-               name: "{% if 'name' in package_copy %}{{package_copy.name}}{% else %}{{package_copy.repo}}{% endif %}"
-               author: "{% if 'author' in package_copy %}{{package_copy.author}}{% else %}{{package_copy.user}}{% endif %}"
-               homepage: "{% if 'homepage' in package_copy %}{{package_copy.homepage}}{% else %}{% if 'giturl' in package_copy %}{{package_copy.giturl}}{%else%}https://github.com/{{package_copy.user}}/{{package_copy.repo}}{% endif %}{% endif %}"
+             fallback:
+               name: "{{package.repo}}"
+               author: "{% if 'user' in package %}{{package.user}}{% endif %}"
+               homepage: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
                version: "{{ latest_tag.stdout }}"
           when: '"register" in package and package.register'
 
@@ -69,11 +69,11 @@
           include_role:
              name: lamachine-register
           vars:
-             package:
-               name: "{% if 'name' in package_copy %}{{package_copy.name}}{% else %}{{package_copy.repo}}{% endif %}"
-               author: "{% if 'author' in package_copy %}{{package_copy.author}}{% else %}{{package_copy.user}}{% endif %}"
-               homepage: "{% if 'homepage' in package_copy %}{{package_copy.homepage}}{% else %}{% if 'giturl' in package_copy %}{{package_copy.giturl}}{%else%}https://github.com/{{package_copy.user}}/{{package_copy.repo}}{% endif %}{% endif %}"
-               version: "{{ latest_tag.stdout }}"
+             fallback:
+               name: "{{package.repo}}"
+               author: "{% if 'user' in package %}{{package.user}}{% endif %}"
+               homepage: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+               version: "{{ latest_commit.stdout }}"
 
     - name: "{{package.repo}} - Checkout custom version: {{customversion[package.repo]}}"
       shell: "git checkout {{customversion[package.repo]}} && git pull"

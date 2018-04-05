@@ -6,20 +6,32 @@
         echo     '    Name: {{package.name}}' >> {{lm_prefix}}/var/lamachine-list.yml
         {% if "version" in package %}
         echo     '    Version: {{package.version}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% elif "version" in fallback %}
+        echo     '    Version: {{fallback.version}}' >> {{lm_prefix}}/var/lamachine-list.yml
         {% endif %}
         {% if "license" in package %}
         echo     '    License: {{package.license}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% elif "license" in fallback %}
+        echo     '    License: {{fallback.license}}' >> {{lm_prefix}}/var/lamachine-list.yml
         {% endif %}
         {% if "summary" in package %}
         echo     '    Summary: {{package.summary}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% elif "summary" in fallback %}
+        echo     '    Summary: {{fallback.summary}}' >> {{lm_prefix}}/var/lamachine-list.yml
         {% endif %}
         {% if "author" in package %}
         echo     '    Author: {{package.author}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% elif "author" in fallback %}
+        echo     '    Author: {{fallback.author}}' >> {{lm_prefix}}/var/lamachine-list.yml
         {% endif %}
         {% if "homepage" in package %}
         echo     "    Home-page: {{package.homepage}}" >> {{lm_prefix}}/var/lamachine-list.yml
+        {% elif "homepage" in fallback %}
+        echo     "    Home-page: {{fallback.homepage}}" >> {{lm_prefix}}/var/lamachine-list.yml
         {% endif %}
         {% if "location" in package %}
         echo     "    Location: {{package.location}}" >> {{lm_prefix}}/var/lamachine-list.yml
+        {% elif "location" in fallback %}
+        echo     "    Location: {{fallback.location}}" >> {{lm_prefix}}/var/lamachine-list.yml
         {% endif %}
         echo >> {{lm_prefix}}/var/lamachine-list.yml
