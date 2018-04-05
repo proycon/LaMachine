@@ -17,7 +17,7 @@
             apt:
               name: nginx
               state: latest
-            when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
+            when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
 
           - name: Installing webserver globally (RedHat)
             become: true
@@ -51,7 +51,7 @@
                  fi
               owner: "{{unix_user}}"
               mode: u+rwx,a+rx
-            when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
+            when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
 
           - name: Adding webserver start script (non-debian, systemd)
             become: true
@@ -65,7 +65,7 @@
                  sudo uwsgi --ini {{lm_prefix}}/etc/uwsgi-emperor/emperor.ini --die-on-term &
               owner: "{{unix_user}}"
               mode: u+rwx,a+rx
-            when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
+            when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
 
           - name: Install webserver configuration
             become: true
@@ -83,7 +83,7 @@
           name: "{{item}}"
           state: latest
         with_items: [uwsgi-emperor, uwsgi, uwsgi-plugin-python3]
-        when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
+        when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
 
       - name: Installing uwsgi globally (RedHat)
         become: true
@@ -157,7 +157,7 @@
           src: "/etc/uwsgi-emperor"
           dest: "{{ lm_prefix }}/etc/uwsgi-emperor"
           state: link
-        when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
+        when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
 
       - name: Create webserver readable directories (global, non-debian)
         file:
@@ -168,7 +168,7 @@
         with_items:
             - "etc/uwsgi-emperor"
             - "etc/uwsgi-emperor/vassals"
-        when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
+        when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
 
   - when: locality=="local"
     block:
@@ -220,7 +220,7 @@
       dest: "{{lm_prefix}}/etc/uwsgi-emperor/emperor.ini"
       force: yes
       backup: yes
-    when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
+    when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
 
   - name: Create document root
     become: "{{lm_become}}"
