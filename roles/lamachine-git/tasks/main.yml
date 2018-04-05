@@ -43,7 +43,7 @@
                author: "{% if 'author' in package %}{{package.author}}{% else %}{{package.user}}{% endif %}"
                homepage: "{% if 'homepage' in package %}{{package.homepage}}{% else %}{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}{% endif %}"
                version: "{{ latest_tag.stdout }}"
-             package: "{% package|combine(register) %}"
+             package: "{{ package|combine(register) }}"
           when: '"register" in package and package.register'
 
     - when: version == "development" or (version == "stable" and ("noreleases" in package and package.noreleases))
@@ -71,7 +71,7 @@
                author: "{% if 'author' in package %}{{package.author}}{% else %}{{package.user}}{% endif %}"
                homepage: "{% if 'homepage' in package %}{{package.homepage}}{% else %}{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}{% endif %}"
                version: "{{ latest_tag.stdout }}"
-             package: "{% package|combine(register) %}"
+             package: "{{ package|combine(register) }}"
 
     - name: "{{package.repo}} - Checkout custom version: {{customversion[package.repo]}}"
       shell: "git checkout {{customversion[package.repo]}} && git pull"
