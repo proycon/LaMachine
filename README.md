@@ -284,6 +284,27 @@ To opt-out of this behaviour, set ``private: true`` in your LaMachine settings.
 
 During build and upgrade, LaMachine downloads software from a wide variety of external sources.
 
+## Security
+
+For a secure experience using LaMachine, take all of the following into account:
+
+* Our recommended bootstrap procedures downloads a script and immediately executes it. This is offered
+  as a convenience but carries some inherent risks and is generally not a secure practice. It implies a trust relation
+  between you and us, as well as the hoster (github). Prudent users are encouraged to download the script,
+  inspect it, and only then execute it. We may provide PGP-signed releases in the future.
+* The bootstrap script asks for and requires root privileges for certain installation steps, this will always be asked and the user may confirm. The Ansible provisioning scripts also generally required a sudo, this will only be asked once, but the privileges will only be used when needed.
+* Running either the bootstrap procedure or the subsequent ansible provisioning entirely as root is forbidden for
+  security reasons.
+* The current webserver configuration does not yet enable authentication for any of the webservices, so do *NOT* expose it directly to the internet without setting up authentication yourself.
+* If you are sure you don't need a webserver/webservices, disable it in the configuration upon first build.
+* The virtual machines tend to come with a preset username and password ``(vagrant:vagrant)``, you will need to change
+  this.
+* Do not run development versions in a production environment, always use the stable release.
+* Do not run an outdated LaMachine installation, ensure you regularly run ``lamachine-update`` for updates! Bugs and
+  potential vulnerabilities may have been patched in the meantime.
+* Only if your setup is otherwise secure (i.e. authentication on webservices), then make sure to always open only the necessary ports (80/443) to the internet, do not expose any of the UWSGI services to the world (this would allow arbitrary code execution).
+* As per the GNU General Public Licence, we do not offer any warranty despite doing our best.
+
 ## Versioning
 
     (this section needs to be (re)written still!)
