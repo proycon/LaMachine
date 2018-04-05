@@ -12,7 +12,7 @@
         chdir: "{{ source_path }}"
       when: not repo_path.stat.exists
 
-    - when: version == "stable" and "'noreleases' not in package or not package.noreleases"
+    - when: version == "stable" and ("noreleases" not in package or not package.noreleases)
       block:
         - name: "{{package.repo}} - Get new git tags from remote"
           shell: "git fetch --tags"
@@ -40,7 +40,7 @@
         chdir: "{{ source_path }}/{{package.repo}}"
       register: gitcheckout
       changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
-      when: version == "development" or (version == "stable" and ('noreleases' in package and package.noreleases))
+      when: version == "development" or (version == "stable" and ("noreleases" in package and package.noreleases))
 
     - name: "{{package.repo}} - Checkout custom version: {{customversion[package.repo]}}"
       shell: "git checkout {{customversion[package.repo]}} && git pull"
