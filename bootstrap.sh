@@ -68,6 +68,7 @@ usage () {
     echo " ${bold}--external${normal} - Use an external/shared/remote controller for updating LaMachine. This is useful for development/testing purposes and remote production environment"
     echo " ${bold}--hostname${normal} - Hostname (or fully qualified domain name) for the target system"
     echo " ${bold}--username${normal} - Username (or fully qualified domain name) for the target system"
+    echo " ${bold}--targetdir${normal} - Set a target directory for local environment creation, this should be an existing path and the local environment will be created under it. Defaults to current working directory."
 }
 
 USER_SET=0 #explicitly set?
@@ -302,6 +303,11 @@ while [[ $# -gt 0 ]]; do
         shift
         shift
         ;;
+        --targetdir)
+        TARGETDIR="$2"
+        shift
+        shift
+        ;;
         --vmmem) #extra ansible parameters
         VMMEM=$2
         shift
@@ -433,12 +439,15 @@ if [[ "$LOCALITY" == "local" ]]; then
         echo " If this is what you want, just press ENTER, "
         echo " Otherwise, type a new existing path: "
         echo -n "${bold}Where do you want to create the local user environment?${normal} [press ENTER for $(pwd)] "
-        read targetdir
-        if [ ! -z "$targetdir" ]; then
-            mkdir -p $targetdir >/dev/null 2>/dev/null
-            cd $targetdir || fatalerror "Specified directory does not exist"
-            BASEDIR="$targetdir"
+        read TARGETDIR
+        if [ ! -z "$TARGETDIR" ]; then
+            mkdir -p $TARGETDIR >/dev/null 2>/dev/null
+            cd $TARGETDIR || fatalerror "Specified target directory does not exist"
+            BASEDIR="$TARGETDIR"
         fi
+    elif [ ! -z "$TARGETDIR" ]; then
+        cd $TARGETDIR || fatalerror "Specified target directory does not exist"
+        BASEDIR="$TARGETDIR"
     fi
 fi
 
