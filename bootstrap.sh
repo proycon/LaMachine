@@ -325,7 +325,7 @@ while [[ $# -gt 0 ]]; do
         shift
         ;;
         --verbose)
-        ANSIBLE_OPTIONS="$ANSIBLE_OPTIONS -v"
+        ANSIBLE_OPTIONS="-vv"
         shift
         ;;
         -h|--help)
