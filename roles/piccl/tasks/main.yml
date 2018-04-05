@@ -148,7 +148,7 @@
             force: yes
             backup: yes
             owner: "{{web_user}}"
-            group: "{{web_user}}"
+            group: "{{web_group}}"
 
         - name: "Install clam configuration for PICCL"
           become: "{{lm_become}}"
