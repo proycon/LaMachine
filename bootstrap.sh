@@ -69,6 +69,7 @@ usage () {
     echo " ${bold}--hostname${normal} - Hostname (or fully qualified domain name) for the target system"
     echo " ${bold}--username${normal} - Username (or fully qualified domain name) for the target system"
     echo " ${bold}--targetdir${normal} - Set a target directory for local environment creation, this should be an existing path and the local environment will be created under it. Defaults to current working directory."
+    echo " ${bold}--services${normal} - Preset enabled services (comma seperated list). Default: all"
 }
 
 USER_SET=0 #explicitly set?
@@ -162,6 +163,7 @@ if [ "$OS" = "unknown" ]; then
       WINDOWS=1 #we are running in the Windows Linux Subsystem
     fi
 fi
+SERVICES="all"
 VERSION="undefined" # we set this because it might have been overriden by the distro
 INTERACTIVE=1
 LOCALITY=""
@@ -305,6 +307,11 @@ while [[ $# -gt 0 ]]; do
         ;;
         --targetdir)
         TARGETDIR="$2"
+        shift
+        shift
+        ;;
+        --services)
+        SERVICES="$2"
         shift
         shift
         ;;
@@ -993,7 +1000,7 @@ controller: \"$CONTROLLER\" #internal or external? Is this installation managed 
     fi
 echo "http_port: 80 #webserver port (for VM or docker)
 mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
-services: [ all ]  #List of services to provide, if set to [ all ], all possible services from the software categories you install will be provided. You can remove this and list specific services you want to enable. This is especially needed in case of a LaMachine installation that intends to only provide a single service.
+services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all possible services from the software categories you install will be provided. You can remove this and list specific services you want to enable. This is especially needed in case of a LaMachine installation that intends to only provide a single service.
 " >> $STAGEDCONFIG
     if [[ $FLAVOUR == "local" ]]; then
         echo "web_user: \"$USERNAME\"" >> $STAGEDCONFIG
