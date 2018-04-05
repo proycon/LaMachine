@@ -1,9 +1,14 @@
 ---
-    - name: "{{package.name}} - Register in lamachine-list"
+    - name: "{% if 'name' in package %}{{package.name}}{% elif 'name' in fallback %}{{fallback.name}}{% else %}NO NAME!{% endif %} - Register in lamachine-list"
       shell: |
         #!/bin/bash
+        {% if "name" in package %}
         echo '{{package.name}}:' >> {{lm_prefix}}/var/lamachine-list.yml
         echo     '    Name: {{package.name}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% elif "name" in fallback %}
+        echo '{{fallback.name}}:' >> {{lm_prefix}}/var/lamachine-list.yml
+        echo     '    Name: {{fallback.name}}' >> {{lm_prefix}}/var/lamachine-list.yml
+        {% endif %}
         {% if "version" in package %}
         echo     '    Version: {{package.version}}' >> {{lm_prefix}}/var/lamachine-list.yml
         {% elif "version" in fallback %}
