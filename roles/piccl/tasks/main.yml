@@ -86,6 +86,10 @@
         package:
           user: LanguageMachines
           repo: PICCL
+          register: true
+          author: Martin Reynaert, Maarten van Gompel, Ko van der Sloot
+          license: GPL
+          summary: "A set of workflows for corpus building through OCR, post-correction, modernization of historic language and Natural Language Processing"
 
     - name: "Symlink PICCL in {{lm_prefix}}/opt"
       file:
@@ -99,16 +103,6 @@
       args:
         chdir: "{{lm_prefix}}/bin"
 
-    - name: Register PICCL
-      include_role:
-         name: lamachine-register
-      vars:
-         package:
-           name: PICCL
-           author: Martin Reynaert, Maarten van Gompel, Ko van der Sloot
-           homepage: "https://github.com/LanguageMachines/PICCL"
-           license: GPL
-           summary: "A set of workflows for corpus building through OCR, post-correction, modernization of historic language and Natural Language Processing"
 
     - name: "Download data and example corpora for PICCL"
       shell: |

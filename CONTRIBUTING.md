@@ -199,6 +199,7 @@ Some lower-level roles:
 	* Expects a ``package`` variable that is a dictionary/map that can contain the following fields: ``name`` (mandatory!), ``version``, ``license``,``author``,``homepage``,``summary``
     * When using ``lamachine-python-install``, metadata registration is entirely automatic, as the PyPI contains all relevant information already. So you never need ``lamachine-register``
     * When using ``lamachine-git-autoconf``,  ``lamachine-register`` is automatically called and certain variables (name,version) can be pre-filled. Others you will need to provide explicitly if wanted.
+    * When using ``lamachine-git``,  ``lamachine-register`` is only called aif you set ``register: true`` on your pakcage. certain variables (name, version) can be pre-filled. Others you will need to provide explicitly if wanted.
 
 The use of specific LaMachine roles is always preferred over the use of comparable generic ansible modules as the
 LaMachine roles take care of a lot of specific things for you so it works in all environments. So use
