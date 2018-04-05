@@ -118,6 +118,7 @@ We distinguish the following variables, all of which you can read and use in you
 * *Permissions:*
   * ``root``	 - A boolean indicating whether LaMachine has root permission on the system (necessarily true if ``locality == "global"``)
   * ``unix_user`` - The unix user that owns and runs LaMachine.
+  * ``unix_group`` - The unix group that owns and runs LaMachine and has write access.
   * ``controller`` - Set to either ``internal`` or ``external``. Indicates whether the LaMachine installation manages itself (i.e. upgrades are done from within the LaMachine environment), or whether it is externally managed. Externally managed installation are useful in development environments or for provisioning of remote machines.
 * *Paths:*
   * ``lm_prefix`` - The path where LaMachine installs its software. This equals to either:
@@ -135,6 +136,7 @@ We distinguish the following variables, all of which you can read and use in you
     * ``webservertype`` - The type of webserver, defaults to ``nginx``. LaMAchine does not install any other webserver, so if you change this nginx won't be installed but you have to set up any alternative webserver (e.g. Apache) yourself.
   * ``http_port`` - port the webserver will listen on
   * ``web_user`` - The unix user that runs the webserver and webservices
+  * ``web_group`` - The unix group that runs the webserver and webservices; ``unix_user`` should always be a member of this group
   * ``services`` - This is a list of services to provide, by default it is set to ``[ all ]``, meaning all services provided by the software categories you install will be enabled, you can remove ``all`` and provide only specific services.
 * *Other:*
   * ``private`` - (boolean) Send basic analytics back to us
@@ -199,6 +201,7 @@ Some lower-level roles:
 	* Expects a ``package`` variable that is a dictionary/map that can contain the following fields: ``name`` (mandatory!), ``version``, ``license``,``author``,``homepage``,``summary``
     * When using ``lamachine-python-install``, metadata registration is entirely automatic, as the PyPI contains all relevant information already. So you never need ``lamachine-register``
     * When using ``lamachine-git-autoconf``,  ``lamachine-register`` is automatically called and certain variables (name,version) can be pre-filled. Others you will need to provide explicitly if wanted.
+    * When using ``lamachine-git``,  ``lamachine-register`` is only called aif you set ``register: true`` on your pakcage. certain variables (name, version) can be pre-filled. Others you will need to provide explicitly if wanted.
 
 The use of specific LaMachine roles is always preferred over the use of comparable generic ansible modules as the
 LaMachine roles take care of a lot of specific things for you so it works in all environments. So use

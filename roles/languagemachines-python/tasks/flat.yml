@@ -21,7 +21,8 @@
             dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/flat.ini"
             force: yes
             backup: yes
-            owner: "{{unix_user}}"
+            owner: "{{web_user}}"
+            group: "{{web_group}}"
             mode: u+rw,a+r
 
         - name: Create server writable directories for FLAT (global)
@@ -31,7 +32,7 @@
               path: "{{ lm_prefix }}/{{item}}"
               state: directory
               owner: "{{ unix_user }}"
-              group: "{{ web_user }}"
+              group: "{{ web_group }}"
               mode: u+rwx,g+rwsx,a+rx
           with_items:
               - "var/www-data/flat.docroot"

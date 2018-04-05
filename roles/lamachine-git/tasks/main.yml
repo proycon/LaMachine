@@ -1,6 +1,10 @@
 
 - when: "'exclude_when' not in package or not package.exclude_when"
   block:
+    - name: "Initialisation"
+      set_fact:
+          package_copy: "{{package}}"
+
     - name: "{{package.repo}} - Check if repository exists"
       stat:
         path: "{{ source_path }}/{{package.repo}}"
@@ -12,7 +16,7 @@
         chdir: "{{ source_path }}"
       when: not repo_path.stat.exists
 
-    - when: version == "stable" and "'noreleases' not in package or not package.noreleases"
+    - when: version == "stable" and ("noreleases" not in package or not package.noreleases)
       block:
         - name: "{{package.repo}} - Get new git tags from remote"
           shell: "git fetch --tags"
@@ -34,13 +38,42 @@
           register: gitcheckout
           changed_when: '"Switched to branch" in gitcheckout.stdout'
 
-    - name: "{{package.repo}} - Checkout latest master version of (development)"
-      shell: "git checkout master && git pull"
-      args:
-        chdir: "{{ source_path }}/{{package.repo}}"
-      register: gitcheckout
-      changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
-      when: version == "development" or (version == "stable" and ('noreleases' in package and package.noreleases))
+        - name: "{{package.repo}} - Register (stable)"
+          include_role:
+             name: lamachine-register
+          vars:
+             fallback:
+               name: "{{package.repo}}"
+               author: "{% if 'user' in package %}{{package.user}}{% endif %}"
+               homepage: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+               version: "{{ latest_tag.stdout }}"
+          when: '"register" in package and package.register'
+
+    - when: version == "development" or (version == "stable" and ("noreleases" in package and package.noreleases))
+      block:
+        - name: "{{package.repo}} - Checkout latest master version of (development)"
+          shell: "git checkout master && git pull"
+          args:
+            chdir: "{{ source_path }}/{{package.repo}}"
+          register: gitcheckout
+          changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
+
+        - name: "{{package.repo}} - Get latest commit hash"
+          shell: "git rev-parse HEAD"
+          args:
+            chdir: "{{ source_path }}/{{package.repo}}"
+          register: latest_commit
+          changed_when: False
+
+        - name: "{{package.repo}} - Register (unreleased)"
+          include_role:
+             name: lamachine-register
+          vars:
+             fallback:
+               name: "{{package.repo}}"
+               author: "{% if 'user' in package %}{{package.user}}{% endif %}"
+               homepage: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+               version: "{{ latest_commit.stdout }}"
 
     - name: "{{package.repo}} - Checkout custom version: {{customversion[package.repo]}}"
       shell: "git checkout {{customversion[package.repo]}} && git pull"

@@ -6,7 +6,7 @@
       apt:
         name: "{{package.debian}}"
         state: installed
-      when: root and "debian" in package and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linuxmint")
+      when: root and "debian" in package and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linux mint")
 
     - name: "{% if 'redhat' in package %}{{package.redhat}}{% else %}(NOT APPLICABLE){% endif %} - Installing global dependency (RedHat)"
       become: true

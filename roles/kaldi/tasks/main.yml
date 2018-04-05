@@ -24,14 +24,14 @@
   - name: Compiling kaldi/tools
     shell: make -j $(nproc)
     args :
-      chdir: "{{lm_prefix}}/kaldi/tools"
+      chdir: "{{lm_prefix}}/opt/kaldi/tools"
     environment:
       KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
 
   - name: Compiling kaldi/src
     shell: make -j $(nproc)
     args:
-      chdir: "{{lm_prefix}}/kaldi/src"
+      chdir: "{{lm_prefix}}/opt/kaldi/src"
     environment:
       KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
 

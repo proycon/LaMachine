@@ -68,10 +68,13 @@ usage () {
     echo " ${bold}--external${normal} - Use an external/shared/remote controller for updating LaMachine. This is useful for development/testing purposes and remote production environment"
     echo " ${bold}--hostname${normal} - Hostname (or fully qualified domain name) for the target system"
     echo " ${bold}--username${normal} - Username (or fully qualified domain name) for the target system"
+    echo " ${bold}--targetdir${normal} - Set a target directory for local environment creation, this should be an existing path and the local environment will be created under it. Defaults to current working directory."
+    echo " ${bold}--services${normal} - Preset enabled services (comma seperated list). Default: all"
 }
 
 USER_SET=0 #explicitly set?
 USERNAME=$(whoami)
+GROUP=$(id -gn $USERNAME)
 HOSTNAME=""
 
 fatalerror () {
@@ -161,6 +164,7 @@ if [ "$OS" = "unknown" ]; then
       WINDOWS=1 #we are running in the Windows Linux Subsystem
     fi
 fi
+SERVICES="all"
 VERSION="undefined" # we set this because it might have been overriden by the distro
 INTERACTIVE=1
 LOCALITY=""
@@ -302,6 +306,16 @@ while [[ $# -gt 0 ]]; do
         shift
         shift
         ;;
+        --targetdir)
+        TARGETDIR="$2"
+        shift
+        shift
+        ;;
+        --services)
+        SERVICES="$2"
+        shift
+        shift
+        ;;
         --vmmem) #extra ansible parameters
         VMMEM=$2
         shift
@@ -312,7 +326,7 @@ while [[ $# -gt 0 ]]; do
         shift
         ;;
         --verbose)
-        ANSIBLE_OPTIONS="$ANSIBLE_OPTIONS -v"
+        ANSIBLE_OPTIONS="-vv"
         shift
         ;;
         -h|--help)
@@ -433,12 +447,15 @@ if [[ "$LOCALITY" == "local" ]]; then
         echo " If this is what you want, just press ENTER, "
         echo " Otherwise, type a new existing path: "
         echo -n "${bold}Where do you want to create the local user environment?${normal} [press ENTER for $(pwd)] "
-        read targetdir
-        if [ ! -z "$targetdir" ]; then
-            mkdir -p $targetdir >/dev/null 2>/dev/null
-            cd $targetdir || fatalerror "Specified directory does not exist"
-            BASEDIR="$targetdir"
+        read TARGETDIR
+        if [ ! -z "$TARGETDIR" ]; then
+            mkdir -p $TARGETDIR >/dev/null 2>/dev/null
+            cd $TARGETDIR || fatalerror "Specified target directory does not exist"
+            BASEDIR="$TARGETDIR"
         fi
+    elif [ ! -z "$TARGETDIR" ]; then
+        cd $TARGETDIR || fatalerror "Specified target directory does not exist"
+        BASEDIR="$TARGETDIR"
     fi
 fi
 
@@ -900,7 +917,9 @@ locality: \"$LOCALITY\" #local or global? (don't change this once set)
 controller: \"$CONTROLLER\" #internal or external? Is this installation managed inside or outside the environment/host? You can't change this value here, run bootstrap with --external to force this to external.
 " > $STAGEDCONFIG
     if [[ $FLAVOUR == "vagrant" ]]; then
+        GROUP="vagrant"
         echo "unix_user: \"vagrant\" #(don't change this unless you know what you're doing)" >> $STAGEDCONFIG
+        echo "unix_group: \"vagrant\" #(don't change this unless you know what you're doing)" >> $STAGEDCONFIG
         echo "homedir: \"/home/vagrant\"" >> $STAGEDCONFIG
         echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is originally stored/shared" >> $STAGEDCONFIG
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
@@ -913,7 +932,9 @@ controller: \"$CONTROLLER\" #internal or external? Is this installation managed 
             echo "ansible_python_interpreter: \"/usr/bin/python3\" #Python interpreter for Vagrant to use with Ansible. This interpreter must be already available in vagrant box $VAGRANTBOX, you may want to set it to python2 instead" >> $STAGEDCONFIG
         fi
     elif [[ $FLAVOUR == "docker" ]]; then
+        GROUP="lamachine"
         echo "unix_user: \"lamachine\"" >> $STAGEDCONFIG
+        echo "unix_group: \"lamachine\" #must be same as unix_user, changing this is not supported yet" >> $STAGEDCONFIG
         echo "homedir: \"/home/lamachine\"" >> $STAGEDCONFIG
         echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared" >> $STAGEDCONFIG
         echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
@@ -922,6 +943,7 @@ controller: \"$CONTROLLER\" #internal or external? Is this installation managed 
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
     else
         echo "unix_user: \"$USERNAME\"" >> $STAGEDCONFIG
+        echo "unix_group: \"$GROUP\"" >> $STAGEDCONFIG
         WEBUSER=$USERNAME
         if [[ "$FLAVOUR" == "remote" ]] || [[ "$locality" == "global" ]]; then
             echo "homedir: \"/home/$USERNAME\" #the home directory of the aforementioned user" >> $STAGEDCONFIG
@@ -984,12 +1006,14 @@ controller: \"$CONTROLLER\" #internal or external? Is this installation managed 
     fi
 echo "http_port: 80 #webserver port (for VM or docker)
 mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
-services: [ all ]  #List of services to provide, if set to [ all ], all possible services from the software categories you install will be provided. You can remove this and list specific services you want to enable. This is especially needed in case of a LaMachine installation that intends to only provide a single service.
+services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all possible services from the software categories you install will be provided. You can remove this and list specific services you want to enable. This is especially needed in case of a LaMachine installation that intends to only provide a single service.
 " >> $STAGEDCONFIG
     if [[ $FLAVOUR == "local" ]]; then
         echo "web_user: \"$USERNAME\"" >> $STAGEDCONFIG
+        echo "web_group: \"$GROUP\"" >> $STAGEDCONFIG
     else
         echo "web_user: \"www-data\" #The user for the webserver, change this on first install if needed!!!" >> $STAGEDCONFIG
+        echo "web_group: \"www-data\" #The group for the webserver, change this on first install if needed!!!" >> $STAGEDCONFIG
     fi
     if [ $OS = "arch" ]; then
         if [[ $FLAVOUR == "local" ]] || [[ $FLAVOUR == "global" ]]; then

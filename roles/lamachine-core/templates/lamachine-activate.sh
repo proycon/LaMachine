@@ -42,10 +42,12 @@ if [[ "$LM_LOCALITY" == "local" ]]; then
     fi
 else
     export LM_PREFIX={{global_prefix}}
-    EXTRAACTIVATE=$(find {{global_prefix}}/bin/activate.d -print0 -type f -name "*.sh")
+    EXTRAACTIVATE=$(find {{global_prefix}}/bin/activate.d -type f -name "*.sh" -print0)
     IFS="\0"
     for f in "$EXTRAACTIVATE"; do
-        source $f
+        if [ ! -z "$f" ]; then
+            source $f
+        fi
     done
 fi
 if [[ "$LAMACHINE_QUIET" != "1" ]]; then
@@ -62,7 +64,7 @@ if [[ "$LM_LOCALITY" == "local" ]] && [[ "$LM_LOCALENV_TYPE" == "virtualenv" ]];
         # Detects `sh` and `dash`; add additional shell filenames as needed.
         case ${0##*/} in sh|dash) SOURCED=1;; esac
       fi
-      if [ $SOURCED -eq 0 ]; then
+      if [[ $SOURCED -eq 0 ]]; then
         #not SOURCED, start a subshell
         export PS1="(`basename \"$VIRTUAL_ENV\"`) \u@\h:\W\$ " #set prompt manually cause it somehow gets messed up otherwise
         export SOURCED

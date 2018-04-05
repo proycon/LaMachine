@@ -10,7 +10,7 @@
         - myspell-nl
         - libhunspell-dev
         - libaspell-dev
-      when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linuxmint")
+      when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linux mint")
 
     - name: Installing global dependencies for Gecco (RedHat)
       become: true

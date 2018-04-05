@@ -17,31 +17,34 @@ if [ -d .git ]; then
     git pull
 fi
 FIRST=1
+INTERACTIVE=1
 if [ "$1" = "--edit" ]; then
-if [ -z "$EDITOR" ]; then
-  export EDITOR=nano
-fi
-if [ -e "host_vars/{{hostname}}.yml" ]; then
-    #LaMachine v2.1.0+
-    $EDITOR "host_vars/{{hostname}}.yml"
-elif [ -e "host_vars/localhost.yml" ]; then
-    #fallback
-    $EDITOR "host_vars/localhost.yml"
-elif [ -e "host_vars/lamachine-$LM_NAME.yml" ]; then
-    #LaMachine v2.0.0
-    $EDITOR "host_vars/lamachine-$LM_NAME.yml"
-fi
-if [ -e "hosts.{{conf_name}}" ]; then
-    #LaMachine v2.0.0
-    $EDITOR "install-{{conf_name}}.yml"
-else
-    #LaMachine v2.1.0+
-    $EDITOR "install.yml"
-fi
-FIRST=2
+    if [ -z "$EDITOR" ]; then
+      export EDITOR=nano
+    fi
+    if [ -e "host_vars/{{hostname}}.yml" ]; then
+        #LaMachine v2.1.0+
+        $EDITOR "host_vars/{{hostname}}.yml"
+    elif [ -e "host_vars/localhost.yml" ]; then
+        #fallback
+        $EDITOR "host_vars/localhost.yml"
+    elif [ -e "host_vars/lamachine-$LM_NAME.yml" ]; then
+        #LaMachine v2.0.0
+        $EDITOR "host_vars/lamachine-$LM_NAME.yml"
+    fi
+    if [ -e "hosts.{{conf_name}}" ]; then
+        #LaMachine v2.0.0
+        $EDITOR "install-{{conf_name}}.yml"
+    else
+        #LaMachine v2.1.0+
+        $EDITOR "install.yml"
+    fi
+    FIRST=2
+elif [ "$1" = "--noninteractive" ]; then
+    INTERACTIVE=0
 fi
 OPTS=""
-if [ {{root|int}} -eq 1 ]; then
+if [[ {{root|int}} -eq 1 ]] && [[ $INTERACTIVE -eq 1 ]]; then
  OPTS="--ask-become-pass"
 fi
 if [ -e "hosts.{{conf_name}}" ]; then
