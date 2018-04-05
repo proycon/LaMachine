@@ -144,6 +144,7 @@
             - "var/log/uwsgi"
             - "var/log/nginx"
             - "var/www-data"
+            - "var/www-data/tmp"
 
       - name: Link nginx from global prefix
         file:
@@ -181,6 +182,7 @@
             - "var/log/uwsgi"
             - "var/log/nginx"
             - "var/www-data"
+            - "var/www-data/tmp"
             - "etc/nginx"
             - "etc/nginx/conf.d"
             - "etc/uwsgi-emperor"
