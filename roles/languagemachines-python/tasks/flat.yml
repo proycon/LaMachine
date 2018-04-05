@@ -21,7 +21,8 @@
             dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/flat.ini"
             force: yes
             backup: yes
-            owner: "{{unix_user}}"
+            owner: "{{web_user}}"
+            group: "{{web_user}}"
             mode: u+rw,a+r
 
         - name: Create server writable directories for FLAT (global)

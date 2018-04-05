@@ -153,7 +153,8 @@
             dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/piccl.ini"
             force: yes
             backup: yes
-            owner: "{{unix_user}}"
+            owner: "{{web_user}}"
+            group: "{{web_user}}"
 
         - name: "Install clam configuration for PICCL"
           become: "{{lm_become}}"

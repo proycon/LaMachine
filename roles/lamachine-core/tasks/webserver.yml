@@ -53,7 +53,7 @@
               mode: u+rwx,a+rx
             when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
 
-          - name: Adding webserver start script (non-debian)
+          - name: Adding webserver start script (non-debian, systemd)
             become: true
             become_user: root
             copy:
@@ -62,7 +62,7 @@
                  #!/bin/bash
                  killall -w uwsgi
                  sudo systemctl restart nginx #assume systemd
-                 uwsgi --ini {{lm_prefix}}/etc/uwsgi-emperor/emperor.ini --die-on-term &
+                 sudo uwsgi --ini {{lm_prefix}}/etc/uwsgi-emperor/emperor.ini --die-on-term &
               owner: "{{unix_user}}"
               mode: u+rwx,a+rx
             when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linuxmint")
