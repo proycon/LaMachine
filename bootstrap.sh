@@ -344,7 +344,8 @@ done
 if [ $INTERACTIVE -eq 1 ]; then
     echo
     echo "Welcome to the LaMachine Installation tool, we will ask some questions how"
-    echo "you want your LaMachine to be installed."
+    echo "you want your LaMachine to be installed and guide you towards the installation"
+    echo "of any software that is needed to complete this installation."
     echo
 fi
 
