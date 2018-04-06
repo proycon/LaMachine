@@ -31,12 +31,32 @@
           register: latest_tag
           changed_when: False
 
-        - name: "{{package.repo}} - Checkout latest stable version {{latest_tag.stdout}}"
-          shell: "git checkout {{latest_tag.stdout}}"
-          args:
-            chdir: "{{ source_path }}/{{package.repo}}"
-          register: gitcheckout
-          changed_when: '"Switched to branch" in gitcheckout.stdout'
+        - block:
+            - name: "{{package.repo}} - Checkout latest stable version {{latest_tag.stdout}}"
+              shell: "git checkout {{latest_tag.stdout}}"
+              args:
+                chdir: "{{ source_path }}/{{package.repo}}"
+              register: gitcheckout
+              changed_when: '"Switched to branch" in gitcheckout.stdout'
+          rescue:
+            - name: "{{package.repo}} - STASHING AWAY LOCAL CHANGES!!!"
+              shell: |
+                echo "There appear to be local changes, LaMachine will stash them away">&2
+                echo "this means they are not deleted and recoverable in principle,">&2
+                echo "but they are NOT used in this compilation. You should ">&2
+                echo "git add them properly if you want to use any custom changes">&2
+                echo "... allowing for 15 second grace period (CTRL-C in case of panic)..."
+                sleep 15
+                git stash -u
+              args:
+                chdir: "{{ source_path }}/{{package.repo}}"
+              when: '("untracked working tree files" in gitcheckout.stdout) and allow_stash'
+            - name: "{{package.repo}} - Checkout latest stable version {{latest_tag.stdout}} (2nd attempt after stash)"
+              shell: "git checkout {{latest_tag.stdout}}"
+              args:
+                chdir: "{{ source_path }}/{{package.repo}}"
+              register: gitcheckout
+              changed_when: '"Switched to branch" in gitcheckout.stdout'
 
         - name: "{{package.repo}} - Register (stable)"
           include_role:
@@ -51,12 +71,32 @@
 
     - when: version == "development" or (version == "stable" and ("noreleases" in package and package.noreleases))
       block:
-        - name: "{{package.repo}} - Checkout latest master version of (development)"
-          shell: "git checkout master && git pull"
-          args:
-            chdir: "{{ source_path }}/{{package.repo}}"
-          register: gitcheckout
-          changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
+        - block:
+            - name: "{{package.repo}} - Checkout latest master version of (development)"
+              shell: "git checkout master && git pull"
+              args:
+                chdir: "{{ source_path }}/{{package.repo}}"
+              register: gitcheckout
+              changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
+          rescue:
+            - name: "{{package.repo}} - STASHING AWAY LOCAL CHANGES!!!"
+              shell: |
+                echo "There appear to be local changes, LaMachine will stash them away">&2
+                echo "this means they are not deleted and recoverable in principle,">&2
+                echo "but they are NOT used in this compilation. You should ">&2
+                echo "git add them properly if you want to use any custom changes">&2
+                echo "... allowing for 15 second grace period (CTRL-C in case of panic)..."
+                sleep 15
+                git stash -u
+              args:
+                chdir: "{{ source_path }}/{{package.repo}}"
+              when: '("untracked working tree files" in gitcheckout.stdout) and allow_stash'
+            - name: "{{package.repo}} - Checkout latest master version of (development, second attempt after stash)"
+              shell: "git checkout master && git pull"
+              args:
+                chdir: "{{ source_path }}/{{package.repo}}"
+              register: gitcheckout
+              changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
 
         - name: "{{package.repo}} - Get latest commit hash"
           shell: "git rev-parse HEAD"
