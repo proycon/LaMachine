@@ -2,6 +2,12 @@
 
 # THIS FILE IS MANAGED BY LAMACHINE, DO NOT EDIT IT! (it will be overwritten on update)
 
+bold=$(tput bold)
+boldred=${bold}$(tput setaf 1) #  red
+boldgreen=${bold}$(tput setaf 2) #  green
+boldblue=${bold}$(tput setaf 4) #  blue
+normal=$(tput sgr0)
+
 if [ -e "{{lm_path}}" ]; then
   cd "{{lm_path}}"
 else
@@ -47,10 +53,26 @@ OPTS=""
 if [[ {{root|int}} -eq 1 ]] && [[ $INTERACTIVE -eq 1 ]]; then
  OPTS="--ask-become-pass"
 fi
+D=$(date +%Y%m%d_%H%M%S)
 if [ -e "hosts.{{conf_name}}" ]; then
     #LaMachine v2.0.0
-    ansible-playbook -i "hosts.{{conf_name}}" "install-{{conf_name}}.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}.log"
+    ansible-playbook -i "hosts.{{conf_name}}" "install-{{conf_name}}.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
+    rc=$?
 else
     #LaMachine v2.1.0+
-    ansible-playbook -i "hosts.ini" "install.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}.log"
+    ansible-playbook -i "hosts.ini" "install.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
+    rc=$?
 fi
+echo "======================================================================================"
+if [ $rc -eq 0 ]; then
+        echo "${boldgreen}The LaMachine update completed succesfully!${normal}"
+        echo " - Log file: $(pwd)/lamachine-{{conf_name}}-$D.log"
+else
+        echo "${boldred}The LaMachine update failed!${normal} You have several options:"
+        echo " - Retry a forced update (lamachine-update force=1), this forces recompilation even if software seems up to date"
+        echo "   and may be necessary in certain circumstances."
+        echo " - Retry the update, possibly tweaking configuration and installation options (lamachine-update --edit)"
+        echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
+        echo "   The log file has been written to $(pwd)/lamachine-{{conf_name}}-$d.log (include it with any bug report)"
+fi
+exit $rc

@@ -1174,7 +1174,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
         echo " - Enter the LaMachine VM in its uncompleted state, run: bash ~/bin/lamachine-$LM_NAME-connect"
         echo " - Force the LaMachine VM to update itself, run: bash ~/bin/lamachine-$LM_NAME-update"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
-        echo "   The log file has been written to $(pwd)/lamachine-$LM_NAME.log"
+        echo "   The log file has been written to $(pwd)/lamachine-$LM_NAME.log (include it with any bug report)"
     fi
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ "$SUDO" -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
@@ -1199,7 +1199,7 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
         echo " - Attempt to activate the environment (run: lamachine-$LM_NAME-activate) and debug the problem"
         echo " - Run lamachine-$LM_NAME-update after activating the environment to see if the problem corrects itself"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
-        echo "   The log file has been written to $(pwd)/lamachine-$LM_NAME.log"
+        echo "   The log file has been written to $(pwd)/lamachine-$LM_NAME.log (include it with any bug report)"
         rc=1
     fi
 elif [[ "$FLAVOUR" == "docker" ]]; then
@@ -1238,7 +1238,7 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
         echo " - Retry the bootstrap, possibly tweaking configuration options"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
         if [ $BUILD -eq 1 ]; then
-            echo "   The log file has been written to $(pwd)/lamachine-$LM_NAME.log"
+            echo "   The log file has been written to $(pwd)/lamachine-$LM_NAME.log (include it with any bug report)"
         fi
     fi
 elif [ "$FLAVOUR" = "remote" ]; then
