@@ -143,7 +143,12 @@ if [ "$OS" = "unknown" ]; then
         OS="redhat"
     fi
 fi
-WINDOWS=0
+if grep -q Microsoft /proc/version; then
+  echo "(Windows Linux Subsystem detected)">&2
+  WINDOWS=1 #we are running in the Windows Linux Subsystem
+else
+  WINDOWS=0
+fi
 if [ "$OS" = "unknown" ]; then
     echo "(Fallback: Detecting OS by finding installed package manager...)">&2
     ARCH=$(which pacman 2> /dev/null)
@@ -158,10 +163,6 @@ if [ "$OS" = "unknown" ]; then
     else
         echo "Unable to detect a supported OS! Perhaps your distribution is not yet supported by LaMachine? Please contact us!">&2
         exit 2
-    fi
-    if grep -q Microsoft /proc/version; then
-      echo "(Windows Linux Subsystem detected)">&2
-      WINDOWS=1 #we are running in the Windows Linux Subsystem
     fi
 fi
 SERVICES="all"
@@ -344,7 +345,8 @@ done
 if [ $INTERACTIVE -eq 1 ]; then
     echo
     echo "Welcome to the LaMachine Installation tool, we will ask some questions how"
-    echo "you want your LaMachine to be installed."
+    echo "you want your LaMachine to be installed and guide you towards the installation"
+    echo "of any software that is needed to complete this installation."
     echo
 fi
 

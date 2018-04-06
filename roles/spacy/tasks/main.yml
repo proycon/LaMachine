@@ -7,18 +7,32 @@
       loop_control:
            loop_var: package
 
-    - name: "Installing Spacy data"
-      include_role:
-          name: lamachine-run
-      vars:
-          command: "python3 -m spacy download {{ item }}"
-      with_items:
-          - en
-          - de
-          - es
-          - pt
-          - fr
-          - it
-          - nl
-          - xx
+    - name: "Checking whether spacy data is available"
+      stat:
+         path: "{{ lm_path }}/.spacydata"
+      register: spacydata
+      changed_when: False
+
+    - when: spacydata.stat.exists or force is defined
+      block:
+        - name: "Installing Spacy data  (Listen carefully, I shall do this only once!)"
+          include_role:
+              name: lamachine-run
+          vars:
+              command: "python3 -m spacy download {{ item }}"
+          with_items:
+              - en
+              - de
+              - es
+              - pt
+              - fr
+              - it
+              - nl
+              - xx
+
+        - name: "Marking spacy data as installed"
+          copy:
+            content: ""
+            dest: "{{lm_path}}/.spacydata"
+
 

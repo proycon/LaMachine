@@ -16,28 +16,45 @@
       chdir: "{{ pkg_source_dir }}"
   register: bootstrap_result
 
-- name: "{{pkg_name}} - Invoke configure"
-  command: "./configure --prefix={{lm_prefix}} {% if 'configure_opts' in package %}{{package.configure_opts}}{% endif %}"
-  args:
-      chdir: "{{ pkg_source_dir }}"
-  environment: "{% if 'build_environment' in package %}{{ package.build_environment }}{% else %}{{default_environment}}{% endif %}"
-  register: configure_result
 
-- name: "{{pkg_name}} - Invoke make"
-  command: "make {% if 'make_opts' in package %}{{package.make_opts}}{% endif %}"
-  args:
-       chdir: "{{ pkg_source_dir }}"
-  environment: "{% if 'build_environment' in package %}{{ package.build_environment }}{% else %}{{default_environment}}{% endif %}"
-  when: configure_result.rc == 0
-  register: make_result
+- block:
+    - name: "{{pkg_name}} - Invoke configure"
+      command: "./configure --prefix={{lm_prefix}} {% if 'configure_opts' in package %}{{package.configure_opts}}{% endif %}"
+      args:
+          chdir: "{{ pkg_source_dir }}"
+      environment: "{% if 'build_environment' in package %}{{ package.build_environment }}{% else %}{{default_environment}}{% endif %}"
+      register: configure_result
 
-- name: "{{pkg_name}} - Invoke make install"
-  become: "{{lm_become}}"
-  become_user: root
-  become_method: sudo
-  command: "make install {% if 'make_install_opts' in package %}{{package.make_install_opts}}{% endif %}"
-  args:
-       chdir: "{{ pkg_source_dir }}"
-  environment: "{% if 'build_environment' in package %}{{ package.build_environment }}{% else %}{{default_environment}}{% endif %}"
-  register: make_install_result
-  when: configure_result.rc == 0 and make_result.rc == 0
+    - name: "{{pkg_name}} - Invoke make"
+      command: "make {% if 'make_opts' in package %}{{package.make_opts}}{% endif %}"
+      args:
+           chdir: "{{ pkg_source_dir }}"
+      environment: "{% if 'build_environment' in package %}{{ package.build_environment }}{% else %}{{default_environment}}{% endif %}"
+      when: configure_result.rc == 0
+      register: make_result
+
+    - name: "{{pkg_name}} - Invoke make install"
+      become: "{{lm_become}}"
+      become_user: root
+      become_method: sudo
+      command: "make install {% if 'make_install_opts' in package %}{{package.make_install_opts}}{% endif %}"
+      args:
+           chdir: "{{ pkg_source_dir }}"
+      environment: "{% if 'build_environment' in package %}{{ package.build_environment }}{% else %}{{default_environment}}{% endif %}"
+      register: make_install_result
+      when: configure_result.rc == 0 and make_result.rc == 0
+  rescue:
+    - name: "{{pkg_name}} - Clean up after failure"
+      shell: |
+        if [ -f Makefile ]; then
+          make clean
+          make distclean
+        elif [ -f configure ]; then
+          rm configure
+        fi
+      args:
+        chdir: "{{ pkg_source_dir }}"
+      ignore_errors: yes
+    - fail:
+        msg: "{{pkg_name}} failed to compile properly!! Please inspect the STDERR output of the relevant task above"
+
