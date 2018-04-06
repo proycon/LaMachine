@@ -945,7 +945,7 @@ controller: \"$CONTROLLER\" #internal or external? Is this installation managed 
         echo "unix_user: \"$USERNAME\"" >> $STAGEDCONFIG
         echo "unix_group: \"$GROUP\"" >> $STAGEDCONFIG
         WEBUSER=$USERNAME
-        if [[ "$FLAVOUR" == "remote" ]] || [[ "$locality" == "global" ]]; then
+        if [[ "$FLAVOUR" == "remote" ]] || [[ "$LOCALITY" == "global" ]]; then
             echo "homedir: \"/home/$USERNAME\" #the home directory of the aforementioned user" >> $STAGEDCONFIG
         else
             echo "homedir: \"$HOMEDIR\" #the home directory of the aforementioned user" >> $STAGEDCONFIG
@@ -960,13 +960,13 @@ controller: \"$CONTROLLER\" #internal or external? Is this installation managed 
         else
             echo "data_path: \"$BASEDIR\" #Shared data path, change this if needed!" >> $STAGEDCONFIG
         fi
-        if [[ "$locality" == "local" ]]; then
+        if [[ "$LOCALITY" == "local" ]]; then
             echo "local_prefix: \"$BASEDIR/$LM_NAME\" #Path to the local environment (virtualenv)" >> $STAGEDCONFIG
             echo "global_prefix: \"/usr/local\" #Path for global installations (not used in your configuration)" >> $STAGEDCONFIG
         else
             echo "global_prefix: \"/usr/local\" #Path for global installations" >> $STAGEDCONFIG
         fi
-        if [[ "$locality" == "global" ]]; then
+        if [[ "$LOCALITY" == "global" ]]; then
             echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
         else
             echo "source_path: \"$BASEDIR/$LM_NAME/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
