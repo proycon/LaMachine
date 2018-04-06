@@ -27,6 +27,7 @@
       chdir: "{{lm_prefix}}/opt/kaldi/tools"
     environment:
       KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
+    ignore_errors: yes #obviously not a good idea
 
   - name: Compiling kaldi/src
     shell: make -j $(nproc)
@@ -34,6 +35,7 @@
       chdir: "{{lm_prefix}}/opt/kaldi/src"
     environment:
       KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
+    ignore_errors: yes #obviously not a good idea
 
   - name: "Adding activation script for Kaldi"
     become: "{{lm_become}}"
