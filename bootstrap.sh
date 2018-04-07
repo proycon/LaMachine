@@ -357,8 +357,8 @@ if [ -z "$FLAVOUR" ]; then
         echo "  1) in a local user environment"
         echo "       installs as much as possible in a separate directory"
         echo "       for a particular user; can exists alongside existing"
-        echo "       installations"
-        echo "       (uses conda or virtualenv)"
+        echo "       installations."
+        echo "       (uses virtualenv)"
         if [ $WINDOWS -eq 0 ]; then
         echo "  2) in a Virtual Machine"
         echo "       complete separation from the host OS"

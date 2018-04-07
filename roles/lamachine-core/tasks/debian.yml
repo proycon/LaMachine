@@ -45,7 +45,7 @@
       apt:
         name: "{{item}}"
         state: present
-      with_items: [coreutils, procps, lsof, dirmngr, pkg-config, git-core, nano, make, gcc, g++, autoconf, automake, autoconf-archive, libtool, autotools-dev, libicu-dev, libxml2-dev, libxslt1-dev, libbz2-dev, zlib1g-dev, libtar-dev, libaspell-dev, libhunspell-dev,  python3, python3-pip, python3-wheel, python3-dev, libboost-all-dev, libboost-python-dev, wget, curl, libexttextcat-dev, libcurl4-gnutls-dev, poppler-utils, perl]
+      with_items: [coreutils, procps, lsof, dirmngr, pkg-config, git-core, mercurial, nano, make, gcc, g++, autoconf, automake, autoconf-archive, libtool, autotools-dev, libicu-dev, libxml2-dev, libxslt1-dev, libbz2-dev, zlib1g-dev, libtar-dev, libaspell-dev, libhunspell-dev,  python3, python3-pip, python3-wheel, python3-dev, libboost-all-dev, libboost-python-dev, wget, curl, libexttextcat-dev, libcurl4-gnutls-dev, poppler-utils, perl]
       #dirmngr is needed for gpg apt-get key
 
     - name: Installing python-virtualenv
