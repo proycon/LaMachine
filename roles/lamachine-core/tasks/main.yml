@@ -218,6 +218,7 @@
           - opt
           - var
           - "var/log"
+          - "var/run"
 
     - name: Install motd
       become: "{{lm_become}}"
@@ -284,7 +285,7 @@
       command: ldconfig -v
       when: root and locality == "global" and ansible_distribution|lower != 'macosx'
 
-    - name: Compiling boost from source for CentOS/RHEL
+    - name: Compiling boost from source for CentOS/RHEL (may take quite a while!)
       shell: |
           #!/bin/bash
           if [ ! -d boost_1_66_0 ]; then

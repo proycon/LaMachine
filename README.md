@@ -145,10 +145,11 @@ documentation](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md
 
 LaMachine can be installed in multiple *flavours*:
 
+ * **Local installation** - Installs LaMachine locally in a user environment on a Linux/BSD or Mac OS X machine (multiple per machine possible); does not come with a webserver!
  * **Global installation** - Installs LaMachine globally on a Linux/BSD machine. (only one per machine)
- * **Local installation** - Installs LaMachine locally in a user environment on a Linux/BSD or Mac OS X machine (multiple per machine possible)
  * **Docker container** - Installs LaMachine in a docker container
  * **Virtual Machine** - Installs LaMachine in a Virtual Machine
+ * **Remote installation** - Installs LaMachine globally on another Linux/BSD machine. (only one per machine)
 
 In all cases, the installation is mediated through [Ansible](https://www.ansible.com), providing a level of abstraction
 over whatever underlying technology is employed. Containerisation uses [Docker](https://docker.com). Virtualisation is
@@ -227,7 +228,7 @@ In this example we assume your LaMachine image has the tag **latest**, which cor
 * To start a **new** interactive container, run ``docker run -i -t proycon/lamachine:latest``
 * To start a **new** container with a command line tool, just append the command: ``docker run -t proycon/lamachine:latest ucto -L nld /data/input.txt /data/output.folia.xml``
 	* Add the ``-i`` flag if the tool is an interactive tool that reads from standard input (i.e. keyboard input).
-* To start a **new** container with the server: ``docker run -p 8080:80 -h hostname -t proycon/lamachine:latest lamachine-start-webserver -f ``
+* To start a **new** container with the webserver: ``docker run -p 8080:80 -h hostname -t proycon/lamachine:latest lamachine-start-webserver -f ``
 	* The numbers values for ``-p`` are the port numbers on the host side and on the container side respectively, the latter must always match with the ``http_port`` setting LaMachine has been built with.
 	* Set ``-h`` with the desired hostname, this too must match the setting LaMachine has been built with.
     * The ``-f`` argument ensures the script waits in the foreground and doesn't exit after starting.
@@ -254,11 +255,13 @@ press ENTER and leave it empty, do not run the entire script with escalated priv
 
 LaMachine comes with several webservices and web applications out of the box
 (source: https://github.com/proycon/clamservices). Most are RESTful webservices served
-using [CLAM](https://proycon.github.io/clam), which also offer a generic web-interface for human end-users.
+using [CLAM](https://proycon.github.io/clam), which also offer a generic web-interface for human end-users. The
+webserver provides a generic portal to all available services.
 
-To start the webserver and webservices, run ``lamachine-start-webserver`` from within your LaMachine installation. You
-can then connect your browser (on the host system) to http://localhost:8080 (the port may differ if you changed the
-default value).
+To start (or restart) the webserver and webservices, run ``lamachine-start-webserver`` from within your LaMachine
+installation. You can then connect your browser (on the host system) to http://localhost:8080 (the port may differ if
+you changed the default value). On virtual machines, the webserver will be automatically started at boot usually. For
+docker you can do: ``docker run -p 8080:80 -h hostname -t proycon/lamachine:latest lamachine-start-webserver -f ``
 
 Note that there is no currently or poor authentication enabled on the webservices, so do not
 expose them to the outside world!
