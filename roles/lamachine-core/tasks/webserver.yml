@@ -179,7 +179,7 @@
       src: nginx.conf
       dest: "{{lm_prefix}}/etc/nginx/nginx.conf"
       force: yes
-      user: "{{unix_user}}"
+      owner: "{{unix_user}}"
       group: "{{unix_group}}"
     when: webservertype == "nginx"
 
