@@ -177,7 +177,7 @@
     become_user: root
     template:
       src: nginx.conf
-      dest: "{{prefix_lm}}/etc/nginx/nginx.conf"
+      dest: "{{lm_prefix}}/etc/nginx/nginx.conf"
       force: yes
       user: "{{unix_user}}"
       group: "{{unix_group}}"
