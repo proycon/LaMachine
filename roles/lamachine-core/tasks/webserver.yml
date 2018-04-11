@@ -134,8 +134,9 @@
       - name: "Finding nginx"
         shell: which nginx
         register: nginx
+        failed_when: nginx.rc == 127
 
-      - when: not nginx.stat.exists and ansible_distribution|lower != "macosx"
+      - when: not nginx.rc != 0 and ansible_distribution|lower != "macosx"
         block:
           - name: Obtaining local nginx webserver from source
             hg:
