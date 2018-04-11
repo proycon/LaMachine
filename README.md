@@ -24,7 +24,7 @@ To build your own LaMachine instance, in any of the possible flavours, or to dow
 on your Linux, BSD or Mac OS X system and run the following command:
 
 ```
-bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/develop/bootstrap.sh)
+bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/master/bootstrap.sh)
 ```
 
 This will prompt you for some questions on how you would like your LaMachine installation and allows you to include precisely

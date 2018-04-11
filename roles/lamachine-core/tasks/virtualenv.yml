@@ -16,9 +16,7 @@
         dest: "{{local_prefix}}/bin/activate"
         block: |
           export LD_LIBRARY_PATH={{local_prefix}}/lib/
-          EXTRAACTIVATE=$(find $VIRTUAL_ENV/bin/activate.d -type f -name "*.sh" -print0)
-          IFS="\0"
-          for f in "$EXTRAACTIVATE"; do
+          for f in "$(find $VIRTUAL_ENV/bin/activate.d -type f -name '*.sh' -print -quit)"; do
             if [ ! -z "$f" ]; then
                 source $f
             fi
