@@ -57,11 +57,11 @@ D=$(date +%Y%m%d_%H%M%S)
 if [ -e "hosts.{{conf_name}}" ]; then
     #LaMachine v2.0.0
     ansible-playbook -i "hosts.{{conf_name}}" "install-{{conf_name}}.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
-    rc=$?
+    rc=${PIPESTATUS[0]}
 else
     #LaMachine v2.1.0+
     ansible-playbook -i "hosts.ini" "install.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
-    rc=$?
+    rc=${PIPESTATUS[0]}
 fi
 echo "======================================================================================"
 if [ $rc -eq 0 ]; then
