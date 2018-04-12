@@ -3,19 +3,12 @@
   block:
     - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest version from github (development)"
       block:
-        - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Check if repository exists"
-          stat:
-            path: "{{ source_path }}/{{ package.github_repo }}"
-          register: repo_path
-        - name: "{{package.github_repo}} - Git clone"
-          shell: "git clone https://github.com/{{package.github_user}}/{{package.github_repo}}"
-          args:
-            chdir: "{{ source_path }}"
-          when: not repo_path.stat.exists
-        - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Checkout latest master version of (development)"
-          shell: "git checkout master && git pull"
-          args:
-            chdir: "{{ source_path }}/{{package.github_repo}}"
+        - name: "{{package.github_repo}} - Git clone/pull latest master"
+          git:
+            repo: "https://github.com/{{package.github_user}}/{{package.github_repo}}"
+            dest: "{{ source_path }}/{{ package.github_repo }}"
+            version: master
+            update: yes
         - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Installing python package"
           become: "{{lm_become}}"
           become_user: root
