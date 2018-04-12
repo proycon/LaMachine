@@ -683,11 +683,11 @@ for package in ${NEED[@]}; do
                 * ) echo "Please answer yes or no.";;
             esac
         done
-        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-        brew tap caskroom/cask
+        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" || fatalerror "Homebrew installation failed!"
+        brew tap caskroom/cask || fatalerror "Failed to install brew-cask, ran: brew tap caskroom/cask"
     elif [ "$package" = "brew-cask" ]; then
         echo "Installing brew-cask"
-        brew tap caskroom/cask
+        brew tap caskroom/cask || fatalerror "Failed to install brew-cask, ran: brew tap caskroom/cask"
     elif [ "$package" = "git" ]; then
         if [ "$OS" = "debian" ]; then
             cmd="sudo apt-get $NONINTERACTIVEFLAGS install git-core"
