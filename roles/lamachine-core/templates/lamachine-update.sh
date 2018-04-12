@@ -73,6 +73,6 @@ else
         echo "   and may be necessary in certain circumstances."
         echo " - Retry the update, possibly tweaking configuration and installation options (lamachine-update --edit)"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
-        echo "   The log file has been written to $(pwd)/lamachine-{{conf_name}}-$d.log (include it with any bug report)"
+        echo "   The log file has been written to $(pwd)/lamachine-{{conf_name}}-$D.log (include it with any bug report)"
 fi
 exit $rc

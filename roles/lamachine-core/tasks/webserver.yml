@@ -36,45 +36,6 @@
               state: latest
             when: (ansible_distribution|lower == "archlinux")
 
-          - name: Adding webserver start script (debian)
-            become: true
-            become_user: root
-            copy:
-              dest: "{{global_prefix}}/bin/lamachine-start-webserver"
-              content: |
-                 #!/bin/bash
-                 sudo service nginx restart
-                 sudo service uwsgi-emperor restart
-                 if [ "$1" = "-f" ]; then
-                    echo "Servers running, waiting indefinitely..."
-                    sleep infinity
-                 fi
-              owner: "{{unix_user}}"
-              mode: u+rwx,a+rx
-            when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
-
-          - name: Adding webserver start script (non-debian, systemd)
-            become: true
-            become_user: root
-            copy:
-              dest: "{{global_prefix}}/bin/lamachine-start-webserver"
-              content: |
-                 #!/bin/bash
-                 killall -w uwsgi
-                 sudo systemctl restart nginx #assume systemd
-                 sudo uwsgi --ini {{lm_prefix}}/etc/uwsgi-emperor/emperor.ini --die-on-term &
-              owner: "{{unix_user}}"
-              mode: u+rwx,a+rx
-            when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
-
-          - name: Install webserver configuration
-            become: true
-            become_user: root
-            template:
-              src: nginx.conf
-              dest: /etc/nginx/nginx.conf
-              force: yes
-              backup: yes
 
       - name: Installing uwsgi globally (Debian/Ubuntu)
         become: true
@@ -129,8 +90,6 @@
           groups: "{{web_group}}"
           append: yes
 
-
-
       - name: Create webserver writable directories (global)
         become: "{{lm_become}}"
         become_user: root
@@ -172,6 +131,25 @@
 
   - when: locality=="local"
     block:
+      - name: "Finding nginx"
+        shell: which nginx
+        register: nginx
+        failed_when: nginx.rc == 127
+
+      - when: not nginx.rc != 0 and ansible_distribution|lower != "macosx"
+        block:
+          - name: Obtaining local nginx webserver from source
+            hg:
+              repo: https://hg.nginx.org/nginx
+              dest: "{{source_path}}/nginx"
+              force: "yes"
+
+          - name: "Compiling and installing local nginx webserver"
+            command: "auto/configure --prefix={{lm_prefix}} && make && make install"
+            args:
+                chdir: "{{ source_path }}/nginx"
+            environment: "{{default_environment}}"
+
       - name: Create webserver writable directories (local)
         file:
             path: "{{ lm_prefix }}/{{item}}"
@@ -194,25 +172,36 @@
           state: latest
           executable: "{{lm_prefix}}/bin/pip"
 
-      - name: Install webserver configuration (local)
-        template:
-          src: nginx.conf
-          dest: "{{lm_prefix}}/etc/nginx/nginx.conf"
-          force: yes
-          backup: yes
-        when: webservertype == "nginx"
+  - name: Install webserver configuration
+    become: "{{lm_become}}"
+    become_user: root
+    template:
+      src: nginx.conf
+      dest: "{{lm_prefix}}/etc/nginx/nginx.conf"
+      force: yes
+      owner: "{{unix_user}}"
+      group: "{{unix_group}}"
+    when: webservertype == "nginx"
 
-      - name: Adding webserver start script (local)
-        copy:
-          dest: "{{lm_prefix}}/bin/lamachine-start-webserver"
-          content: |
-             #!/bin/bash
-             killall -w nginx
-             killall -w uwsgi
-             nginx -c {{lm_prefix}}/etc/nginx -p {{lm_prefix}}/etc/nginx &
-             uwsgi --ini {{lm_prefix}}/etc/uwsgi-emperor/emperor.ini --die-on-term &
-          owner: "{{unix_user}}"
-          mode: u+rwx,a+rx
+  - name: Adding webserver start script
+    become: "{{lm_become}}"
+    become_user: root
+    template:
+      src: lamachine-start-webserver.sh
+      dest: "{{lm_prefix}}/bin/lamachine-start-webserver"
+      owner: "{{unix_user}}"
+      group: "{{unix_group}}"
+      mode: u+rwx,g+rwx,o-rwx
+
+  - name: Adding webserver stop script
+    become: "{{lm_become}}"
+    become_user: root
+    template:
+      src: lamachine-stop-webserver.sh
+      dest: "{{lm_prefix}}/bin/lamachine-stop-webserver"
+      owner: "{{unix_user}}"
+      group: "{{unix_group}}"
+      mode: u+rwx,g+rwx,o-rwx
 
   - name: Install uwsgi-emperor configuration (non-debian)
     template:

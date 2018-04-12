@@ -20,7 +20,7 @@ boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
 echo "${bold}=====================================================================${normal}"
-echo "           ,              ${bold}LaMachine v2.1.1${normal} - NLP Software distribution"
+echo "           ,              ${bold}LaMachine v2.1.2${normal} - NLP Software distribution"
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
 echo "            /| |\         Centre of Language and Speech Technology"
@@ -107,6 +107,17 @@ fi
 if [ ! -z "$CONDA_PREFIX" ]; then
     fatalerror "Inception error: Do not run the LaMachine bootstrap when you are inside an Anaconda environment (run 'source deactivate' first)"
 fi
+
+if which python; then
+    echo "Checking sanity of your Python installation..."
+    python -c "from __future__ import print_function; import sys; print(sys.version)" | grep -i anaconda
+    if [ $? -eq 0 ]; then
+        fatalerror "Conflict error: The default Python on this system is managed by Anaconda, this is incompatible with LaMachine. Ensure the Python found in your \$PATH corresponds to a regular version as supplied with your OS, editing the order of your \$PATH in ~/.bashrc or ~/.bash_profile should be sufficient to solve this without completely uninstalling anaconda."
+    fi
+else
+    fatalerror "No Python found! However, python should be available by default on all supported platforms; please install it yourself through your package manager (and ensure it is in your \$PATH)"
+fi
+echo ""
 
 ####################################################
 #               Platform Detection
@@ -357,8 +368,8 @@ if [ -z "$FLAVOUR" ]; then
         echo "  1) in a local user environment"
         echo "       installs as much as possible in a separate directory"
         echo "       for a particular user; can exists alongside existing"
-        echo "       installations"
-        echo "       (uses conda or virtualenv)"
+        echo "       installations."
+        echo "       (uses virtualenv)"
         if [ $WINDOWS -eq 0 ]; then
         echo "  2) in a Virtual Machine"
         echo "       complete separation from the host OS"
@@ -488,9 +499,9 @@ fi
 
 if [ -z "$BRANCH" ]; then
     if [[ "$VERSION" == "development" ]]; then
-        BRANCH="master"
+        BRANCH="develop"
     else
-        BRANCH="master"
+        BRANCH="develop"
     fi
 fi
 if [ -z "$GITREPO" ]; then
@@ -683,11 +694,11 @@ for package in ${NEED[@]}; do
                 * ) echo "Please answer yes or no.";;
             esac
         done
-        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-        brew tap caskroom/cask
+        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" || fatalerror "Homebrew installation failed!"
+        brew tap caskroom/cask || fatalerror "Failed to install brew-cask, ran: brew tap caskroom/cask"
     elif [ "$package" = "brew-cask" ]; then
         echo "Installing brew-cask"
-        brew tap caskroom/cask
+        brew tap caskroom/cask || fatalerror "Failed to install brew-cask, ran: brew tap caskroom/cask"
     elif [ "$package" = "git" ]; then
         if [ "$OS" = "debian" ]; then
             cmd="sudo apt-get $NONINTERACTIVEFLAGS install git-core"
@@ -1010,7 +1021,7 @@ echo "http_port: 80 #webserver port (for VM or docker)
 mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
 services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all possible services from the software categories you install will be provided. You can remove this and list specific services you want to enable. This is especially needed in case of a LaMachine installation that intends to only provide a single service.
 " >> $STAGEDCONFIG
-    if [[ $FLAVOUR == "local" ]]; then
+    if [[ $FLAVOUR == "local" ]] || [[ "$OS" == "mac" ]]; then
         echo "web_user: \"$USERNAME\"" >> $STAGEDCONFIG
         echo "web_group: \"$GROUP\"" >> $STAGEDCONFIG
     else
