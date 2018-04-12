@@ -3,11 +3,11 @@
   block:
     - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest version from github (development)"
       block:
-        - name: "{{package.github_repo}} - Git clone/pull latest master"
+        - name: "{{package.github_repo}} - Git clone/pull latest {{ package.git_branch }}"
           git:
             repo: "https://github.com/{{package.github_user}}/{{package.github_repo}}"
             dest: "{{ source_path }}/{{ package.github_repo }}"
-            version: master
+            version: "{{ package.git_branch }}"
             update: yes
         - name: "{{package.github_repo}} - Installing python package"
           become: "{{lm_become}}"
