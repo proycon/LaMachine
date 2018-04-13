@@ -32,6 +32,10 @@ properties = { #first order properties (including collections, i.e. properties t
     "doap:description": "A brief description of what the software does",
     "doap:homepage": "The homepage of the software",
     "doap:developer": "The author of the software",
+    "doap:maintainer": "The maintainer of the software",
+    "doap:repository": "Source code repository",
+    "doap:vendor": "Vendor/publisher",
+    "doap:platform": "Platform (non-OS specific), e.g. Python, Java, Firefox, ECMA CLR",
     "dcterms:license": "The software license",
     "lamachine:dependency": "A dependency",
     "lamachine:interface": "An interface",
@@ -45,6 +49,8 @@ properties = { #first order properties (including collections, i.e. properties t
     "xhv:last": "Latest available version of the software (may be newer than the one actually installed! cf. doap:revision)",
     "lamachine:destination": "Location where the software is installed on disk", #(we can also tie this directly to an interface, which is preferred!)
     "schema:operatingSystem": "The operating system on which this software works",
+    "admssw:status": "The development status of the software (e.g. alpha, beta, production, prerelease)",
+    "admssw:programmingLanguage": "Programming language in which the software is written",
 }
 
 alias = { #just for convenience so common fields work out of the box
@@ -68,13 +74,14 @@ collections = {
     "themes": "rad:theme",
     "keywords": "rad:keyword",
     "operatingSystems": "schema:operatingSystem",
+    "programmingLanguages": "admssw:programmingLanguage",
 }
 
 incollection = { v:k for k,v in collections.items() }
 
 dep_properties = {
     "doap:name": "The name of the dependency",
-    "lamachine:externalDependency": "Boolean, external dependencies are dependencies in a different software ecosystem. Internal dependencies are in the same ecosystem (e.g. Python/PyPI, Java/Maven, Perl/CPAN)",
+    "lamachine:externalPlatform": "Boolean, external dependencies are dependencies in a different software ecosystem. Internal dependencies are in the same ecosystem (e.g. Python/PyPI, Java/Maven, Perl/CPAN)",
     "lamachine:minimumVersion": "Minimum version",
     "lamachine:maximumVersion": "Maximum version",
 }
@@ -94,8 +101,9 @@ pip_mapping = { #we only need to cover the ones not already covered by common al
 pip_classifier_mapping = { #we only need to cover the ones not already covered by common aliasses
     "Operating System": "schema:operatingSystem",
     "Development Status": "admssw:status",
-    "Indented Audience": "admssw:intendedAudience",
+    "Intended Audience": "admssw:intendedAudience",
     "Programming Language": "admssw:programmingLanguage",
+    "License": "dcterms:license"
 }
 
 
@@ -163,7 +171,11 @@ class SoftwareMetadata:
             self.data[key] = value
 
     def __setitem__(self, key, value):
-        self.add(key, value)
+        self.data[key] = value
+
+    def __contains__(self, key):
+        key = self.resolvekey(key)
+        return key in self.data
 
     def __getitem__(self, key):
         key = self.resolvekey(key)
@@ -172,6 +184,7 @@ class SoftwareMetadata:
             return self.data[collection]
         else:
             return self.data[key]
+
 
     def __items__(self):
         for x in self.data.items():
@@ -205,7 +218,7 @@ class SoftwareMetadata:
         return yaml.dump(self.dequalify(), default_flow_style=False)
 
     def json(self):
-        return yaml.dumps(self.dequalify(), ensure_ascii=False, indent=4)
+        return json.dumps(self.dequalify(), ensure_ascii=False, indent=4)
 
 
 
@@ -218,11 +231,13 @@ def parsepip(lines):
         elif line.strip() == "Entry-points:":
             section = "interfaces"
         elif section == "classifiers":
-            fields = line.strip().split('::')
-            if fields[0].lower() in alias:
-                data.add(fields[0], " ".join(fields[1:]))
-            elif fields[0] in pip_classifier_mapping:
-                data.add(pip_classifier_mapping[fields[0]], " ".join(fields[1:]))
+            fields = [ x.strip() for x in line.strip().split('::') ]
+            if fields[0] in pip_classifier_mapping:
+                data.add(pip_classifier_mapping[fields[0]], " :: ".join(fields[1:]))
+            elif fields[0].lower() in alias:
+                data.add(fields[0], " :: ".join(fields[1:]))
+            else:
+                print("WARNING: Classifier "  + fields[0] + " has no translation",file=sys.stderr)
         elif section == "interfaces":
             if line.strip() == "[console_scripts]":
                 pass
@@ -231,11 +246,17 @@ def parsepip(lines):
                 data.add('lamachine:interface',{'lamachine:entrypoint': fields[0].strip(), 'admssw:userInterfaceType': 'cli'})
         else:
             key, value = line.split(':',1)
-            #if key == "Author-email":
-            #    data['developer'] += " <" + value + ">"
-            if key == "Requires":
+            if key == "Author-email":
+                if "doap:developer" in data:
+                    data["doap:developer"][0] += " <" + value.strip() + ">"
+            elif key == "Requires":
                 for dependency in value.split(','):
-                    data.add('lamachine:dependency',{'doap:name': dependency.strip(), 'lamachine:externalDependency': 'false'})
+                    if dependency.strip():
+                        data.add('lamachine:dependency',{'doap:name': dependency.strip(), 'lamachine:externalPlatform': False})
+            elif key == "Requires-External":
+                for dependency in value.split(','):
+                    if dependency.strip():
+                        data.add('lamachine:dependency',{'doap:name': dependency.strip(), 'lamachine:externalPlatform': True})
             elif key in pip_mapping:
                 data.add(pip_mapping[key], value)
             else:
@@ -243,6 +264,8 @@ def parsepip(lines):
                     data.add(key, value)
                 except KeyError:
                     print("WARNING: No translation for pip key " + key,file=sys.stderr)
+
+    data.add('platform', 'Python')
 
     return data
 
@@ -260,6 +283,7 @@ def iterargs(args):
 def main():
     parser = argparse.ArgumentParser(description="LaMachine Metadater")
     parser.add_argument('--pip', type=str,help="Query through pip, supply the package name", action='store',required=False)
+    parser.add_argument('--output', type=str,help="Metadata output type: yaml (default), json", action='store',required=False, default="yaml")
     for key, help in properties.items():
         shortkey = key.split(':')[1]
         if key in incollection:
@@ -283,7 +307,10 @@ def main():
         data = SoftwareMetadata()
 
     data.update(args)
-    print(data.yaml())
+    if args.output == "yaml":
+        print(data.yaml())
+    elif args.output == "json":
+        print(data.json())
 
 if __name__ == '__main__':
     main()
