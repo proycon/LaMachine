@@ -241,7 +241,7 @@
           if [[ -e "{{lamachine_path}}/bootstrap.sh" ]] && [[ ! -e "{{source_path}}/LaMachine/bootstrap.sh" ]]; then
             if [[ "{{source_path}}" != "{{lamachine_path}}/"* ]]; then
               echo "Copy {{lamachine_path}} -> {{source_path}}/LaMachine">&2
-              cp -Rpd "{{lamachine_path}}" "{{source_path}}/LaMachine"
+              cp -Rp "{{lamachine_path}}" "{{source_path}}/LaMachine"
               exit $?
             else
               #source path is nested inside lamachine_path (usually bootstrap.sh was run inside a LaMachine git clone)
