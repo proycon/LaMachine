@@ -1,13 +1,13 @@
 ---
-    - name: "{% if 'name' in metadata %}{{metadata.name}}{% elif 'pip' in package and package.pip %}{{package.pip}}{% else %}NO NAME!{% endif %} - Register in lamachine-list"
+    - name: "{% if 'name' in metadata %}{{metadata.name}}{% elif 'pip' in package and package.pip %}{{package.pip}}{% else %}NO NAME!{% endif %} - Outputting temporary metadata"
+      copy:
+        content: '{% if "metadata" in package %}{{ metadata_defaults|combine(metadata)|combine(package.metadata)|to_nice_yaml }}{% else %}{{ metadata_defaults|combine(metadata)|to_nice_yaml }}{% endif %}'
+        dest: "{{lm_prefix}}/var/tmpmetadata.yml"
+        force: yes
+
+    - name: "{% if 'name' in metadata %}{{metadata.name}}{% elif 'pip' in package and package.pip %}{{package.pip}}{% else %}NO NAME!{% endif %} - Registering metadata (lamachine-list)"
       shell: |
         #!/bin/bash
-        {{lm_prefix}}/bin/metadater.py {% if "pip" in package and package.pip %}--pip {{package.pip}}{% endif %} --yaml >> {{lm_prefix}}/var/lamachine-list.yml << EOF
-        {% if "metadata" in package %}
-        {{ metadata_defaults|combine(metadata)|combine(package.metadata)|to_nice_yaml }}
-        {% else %}
-        {{ metadata_defaults|combine(metadata)|to_nice_yaml }}
-        {% endif %}
-        EOF
+        cat {{lm_prefix}}/var/tmpmetadata.yml | {{lm_prefix}}/bin/metadater.py {% if "pip" in package and package.pip %}--pip {{package.pip}}{% endif %} --yaml >> {{lm_prefix}}/var/lamachine-list.yml
       args:
         executable: /bin/bash
