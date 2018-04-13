@@ -3,7 +3,7 @@
       shell: |
         #!/bin/bash
         {{lm_prefix}}/bin/metadater.py {% if "pip" in package and package.pip %}--pip {{package.pip}}{% endif %} --yaml >> {{lm_prefix}}/var/lamachine-list.yml << EOF
-        {% "metadata" in package %}
+        {% if "metadata" in package %}
         {{ metadata_defaults|combine(metadata)|combine(package.metadata)|to_nice_yaml }}
         {% else %}
         {{ metadata_defaults|combine(metadata)|to_nice_yaml }}
