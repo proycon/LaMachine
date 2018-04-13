@@ -229,12 +229,6 @@
         force: yes
         backup: yes
 
-    - name: Copy metadata registration script
-      become: "{{lm_become}}"
-      become_user: root
-      copy:
-        src: "{{lm_path}}/helpers/metadater.py"
-        dest: "{{ lm_prefix}}/bin/metadater.py"
 
     - name: Check existence of LaMachine source dir (migration v2.0.0 -> v2.0.1)
       stat:
@@ -265,6 +259,13 @@
       when: (controller is defined and controller == "internal") or lamachine_v2_0_0_source.stat.exists
       failed_when: controllercopy.rc > 0 and controllercopy.rc != 123
       changed_when: controllercopy.rc > 0 and controllercopy.rc != 123
+
+    - name: Copy metadata registration script
+      become: "{{lm_become}}"
+      become_user: root
+      copy:
+        src: "{{lm_path}}/helpers/metadater.py"
+        dest: "{{ lm_prefix}}/bin/metadater.py"
 
     - name: LaMachine source dir migration (v2.0.0 -> v2.0.1)
       become: "{{lm_become}}"
