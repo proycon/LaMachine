@@ -50,7 +50,7 @@
              pip: "{% if 'pip' in package %}{{package.pip}}{% endif %}"
           metadata:
              name: "{% if 'pip' in package %}{{package.pip}}{% else %}{{ package.github_repo }}{% endif %}"
-             repository: "{% if 'github_repo' in package %}https://github.com/{{package.github_user}}/{{package.github_repo}}"
+             repository: "{% if 'github_repo' in package %}https://github.com/{{package.github_user}}/{{package.github_repo}}{% endif %}"
       when: do_registration
 
 
