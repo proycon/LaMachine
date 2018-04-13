@@ -1,2 +1,3 @@
 ---
 allow_stash: true
+do_registration: true
