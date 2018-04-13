@@ -8,6 +8,6 @@
     - name: "{% if 'name' in metadata %}{{metadata.name}}{% elif 'pip' in package and package.pip %}{{package.pip}}{% else %}NO NAME!{% endif %} - Registering metadata (lamachine-list)"
       shell: |
         #!/bin/bash
-        cat {{lm_prefix}}/var/tmpmetadata.yml | {{lm_prefix}}/bin/metadater.py {% if "pip" in package and package.pip %}--pip {{package.pip}}{% endif %} --yaml >> {{lm_prefix}}/var/lamachine-list.yml
+        cat {{lm_prefix}}/var/tmpmetadata.yml | {{lm_prefix}}/bin/python {{lm_prefix}}/bin/metadater.py {% if "pip" in package and package.pip %}--pip {{package.pip}}{% endif %} --yaml >> {{lm_prefix}}/var/lamachine-list.yml
       args:
         executable: /bin/bash
