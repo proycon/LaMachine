@@ -62,12 +62,13 @@
           include_role:
              name: lamachine-register
           vars:
-             fallback:
+             metadata_defaults:
                name: "{{package.repo}}"
                author: "{% if 'user' in package %}{{package.user}}{% endif %}"
                homepage: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+               repository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
                version: "{{ latest_tag.stdout }}"
-          when: '"register" in package and package.register'
+          when: "do_registration is defined and do_registration"
 
     - when: version == "development" or (version == "stable" and ("noreleases" in package and package.noreleases))
       block:
@@ -109,11 +110,13 @@
           include_role:
              name: lamachine-register
           vars:
-             fallback:
+             metadata_defaults:
                name: "{{package.repo}}"
                author: "{% if 'user' in package %}{{package.user}}{% endif %}"
                homepage: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+               repository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
                version: "{{ latest_commit.stdout }}"
+          when: "do_registration is defined and do_registration"
 
     - name: "{{package.repo}} - Checkout custom version: {{customversion[package.repo]}}"
       shell: "git checkout {{customversion[package.repo]}} && git pull"

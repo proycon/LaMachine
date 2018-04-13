@@ -6,6 +6,7 @@
         name: lamachine-git
       vars:
         package: "{{package}}"
+        do_registration: false
 
     - name: "{{package.repo}} - Checking whether recompilation is needed"
       shell: |
@@ -49,31 +50,27 @@
         chdir: "{{ source_path }}/{{package.repo}}"
       when: autoconf_git_updated.stdout|int == 1 and make_install_result is defined and make_install_result.rc == 0
 
-    - name: "{{package.repo}} - Register in lamachine-list"
+    - name: "{{package.repo}} - Obtaining version number for registration"
       shell: |
-        #!/bin/bash
-        echo '{{package.repo}}:' >> {{lm_prefix}}/var/lamachine-list.yml
-        echo     '    Name: {{package.repo}}' >> {{lm_prefix}}/var/lamachine-list.yml
-        echo -en  '    Version:    ' >> {{lm_prefix}}/var/lamachine-list.yml
         git describe --tags > .installed-version.lamachine
         if [ $? -eq 0 ]; then
           cat .installed-version.lamachine >> {{lm_prefix}}/var/lamachine-list.yml
         else
           cat .installed-commit.lamachine >> {{lm_prefix}}/var/lamachine-list.yml
         fi
-        {% if "license" in package %}
-        echo     '    License: {{package.license}}' >> {{lm_prefix}}/var/lamachine-list.yml
-        {% endif %}
-        {% if "summary" in package %}
-        echo     '    Summary: {{package.summary}}' >> {{lm_prefix}}/var/lamachine-list.yml
-        {% endif %}
-        {% if "author" in package %}
-        echo     '    Author: {{package.author}}' >> {{lm_prefix}}/var/lamachine-list.yml
-        {% else %}
-        echo     '    Author: {{package.user}}' >> {{lm_prefix}}/var/lamachine-list.yml
-        {% endif %}
-        echo     "    Home-page: {% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}" >> {{lm_prefix}}/var/lamachine-list.yml
-        echo >> {{lm_prefix}}/var/lamachine-list.yml
       args:
         executable: "/bin/bash"
         chdir: "{{ source_path }}/{{package.repo}}"
+      register: register_version
+
+
+    - name: "{{package.repo}} - Register in lamachine-list"
+      include_role:
+         name: lamachine-register
+      vars:
+         metadata_defaults:
+           name: "{{package.repo}}"
+           author: "{% if 'user' in package %}{{package.user}}{% endif %}"
+           homepage: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+           repository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+           version: "{{ register_version.stdout }}"

@@ -50,7 +50,7 @@
     include_role:
        name: lamachine-register
     vars:
-       package:
+       metadata:
          name: Kaldi
          author: (multiple)
          homepage: "http://kaldi-asr.org/"

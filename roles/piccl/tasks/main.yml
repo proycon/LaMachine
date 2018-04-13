@@ -31,7 +31,8 @@
         package:
           repo: ticcltools
           user: LanguageMachines
-          author: Martin Reynaert, Ko van der Sloot
+        metadata:
+          authors: [ Martin Reynaert, Ko van der Sloot ]
           homepage: "https://github.com/LanguageMachines/ticcltools"
           summary: "TicclTools is a collection of programs to process datafiles, together they constitute the bulk of TICCL: Text Induced Corpus-Cleanup. This software is invoked by the pipeline system PICCL"
           license: GPL
@@ -52,10 +53,10 @@
       include_role:
          name: lamachine-register
       vars:
-         package:
+         metadata:
            name: Nextflow
-           author: Paolo Di Tommaso, Maria Chatzou, Evan W Floden, Pablo Prieto Barja, Emilio Palumbo, Cedric Notredame
-           homepage: "http://nextflow.io"
+           authors: [ Paolo Di Tommaso, Maria Chatzou, Evan W Floden, Pablo Prieto Barja, Emilio Palumbo, Cedric Notredame ]
+           homepage: "https://www.nextflow.io"
            license: GPL
 
     - name: Nextflow test
@@ -86,8 +87,8 @@
         package:
           user: LanguageMachines
           repo: PICCL
-          register: true
-          author: Martin Reynaert, Maarten van Gompel, Ko van der Sloot
+        metadata:
+          authors: [ Martin Reynaert, Maarten van Gompel, Ko van der Sloot ]
           license: GPL
           summary: "A set of workflows for corpus building through OCR, post-correction, modernization of historic language and Natural Language Processing"
 
@@ -130,9 +131,10 @@
             package:
               github_user: "LanguageMachines"
               github_repo: "PICCL"
-              pip: "" #always installed from source, will reuse same sourcedir
               setupdir: "webservice" #setup.py is in this subdir
               git_branch: "{{ current_piccl_branch_or_tag.stdout }}"
+            metadata:
+              name: piccl_webservice
 
         - name: "Install webserver configuration for PICCL"
           become: "{{lm_become}}"

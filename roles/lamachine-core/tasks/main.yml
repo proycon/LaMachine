@@ -229,6 +229,13 @@
         force: yes
         backup: yes
 
+    - name: Copy metadata registration script
+      become: "{{lm_become}}"
+      become_user: root
+      copy:
+        src: "{{lm_path}}/helpers/metadater.py"
+        dest: "{{ lm_prefix}}/bin/metadater.py"
+
     - name: Check existence of LaMachine source dir (migration v2.0.0 -> v2.0.1)
       stat:
          path: "{{ lm_prefix }}/LaMachine"
