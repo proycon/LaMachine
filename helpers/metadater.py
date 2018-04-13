@@ -5,12 +5,17 @@
 #Attempting to reuse as much as possible from ADMS.SW and DOAP:
 #https://joinup.ec.europa.eu/svn/adms_foss/adms_sw_v1.00/adms_sw_v1.00.htm
 
+# Maarten van Gompel
+# CLST, Radboud University Nijmegen
+# GPL v3
+
 
 import sys
 import argparse
 import subprocess
 import yaml
 import json
+from itertools import chain
 from collections import OrderedDict
 
 def represent_ordereddict(dumper, data):
@@ -67,17 +72,19 @@ alias = { #just for convenience so common fields work out of the box
 }
 
 collections = {
-    "developers": "doap:developer",
+    "authors": "doap:developer",
+    "developers": "doap:developer", #overrides the previous one which is just an alias
     "dependencies": "lamachine:dependency",
     "interfaces": "lamachine:interface",
     "audiences": "admssw:intendedAudience",
-    "themes": "rad:theme",
+    "topics": "rad:theme",
+    "themes": "rad:theme", #overrides the previous one which is just an alias
     "keywords": "rad:keyword",
     "operatingSystems": "schema:operatingSystem",
     "programmingLanguages": "admssw:programmingLanguage",
 }
-
 incollection = { v:k for k,v in collections.items() }
+
 
 dep_properties = {
     "doap:name": "The name of the dependency",
@@ -107,6 +114,18 @@ pip_classifier_mapping = { #we only need to cover the ones not already covered b
 }
 
 
+def qualify(key):
+    if ':' in key:
+        return key #already qualified
+    for qkey in chain(properties, interface_properties, dep_properties):
+        if qkey.split(':')[1].lower() == key.lower():
+            return qkey
+    for shortkey, qkey in alias.items():
+        if key.lower() == shortkey.lower():
+            return qkey
+    raise KeyError("Unable to qualify key: " + key)
+
+
 class SoftwareMetadata:
     def __init__(self, **kwargs):
         self.data = OrderedDict()
@@ -119,23 +138,21 @@ class SoftwareMetadata:
                     self.add(key, item)
             else:
                 self.add(key, value)
+        for collection, key in collections.items():
+            if collection in d:
+                for item in d[collection]:
+                    if isinstance(item, dict):
+                        self.add(qualify(key), { qualify(k):v for k,v in item.items() })
+                    else:
+                        self.add(qualify(key), item)
 
     def resolvekey(self, key):
-        if key.lower() in alias:
-            key = alias[key.lower()]
         if ':' in key:
             #key is fully qualified
             if key not in properties:
                 raise KeyError("No such key: ", key)
         else:
-            found = False
-            for qkey in properties:
-                if qkey.lower().split(':')[1] == key.lower():
-                    found = True
-                    key = qkey
-                    break
-            if not found:
-                raise KeyError("No such key: ", key)
+            key = qualify(key)
         return key
 
     def incollection(self, key):
@@ -215,15 +232,14 @@ class SoftwareMetadata:
         return out
 
     def yaml(self):
-        return yaml.dump(self.dequalify(), default_flow_style=False)
+        return yaml.dump({ self['doap:name'].lower().replace(" ","_"): self.dequalify()}, default_flow_style=False)
 
     def json(self):
-        return json.dumps(self.dequalify(), ensure_ascii=False, indent=4)
+        return json.dumps({ self['doap:name'].lower().replace(" ","_"): self.dequalify()}, ensure_ascii=False, indent=4)
 
 
 
-def parsepip(lines):
-    data = SoftwareMetadata()
+def parsepip(data, lines):
     section = None
     for line in lines:
         if line.strip() == "Classifiers:":
@@ -267,7 +283,6 @@ def parsepip(lines):
 
     data.add('platform', 'Python')
 
-    return data
 
 def iterargs(args):
     if isinstance(args, argparse.Namespace):
@@ -283,6 +298,7 @@ def iterargs(args):
 def main():
     parser = argparse.ArgumentParser(description="LaMachine Metadater")
     parser.add_argument('--pip', type=str,help="Query through pip, supply the package name", action='store',required=False)
+    parser.add_argument('--yaml', help="Read metadata from standard input (YAML format)", action='store_true',required=False)
     parser.add_argument('--output', type=str,help="Metadata output type: yaml (default), json", action='store',required=False, default="yaml")
     for key, help in properties.items():
         shortkey = key.split(':')[1]
@@ -298,19 +314,21 @@ def main():
 
     args = parser.parse_args()
 
+    data = SoftwareMetadata()
+    if args.yaml:
+        data.update(yaml.load(sys.stdin))
     if args.pip:
         process = subprocess.Popen('pip show -v "' + args.pip +  '"', stdout=subprocess.PIPE, shell=True)
         out, _ = process.communicate()
         out = str(out, 'utf-8')
-        data = parsepip(out.split("\n"))
-    else:
-        data = SoftwareMetadata()
+        parsepip(data, out.split("\n"))
 
     data.update(args)
-    if args.output == "yaml":
-        print(data.yaml())
-    elif args.output == "json":
-        print(data.json())
+    if 'doap:name' in data:
+        if args.output == "yaml":
+            print(data.yaml())
+        elif args.output == "json":
+            print(data.json())
 
 if __name__ == '__main__':
     main()
