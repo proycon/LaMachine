@@ -71,6 +71,7 @@ alias = { #just for convenience so common fields work out of the box
     "requires": "lamachine:dependency",
     "topic": "rad:theme", #used by pip
     "specification": "wdrs:describedby",
+    "interfacetype": "admssw:userInterfaceType"
 }
 
 collections = {
