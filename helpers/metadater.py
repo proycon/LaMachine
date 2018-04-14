@@ -261,7 +261,10 @@ def parsepip(data, lines):
                 fields = line.split('=')
                 data.add('lamachine:interface',{'lamachine:entrypoint': fields[0].strip(), 'admssw:userInterfaceType': 'cli'})
         else:
-            key, value = line.split(':',1)
+            try:
+                key, value = line.split(':',1)
+            except:
+                continue
             if key == "Author-email":
                 if "doap:developer" in data:
                     data["doap:developer"][0] += " <" + value.strip() + ">"
