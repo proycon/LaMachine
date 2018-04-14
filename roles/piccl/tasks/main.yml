@@ -135,6 +135,12 @@
               git_branch: "{{ current_piccl_branch_or_tag.stdout }}"
             metadata:
               name: piccl_webservice
+              interfaces:
+                  - entrypoint: "{{lm_base_url}}/piccl"
+                    interfacetype: rest
+                    specification: "{{lm_base_url}}/piccl/info"
+                  - entrypoint: "{{lm_base_url}}/piccl"
+                    interfacetype: wui
 
         - name: "Install webserver configuration for PICCL"
           become: "{{lm_become}}"

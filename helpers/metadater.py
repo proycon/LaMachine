@@ -56,6 +56,7 @@ properties = { #first order properties (including collections, i.e. properties t
     "schema:operatingSystem": "The operating system on which this software works",
     "admssw:status": "The development status of the software (e.g. alpha, beta, production, prerelease)",
     "admssw:programmingLanguage": "Programming language in which the software is written",
+    "wdrs:describedby": "Documentation/Specification",
 }
 
 alias = { #just for convenience so common fields work out of the box
@@ -69,6 +70,7 @@ alias = { #just for convenience so common fields work out of the box
     "mimetype": "admssw:supportsFormat",
     "requires": "lamachine:dependency",
     "topic": "rad:theme", #used by pip
+    "specification": "wdrs:describedby",
 }
 
 collections = {
@@ -82,6 +84,7 @@ collections = {
     "keywords": "rad:keyword",
     "operatingSystems": "schema:operatingSystem",
     "programmingLanguages": "admssw:programmingLanguage",
+    "documentation": "wdrs:describedby",
 }
 incollection = { v:k for k,v in collections.items() }
 
@@ -97,6 +100,7 @@ interface_properties = {
     "lamachine:entrypoint": "The name of the executable, module, or an URL (depending on interfaceType)",
     "admssw:userInterfaceType": "User Interface Type", #for now we simply predefine: api (some for of shared library), cli (command line tool),  tui (Text UI), gui (Graphical UI), wui (Web UI), rest (REST webservice), soap (SOAP webservice), xmlrpc (other XMLRPC webservice), ws (other webservice)
     "admssw:supportsFormat": "Supported data format", #ideally range is dcterms:FileFormat, we settle for plain mimetypes for now
+    "wdrs:describedby": "Documentation/Specification",
     "lamachine:destination": "Location where the software is installed on disk, may be more generic or differ from lamachine:entrypoint",
 }
 
