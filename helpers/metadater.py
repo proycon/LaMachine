@@ -99,7 +99,7 @@ dep_properties = {
 
 interface_properties = {
     "lamachine:entrypoint": "The name of the executable, module, or an URL (depending on interfaceType)",
-    "admssw:userInterfaceType": "User Interface Type", #for now we simply predefine: api (some for of shared library), cli (command line tool),  tui (Text UI), gui (Graphical UI), wui (Web UI), rest (REST webservice), soap (SOAP webservice), xmlrpc (other XMLRPC webservice), ws (other webservice)
+    "admssw:userInterfaceType": "User Interface Type, for now we simply predefine: api (some for of shared library), cli (command line tool),  tui (Text UI), gui (Graphical UI), wui (Web UI), rest (REST webservice), soap (SOAP webservice), xmlrpc (other XMLRPC webservice), ws (other webservice)"
     "admssw:supportsFormat": "Supported data format", #ideally range is dcterms:FileFormat, we settle for plain mimetypes for now
     "wdrs:describedby": "Documentation/Specification",
     "lamachine:destination": "Location where the software is installed on disk, may be more generic or differ from lamachine:entrypoint",
@@ -303,6 +303,11 @@ def iterargs(args):
         if shortkey in args and args[shortkey]:
             yield key, args[shortkey]
 
+def propertylabel(key):
+    key = qualify(key)
+    for k, label in itertools.chain(properties.items(), dep_properties.items(), interface_properties.items()):
+        if k == key: return label
+
 def main():
     parser = argparse.ArgumentParser(description="LaMachine Metadater")
     parser.add_argument('--pip', type=str,help="Query through pip, supply the package name", action='store',required=False)
@@ -316,9 +321,9 @@ def main():
             parser.add_argument('--' + shortkey, type=str,help=help + " (" + key +  ")", action='store',required=False)
     for shortkey, key in alias.items():
         if key in incollection:
-            parser.add_argument('--' + shortkey, type=str,nargs='*', help="Alias for --"+ key.split(':')[1] +": " + properties[key], action='store',required=False)
+            parser.add_argument('--' + shortkey, type=str,nargs='*', help="Alias for --"+ key.split(':')[1] +": " + label, action='store',required=False)
         else:
-            parser.add_argument('--' + shortkey, type=str,help="Alias for --"+ key.split(':')[1] +": " + properties[key], action='store',required=False)
+            parser.add_argument('--' + shortkey, type=str,help="Alias for --"+ key.split(':')[1] +": " + label, action='store',required=False)
 
     args = parser.parse_args()
 
