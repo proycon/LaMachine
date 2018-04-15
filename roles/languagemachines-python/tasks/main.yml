@@ -71,7 +71,7 @@
               metadata:
                   name: "{{item}}_webservice"
                   interfaces:
-                      - entrypoint: "{{lm_base_url}}/{{item})"
+                      - entrypoint: "{{lm_base_url}}/{{item}}"
                         interfacetype: rest
                         specification: "{{lm_base_url}}/{{item}}/info"
                       - entrypoint: "{{lm_base_url}}/{{item}}"
