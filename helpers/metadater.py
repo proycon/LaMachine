@@ -13,10 +13,10 @@
 import sys
 import argparse
 import subprocess
-import yaml
 import json
 from itertools import chain
 from collections import OrderedDict
+import yaml
 
 def represent_ordereddict(dumper, data):
     value = []
@@ -99,7 +99,7 @@ dep_properties = {
 
 interface_properties = {
     "lamachine:entrypoint": "The name of the executable, module, or an URL (depending on interfaceType)",
-    "admssw:userInterfaceType": "User Interface Type, for now we simply predefine: api (some for of shared library), cli (command line tool),  tui (Text UI), gui (Graphical UI), wui (Web UI), rest (REST webservice), soap (SOAP webservice), xmlrpc (other XMLRPC webservice), ws (other webservice)"
+    "admssw:userInterfaceType": "User Interface Type, for now we simply predefine: api (some for of shared library), cli (command line tool),  tui (Text UI), gui (Graphical UI), wui (Web UI), rest (REST webservice), soap (SOAP webservice), xmlrpc (other XMLRPC webservice), ws (other webservice)",
     "admssw:supportsFormat": "Supported data format", #ideally range is dcterms:FileFormat, we settle for plain mimetypes for now
     "wdrs:describedby": "Documentation/Specification",
     "lamachine:destination": "Location where the software is installed on disk, may be more generic or differ from lamachine:entrypoint",
@@ -163,8 +163,7 @@ class SoftwareMetadata:
     def incollection(self, key):
         if key in incollection:
             return incollection[key]
-        else:
-            return False
+        return False
 
     def add(self, key, value):
         key = self.resolvekey(key)
@@ -204,8 +203,7 @@ class SoftwareMetadata:
         collection = self.incollection(key)
         if collection:
             return self.data[collection]
-        else:
-            return self.data[key]
+        return self.data[key]
 
 
     def __items__(self):
@@ -305,25 +303,26 @@ def iterargs(args):
 
 def propertylabel(key):
     key = qualify(key)
-    for k, label in itertools.chain(properties.items(), dep_properties.items(), interface_properties.items()):
+    for k, label in chain(properties.items(), dep_properties.items(), interface_properties.items()):
         if k == key: return label
+    raise KeyError(key)
 
 def main():
     parser = argparse.ArgumentParser(description="LaMachine Metadater")
     parser.add_argument('--pip', type=str,help="Query through pip, supply the package name", action='store',required=False)
     parser.add_argument('--yaml', help="Read metadata from standard input (YAML format)", action='store_true',required=False)
     parser.add_argument('--output', type=str,help="Metadata output type: yaml (default), json", action='store',required=False, default="yaml")
-    for key, help in properties.items():
+    for key, hint in properties.items():
         shortkey = key.split(':')[1]
         if key in incollection:
-            parser.add_argument('--' + shortkey, type=str,nargs='*', help=help + " (" +  key + ")", action='store',required=False)
+            parser.add_argument('--' + shortkey, type=str,nargs='*', help=hint + " (" +  key + ")", action='store',required=False)
         else:
-            parser.add_argument('--' + shortkey, type=str,help=help + " (" + key +  ")", action='store',required=False)
+            parser.add_argument('--' + shortkey, type=str,help=hint + " (" + key +  ")", action='store',required=False)
     for shortkey, key in alias.items():
         if key in incollection:
-            parser.add_argument('--' + shortkey, type=str,nargs='*', help="Alias for --"+ key.split(':')[1] +": " + label, action='store',required=False)
+            parser.add_argument('--' + shortkey, type=str,nargs='*', help="Alias for --"+ key.split(':')[1] +": " + propertylabel(key), action='store',required=False)
         else:
-            parser.add_argument('--' + shortkey, type=str,help="Alias for --"+ key.split(':')[1] +": " + label, action='store',required=False)
+            parser.add_argument('--' + shortkey, type=str,help="Alias for --"+ key.split(':')[1] +": " + propertylabel(key), action='store',required=False)
 
     args = parser.parse_args()
 
