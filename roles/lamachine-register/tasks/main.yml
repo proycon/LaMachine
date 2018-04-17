@@ -11,7 +11,7 @@
         {% if 'pip' in package and package.pip %}
         {{lm_prefix}}/bin/pip show -v   | {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if codemeta %}json,{% endif %}json,pip {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json -
         {% else %}
-        {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if codemeta %}json,{% endif %}json {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.yml
+        {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if codemeta %}json,{% endif %}json {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json
         {% endif %}
       args:
         executable: /bin/bash
