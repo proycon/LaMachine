@@ -8,7 +8,7 @@
             repo: "https://github.com/{{package.github_user}}/{{package.github_repo}}"
             dest: "{{ source_path }}/{{ package.github_repo }}"
             version: "{% if 'git_branch' in package %}{{ package.git_branch }}{% else %}master{% endif %}"
-            reursive: yes
+            recursive: yes
             update: yes
         - name: "{{package.github_repo}} - Installing python package"
           become: "{{lm_become}}"
