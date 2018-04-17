@@ -11,7 +11,7 @@
       register: repo_path
 
     - name: "{{package.repo}} - Git clone"
-      shell: "git clone {% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+      shell: "git clone --recursive {% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
       args:
         chdir: "{{ source_path }}"
       when: not repo_path.stat.exists
