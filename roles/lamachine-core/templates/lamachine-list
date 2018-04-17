@@ -21,11 +21,14 @@ if yaml is not None:
 
     yaml.add_representer(OrderedDict, represent_ordereddict)
 
+def yaml_simplify(d):
+    return dict( (k, v) if not isinstance(v, dict) else (k, yaml_simplify(v)) for k, v in d.items() if k[0] != '@' )
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="LaMachine list")
     #parser.add_argument('--yaml', help="Read metadata from standard input (YAML format)", action='store_true',required=False)
-    parser.add_argument('-r', "--registry", type=str,help="Short output", action='store',required=False, default="{{lm_prefix}}/lamachine-register.json")
+    parser.add_argument('-r', "--registry", type=str,help="Short output", action='store',required=False, default="{{lm_prefix}}/var/lamachine-registry.json")
     parser.add_argument('-s', "--short", help="Short output", action='store_true',required=False)
     parser.add_argument("--json", help="Short output", action='store_true',required=False)
     parser.add_argument('software', nargs='*', help='Software packages to query (if not specified, will return all)')
@@ -36,12 +39,12 @@ if __name__ == "__main__":
     for identifier, data in sorted(registry.items()):
         if not args.software or data['identifier'] in args.software:
             if args.short:
-                print(data['identifier'] + "\t" + data['description'])
+                print(data['identifier'] + "\t" + data['name'] + "\t" + data['version'] + "\t" + data['description'])
             elif args.json:
                 jsonout[data['identifier']] = data
             else:
                 del registry[data['identifier']]['@context']
-                print(yaml.dump(registry[data['identifier']], default_flow_style=False))
+                print(yaml.dump({data['identifier']: yaml_simplify(registry[data['identifier']])}, default_flow_style=False))
 
     if args.json:
-        print(json.dumps(data, ensure_ascii=False,indent=4))
+        print(json.dumps(jsonout, ensure_ascii=False,indent=4))
