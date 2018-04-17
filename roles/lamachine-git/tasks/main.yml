@@ -58,11 +58,18 @@
               register: gitcheckout
               changed_when: '"Switched to branch" in gitcheckout.stdout'
 
+        - name: "{{package.repo}} - Checking whether codemeta.json is provided (stable)"
+          stat:
+            path: "{{ source_path }}/{{package.repo}}/codemeta.json"
+          register: have_codemeta
+          changed_when: False
+
         - name: "{{package.repo}} - Register (stable)"
           include_role:
              name: lamachine-register
           vars:
-             metadata_defaults:
+             codemeta: "{% if have_codemeta.stat.exists %}{{ source_path }}/{{package.repo}}/codemeta.json{% endif %}"
+             metadata_defaults: #'metadata' by caller takes presendence over defaults
                name: "{{package.repo}}"
                author: "{% if 'user' in package %}{{package.user}}{% endif %}"
                homepage: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
@@ -106,15 +113,22 @@
           register: latest_commit
           changed_when: False
 
+        - name: "{{package.repo}} - Checking whether codemeta.json is provided (unreleased)"
+          stat:
+            path: "{{ source_path }}/{{package.repo}}/codemeta.json"
+          register: have_codemeta
+          changed_when: False
+
         - name: "{{package.repo}} - Register (unreleased)"
           include_role:
              name: lamachine-register
           vars:
-             metadata_defaults:
+             codemeta: "{% if have_codemeta.stat.exists %}{{ source_path }}/{{package.repo}}/codemeta.json{% endif %}"
+             metadata_defaults: #'metadata' by caller takes presendence over defaults
                name: "{{package.repo}}"
                author: "{% if 'user' in package %}{{package.user}}{% endif %}"
-               homepage: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
-               repository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+               url: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+               codeRepository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
                version: "{{ latest_commit.stdout }}"
           when: "do_registration is defined and do_registration"
 

@@ -1,13 +1,17 @@
 ---
     - name: "{% if 'name' in metadata %}{{metadata.name}}{% elif 'pip' in package and package.pip %}{{package.pip}}{% else %}NO NAME!{% endif %} - Outputting temporary metadata"
       copy:
-        content: '{% if "metadata" in package %}{{ metadata_defaults|combine(metadata)|combine(package.metadata)|to_nice_yaml }}{% else %}{{ metadata_defaults|combine(metadata)|to_nice_yaml }}{% endif %}'
-        dest: "{{lm_prefix}}/var/tmpmetadata.yml"
+        content: '{% if "metadata" in package %}{{ metadata_defaults|combine(metadata)|combine(package.metadata)|to_json }}{% else %}{{ metadata_defaults|combine(metadata)|to_json }}{% endif %}'
+        dest: "{{lm_prefix}}/var/tmpmetadata.json"
         force: yes
 
     - name: "{% if 'name' in metadata %}{{metadata.name}}{% elif 'pip' in package and package.pip %}{{package.pip}}{% else %}NO NAME!{% endif %} - Registering metadata (lamachine-list)"
       shell: |
         #!/bin/bash
-        cat {{lm_prefix}}/var/tmpmetadata.yml | {{lm_prefix}}/bin/python {{lm_prefix}}/bin/metadater.py {% if "pip" in package and package.pip %}--pip {{package.pip}}{% endif %} --yaml >> {{lm_prefix}}/var/lamachine-list.yml
+        {% if 'pip' in package and package.pip %}
+        {{lm_prefix}}/bin/pip show -v   | {{lm_prefix}}/bin/codemetapy ---with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if codemeta %}json,{% endif %}json,pip {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json -
+        {% else %}
+        {{lm_prefix}}/bin/codemetapy ---with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if codemeta %}json,{% endif %}json {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.yml
+        {% endif %}
       args:
         executable: /bin/bash

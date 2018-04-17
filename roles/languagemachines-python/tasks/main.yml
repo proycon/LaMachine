@@ -50,9 +50,7 @@
                github_repo: "flat"
                pip: "FoLiA-Linguistic-Annotation-Tool"
             metadata:
-                interfaces:
-                  - entrypoint: "{{lm_base_url}}/flat"
-                    interfacetype: wui
+               entryPoints: { "@type": "EntryPoint",  url: "{{lm_base_url}}/flat" }
 
 
         - name: Installing webservices
@@ -69,13 +67,9 @@
               name: lamachine-register
           vars:
               metadata:
-                  name: "{{item}}_webservice"
-                  interfaces:
-                      - entrypoint: "{{lm_base_url}}/{{item}}"
-                        interfacetype: rest
-                        specification: "{{lm_base_url}}/{{item}}/info"
-                      - entrypoint: "{{lm_base_url}}/{{item}}"
-                        interfacetype: wui
+                  identifier: "{{item}}_webservice"
+                  name: "{{item}} Webservice"
+                  entryPoints: { "@type": "EntryPoint",  url: "{{lm_base_url}}/{{item}}" }
           when: '"all" in services or item in services'
           with_items:
             - frog

@@ -31,11 +31,6 @@
         package:
           repo: ticcltools
           user: LanguageMachines
-        metadata:
-          authors: [ Martin Reynaert, Ko van der Sloot ]
-          homepage: "https://github.com/LanguageMachines/ticcltools"
-          summary: "TicclTools is a collection of programs to process datafiles, together they constitute the bulk of TICCL: Text Induced Corpus-Cleanup. This software is invoked by the pipeline system PICCL"
-          license: GPL
 
     - name: Create nextflow home
       file:
@@ -54,9 +49,10 @@
          name: lamachine-register
       vars:
          metadata:
+           identifier: nextflow
            name: Nextflow
-           authors: [ Paolo Di Tommaso, Maria Chatzou, Evan W Floden, Pablo Prieto Barja, Emilio Palumbo, Cedric Notredame ]
-           homepage: "https://www.nextflow.io"
+           author: [ "Paolo Di Tommaso", "Maria Chatzou", "Evan W Floden", "Pablo Prieto Barja", "Emilio Palumbo", "Cedric Notredame" ]
+           url: "https://www.nextflow.io"
            license: GPL
 
     - name: Nextflow test
@@ -87,10 +83,6 @@
         package:
           user: LanguageMachines
           repo: PICCL
-        metadata:
-          authors: [ Martin Reynaert, Maarten van Gompel, Ko van der Sloot ]
-          license: GPL
-          summary: "A set of workflows for corpus building through OCR, post-correction, modernization of historic language and Natural Language Processing"
 
     - name: "Symlink PICCL in {{lm_prefix}}/opt"
       file:
@@ -134,13 +126,9 @@
               setupdir: "webservice" #setup.py is in this subdir
               git_branch: "{{ current_piccl_branch_or_tag.stdout }}"
             metadata:
-              name: piccl_webservice
-              interfaces:
-                  - entrypoint: "{{lm_base_url}}/piccl"
-                    interfacetype: rest
-                    specification: "{{lm_base_url}}/piccl/info"
-                  - entrypoint: "{{lm_base_url}}/piccl"
-                    interfacetype: wui
+              identifier: piccl_webservice
+              name: "PICCL webservice"
+              entryPoints: { "@type": "EntryPoint", url: "{{lm_base_url}}/piccl" }
 
         - name: "Install webserver configuration for PICCL"
           become: "{{lm_become}}"

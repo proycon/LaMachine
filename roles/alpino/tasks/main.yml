@@ -70,8 +70,9 @@
          name: lamachine-register
       vars:
          metadata:
+           identifier: alpino
            name: Alpino
-           authors: [ Gertjan van Noord, Gosse Bouma ]
-           homepage: "http://www.let.rug.nl/vannoord/alp/Alpino/"
+           author: [ "Gertjan van Noord", "Gosse Bouma" ]
+           url: "http://www.let.rug.nl/vannoord/alp/Alpino/"
            license: LGPL
-           summary: "Alpino is a dependency parser for Dutch, developed in the context of the PIONIER Project Algorithms for Linguistic Processing."
+           description: "Alpino is a dependency parser for Dutch, developed in the context of the PIONIER Project Algorithms for Linguistic Processing."

@@ -52,96 +52,49 @@
           with_items:
             - repo: ticcutils
               user: LanguageMachines
-              metadata:
-                license: GPL
-                author: Ko van der Sloot
-                summary: Ticcutils, a generic C++ utility library shared by our software.
               configure_opts: "{% if (ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'rhel') and locality == 'local' %}--with-boost={{lm_prefix}}{% endif %}"
               build_environment:
                  TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
                  CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
             - repo: libfolia
               user: LanguageMachines
-              metadata:
-                summary: C++ Library for the Format for Linguistic Annotation (FoLiA)
-                license: GPL
-                author: Ko van der Sloot
               build_environment:
                  CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
             - repo: uctodata
               user: LanguageMachines
-              metadata:
-                license: GPL
-                author: Maarten van Gompel, Ko van der Sloot
             - repo: ucto
               user: LanguageMachines
-              metadata:
-                summary: "Unicode tokeniser. Ucto tokenizes text files: it separates words from punctuation, and splits sentences."
-                license: GPL
-                authors: [ Maarten van Gompel, Ko van der Sloot ]
               build_environment:
                  TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
                  TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/ -ltextcat{% endif %}"
                  CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D HAVE_OLD_TEXTCAT{% endif %} -D U_USING_ICU_NAMESPACE=1"
             - repo: timbl
               user: LanguageMachines
-              metadata:
-                license: GPL
-                authors: [ Ko van der Sloot, Peter Berck, Antal van den Bosch, Walter Daelemans, Maarten van Gompel, Ton Weijter, Jakub Zavrel ]
-                summary: TiMBL implements several memory-based learning algorithms.
             - repo: timblserver
               user: LanguageMachines
-              metadata:
-                license: GPL
-                author: Ko van der Sloot
-                summary: TiMBL implements several memory-based learning algorithms.
             - repo: mbt
               user: LanguageMachines
-              metadata:
-                license: GPL
-                authors: [ Ko van der Sloot, Antal van den Bosch, Walter Daelemans, Jakub Zavrel ]
-                summary: "MBT: Memory-based tagger generation and tagging MBT is a memory-based tagger-generator and tagger in one."
             - repo: mbtserver
               user: LanguageMachines
-              metadata:
-                license: GPL
-                author: Ko van der Sloot
-                summary: "MBT: Memory-based tagger generation and tagging MBT is a memory-based tagger-generator and tagger in one."
             - repo: frogdata
               user: LanguageMachines
-              metadata:
-                license: GPL
-                authors: [ Ko van der Sloot, Antal van den Bosch, Maarten van Gompel, Bertjan Busser ]
             - repo: frog
               user: LanguageMachines
-              metadata:
-                license: GPL
-                authors: [ Ko van der Sloot, Antal van den Bosch, Maarten van Gompel, Bertjan Busser ]
               build_environment:
                  CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
             - repo: foliautils
               user: LanguageMachines
-              metadata:
-                license: GPL
-                author: [ Ko van der Sloot, Maarten van Gompel ]
-                summary: Command-line utilities for working with the Format for Linguistic Annotation (FoLiA), powered by libfolia (C++)
               build_environment:
                  TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
                  TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/ -ltextcat{% endif %}"
                  CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D HAVE_OLD_TEXTCAT{% endif %} -D U_USING_ICU_NAMESPACE=1"
             - repo: toad
               user: LanguageMachines
-              metadata:
-                author: Ko van der Sloot
-                license: GPL
               build_environment:
                  CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
               exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
             - repo: wopr
               user: LanguageMachines
-              metadata:
-                author: Peter Berck
-                license: GPL
               exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
               build_environment:
                  CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
@@ -156,9 +109,6 @@
         package:
             user: proycon
             repo: colibri-core
-        metadata:
-            summary: "Colibri core is an NLP tool as well as a C++ and Python library for working with basic linguistic constructions such as n-grams and skipgrams (i.e patterns with one or more gaps, either of fixed or dynamic size) in a quick and memory-efficient way."
-            license: GPL
 
     - name: Running ldconfig
       become: yes
