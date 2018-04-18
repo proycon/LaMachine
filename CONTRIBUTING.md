@@ -39,6 +39,7 @@ Why should you want to participate in LaMachine to distribute your software?
 * LaMachine is extensively documented.
 * LaMachine does not replace or reinvent existing technologies, but builds on them: Linux Distributions, Ansible, Vagrant, Docker, pip, virtualenv
     * This means LaMachine remains an optional solution to make things easier, but build on established installation methods that remain usable outside LaMachine.
+* LaMachine handles software metadata
 
 ## How to contribute?
 
@@ -197,11 +198,12 @@ repositories:
 Some lower-level roles:
 * ``lamachine-git`` - Clone a particular git repository
 * ``lamachine-run`` - Run a particular command in the LaMachine environment.
-* ``lamachine-register`` -  Registers software metadata manually.
-	* Expects a ``package`` variable that is a dictionary/map that can contain the following fields: ``name`` (mandatory!), ``version``, ``license``,``author``,``homepage``,``summary``
-    * When using ``lamachine-python-install``, metadata registration is entirely automatic, as the PyPI contains all relevant information already. So you never need ``lamachine-register``
-    * When using ``lamachine-git-autoconf``,  ``lamachine-register`` is automatically called and certain variables (name,version) can be pre-filled. Others you will need to provide explicitly if wanted.
-    * When using ``lamachine-git``,  ``lamachine-register`` is only called aif you set ``register: true`` on your pakcage. certain variables (name, version) can be pre-filled. Others you will need to provide explicitly if wanted.
+* ``lamachine-register`` -  Registers software metadata manually
+    * Holds a ``metadata`` dictionary/map with the relevant metadata according to the  Codemeta model (Read the *metadata* section below).
+    * Set ``codemeta`` to point to a specific ``codemeta.json`` file to load, any metadata supplied in ``metadata`` will be appended.
+    * When using ``lamachine-python-install``, metadata registration is entirely automatic, as PyPI contains all relevant information already. So you never need ``lamachine-register``, you can again set a ``metadata`` map and/or ``codemeta`` field.
+    * When using ``lamachine-git-autoconf``,  ``lamachine-register`` is automatically called and a few variables (name,identifier,version) can be pre-filled. Others you will need to provide explicitly if wanted (preferably in the upstream project in a ``codemeta.json`` file).
+    * When using ``lamachine-git``,  ``lamachine-register`` is only called if you set ``do_registration: true``. Certain variables (name, version) can be pre-filled. Others you will need to provide explicitly if wanted.
 
 The use of specific LaMachine roles is always preferred over the use of comparable generic ansible modules as the
 LaMachine roles take care of a lot of specific things for you so it works in all environments. So use
@@ -275,6 +277,19 @@ we encourage you to set up a task that produces an error if the platform is unsu
      msg: "This software is not supported on Mac OS X or CentOS"
    when: ansible_distribution|lower == "macosx" or ansible_distribution|lower == "centos"
 ```
+
+## Software Metadata
+
+LaMachine attempts to register software metadata of all software it explicitly installs, the ``lamachine-register`` role
+that is invoked by various installation procedures takes care of this. The metadata is collected in a
+``lamachine-registry.json`` file and is converted from various formats to [Codemeta](https://codemeta.github.io),
+ensuring a unified metadata format. Metadata from certain sources such as the Python Package Index or CRAN can be
+converted quite well. You can place a ``codemeta.json`` file in the root of your source code repository which LaMachine
+will automatically use. Alternatively, you can augment metadata from the ansible roles if updating the upstream project
+is not an option.
+
+Within LaMachine, the ``lamachine-list`` allows users to access the available metadata from the command line.
+
 
 ## Testing
 
