@@ -5,7 +5,7 @@
         dest: "{{lm_prefix}}/var/tmpmetadata.json"
         force: yes
 
-    - name: "{% if 'name' in metadata %}{{metadata.name}}{% elif 'pip' in package and package.pip %}{{package.pip}}{% else %}NO NAME!{% endif %} - Registering metadata (lamachine-list)"
+    - name: "{% if 'name' in metadata %}{{metadata.name}}{% elif 'pip' in package and package.pip %}{{package.pip}}{% else %}NO NAME!{% endif %} - Registering metadata"
       shell: |
         #!/bin/bash
         {% if 'pip' in package and package.pip %}
