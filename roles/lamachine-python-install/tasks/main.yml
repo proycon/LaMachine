@@ -38,12 +38,14 @@
         path: "{{ source_path }}/{{package.github_repo}}/codemeta.json"
       register: have_codemeta
       changed_when: False
+      when: "'github_repo' in package"
+
 
     - name: Register software metadata
       include_role:
           name: lamachine-register
       vars:
-          codemeta: "{% if have_codemeta.stat.exists %}{{ source_path }}/{{package.repo}}/codemeta.json{% endif %}"
+          codemeta: "{% if 'github_repo' in package and have_codemeta.stat.exists %}{{ source_path }}/{{package.github_repo}}/codemeta.json{% endif %}"
           metadata_defaults:
              identifier: "{% if 'pip' in package %}{{package.pip}}{% else %}{{ package.github_repo }}{% endif %}"
              name: "{% if 'pip' in package %}{{package.pip}}{% else %}{{ package.github_repo }}{% endif %}"
