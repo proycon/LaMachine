@@ -3,21 +3,24 @@
   block:
     - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest version from github (development)"
       block:
-        - name: "{{package.github_repo}} - Git clone/pull latest {% if 'git_branch' in package %}{{ package.git_branch }}{% else %}master{% endif %}"
+        - name: "{{package.github_repo}} - Git clone/pull latest {% if 'git_branch' in package %}{{ package.git_branch }}{% else %}master{% endif %}" #we always do this, even if we're not using the source for installation (we still need to check for codemeta.json)
           git:
             repo: "https://github.com/{{package.github_user}}/{{package.github_repo}}"
             dest: "{{ source_path }}/{{ package.github_repo }}"
             version: "{% if 'git_branch' in package %}{{ package.git_branch }}{% else %}master{% endif %}"
             recursive: yes
             update: yes
-        - name: "{{package.github_repo}} - Installing python package"
+          environment: "{{lm_env}}"
+          when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != ""'
+
+        - name: "{{package.github_repo}} - Installing python package (development)"
           become: "{{lm_become}}"
           become_user: root
           shell: "python3 {% if 'setup' in package %}{{package.setup}}{% else %}setup.py{% endif %} install"
           args:
             chdir: "{{ source_path }}/{{package.github_repo}}{% if 'setupdir' in package %}/{{ package.setupdir }}{% endif %}"
-      environment: "{{lm_env}}"
-      when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and (version == "development" or ("pip" not in package or package.pip == ""))'
+          environment: "{{lm_env}}"
+          when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and (version == "development" or ("pip" not in package or package.pip == ""))'
 
 
     - name: "{% if 'pip' in package %}{{package.pip}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest release from the Python Package Index (stable)"
@@ -30,25 +33,17 @@
       environment: "{{lm_env}}"
       when: (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == ""))) and localenv_type != "conda" and "pip" in package and package.pip != ""
 
-    - name: "{% if 'conda' in package %}{{package.conda}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest release from conda (stable)"
-      command: "{{local_prefix}}/bin/conda install -mqy -p {{local_prefix}} {{package.conda}}"
-      environment: "{{lm_env}}"
-      when: (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == ""))) and localenv_type == "conda" and "conda" in package and package.conda != ""
+    - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Checking whether codemeta.json is provided"
+      stat:
+        path: "{{ source_path }}/{{package.github_repo}}/codemeta.json"
+      register: have_codemeta
+      changed_when: False
 
-    - name: "{% if 'pip' in package %}{{package.pip}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest release from the Python Package Index (stable, conda)"
-      pip:
-           name: "{{package.pip}}"
-           state: latest
-           executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
-      environment: "{{lm_env}}"
-      when: (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == ""))) and localenv_type == "conda" and ("conda" not in package or package.conda == "") and "pip" in package and package.pip != ""
-
-    - name: Register software in lamachine-list
+    - name: Register software metadata
       include_role:
           name: lamachine-register
       vars:
-          register:
-             pip: "{% if 'pip' in package %}{{package.pip}}{% endif %}"
+          codemeta: "{% if have_codemeta.stat.exists %}{{ source_path }}/{{package.repo}}/codemeta.json{% endif %}"
           metadata_defaults:
              identifier: "{% if 'pip' in package %}{{package.pip}}{% else %}{{ package.github_repo }}{% endif %}"
              name: "{% if 'pip' in package %}{{package.pip}}{% else %}{{ package.github_repo }}{% endif %}"
