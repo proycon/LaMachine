@@ -39,7 +39,7 @@ if __name__ == "__main__":
     for identifier, data in sorted(registry.items()):
         if not args.software or data['identifier'] in args.software:
             if args.short:
-                print(data['identifier'] + "\t" + data['name'] + "\t" + data['version'] + "\t" + data['description'])
+                print('{0: < 20}'.format(data['identifier']) + "\t" + '{0: <30}'.format(data['name']) + "\t" + data['version'] + "\t" + data['description'])
             elif args.json:
                 jsonout[data['identifier']] = data
             else:
