@@ -376,6 +376,16 @@
     - import_tasks: webserver.yml
       when: webserver is defined and webserver == true
 
+    - name: "Adding custom activation script"
+      become: "{{lm_become}}"
+      become_user: root
+      copy:
+        dest: "{{lm_prefix}}/bin/activate.d/custom.sh"
+        content: |
+          #You can use this file to add custom activations
+        force: no
+        mode: u+rwx,a+rx
+
 
 
 

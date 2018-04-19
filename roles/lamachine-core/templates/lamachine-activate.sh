@@ -42,7 +42,7 @@ if [[ "$LM_LOCALITY" == "local" ]]; then
     fi
 else
     export LM_PREFIX="{{global_prefix}}"
-    for f in "$(find $LM_PREFIX/bin/activate.d -type f -name '*.sh' -print)"; do
+    for f in $LM_PREFIX/bin/activate.d/*.sh; do
         if [ ! -z "$f" ]; then
             source $f
         fi
