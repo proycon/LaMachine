@@ -326,7 +326,6 @@
     - name: Installing ansible locally (virtualenv, old version)
       pip:
           name: "ansible"
-          state: latest
           virtualenv: "{{ local_prefix }}"
           version: "2.4.4.0"
       when: locality == "local" and localenv_type == "virtualenv"
