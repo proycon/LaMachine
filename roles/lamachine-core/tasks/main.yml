@@ -320,16 +320,14 @@
           name: "ansible"
           state: latest
           virtualenv: "{{ local_prefix }}"
-      when: locality == "local" and localenv_type == "virtualenv"
-      when: python_version.stdout >= "3.5"
+      when: python_version.stdout >= "3.5" and locality == "local" and localenv_type == "virtualenv"
 
     - name: Installing ansible locally (virtualenv, old version)
       pip:
           name: "ansible"
           virtualenv: "{{ local_prefix }}"
           version: "2.4.4.0"
-      when: locality == "local" and localenv_type == "virtualenv"
-      when: python_version.stdout <= "3.4"
+      when: python_version.stdout <= "3.4" and locality == "local" and localenv_type == "virtualenv"
 
     - name: Sending anonymous usage analytics to LaMachine creators
       shell: |
