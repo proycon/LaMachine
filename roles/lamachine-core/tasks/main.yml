@@ -309,12 +309,11 @@
           chdir: "{{source_path}}"
       when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
 
-    - name: Installing ansible locally (conda)
-      pip:
-          name: "ansible"
-          state: latest
-          executable: "{{ local_prefix }}/bin/pip"
-      when: locality == "local" and localenv_type == "conda"
+    - name: Obtaining Python version
+      shell: python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'
+      register: python_version
+      environment: "{{lm_env}}"
+      changed_when: False
 
     - name: Installing ansible locally (virtualenv)
       pip:
@@ -322,6 +321,16 @@
           state: latest
           virtualenv: "{{ local_prefix }}"
       when: locality == "local" and localenv_type == "virtualenv"
+      when: python_version.stdout >= "3.5"
+
+    - name: Installing ansible locally (virtualenv, old version)
+      pip:
+          name: "ansible"
+          state: latest
+          virtualenv: "{{ local_prefix }}"
+          version: "2.4.4.0"
+      when: locality == "local" and localenv_type == "virtualenv"
+      when: python_version.stdout <= "3.4"
 
     - name: Sending anonymous usage analytics to LaMachine creators
       shell: |
