@@ -44,14 +44,14 @@ if __name__ == "__main__":
     jsonout = {}
     softwarelist = [ x.lower() for x in args.software ]
     if softwarelist and args.dependencies:
-        for identifier, data in sorted(registry.items()):
+        for identifier, data in sorted(registry.items(), key=lambda x: x[0].lower()):
             if data['identifier'].lower() in softwarelist:
                 if 'softwareRequirements' in data:
                     for dep in data['softwareRequirements']:
                         if 'identifier' in dep and dep['identifier'].lower() not in softwarelist:
                             softwarelist.append(dep['identifier'].lower())
 
-    for identifier, data in sorted(registry.items()):
+    for identifier, data in sorted(registry.items(), key=lambda x: x[0].lower()):
         if not softwarelist or data['identifier'].lower() in softwarelist:
             if args.short:
                 print('{0: <20}'.format(data['identifier'].lower()) + "\t" + '{0: <30}'.format(data['name']) + "\t" + data['version'] + "\t" + data['description'])
