@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python
 
 import sys
 import argparse
@@ -22,7 +22,12 @@ if yaml is not None:
     yaml.add_representer(OrderedDict, represent_ordereddict)
 
 def yaml_simplify(d):
-    return dict( (k, v) if not isinstance(v, dict) else (k, yaml_simplify(v)) for k, v in d.items() if k[0] != '@' )
+    if isinstance(d, (dict, OrderedDict)):
+        return dict( (k, yaml_simplify(v)) for k, v in d.items() if k[0] != '@' )
+    elif isinstance(d, (list, tuple)):
+        return list( yaml_simplify(v) for v in d )
+    else:
+        return d
 
 if __name__ == "__main__":
 
