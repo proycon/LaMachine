@@ -108,7 +108,7 @@
               changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
 
         - name: "{{package.repo}} - Get latest commit hash"
-          shell: "git rev-parse HEAD"
+          shell: "git describe --tags || git rev-parse HEAD"
           args:
             chdir: "{{ source_path }}/{{package.repo}}"
           register: latest_commit
