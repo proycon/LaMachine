@@ -54,7 +54,7 @@ if __name__ == "__main__":
     for identifier, data in sorted(registry.items()):
         if not softwarelist or data['identifier'].lower() in softwarelist:
             if args.short:
-                print('{0: < 20}'.format(data['identifier']) + "\t" + '{0: <30}'.format(data['name']) + "\t" + data['version'] + "\t" + data['description'])
+                print('{0: <20}'.format(data['identifier'].lower()) + "\t" + '{0: <30}'.format(data['name']) + "\t" + data['version'] + "\t" + data['description'])
             elif args.json:
                 jsonout[data['identifier'].lower()] = data
             else:
