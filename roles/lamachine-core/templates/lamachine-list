@@ -42,13 +42,13 @@ if __name__ == "__main__":
     with open(args.registry,'r',encoding='utf-8') as f:
         registry = json.load(f)
     jsonout = {}
-    softwarelist = [ x.lower() for x in args.software() ]
+    softwarelist = [ x.lower() for x in args.software ]
     if softwarelist and args.dependencies:
         for identifier, data in sorted(registry.items()):
-            if data['identifier'] in softwarelist:
+            if data['identifier'].lower() in softwarelist:
                 if 'softwareRequirements' in data:
                     for dep in data['softwareRequirements']:
-                        if 'identifier' in dep and dep['identifier'].lower() not in args.software:
+                        if 'identifier' in dep and dep['identifier'].lower() not in softwarelist:
                             softwarelist.append(dep['identifier'].lower())
 
     for identifier, data in sorted(registry.items()):
