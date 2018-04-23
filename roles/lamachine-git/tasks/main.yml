@@ -11,7 +11,7 @@
       register: repo_path
 
     - name: "{{package.repo}} - Git clone"
-      shell: "git clone {% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+      shell: "git clone --recursive {% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
       args:
         chdir: "{{ source_path }}"
       when: not repo_path.stat.exists
@@ -58,16 +58,25 @@
               register: gitcheckout
               changed_when: '"Switched to branch" in gitcheckout.stdout'
 
+        - name: "{{package.repo}} - Checking whether codemeta.json is provided (stable)"
+          stat:
+            path: "{{ source_path }}/{{package.repo}}/codemeta.json"
+          register: have_codemeta
+          changed_when: False
+
         - name: "{{package.repo}} - Register (stable)"
           include_role:
              name: lamachine-register
           vars:
-             fallback:
+             codemeta: "{% if have_codemeta.stat.exists %}{{ source_path }}/{{package.repo}}/codemeta.json{% endif %}"
+             metadata_defaults: #'metadata' by caller takes presendence over defaults
+               identifier: "{{package.repo}}"
                name: "{{package.repo}}"
                author: "{% if 'user' in package %}{{package.user}}{% endif %}"
                homepage: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+               repository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
                version: "{{ latest_tag.stdout }}"
-          when: '"register" in package and package.register'
+          when: "do_registration is defined and do_registration"
 
     - when: version == "development" or (version == "stable" and ("noreleases" in package and package.noreleases))
       block:
@@ -99,21 +108,31 @@
               changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
 
         - name: "{{package.repo}} - Get latest commit hash"
-          shell: "git rev-parse HEAD"
+          shell: "git describe --tags || git rev-parse HEAD"
           args:
             chdir: "{{ source_path }}/{{package.repo}}"
           register: latest_commit
+          changed_when: False
+
+        - name: "{{package.repo}} - Checking whether codemeta.json is provided (unreleased)"
+          stat:
+            path: "{{ source_path }}/{{package.repo}}/codemeta.json"
+          register: have_codemeta
           changed_when: False
 
         - name: "{{package.repo}} - Register (unreleased)"
           include_role:
              name: lamachine-register
           vars:
-             fallback:
+             codemeta: "{% if have_codemeta.stat.exists %}{{ source_path }}/{{package.repo}}/codemeta.json{% endif %}"
+             metadata_defaults: #'metadata' by caller takes presendence over defaults
+               identifier: "{{package.repo}}"
                name: "{{package.repo}}"
                author: "{% if 'user' in package %}{{package.user}}{% endif %}"
-               homepage: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+               url: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+               codeRepository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
                version: "{{ latest_commit.stdout }}"
+          when: "do_registration is defined and do_registration"
 
     - name: "{{package.repo}} - Checkout custom version: {{customversion[package.repo]}}"
       shell: "git checkout {{customversion[package.repo]}} && git pull"

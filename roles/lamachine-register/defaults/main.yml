@@ -1,6 +1,7 @@
 ---
+codemeta: ""
 package:
-    DUMMY: 0
-fallback:
-    DUMMY: 0
+  metadata: {}
+metadata: {}
+metadata_defaults: {}
 

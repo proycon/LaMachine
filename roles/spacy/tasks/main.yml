@@ -13,7 +13,7 @@
       register: spacydata
       changed_when: False
 
-    - when: spacydata.stat.exists or force is defined
+    - when: not spacydata.stat.exists or force is defined
       block:
         - name: "Installing Spacy data  (Listen carefully, I shall do this only once!)"
           include_role:

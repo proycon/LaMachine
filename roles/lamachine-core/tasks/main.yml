@@ -229,6 +229,7 @@
         force: yes
         backup: yes
 
+
     - name: Check existence of LaMachine source dir (migration v2.0.0 -> v2.0.1)
       stat:
          path: "{{ lm_prefix }}/LaMachine"
@@ -258,6 +259,7 @@
       when: (controller is defined and controller == "internal") or lamachine_v2_0_0_source.stat.exists
       failed_when: controllercopy.rc > 0 and controllercopy.rc != 123
       changed_when: controllercopy.rc > 0 and controllercopy.rc != 123
+
 
     - name: LaMachine source dir migration (v2.0.0 -> v2.0.1)
       become: "{{lm_become}}"
@@ -307,19 +309,25 @@
           chdir: "{{source_path}}"
       when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
 
-    - name: Installing ansible locally (conda)
-      pip:
-          name: "ansible"
-          state: latest
-          executable: "{{ local_prefix }}/bin/pip"
-      when: locality == "local" and localenv_type == "conda"
+    - name: Obtaining Python version
+      shell: python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'
+      register: python_version
+      environment: "{{lm_env}}"
+      changed_when: False
 
     - name: Installing ansible locally (virtualenv)
       pip:
           name: "ansible"
           state: latest
           virtualenv: "{{ local_prefix }}"
-      when: locality == "local" and localenv_type == "virtualenv"
+      when: python_version.stdout >= "3.5" and locality == "local" and localenv_type == "virtualenv"
+
+    - name: Installing ansible locally (virtualenv, old version)
+      pip:
+          name: "ansible"
+          virtualenv: "{{ local_prefix }}"
+          version: "2.4.4.0"
+      when: python_version.stdout <= "3.4" and locality == "local" and localenv_type == "virtualenv"
 
     - name: Sending anonymous usage analytics to LaMachine creators
       shell: |
@@ -353,26 +361,36 @@
       when: locality == "global"
 
     - name: Install LaMachine list script
-      copy:
+      template:
+        src: lamachine-list
         dest: "{{lm_prefix}}/bin/lamachine-list"
-        content: |
-          #!/bin/bash
-          if [ "$1" = "-s" ]; then
-            cat {{lm_prefix}}/var/lamachine-list.yml | grep -e "^\w" | sed "s/://" | sort | less
-          else
-            cat {{lm_prefix}}/var/lamachine-list.yml | less
-          fi
+        force: "yes"
         mode: u+rwx,a+rx
 
-    - name: Reinitialize LaMachine list
+    - name: Reinitialize LaMachine registry
       copy:
-        dest: "{{lm_prefix}}/var/lamachine-list.yml"
-        content: |
-          ---
+        dest: "{{lm_prefix}}/var/lamachine-registry.json"
+        content: "{}"
         mode: u+rwx,a+rx
+
+    - name: Installing CodeMetaPy, needed for registering metadata
+      include_role:
+        name: lamachine-python-install
+      vars:
+        package: { github_user: "proycon", github_repo: "codemetapy", pip: "codemetapy" }
 
     - import_tasks: webserver.yml
       when: webserver is defined and webserver == true
+
+    - name: "Adding custom activation script"
+      become: "{{lm_become}}"
+      become_user: root
+      copy:
+        dest: "{{lm_prefix}}/bin/activate.d/custom.sh"
+        content: |
+          #You can use this file to add custom activations
+        force: no
+        mode: u+rwx,a+rx
 
 
 

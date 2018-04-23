@@ -60,18 +60,23 @@
         mode: u+rwx,a+rx
 
     - name: "Linking Alpino binary from {{lm_prefix}}/bin/Alpino"
-      file:
-        src: "{{lm_prefix}}/opt/Alpino/bin/Alpino"
+      copy:
         dest: "{{lm_prefix}}/bin/Alpino"
-        state: link
+        content: |
+          #!/bin/bash
+          export ALPINO_HOME={{lm_prefix}}/opt/Alpino
+          {{lm_prefix}}/opt/Alpino/bin/Alpino
+        force: yes
+        mode: u+rwx,a+rx
 
     - name: Register ALPINO
       include_role:
          name: lamachine-register
       vars:
-         package:
+         metadata:
+           identifier: alpino
            name: Alpino
-           author: Gertjan van Noord, Gosse Bouma
-           homepage: "http://www.let.rug.nl/vannoord/alp/Alpino/"
+           author: [ "Gertjan van Noord", "Gosse Bouma" ]
+           url: "http://www.let.rug.nl/vannoord/alp/Alpino/"
            license: LGPL
-           summary: "Alpino is a dependency parser for Dutch, developed in the context of the PIONIER Project Algorithms for Linguistic Processing."
+           description: "Alpino is a dependency parser for Dutch, developed in the context of the PIONIER Project Algorithms for Linguistic Processing."

@@ -4,12 +4,12 @@
       include_role:
         name: lamachine-python-install
       with_items:
-          - { github_user: "proycon", github_repo: "pynlpl", pip: "pynlpl", conda: "" }
-          - { github_user: "proycon", github_repo: "clam", pip: "clam", conda: "" }
-          - { github_user: "proycon", github_repo: "folia", pip: "folia-tools", conda: "" }
-          - { github_user: "proycon", github_repo: "foliadocserve", pip: "foliadocserve", conda: "" }
-          - { github_user: "proycon", github_repo: "babelpy", pip: "babelpy", conda: "" }
-          - { github_user: "proycon", github_repo: "babelente", pip: "babelente", conda: "" }
+          - { github_user: "proycon", github_repo: "pynlpl", pip: "pynlpl" }
+          - { github_user: "proycon", github_repo: "clam", pip: "clam" }
+          - { github_user: "proycon", github_repo: "folia", pip: "folia-tools" }
+          - { github_user: "proycon", github_repo: "foliadocserve", pip: "foliadocserve" }
+          - { github_user: "proycon", github_repo: "babelpy", pip: "babelpy" }
+          - { github_user: "proycon", github_repo: "babelente", pip: "babelente" }
       loop_control:
            loop_var: package
 
@@ -49,6 +49,9 @@
                github_user: "proycon"
                github_repo: "flat"
                pip: "FoLiA-Linguistic-Annotation-Tool"
+            metadata:
+               entryPoints: { "@type": "EntryPoint",  url: "{{lm_base_url}}/flat" }
+
 
         - name: Installing webservices
           include_role:
@@ -58,6 +61,21 @@
                github_user: "proycon"
                github_repo: "clamservices"
                pip: "clamservices"
+
+        - name: Register webservices
+          include_role:
+              name: lamachine-register
+          vars:
+              metadata:
+                  identifier: "{{item}}_webservice"
+                  name: "{{item}} Webservice"
+                  entryPoints: { "@type": "EntryPoint",  url: "{{lm_base_url}}/{{item}}" }
+          when: '"all" in services or item in services'
+          with_items:
+            - frog
+            - ucto
+            - timbl
+            - colibricore
 
         - name: Link Python package installation in opt/
           become: "{{lm_become}}"

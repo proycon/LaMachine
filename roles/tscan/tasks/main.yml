@@ -6,9 +6,6 @@
           package:
             repo: tscan
             user: proycon
-            author: Ko van der Sloot, Martijn van der Klis, Maarten van Gompel
-            summary: "T-scan: an analysis tool for dutch texts to assess the complexity of the text, based on original work by Rogier Kraf"
-            license: AGPL
 
     #download data is done in tscan bootstrap.sh already
     #

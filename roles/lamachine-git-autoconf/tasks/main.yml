@@ -6,6 +6,7 @@
         name: lamachine-git
       vars:
         package: "{{package}}"
+        do_registration: false
 
     - name: "{{package.repo}} - Checking whether recompilation is needed"
       shell: |
@@ -27,7 +28,7 @@
           echo "Scheduling compilation...">&2
           if [ -e Makefile ]; then
             echo "Cleaning up old version first">&2
-            make distclean
+            make distclean > /dev/null
           fi
           echo 1
       args:
@@ -49,31 +50,34 @@
         chdir: "{{ source_path }}/{{package.repo}}"
       when: autoconf_git_updated.stdout|int == 1 and make_install_result is defined and make_install_result.rc == 0
 
-    - name: "{{package.repo}} - Register in lamachine-list"
+    - name: "{{package.repo}} - Obtaining version number for registration"
       shell: |
-        #!/bin/bash
-        echo '{{package.repo}}:' >> {{lm_prefix}}/var/lamachine-list.yml
-        echo     '    Name: {{package.repo}}' >> {{lm_prefix}}/var/lamachine-list.yml
-        echo -en  '    Version:    ' >> {{lm_prefix}}/var/lamachine-list.yml
         git describe --tags > .installed-version.lamachine
         if [ $? -eq 0 ]; then
-          cat .installed-version.lamachine >> {{lm_prefix}}/var/lamachine-list.yml
+          cat .installed-version.lamachine
         else
-          cat .installed-commit.lamachine >> {{lm_prefix}}/var/lamachine-list.yml
+          cat .installed-commit.lamachine
         fi
-        {% if "license" in package %}
-        echo     '    License: {{package.license}}' >> {{lm_prefix}}/var/lamachine-list.yml
-        {% endif %}
-        {% if "summary" in package %}
-        echo     '    Summary: {{package.summary}}' >> {{lm_prefix}}/var/lamachine-list.yml
-        {% endif %}
-        {% if "author" in package %}
-        echo     '    Author: {{package.author}}' >> {{lm_prefix}}/var/lamachine-list.yml
-        {% else %}
-        echo     '    Author: {{package.user}}' >> {{lm_prefix}}/var/lamachine-list.yml
-        {% endif %}
-        echo     "    Home-page: {% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}" >> {{lm_prefix}}/var/lamachine-list.yml
-        echo >> {{lm_prefix}}/var/lamachine-list.yml
       args:
         executable: "/bin/bash"
         chdir: "{{ source_path }}/{{package.repo}}"
+      register: register_version
+
+    - name: "{{package.repo}} - Checking whether codemeta.json is provided (stable)"
+      stat:
+        path: "{{ source_path }}/{{package.repo}}/codemeta.json"
+      register: have_codemeta
+      changed_when: False
+
+    - name: "{{package.repo}} - Registering metadata"
+      include_role:
+         name: lamachine-register
+      vars:
+         codemeta: "{% if have_codemeta.stat.exists %}{{ source_path }}/{{package.repo}}/codemeta.json{% endif %}"
+         metadata_defaults:
+           identifier: "{{package.repo|lower}}"
+           name: "{{package.repo}}"
+           author: "{% if 'user' in package %}{{package.user}}{% endif %}"
+           url: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+           codeRepository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+           version: "{{ register_version.stdout }}"
