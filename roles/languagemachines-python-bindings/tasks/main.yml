@@ -21,10 +21,12 @@
     - name: Installing Colibri Core Python Binding
       include_role:
         name: lamachine-python-install
-      with_items:
-          - { github_user: "proycon", github_repo: "colibri-core", pip: "", conda: "" } #always installed from source, will reuse same sourcedir as C++ lib
-      loop_control:
-          loop_var: package
+      vars:
+        package:
+          github_user: proycon
+          github_repo: colibri-core #always installed from source, will reuse same sourcedir as C++ lib
+        metadata:
+          identifier: colibricore_python
 
     - name: Testing Python bindings
       include_role:
