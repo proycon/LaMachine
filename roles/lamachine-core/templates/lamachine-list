@@ -44,21 +44,20 @@ if __name__ == "__main__":
     jsonout = {}
     softwarelist = [ x.lower() for x in args.software ]
     if softwarelist and args.dependencies:
-        for identifier, data in sorted(registry.items(), key=lambda x: x[0].lower()):
+        for data in sorted(registry['@graph'], key=lambda x: x['identifier'].lower()):
             if data['identifier'].lower() in softwarelist:
                 if 'softwareRequirements' in data:
                     for dep in data['softwareRequirements']:
                         if 'identifier' in dep and dep['identifier'].lower() not in softwarelist:
                             softwarelist.append(dep['identifier'].lower())
 
-    for identifier, data in sorted(registry.items(), key=lambda x: x[0].lower()):
+    for data in sorted(registry['@graph'], key=lambda x: x['identifier'].lower()):
         if not softwarelist or data['identifier'].lower() in softwarelist:
             if args.short:
                 print('{0: <20}'.format(data['identifier'].lower()) + "\t" + '{0: <30}'.format(data['name']) + "\t" + data['version'] + "\t" + data['description'])
             elif args.json:
                 jsonout[data['identifier'].lower()] = data
             else:
-                del registry[data['identifier'].lower()]['@context']
                 print(yaml.dump({data['identifier'].lower(): yaml_simplify(registry[data['identifier'].lower()])}, default_flow_style=False))
 
     if args.json:

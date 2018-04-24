@@ -62,14 +62,18 @@
                github_repo: "clamservices"
                pip: "clamservices"
 
+        - name: Reading Software Metadata Registry
+          vars:
+            file: "{{lm_prefix}}/var/lamachine-registry.json"
+            name: codemeta_registry
+
         - name: Register webservices
           include_role:
               name: lamachine-register
           vars:
-              metadata:
-                  identifier: "{{item}}_webservice"
-                  name: "{{item}} Webservice"
-                  entryPoints: { "@type": "EntryPoint",  url: "{{lm_base_url}}/{{item}}" }
+              metadata: #add entrypoint metadata to registry
+                  identifier: "{{item}}"
+                  entryPoints: { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", mediatorApplication: "#clamservices" }
           when: '"all" in services or item in services'
           with_items:
             - frog
