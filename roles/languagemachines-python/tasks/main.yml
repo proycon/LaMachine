@@ -62,11 +62,6 @@
                github_repo: "clamservices"
                pip: "clamservices"
 
-        - name: Reading Software Metadata Registry
-          vars:
-            file: "{{lm_prefix}}/var/lamachine-registry.json"
-            name: codemeta_registry
-
         - name: Register webservices
           include_role:
               name: lamachine-register
