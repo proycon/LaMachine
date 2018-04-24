@@ -33,6 +33,7 @@
   Centre for Language and Speech Technology (CLST) \\
   Radboud University Nijmegen, the Netherlands \\
   {\tt proycon@anaproy.nl} \\ %\And % if needed: this makes a second column
+  \url{https://proycon.github.io/LaMachine}
 %  Second Author \\
 %  Department (optional)\\
 %  University Name without city \\
@@ -135,30 +136,41 @@ single shared dataspace between host and VM/container (where applicable), or all
 search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.
 
 With LaMachine we also attempt to harmonise the metadata of all installed software, by converting metadata upstream repositories to
-the CodeMeta standard\footnote{\url{https://codemeta.github.io/}} where possible, or encouraging software developers to provide
+the CodeMeta standard\footnote{\url{https://codemeta.github.io/}} \cite{codemeta,codemetar} where possible, or encouraging software developers to provide
 their own. This in turn enables other tools to do proper service discovery, and provenance logging.
 
 \section{Software}
 
 As LaMachine was conceived initially as the primary means of distribution of the software stack developed at CLST,
 Radboud University Nijmegen, it includes a lot of our software. A full list goes beyond the scope of this overview, we
-will merely mention some CLARIN/CLARIAH-funded tools: ucto (a tokeniser), Frog (an NLP suite for Dutch), FoLiA (Format
+will merely mention some CLARIN-NL/CLARIAH-funded tools: ucto (a tokeniser), Frog (an NLP suite for Dutch), FoLiA (Format
 for linguistic Annotation, with assorted tools), FLAT (a web-based linguistic Annotation tool), PICCL (an OCR and
 post-OCR correction pipeline) and CLAM. We already include some relevant software by Groningen University and VU
-Amsterdam. Moreover, LaMachine incorporates a large number of renowned tools by external parties, offering most notably
-a mature Python environment\footnote{scipy, numpy, scikit-learn, matplotlib, nltk, spacy, pytorch, keras, gensim,
-etc...}, but also offering space for e.g. R and Java.
+Amsterdam as well. Moreover, LaMachine incorporates a large number of renowned tools by external international parties,
+offering most notably a mature Python environment\footnote{scipy, numpy, scikit-learn, matplotlib, nltk, spacy, pytorch,
+keras, gensim, etc...}, but also offering space for e.g. R and Java.
 
-\section{Future}
+\section{Conclusion \& Future work}
 
-The very recent release of version 2, which constituted a full rewrite, has opened up LaMachine to outside contribution.
-Contributor documentation has been written, and at this stage, we greatly welcome external participants to join in. The
-main objectives for the future are to providing greater \emph{interoperability} between the included tools through
-better \emph{higher-level interfaces} for the researcher. We see this as a bottom-up process and have now established a
-firm foundation to build upon. LaMachine development presently takes place in the scope of the CLARIAH WP3 Virtual
-Research Environment project, which has much higher ambitions in accommodating the researcher and connectivity of
-data and services. A major part of our future focus will be on interoperability with the higher-level tooling developed there, or in the
-wider CLARIN/CLARIAH commmunity.
+The very recent release of LaMachine v2, which constituted a full rewrite, has opened up LaMachine to outside
+contribution. Contributor documentation has been written, and at this stage, we greatly welcome external participants
+to join in. Aside from the incorporation of new relevant software, the main objectives for the future are to provide
+greater \emph{interoperability} between the included tools through better \emph{high-level interfaces} for the
+researcher. We see this as a bottom-up process and have now established a firm foundation to build upon. Note that such
+proposed interfaces, including the current portal application in LaMachine, are always considered separate independent
+software projects, which may be deployed by/in/for LaMachine, but also in other contexts. LaMachine remains `just'
+a software distribution at heart.
+
+Development of LaMachine presently takes place in the scope of the CLARIAH WP3 Virtual Research Environment (VRE)
+project\footnote{https://github.com/meertensinstituut/clariah-wp3-vre}, which has much higher ambitions in accommodating
+the researcher and connectivity of data and services, and transcends also those of the CLARIN LRS Switchboard project
+\cite{switchboard}. An important part of our future focus will therefore be on interoperability with the higher-level
+tools emerging from the VRE efforts, but also with other parts of the CLARIN infrastructure; single-sign on
+authentication being a notable example here.
+
+\bibliographystyle{acl}
+\bibliography{lamachine}
+
 
 
 \end{document}
