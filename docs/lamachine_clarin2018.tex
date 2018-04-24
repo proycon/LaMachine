@@ -1,16 +1,17 @@
 \documentclass[a4paper,11pt]{article}
-\usepackage{CLARIN2018}
+%\usepackage{CLARIN2018}
 % - - - - - - - IMPORTANT - - - - - - - -
 % The next three lines allow XeLaTeX, graphics import and hyperlinks, set font and language
-\usepackage{xltxtra,polyglossia,graphicx,hyperref}
-\setmainfont[Mapping=tex-text]{Times}
-\setdefaultlanguage{english}
+%\usepackage{xltxtra,polyglossia,graphicx,hyperref}
+%\setmainfont[Mapping=tex-text]{Times}
+%\setdefaultlanguage{english}
 % If for some reason the above three lines are not compatible with your LaTeX installation,
 % comment out the above three instructions and uncomment the following four instead:
 %\usepackage{times}
-%\usepackage{url}
+\usepackage{hyperref}
+\usepackage{graphicx}
 %\usepackage{latexsym}
-%\usepackage[english]{babel}
+\usepackage[english]{babel}
 
 %\setlength\titlebox{5cm}
 
@@ -19,7 +20,6 @@
 % smaller than 5cm (the original size); we will check this
 % in the camera-ready version and ask you to change it back.
 
-\usepackage{covington} % if needed, for linguistic examples
 
 \title{LaMachine NLP Software Distribution}
 
@@ -56,29 +56,78 @@
 \maketitle
 
 \begin{abstract}
-We introduce LaMachine, a unified Natural Language Processing (NLP) open-source
-software distribution to facilitate the installation and deployment of a large
-amount of software projects that have been developed in the scope of the
-CLARIN-NL project and its current successor CLARIAH. Special attention is paid
-to encouragement of good software development practises.
+We introduce LaMachine, a unified Natural Language Processing (NLP) open-source software distribution to facilitate the
+installation and deployment of a large amount of software projects that have been developed in the scope of the
+CLARIN-NL project and its current successor CLARIAH. Special attention is paid to encouragement of good software
+development practises and reuse of established infrastructure in the scientific \& open-source software development
+community.
 \end{abstract}
 
 \section{Introduction} \label{intro}
 
-Software is a key deliverable and a vital component for research in projects
-such as CLARIN. It is software that provides researchers the instruments to
-yield for their research, and without it a lot of research would become highly
-unfeasible or right-out impossible. It is CLARIN's core mission to make digital
-language resources, including software, available to the wider research
-community.
+Software is a key deliverable and a vital component for research in projects such as CLARIN. It is software that
+provides researchers the instruments to yield for their research; without it a lot of research would become highly
+unfeasible or right-out impossible. It is CLARIN's core mission to make digital language resources, including software,
+available to the wider research community.
 
-Software is a broad but well-ingrained notion in society nowadays, referring to
-any form of computer program. This can manifest in various forms, whether it is
-an app on a phone, a graphical desktop application, a command line tool,  or a
-webpage.
+Software is a broad but well-ingrained notion in society nowadays, referring to any form of computer program. This can
+manifest in various forms, whether it is an app on a phone, a graphical desktop application, a command line tool, or a
+web-based application. These different \emph{interfaces} generally address different \emph{audiences}; the data
+scientist will feel at home at the command line and in scripting environments and uses these fairly low-level
+interfaces, whereas researchers in the humanities demand higher-level interfaces. There is often a power trade-off
+between lower and higher-level interfaces, with the former providing maximum flexibility at the cost of a steeper
+learning curve, technical ability, and a do-it-yourself mentality. Higher level interfaces, on the other
+hand, expose certain functionality of the software in an easy and accessible way, but in doing so often can not expose
+the full power of the software. The cost trade-off is also apparant in the construction of the interfaces, where
+high-level interfaces are typically far more costly to build.
 
-one classification could be
-made based on the \emph{interfaces} software offers.
+LaMachine attemps to address both audiences and incorporates software providing different types of interfaces. This
+explicitly includes web-based interfaces, both for human end-users as well as machines (i.e. webservices). Development
+of LaMachine proceeds in a bottom-up fashion, which introduces a natural bias towards lower-level interfaces, as those
+are often a prerequisite to build higher-level interfaces on.
+
+We see that NLP software often takes on complex forms such as processing pipelines invoking various individual
+components. Add dedicated web-interfaces on top of that and you obtain a suite of interconnected software that is often
+non-trivial to install. This is precisely where LaMachine shines.
+
+\section{Architecture}
+
+\subsection{Scope}
+
+LaMachine is an open-source NLP software distribution. This implies the following:
+
+\begin{enumerate}
+    \item LaMachine facilitates the installation, distribution and configuration of software. It does not fork, modify
+        or appropriate the participating software in any way, nor does it provide a hosting place or repository for
+        software.
+    \item The software included in LaMachine must under an OSI-approved open-source license and is, where necessary,
+        compiled from source during installation.
+    \item The included software bears at least some relevance to the field of Natural Language Processing.
+    \item LaMachine lives in an open-source ecosystem and therefore builds on POSIX-compliant platforms; this primarily
+        means Linux, as well as BSD and Mac OS X. This by definition excludes certain software for different platforms, such as
+        mobile platforms (Android/iOS/etc), native Windows/Mac desktop applications, or certain interface types in
+        general such as classical desktop GUI applications.
+\end{enumerate}
+
+We can more accurately describe LaMachine as a \emph{meta distribution}: it can be installed in various forms, which we
+will get back to shortly. At its core, LaMachine consists of a set of machine-parsable instructions on how to obtain,
+install and configure software, these are implemented using Ansible\footnote{\url{https://www.ansible.com}}. This is
+notably different from the more classical notion of Linux distributions, which generally provide their own repositories
+with (often binary) software packages. LaMachine builds on this already available infrastructure by taking these
+repositories as a given already and only needs to know which repositories to use.  Similarly, there are different
+programming language-specific ecosystems providing their own repositories, such as the Python Package
+Index\footnote{\url{https://pypi.org}} for Python, CRAN\footnote{\url{https://cran.r-project.org/}} for R,
+CPAN\footnote{\url{https://www.cpan.org}} for Perl, Maven Central\footnote{\url{https://search.maven.org}} for Java.
+LaMachine again simply relies on those to pull and install software from. In doing so, we compel participating software
+projects to adhere to well-established distribution standards and ensure the software is more sustainable towards the
+future.
+
+LaMachine provides ample flexibility that allows it to be deployable in different contexts. First of all there is
+flexibility with regard to the target platform, where we support several major GNU/Linux distributions (Debian, Ubuntu,
+CentOS, RedHat Enterprise Linux, Fedora, Arch Linux), as well as Mac OS X. Second of all there is flexibility with
+regard to the form, where we support containerisation through Docker, virtualisation through Vagrant and VirtualBox,
+direct remote provisioning through Ansible (for production servers), or a installation that is either global to the
+machine or local in a separate directory for a specific user.
 
 
 
@@ -87,5 +136,5 @@ made based on the \emph{interfaces} software offers.
 
 
 
-We too often see that the research community develops valuable
+\end{document}
 
