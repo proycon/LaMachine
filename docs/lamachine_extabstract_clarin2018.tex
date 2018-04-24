@@ -21,7 +21,7 @@
 % in the camera-ready version and ask you to change it back.
 
 
-\title{LaMachine NLP Software Distribution}
+\title{LaMachine: A meta-distribution for NLP software}
 
 % - - - - - - - IMPORTANT - - - - - - -
 % Leave the author information empty until your paper has been accepted
@@ -73,7 +73,7 @@ available to the wider research community.
 
 We see that NLP software often takes on complex forms such as processing pipelines invoking various individual
 components, which in turn rely on various dependencies. Add dedicated web-interfaces on top of that and you obtain a
-suite of interconnected software that is often non-trivial to install, configure, and deploy. This is where LaMachines
+suite of interconnected software that is often non-trivial to install, configure, and deploy. This is where LaMachine
 comes in.
 
 LaMachine incorporates software providing different types of interfaces\footnote{command line interfaces, programming
@@ -90,10 +90,11 @@ We can qualify LaMachine as a \emph{meta distribution} that builds on establishe
 \section{Architecture}
 
 Being an open-source NLP software distribution, LaMachine is constrained to POSIX-compliant platforms; this primarily
-means Linux, but also BSD and Mac OS X, and can be contrasted to mobile platforms (Android/iOS/etc), native Windows/Mac
-desktop software, or certain interface types in general such as classical desktop GUI applications. Software that is
-incorporated must 1) bear some relevance to NLP, and 2) be under a recognised open-source license and deposited in a
-public version controlled repository (e.g. Github, Gitlab, Bitbucket).
+means Linux, but also BSD and, with some restrictions, Mac OS X. This can be put in contrast to mobile platforms
+(Android/iOS/etc), native Windows/Mac desktop software, or certain interface types in general such as classical desktop
+GUI applications. Software that is incorporated must 1) bear some relevance to NLP, and 2) be under a recognised
+open-source license and 3) be deposited in a public version controlled repository\footnote{e.g. Github, Gitlab,
+Bitbucket}.
 
 LaMachine is a \emph{meta distribution} as it can be installed in various contexts. At its core, LaMachine consists of a
 set of machine-parsable instructions on how to obtain, install and configure software, these are implemented using
@@ -106,16 +107,16 @@ CRAN\footnote{\url{https://cran.r-project.org/}} for R, CPAN\footnote{\url{https
 Central\footnote{\url{https://search.maven.org}} for Java.  LaMachine again relies on those to pull and install
 software from and never forks, archives, or modifies the software in any way. In doing so, we compel participating
 software projects to adhere to well-established distribution standards and ensure the software is more sustainable
-towards the future. Moreover, we ensure that LaMachine never becomes a prerequisite for the software but merely a
+towards the future \cite{softwarequality}. Moreover, we ensure that LaMachine never becomes a prerequisite for the software but merely a
 courtesy or convenience.
 
 LaMachine provides ample flexibility that allows it to be deployable in different contexts. First of all there is
 flexibility with regard to the target platform, where we support several major GNU/Linux distributions (Debian, Ubuntu,
 CentOS, RedHat Enterprise Linux, Fedora, Arch Linux), as well as Mac OS X. Second of all there is flexibility with
-regard to the form, where we support \emph{containerisation} through Docker\footnote{\url{https://www.docker.com}}, virtualisation through
-Vagrant\footnote{\url{https://vagrant.org}} and VirtualBox\footnote{\url{https://www.virtualbox.org}},
+regard to the form, where we support \emph{containerisation} through Docker\footnote{\url{https://www.docker.com}},
+\emph{virtualisation} through Vagrant\footnote{\url{https://vagrant.org}} and VirtualBox\footnote{\url{https://www.virtualbox.org}},
 direct remote provisioning through Ansible (for production servers), or an installation that is either global to the
-machine or local in a separate directory for a specific user. Pre-built docker containers and virtual machines with a
+machine or local in a custom directory for a specific user. Pre-built docker containers and virtual machines with a
 limited selection of participating software are regularly uploaded to the Docker Hub and Vagrant Cloud, respectively.
 
 Installation of LaMachine begins with a single bootstrap command\footnote{See
@@ -163,9 +164,9 @@ a software distribution at heart.
 
 Development of LaMachine presently takes place in the scope of the CLARIAH WP3 Virtual Research Environment (VRE)
 project\footnote{https://github.com/meertensinstituut/clariah-wp3-vre}, which has much higher ambitions in accommodating
-the researcher and connectivity of data and services, and transcends also those of the CLARIN LRS Switchboard project
-\cite{switchboard}. An important part of our future focus will therefore be on interoperability with the higher-level
-tools emerging from the VRE efforts, but also with other parts of the CLARIN infrastructure; single-sign on
+the researcher and connectivity of data and services, and transcends also those of the CLARIN LRS Switchboard
+project~\cite{switchboard}. An important part of our future focus will therefore be on interoperability with the
+higher-level tools emerging from the VRE efforts, but also with other parts of the CLARIN infrastructure; single-sign on
 authentication being a notable example here.
 
 \bibliographystyle{acl}
