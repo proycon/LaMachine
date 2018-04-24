@@ -58,7 +58,7 @@ if __name__ == "__main__":
             elif args.json:
                 jsonout[data['identifier'].lower()] = data
             else:
-                print(yaml.dump({data['identifier'].lower(): yaml_simplify(registry[data['identifier'].lower()])}, default_flow_style=False))
+                print(yaml.dump({data['identifier'].lower(): yaml_simplify(data['identifier'].lower())}, default_flow_style=False))
 
     if args.json:
         print(json.dumps(jsonout, ensure_ascii=False,indent=4))
