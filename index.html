@@ -204,7 +204,7 @@
                    $('div.help').css('color','red');
                }
            } else if (mode == "docker") {
-               $('div.command div.text').html("docker pull proycon/lamachine:stable && docker run -p 8080:80 -t -i proycon/lamachine:stable ");
+               $('div.command div.text').html("docker pull proycon/lamachine:latest && docker run -p 8080:80 -t -i proycon/lamachine:latest");
                $('div.help').html("For this to work, you need to have Docker installed and running on your system. On Linux or Mac OS X, you can install it with: <tt>curl -fsSL get.docker.com -o get-docker.sh &amp;&amp; sh get-docker.sh</tt>");
                $('div.help').css('color','black');
            } else if (mode == "vagrant") {
