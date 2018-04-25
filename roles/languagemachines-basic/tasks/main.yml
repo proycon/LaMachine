@@ -10,9 +10,13 @@
             shell: brew untap homebrew/science || /usr/bin/true
           - name: Adding homebrew tap
             command: brew tap fbkarsdorp/homebrew-lamachine
+          - name: Uninstalling from homebrew
+            command: brew reinstall ticcutils libfolia uctodata ucto timbl timblserver mbt frogdata frog foliautils
+            when: force is defined and force
           - name: Installing from homebrew
             command: brew install ticcutils libfolia uctodata ucto timbl timblserver mbt frogdata frog foliautils #TODO: toad still missing cause it failed to compile earlier
             register: macosx
+            when: force is not defined or not force
       when: ansible_distribution|lower == 'macosx' and root and version == "stable" #note: no locality check here, we use homebrew even in local mode
 
     - name: Link frogdata and uctodata on Mac OS X
