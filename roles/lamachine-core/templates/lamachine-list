@@ -54,11 +54,11 @@ if __name__ == "__main__":
     for data in sorted(registry['@graph'], key=lambda x: x['identifier'].lower()):
         if not softwarelist or data['identifier'].lower() in softwarelist:
             if args.short:
-                print('{0: <20}'.format(data['identifier'].lower()) + "\t" + '{0: <30}'.format(data['name']) + "\t" + data['version'] + "\t" + data['description'])
+                print('{0: <20}'.format(data['identifier'].lower()) + "\t" + '{0: <30}'.format(data.get('name','unknown')) + "\t" + data.get('version','unknown')+ "\t" + data.get('description',''))
             elif args.json:
                 jsonout[data['identifier'].lower()] = data
             else:
-                print(yaml.dump({data['identifier'].lower(): yaml_simplify(data['identifier'].lower())}, default_flow_style=False))
+                print(yaml.dump({data['identifier'].lower(): yaml_simplify(data)}, default_flow_style=False))
 
     if args.json:
         print(json.dumps(jsonout, ensure_ascii=False,indent=4))
