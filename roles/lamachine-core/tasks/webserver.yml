@@ -148,7 +148,7 @@
             command: "auto/configure --prefix={{lm_prefix}} && make && make install"
             args:
                 chdir: "{{ source_path }}/nginx"
-            environment: "{{default_environment}}"
+            environment: "{{lm_env}}"
 
       - name: Create webserver writable directories (local)
         file:
