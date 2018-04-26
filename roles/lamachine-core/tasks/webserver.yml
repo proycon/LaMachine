@@ -145,7 +145,7 @@
               force: "yes"
 
           - name: "Compiling and installing local nginx webserver"
-            command: "auto/configure --prefix={{lm_prefix}} && make && make install"
+            shell: "auto/configure --prefix={{lm_prefix}} && make && make install"
             args:
                 chdir: "{{ source_path }}/nginx"
             environment: "{{lm_env}}"
