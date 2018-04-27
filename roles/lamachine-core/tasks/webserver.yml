@@ -156,6 +156,14 @@
               dest: "{{ lm_prefix }}/bin/nginx"
               state: link
 
+          - name: Copying extra configuration
+            copy:
+              src: "{{source_path}}/nginx/conf/{{item}}"
+              dest: "{{lm_prefix}}/etc/nginx/{{item}}"
+            with_fileglob:
+              - "mime.types"
+              - "uwsgi_params"
+
       - name: Create webserver writable directories (local)
         file:
             path: "{{ lm_prefix }}/{{item}}"

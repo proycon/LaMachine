@@ -43,7 +43,7 @@ fi
 uwsgi --ini "{{lm_prefix}}/etc/uwsgi-emperor/emperor.ini" --die-on-term &
 
 {% if webservertype == "nginx" %}
-    nginx -c "{{lm_prefix}}/etc/nginx.conf" -p "{{lm_prefix}}/share/nginx"  -g "pid {{lm_prefix}}/var/run/nginx.pid; worker_processes 2;"
+    nginx -c "{{lm_prefix}}/etc/nginx/nginx.conf" -p "{{lm_prefix}}"  -g "pid {{lm_prefix}}/var/run/nginx.pid;"
 {% else %}
     echo "You are using a non-default webservertype, unable to manage webserver for you...">&2
 {% endif %}
