@@ -28,7 +28,7 @@
       become_user: root
       pip:
            name: "{{package.pip}}"
-           state: "{% if 'state' in package %}{{package.state}}{% else %}latest{% endif %}"
+           state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package %}{{package.state}}{% else %}latest{% endif %}"
            executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
       environment: "{{lm_env}}"
       when: (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == ""))) and localenv_type != "conda" and "pip" in package and package.pip != ""
