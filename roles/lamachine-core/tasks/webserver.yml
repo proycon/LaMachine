@@ -150,6 +150,12 @@
                 chdir: "{{ source_path }}/nginx"
             environment: "{{lm_env}}"
 
+          - name: Linking to nginx binary
+            file:
+              src: "{{ lm_prefix}}/bin/nginx"
+              dest: "{{ lm_prefix }}/sbin/nginx"
+              state: link
+
       - name: Create webserver writable directories (local)
         file:
             path: "{{ lm_prefix }}/{{item}}"
