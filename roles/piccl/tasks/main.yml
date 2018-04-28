@@ -127,14 +127,14 @@
               git_branch: "{{ current_piccl_branch_or_tag.stdout }}"
             do_registration: false #we register entrypoints manually:
 
-          - name: Registering PICCL webservice entrypoints
-            include_role:
-              name: lamachine-register
-            metadata:
-              identifier: piccl
-              entryPoints:
-                - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/piccl", interfaceType: "WUI" }
-                - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/piccl", specification: "{{lm_base_url}}/{{item}}/info",  interfaceType: "REST" }
+        - name: Registering PICCL webservice entrypoints
+          include_role:
+            name: lamachine-register
+          metadata:
+            identifier: piccl
+            entryPoints:
+              - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/piccl", interfaceType: "WUI" }
+              - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/piccl", specification: "{{lm_base_url}}/{{item}}/info",  interfaceType: "REST" }
 
         - name: "Install webserver configuration for PICCL"
           become: "{{lm_become}}"
