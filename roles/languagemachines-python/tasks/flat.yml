@@ -85,3 +85,12 @@
               executable: /bin/bash
               chdir: "{{lm_prefix}}/etc"
           environment: "{{lm_env}}"
+
+        - name: Registering FLAT
+          include_role:
+              name: lamachine-register
+          vars:
+              metadata: #add entrypoint metadata to registry
+                  identifier: "folia-linguistic-annotation-tool"
+                  entryPoints:
+                    - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/flat", interfaceType: "WUI" }

@@ -50,7 +50,8 @@
                github_repo: "flat"
                pip: "FoLiA-Linguistic-Annotation-Tool"
             metadata:
-               entryPoints: { "@type": "EntryPoint",  url: "{{lm_base_url}}/flat" }
+              entryPoints:
+                - { "@type": "EntryPoint",  url: "{{lm_base_url}}/flat" }
 
 
         - name: Installing webservices
@@ -68,7 +69,9 @@
           vars:
               metadata: #add entrypoint metadata to registry
                   identifier: "{{item}}"
-                  entryPoints: { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", mediatorApplication: "#clamservices" }
+                  entryPoints:
+                    - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "WUI", mediatorApplication: "#clamservices" }
+                    - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "REST", specification: "{{lm_base_url}}/{{item}}/info",  mediatorApplication: "#clamservices" }
           when: '"all" in services or item in services'
           with_items:
             - frog

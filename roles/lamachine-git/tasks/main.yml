@@ -70,7 +70,7 @@
           vars:
              codemeta: "{% if have_codemeta.stat.exists %}{{ source_path }}/{{package.repo}}/codemeta.json{% endif %}"
              metadata_defaults: #'metadata' by caller takes presendence over defaults
-               identifier: "{{package.repo}}"
+               identifier: "{{package.repo|lower}}"
                name: "{{package.repo}}"
                author: "{% if 'user' in package %}{{package.user}}{% endif %}"
                homepage: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
@@ -126,7 +126,7 @@
           vars:
              codemeta: "{% if have_codemeta.stat.exists %}{{ source_path }}/{{package.repo}}/codemeta.json{% endif %}"
              metadata_defaults: #'metadata' by caller takes presendence over defaults
-               identifier: "{{package.repo}}"
+               identifier: "{{package.repo|lower}}"
                name: "{{package.repo}}"
                author: "{% if 'user' in package %}{{package.user}}{% endif %}"
                url: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"

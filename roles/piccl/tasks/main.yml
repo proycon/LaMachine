@@ -125,10 +125,16 @@
               github_repo: "PICCL"
               setupdir: "webservice" #setup.py is in this subdir
               git_branch: "{{ current_piccl_branch_or_tag.stdout }}"
+            do_registration: false #we register entrypoints manually:
+
+          - name: Registering PICCL webservice entrypoints
+            include_role:
+              name: lamachine-register
             metadata:
-              identifier: piccl_webservice
-              name: "PICCL webservice"
-              entryPoints: { "@type": "EntryPoint", url: "{{lm_base_url}}/piccl" }
+              identifier: piccl
+              entryPoints:
+                - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/piccl", interfaceType: "WUI" }
+                - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/piccl", specification: "{{lm_base_url}}/{{item}}/info",  interfaceType: "REST" }
 
         - name: "Install webserver configuration for PICCL"
           become: "{{lm_become}}"
