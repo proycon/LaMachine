@@ -67,6 +67,7 @@
           include_role:
               name: lamachine-register
           vars:
+              update: "{{item}}"
               metadata: #add entrypoint metadata to registry
                   identifier: "{{item}}"
                   entryPoints:
