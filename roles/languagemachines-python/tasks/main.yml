@@ -84,11 +84,11 @@
               name: lamachine-register
           vars:
             update: "colibri-core"
-              metadata: #add entrypoint metadata to registry
-                  identifier: "colibri-core"
-                  entryPoints:
-                    - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/colibricore", interfaceType: "WUI", mediatorApplication: "#clamservices" }
-                    - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/colibricore", interfaceType: "REST", specification: "{{lm_base_url}}/colibricore/info",  mediatorApplication: "#clamservices" }
+            metadata: #add entrypoint metadata to registry
+                identifier: "colibri-core"
+                entryPoints:
+                  - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/colibricore", interfaceType: "WUI", mediatorApplication: "#clamservices" }
+                  - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/colibricore", interfaceType: "REST", specification: "{{lm_base_url}}/colibricore/info",  mediatorApplication: "#clamservices" }
 
         - name: Link Python package installation in opt/
           become: "{{lm_become}}"
