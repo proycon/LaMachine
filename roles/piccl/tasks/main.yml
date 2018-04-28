@@ -136,7 +136,7 @@
               identifier: piccl
               entryPoints:
                 - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/piccl", interfaceType: "WUI" }
-                - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/piccl", specification: "{{lm_base_url}}/{{item}}/info",  interfaceType: "REST" }
+                - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/piccl", specification: "{{lm_base_url}}/piccl/info",  interfaceType: "REST" }
 
         - name: "Install webserver configuration for PICCL"
           become: "{{lm_become}}"
