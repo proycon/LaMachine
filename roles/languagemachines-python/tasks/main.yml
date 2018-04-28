@@ -50,9 +50,22 @@
                github_repo: "flat"
                pip: "FoLiA-Linguistic-Annotation-Tool"
             metadata:
+              identifier: "flat"
+              name: "FLAT: FoLiA Linguistic Annotation Tool"
               entryPoints:
-                - { "@type": "EntryPoint",  url: "{{lm_base_url}}/flat" }
+                - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/flat", interfaceType: "WUI" }
+          when: '"all" in services or "flat" in services'
 
+        - name: Registering foliadocserve entrypoint
+          include_role:
+            name: lamachine-register
+          vars:
+            update: "foliadocserve"
+            metadata:
+              entryPoints:
+                - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/foliadocserve", interfaceType: "WUI" }
+                - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/foliadocserve", interfaceType: "REST" }
+          when: '"all" in services or "flat" in services or "foliadocserve" in services'
 
         - name: Installing webservices
           include_role:
