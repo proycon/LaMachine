@@ -72,7 +72,6 @@
              metadata_defaults: #'metadata' by caller takes presendence over defaults
                identifier: "{{package.repo|lower}}"
                name: "{{package.repo}}"
-               author: "{% if 'user' in package %}{{package.user}}{% endif %}"
                homepage: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
                repository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
                version: "{{ latest_tag.stdout }}"
@@ -128,7 +127,6 @@
              metadata_defaults: #'metadata' by caller takes presendence over defaults
                identifier: "{{package.repo|lower}}"
                name: "{{package.repo}}"
-               author: "{% if 'user' in package %}{{package.user}}{% endif %}"
                url: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
                codeRepository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
                version: "{{ latest_commit.stdout }}"

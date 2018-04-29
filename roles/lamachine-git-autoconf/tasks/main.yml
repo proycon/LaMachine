@@ -77,7 +77,6 @@
          metadata_defaults:
            identifier: "{{package.repo|lower}}"
            name: "{{package.repo}}"
-           author: "{% if 'user' in package %}{{package.user}}{% endif %}"
            url: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
            codeRepository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
            version: "{{ register_version.stdout }}"
