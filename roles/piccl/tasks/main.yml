@@ -112,10 +112,11 @@
     - when: webserver and ("piccl" in services or "all" in services)
       block:
         - name: Detect current PICCL branch or tag
-          shell: "git branch | grep '^\\*' | sed -e 's/(detached from \\(.*\\))/\\1/' -e 's/\\* //'"
+          shell: "git describe --tags || git rev-parse HEAD"
           register: current_piccl_branch_or_tag
           args:
             chdir: "{{source_path}}/PICCL"
+
         - name: Installing PICCL webservice
           include_role:
             name: lamachine-python-install

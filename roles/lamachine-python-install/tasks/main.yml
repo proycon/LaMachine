@@ -7,16 +7,16 @@
           git:
             repo: "https://github.com/{{package.github_user}}/{{package.github_repo}}"
             dest: "{{ source_path }}/{{ package.github_repo }}"
-            version: "{% if 'git_branch' in package %}{{ package.git_branch }}{% else %}master{% endif %}"
+            version: "{% if 'git_branch' in package and git_branch %}{{ package.git_branch }}{% else %}master{% endif %}"
             recursive: yes
             update: yes
           environment: "{{lm_env}}"
-          when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != ""'
+          when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and ("ignore_git" not in package or not package.ignore_git)'
 
         - name: "{{package.github_repo}} - Installing python package (development)"
           become: "{{lm_become}}"
           become_user: root
-          shell: "python3 {% if 'setup' in package %}{{package.setup}}{% else %}setup.py{% endif %} install"
+          shell: "python3 {% if 'setup' in package and package.setup %}{{package.setup}}{% else %}setup.py{% endif %} install"
           args:
             chdir: "{{ source_path }}/{{package.github_repo}}{% if 'setupdir' in package %}/{{ package.setupdir }}{% endif %}"
           environment: "{{lm_env}}"
