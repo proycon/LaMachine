@@ -7,7 +7,7 @@
           git:
             repo: "https://github.com/{{package.github_user}}/{{package.github_repo}}"
             dest: "{{ source_path }}/{{ package.github_repo }}"
-            version: "{% if 'git_branch' in package and git_branch %}{{ package.git_branch }}{% else %}master{% endif %}"
+            version: "{% if 'git_branch' in package and package.git_branch %}{{ package.git_branch }}{% else %}master{% endif %}"
             recursive: yes
             update: yes
           environment: "{{lm_env}}"
