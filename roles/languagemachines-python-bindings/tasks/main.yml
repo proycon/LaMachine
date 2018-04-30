@@ -18,6 +18,12 @@
         state: touch
       changed_when: False
 
+    - name: Detect current colibri-core branch or tag
+      shell: "git describe --tags || git rev-parse HEAD"
+      register: current_coco_branch_or_tag
+      args:
+        chdir: "{{source_path}}/colibri-core"
+
     - name: Installing Colibri Core Python Binding
       include_role:
         name: lamachine-python-install
@@ -25,6 +31,7 @@
         package:
           github_user: proycon
           github_repo: colibri-core #always installed from source, will reuse same sourcedir as C++ lib
+          git_branch: "{{ current_coco_branch_or_tag.stdout }}"
         metadata:
           identifier: colibricore_python
 
