@@ -82,6 +82,7 @@
            description: "Alpino is a dependency parser for Dutch, developed in the context of the PIONIER Project Algorithms for Linguistic Processing."
 
     - when: webserver
+      block:
         - name: "Install uwsgi configuration for alpino"
           become: "{{lm_become}}"
           become_user: root
