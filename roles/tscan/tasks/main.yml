@@ -8,5 +8,73 @@
             user: proycon
 
     #download data is done in tscan bootstrap.sh already
-    #
-    #TODO: set up webservice?
+
+    - name: Register T-scan
+      include_role:
+         name: lamachine-register
+      vars:
+         metadata:
+           identifier: tscan
+           name: "T-scan"
+           author: [ "Ko van der Sloot", "Martijn van der Klis", "Maarten van Gompel" ]
+           url: "https://github.com/proycon/tscan"
+           license: AGPL
+           description: "T-scan: an analysis tool for dutch texts to assess the complexity of the text, based on original work by Rogier Kraf."
+
+    - when: webserver
+      block:
+        - name: "Install webserver configuration"
+          become: "{{lm_become}}"
+          become_user: root
+          template:
+            src: "nginx/tscan.conf"
+            dest: "{{lm_prefix}}/etc/nginx/conf.d/tscan.conf"
+            force: yes
+            backup: yes
+            owner: "{{unix_user}}"
+            group: "{{unix_group}}"
+
+          when: webservertype == "nginx" and ("all" in services or "ucto"  in services or "frog" in services or "timbl" in services or "colibricore" in services)
+        - name: "Install uwsgi configuration for tscan"
+          become: "{{lm_become}}"
+          become_user: root
+          template:
+            src: "uwsgi/{{item}}.ini"
+            dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{item}}.ini"
+            force: yes
+            backup: yes
+            owner: "{{web_user}}" #permissions need to match the runner
+            group: "{{web_group}}"
+            mode: u+rw,a+r
+          when: '"all" in services or item in services'
+          with_items:
+            - tscan
+
+        - name: "Install clam configuration for tscan"
+          become: "{{lm_become}}"
+          become_user: root
+          template:
+            src: "clam/{{item}}.config.yml"
+            dest: "{{lm_prefix}}/etc/{{item}}.config.yml"
+            force: yes
+            backup: yes
+            owner: "{{unix_user}}"
+            group: "{{unix_group}}"
+            mode: u+rw,a+r
+          when: '"all" in services or item in services'
+          with_items:
+            - tscan
+
+        - name: Register tscan webservice
+          include_role:
+              name: lamachine-register
+          vars:
+              update: "{{item}}"
+              metadata: #add entrypoint metadata to registry
+                  identifier: "{{item}}"
+                  entryPoints:
+                    - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "WUI", mediatorApplication: "#clamservices" }
+                    - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "REST", specification: "{{lm_base_url}}/{{item}}/info",  mediatorApplication: "#clamservices" }
+          when: '"all" in services or item in services'
+          with_items:
+            - tscan
