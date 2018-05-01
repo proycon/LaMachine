@@ -149,6 +149,7 @@
             - ucto
             - timbl
             - colibricore
+            - babelente #technically not part of clamservices but included here for convenience
           #note: some things like alpino are deferred to that respective role
 
         - name: "Install clam configuration"
@@ -168,6 +169,7 @@
             - ucto
             - timbl
             - colibricore
+            - babelente
 
         - name: "Setting up FLAT"
           import_tasks: flat.yml
