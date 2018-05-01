@@ -132,7 +132,7 @@
             group: "{{unix_group}}"
           when: webservertype == "nginx" and ("all" in services or "ucto"  in services or "frog" in services or "timbl" in services or "colibricore" in services)
 
-        - name: "Install uwsgi configurations,"
+        - name: "Install uwsgi configurations"
           become: "{{lm_become}}"
           become_user: root
           template:
@@ -149,6 +149,7 @@
             - ucto
             - timbl
             - colibricore
+          #note: some things like alpino are deferred to that respective role
 
         - name: "Install clam configuration"
           become: "{{lm_become}}"

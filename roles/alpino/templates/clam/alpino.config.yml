@@ -1,0 +1,5 @@
+port: 8805
+urlprefix: "alpino"
+root: "{{lm_prefix}}/var/www-data/alpino.clam/"
+bindir: "{{lm_prefix}}/bin/"
+flaturl: "{% if http_port|int == 443 %}https://{% else %}http://{% endif %}{{hostname}}/flat"
