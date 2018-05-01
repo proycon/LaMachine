@@ -9,10 +9,11 @@
       shell: |
         #!/bin/bash
         {% if 'pip' in package and package.pip %}
-        {{lm_prefix}}/bin/pip show -v {{package.pip}} | {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}json,pip {% if update %}{{update}}{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json -
+        pip3 show -v {{package.pip}} | {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}json,pip {% if update %}{{update}}{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json -
         {% else %}
         {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}json {% if update %}{{update}}{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json
         {% endif %}
         exit $?
       args:
         executable: /bin/bash
+      environment: "{{lm_env}}"
