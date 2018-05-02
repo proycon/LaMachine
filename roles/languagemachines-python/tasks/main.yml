@@ -91,6 +91,7 @@
             - frog
             - ucto
             - timbl
+            - babelente
 
         - name: Register colibri-core webservice
           include_role:
