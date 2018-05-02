@@ -55,7 +55,6 @@
           - { src: /usr/bin/python3.6, dest: /usr/bin/python3 }
           - { src: /usr/bin/python3.6-config, dest: /usr/bin/python3-config }
           - { src: /usr/bin/pip3.6, dest: /usr/bin/pip3 }
-          - { src: /usr/bin/pyenv3.6, dest: /usr/bin/pyenv3 }
           - { src: /usr/bin/pydoc3.6, dest: /usr/bin/pydoc3 }
           - { src: /usr/bin/easy_install-3.6, dest: /usr/bin/easy_install-3 }
           - { src: /usr/include/python3.6m, dest: /usr/include/python3.6 }
