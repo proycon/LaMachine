@@ -138,11 +138,17 @@
 
       - when: nginx.rc != 0 and ansible_distribution|lower != "macosx"
         block:
-          - name: Obtaining local nginx webserver from source
-            hg:
-              repo: https://hg.nginx.org/nginx
-              dest: "{{source_path}}/nginx"
-              force: "yes"
+          - block:
+              - name: Obtaining local nginx webserver from source
+                hg:
+                  repo: https://hg.nginx.org/nginx
+                  dest: "{{source_path}}/nginx"
+                  force: "yes"
+            rescue:
+              - name: Obtaining local nginx webserver from source (2nd attempt, insecure fallback)
+                shell: hg clone --insecure https://hg.nginx.org/nginx
+                args:
+                  chdir: "{{source_path}}"
 
           - name: "Compiling and installing local nginx webserver"
             shell: "auto/configure --prefix={{lm_prefix}} && make && make install"
