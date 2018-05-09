@@ -43,6 +43,13 @@
       KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
     ignore_errors: yes #obviously not a good idea
 
+  - name: Testing kaldi
+    shell: make test
+    args:
+      chdir: "{{lm_prefix}}/opt/kaldi/src"
+    environment:
+      KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
+
   - name: "Adding activation script for Kaldi"
     become: "{{lm_become}}"
     become_user: root
