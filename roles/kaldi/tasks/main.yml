@@ -13,6 +13,7 @@
       - { debian: gfortran, redhat: libgfortran, arch: gcc-fortran }
     loop_control:
         loop_var: package
+    when: root
 
   - name: "Checking out Kaldi"
     git:
@@ -28,6 +29,11 @@
     environment:
       KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
     ignore_errors: yes #obviously not a good idea
+
+  - name: Configuring kaldi/src
+    shell: ./configure
+    args:
+      chdir: "{{lm_prefix}}/opt/kaldi/src"
 
   - name: Compiling kaldi/src
     shell: make -j $(nproc)
