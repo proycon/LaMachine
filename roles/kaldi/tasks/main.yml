@@ -31,7 +31,7 @@
     ignore_errors: yes #obviously not a good idea
 
   - name: Configuring kaldi/src
-    shell: ./configure
+    shell: "./configure {{kaldi_configure_options}}"
     args:
       chdir: "{{lm_prefix}}/opt/kaldi/src"
 
@@ -41,7 +41,6 @@
       chdir: "{{lm_prefix}}/opt/kaldi/src"
     environment:
       KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
-    ignore_errors: yes #obviously not a good idea
 
   - name: Testing kaldi
     shell: make test
@@ -49,6 +48,7 @@
       chdir: "{{lm_prefix}}/opt/kaldi/src"
     environment:
       KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
+    ignore_errors: "{{ kaldi_test_ignore_errors }}"
 
   - name: "Adding activation script for Kaldi"
     become: "{{lm_become}}"
