@@ -70,4 +70,4 @@
       package:
          github_user: "UFAL-DSG"
          github_repo: "alex-asr"
-         pip: "alex_asr"
+         #pip: "alex_asr"
