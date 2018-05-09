@@ -63,11 +63,3 @@
          license: Apache
          summary: "Automatic Speech Recognition Toolkit"
 
-  - name: Installing Alex-ASR
-    include_role:
-      name: lamachine-python-install
-    vars:
-      package:
-         github_user: "UFAL-DSG"
-         github_repo: "alex-asr"
-         #pip: "alex_asr"
