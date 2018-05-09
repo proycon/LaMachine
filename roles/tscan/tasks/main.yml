@@ -7,6 +7,23 @@
             repo: tscan
             user: proycon
 
+    - name: Detect current T-scan branch or tag
+      shell: "git describe --tags || git rev-parse HEAD"
+      register: current_tscan_branch_or_tag
+      args:
+        chdir: "{{source_path}}/tscan"
+
+    - name: Installing T-scan webservice
+      include_role:
+        name: lamachine-python-install
+      vars:
+        package:
+          github_user: "proycon"
+          github_repo: "tscan"
+          setupdir: "webservice" #setup.py is in this subdir
+          git_branch: "{{ current_tscan_branch_or_tag.stdout }}"
+        do_registration: false #we register entrypoints manually:
+
     #download data is done in tscan bootstrap.sh already
 
     - name: Register T-scan
@@ -20,6 +37,9 @@
            url: "https://github.com/proycon/tscan"
            license: AGPL
            description: "T-scan: an analysis tool for dutch texts to assess the complexity of the text, based on original work by Rogier Kraf."
+           entryPoints:
+              - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/tscan", interfaceType: "WUI" }
+              - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/tscan", specification: "{{lm_base_url}}/tscan/info",  interfaceType: "REST" }
 
     - when: webserver
       block:

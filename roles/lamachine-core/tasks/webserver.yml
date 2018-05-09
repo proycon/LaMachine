@@ -134,9 +134,12 @@
       - name: "Finding nginx"
         shell: which nginx
         register: nginx
+        environment:
+            PATH: "{{local_prefix}}/bin:/usr/sbin:{{ansible_env.PATH}}"
         failed_when: nginx.rc == 127
+        when: webservertype == "nginx"
 
-      - when: nginx.rc != 0 and ansible_distribution|lower != "macosx"
+      - when: nginx.rc != 0 and ansible_distribution|lower != "macosx" and webservertype == "nginx"
         block:
           - block:
               - name: Obtaining local nginx webserver from source
