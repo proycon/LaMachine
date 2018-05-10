@@ -130,6 +130,7 @@
                url: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
                codeRepository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
                version: "{{ latest_commit.stdout }}"
+               producer: "{% if 'user' in package %}{% if package.user in github_clst_users %}{{metadata_producer_clst}}{% else %}{{metadata_producer_unknown}}{% endif %}{% else %}{{metadata_producer_unknown}}{% endif %}"
           when: "do_registration is defined and do_registration"
 
     - name: "{{package.repo}} - Checkout custom version: {{customversion[package.repo]}}"
