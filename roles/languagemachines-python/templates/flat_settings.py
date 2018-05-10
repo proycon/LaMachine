@@ -97,6 +97,8 @@ DEFAULTCONFIGURATION = 'full'
 # Allow public anonymous uploads without any authentication?
 ALLOWPUBLICUPLOAD = True #DISABLE THIS IF YOU DO NOT NEED ANY ANONYMOUS UNAUTHENTICATED USAGE!
 
+ALLOWREGISTRATION = True
+
 #These are the configurations, add new ones by copying the 'full' configuration and adapting it to your needs.
 CONFIGURATIONS = {
 'full':{
@@ -276,7 +278,6 @@ MANAGERS = ADMINS
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', "{{hostname}}"]
 
-FORCE_SCRIPT_NAME = "/flat" #FLAT runs on the flat/ url prefix rather than the root
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -316,12 +317,16 @@ MEDIA_URL = 'http://flat.science.ru.nl/usermedia/' #not used currently by FLAT
 # Example: "/var/www/example.com/static/"
 STATIC_ROOT = BASE_DIR + '/flat/static/'
 
+BASE_PREFIX = '/flat'
+if BASE_PREFIX:
+    FORCE_SCRIPT_NAME = BASE_PREFIX #FLAT runs on the flat/ url prefix rather than the root
+
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
-STATIC_URL = '/static/'
+STATIC_URL = BASE_PREFIX + '/static/'
 
 STYLE_ROOT = BASE_DIR + '/flat/style/'
-STYLE_URL = '/style/'
+STYLE_URL =  BASE_PREFIX + '/style/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -340,7 +345,7 @@ STATICFILES_FINDERS = (
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-LOGIN_URL = "/login/" #don't change this
+LOGIN_URL = BASE_PREFIX + "/login/"
 
 
 
