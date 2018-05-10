@@ -86,3 +86,21 @@
               chdir: "{{lm_prefix}}/etc"
           environment: "{{lm_env}}"
 
+        - name: Configure FLAT domain
+          shell: |
+            export PYTHONPATH="{{lm_prefix}}/etc" DJANGO_SETTINGS_MODULE=flat_settings
+            echo -ne "
+
+            username = 'flat'
+            password = 'flat'
+            email = 'flat@localhost'
+
+            from django.contrib.sites.models import Site
+            one = Site.objects.all()[0]
+            one.domain = '{{hostname}}/flat'
+            one.name = 'FLAT'
+            one.save()" | django-admin shell -i python
+          args:
+              executable: /bin/bash
+              chdir: "{{lm_prefix}}/etc"
+          environment: "{{lm_env}}"
