@@ -317,9 +317,10 @@ MEDIA_URL = 'http://flat.science.ru.nl/usermedia/' #not used currently by FLAT
 # Example: "/var/www/example.com/static/"
 STATIC_ROOT = BASE_DIR + '/flat/static/'
 
+#If you don't run at the document root of your webserver/virtual host, set BASE_PREFIX to your URL prefix (no trailing slash), e.g BASE_PREFIX = "/flat"
+#leave empty in all other scenarios
 BASE_PREFIX = '/flat'
-if BASE_PREFIX:
-    FORCE_SCRIPT_NAME = BASE_PREFIX #FLAT runs on the flat/ url prefix rather than the root
+if BASE_PREFIX: FORCE_SCRIPT_NAME = BASE_PREFIX #FLAT runs on the flat/ url prefix rather than the root
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
