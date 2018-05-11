@@ -113,7 +113,7 @@
                 echo "Unable to find dir"
                 exit 2
             fi
-            if [ ! -e "{{lm_prefix}}/opt/{{item}}" ]; then
+            if [ -e "{{lm_prefix}}/opt/{{item}}" ]; then
               rm "{{lm_prefix}}/opt/{{item}}"
             fi
             ln -sf $DIR {{lm_prefix}}/opt/{{item}}
