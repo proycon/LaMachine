@@ -139,7 +139,7 @@
         failed_when: nginx.rc == 127
         when: webservertype == "nginx"
 
-      - when: nginx.rc != 0 and ansible_distribution|lower != "macosx" and webservertype == "nginx"
+      - when: ansible_distribution|lower != "macosx" and webservertype == "nginx" and nginx.rc != 0
         block:
           - block:
               - name: Obtaining local nginx webserver from source
