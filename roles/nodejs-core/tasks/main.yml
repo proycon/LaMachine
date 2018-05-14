@@ -1,0 +1,10 @@
+---
+  - name: Installing NodeJS (Linux)
+    include_role:
+      name: lamachine-package-install
+    with_items:
+      - { debian: nodejs, redhat: nodejs, arch: nodejs, homebrew: node }
+      - { debian: npm, redhat: npm, arch: npm } #npm is already included as a dependency for nodejs usually, but listing explicitly just in case
+    loop_control:
+       loop_var: package
+    when: root
