@@ -12,7 +12,31 @@
     args:
       chdir: "{{ source_path }}/labirinto"
 
+  - name: Install webserver configuration
+    become: "{{lm_become}}"
+    become_user: root
+    template:
+      src: "nginx/labirinto.conf"
+      dest: "{{lm_prefix}}/etc/nginx/conf.d/labirinto.conf"
+      force: yes
+      owner: "{{unix_user}}"
+      group: "{{unix_group}}"
+    when: webservertype == "nginx"
+
+  - name: Copying build file
+    template:
+      src: "prod.env.js"
+      dest: "{{ source_path }}/labirinto/config/prod.env.js"
+      force: yes
+      owner: "{{unix_user}}"
+      group: "{{unix_group}}"
+
   - name: Building Labirinto
     shell: npm run build
     args:
       chdir: "{{ source_path }}/labirinto"
+
+  - name: Deploying to document root
+    become: "{{lm_become}}"
+    become_user: root
+    command: "cp -r {{ source_path }}/dist/* {{lm_prefix}}/var/www-data/docroot/"
