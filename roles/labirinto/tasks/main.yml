@@ -39,4 +39,4 @@
   - name: Deploying to document root
     become: "{{lm_become}}"
     become_user: root
-    command: "cp -r {{ source_path }}/dist/* {{lm_prefix}}/var/www-data/docroot/"
+    command: "cp -r {{ source_path }}/labirinto/dist/* {{lm_prefix}}/var/www-data/docroot/"
