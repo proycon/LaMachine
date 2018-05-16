@@ -24,7 +24,7 @@ if [ -d .git ]; then
 fi
 FIRST=1
 INTERACTIVE=1
-if [ "$1" = "--edit" ]; then
+if [ "$1" = "--edit" ] || [ "$1" = "--editonly" ]; then
     if [ -z "$EDITOR" ]; then
       export EDITOR=nano
     fi
@@ -48,6 +48,9 @@ if [ "$1" = "--edit" ]; then
     FIRST=2
 elif [ "$1" = "--noninteractive" ]; then
     INTERACTIVE=0
+fi
+if [ "$1" = "--editonly" ]; then
+    exit 0
 fi
 OPTS=""
 if [[ {{root|int}} -eq 1 ]] && [[ $INTERACTIVE -eq 1 ]]; then
