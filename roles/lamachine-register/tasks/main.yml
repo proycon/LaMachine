@@ -1,9 +1,17 @@
 ---
+
+    - name: "Download remote metadata"
+      get_url:
+          url: "{{url}}"
+          dest: "{{lm_prefix}/var/tmpmetadata.json"
+      when: url is defined and url != ""
+
     - name: "Outputting temporary metadata"
       copy:
         content: '{% if "metadata" in package %}{{ metadata_defaults|combine(metadata)|combine(package.metadata)|to_json }}{% else %}{{ metadata_defaults|combine(metadata)|to_json }}{% endif %}'
         dest: "{{lm_prefix}}/var/tmpmetadata.json"
         force: yes
+      when: download is not defined or download == ""
 
     - name: "Registering metadata"
       shell: |

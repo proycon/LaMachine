@@ -32,6 +32,7 @@ github_clst_users:
   - kosloot
   - fkunneman
   - erkanbasar
+metadata_extra_urls: [] #URLs to extra codemeta.json files to download and register
 metadata_producer_unknown: {}
 metadata_producer_clst:
     "@id": "https://www.ru.nl/clst"
