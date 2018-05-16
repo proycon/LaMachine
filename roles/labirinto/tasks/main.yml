@@ -23,13 +23,16 @@
       group: "{{unix_group}}"
     when: webservertype == "nginx"
 
-  - name: Copying build file
+  - name: Copying build files
     template:
-      src: "prod.env.js"
-      dest: "{{ source_path }}/labirinto/config/prod.env.js"
+      src: "{{item}}"
+      dest: "{{ source_path }}/labirinto/config/{{item}}"
       force: yes
       owner: "{{unix_user}}"
       group: "{{unix_group}}"
+    with_items:
+      - "prod.env.js"
+      - "index.js"
 
   - name: Building Labirinto
     shell: npm run build
@@ -39,4 +42,4 @@
   - name: Deploying to document root
     become: "{{lm_become}}"
     become_user: root
-    shell: "cp -r {{ source_path }}/labirinto/dist/* {{lm_prefix}}/var/www-data/docroot/"
+    shell: "mkdir -p {{lm_prefix}}/var/www-data/docroot/portal && cp -r {{ source_path }}/labirinto/dist/* {{lm_prefix}}/var/www-data/docroot/portal/"
