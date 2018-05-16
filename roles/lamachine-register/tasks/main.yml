@@ -3,7 +3,7 @@
     - name: "Download remote metadata"
       get_url:
           url: "{{url}}"
-          dest: "{{lm_prefix}/var/tmpmetadata.json"
+          dest: "{{lm_prefix}/var/codemeta.tmp.json"
       when: url is defined and url != ""
 
     - name: "Outputting temporary metadata"
@@ -11,15 +11,15 @@
         content: '{% if "metadata" in package %}{{ metadata_defaults|combine(metadata)|combine(package.metadata)|to_json }}{% else %}{{ metadata_defaults|combine(metadata)|to_json }}{% endif %}'
         dest: "{{lm_prefix}}/var/tmpmetadata.json"
         force: yes
-      when: download is not defined or download == ""
 
     - name: "Registering metadata"
       shell: |
         #!/bin/bash
+        # what we do here is build a chain of metadata, each one updating over the last, effectively merging all the fields
         {% if 'pip' in package and package.pip %}
-        pip3 show -v {{package.pip}} | {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}json,pip {% if update %}{{update}}{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json -
+        pip3 show -v {{package.pip}} | {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}{% if url is defined and url %}json,{% endif %}json,pip {% if update %}{{update}}{% endif %} {% if url is defined and url %}{{lm_prefix}}/var/codemeta.tmp.json{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json -
         {% else %}
-        {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}json {% if update %}{{update}}{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json
+        {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}{% if url is defined and url %}json,{% endif %}json {% if update %}{{update}}{% endif %} {% if url is defined and url %}{{lm_prefix}}/var/codemeta.tmp.json{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json
         {% endif %}
         exit $?
       args:

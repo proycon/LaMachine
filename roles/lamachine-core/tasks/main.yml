@@ -383,8 +383,10 @@
       include_role:
           name: lamachine-register
       vars:
-          url: "{{item}}"
-      with_items: "{{metadata_extra_urls}}"
+          url: "{% if 'url' in item %}{{item.url}}{% else %}{% endif %}"
+          codemeta: "{% if 'codemeta' in item %}{{item.codemeta}}{% else %}{% endif %}"
+          metadata: "{% if 'metadata' in item %}{{item.metadata}}{% else %}{}{% endif %}"
+      with_items: "{{metadata_extra}}"
       when: metadata_extra_urls is defined and metadata_extra_urls
 
     - import_tasks: webserver.yml
