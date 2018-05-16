@@ -7,6 +7,6 @@ module.exports = {
   REGISTRY_URL: '"{{lm_base_url}}/metadata.json"',
   LOGO_RIGHT: "true",
   LOGO_LEFT: "true",
-  ORGANIZATIONS: '"[]"',
+  ORGANIZATIONS: '["Radboud"]',
   DOMAINS: '["{{hostname}}"]',
 }
