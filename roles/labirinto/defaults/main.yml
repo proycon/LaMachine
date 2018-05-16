@@ -1,0 +1,10 @@
+---
+portal_title: "LaMachine Portal"
+portal_description: "This portal provides an overview of available Natural Language Processing software in this installation of LaMachine, use the filters above to broaden or narrow the selection."
+portal_organizations:
+  - DUMMY
+portal_domains:
+  - "{{hostname}}"
+portal_registry_url: "{{lm_base_url}}/metadata.json"
+
+
