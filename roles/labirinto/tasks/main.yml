@@ -1,45 +1,47 @@
 ---
-  - name: Obtaining Labirinto
-    include_role:
-      name: lamachine-git
-    vars:
-      package:
-        user: proycon
-        repo: labirinto
+  - when: webserver is defined and webserver == true
+    block:
+      - name: Obtaining Labirinto
+        include_role:
+          name: lamachine-git
+        vars:
+          package:
+            user: proycon
+            repo: labirinto
 
-  - name: Installing Labirinto dependencies
-    shell: npm install
-    args:
-      chdir: "{{ source_path }}/labirinto"
+      - name: Installing Labirinto dependencies
+        shell: npm install
+        args:
+          chdir: "{{ source_path }}/labirinto"
 
-  - name: Install webserver configuration
-    become: "{{lm_become}}"
-    become_user: root
-    template:
-      src: "nginx/labirinto.conf"
-      dest: "{{lm_prefix}}/etc/nginx/conf.d/labirinto.conf"
-      force: yes
-      owner: "{{unix_user}}"
-      group: "{{unix_group}}"
-    when: webservertype == "nginx"
+      - name: Install webserver configuration
+        become: "{{lm_become}}"
+        become_user: root
+        template:
+          src: "nginx/labirinto.conf"
+          dest: "{{lm_prefix}}/etc/nginx/conf.d/labirinto.conf"
+          force: yes
+          owner: "{{unix_user}}"
+          group: "{{unix_group}}"
+        when: webservertype == "nginx"
 
-  - name: Copying build files
-    template:
-      src: "{{item}}"
-      dest: "{{ source_path }}/labirinto/config/{{item}}"
-      force: yes
-      owner: "{{unix_user}}"
-      group: "{{unix_group}}"
-    with_items:
-      - "prod.env.js"
-      - "index.js"
+      - name: Copying build files
+        template:
+          src: "{{item}}"
+          dest: "{{ source_path }}/labirinto/config/{{item}}"
+          force: yes
+          owner: "{{unix_user}}"
+          group: "{{unix_group}}"
+        with_items:
+          - "prod.env.js"
+          - "index.js"
 
-  - name: Building Labirinto
-    shell: npm run build
-    args:
-      chdir: "{{ source_path }}/labirinto"
+      - name: Building Labirinto
+        shell: npm run build
+        args:
+          chdir: "{{ source_path }}/labirinto"
 
-  - name: Deploying to document root
-    become: "{{lm_become}}"
-    become_user: root
-    shell: "mkdir -p {{lm_prefix}}/var/www-data/docroot/portal && cp -r {{ source_path }}/labirinto/dist/* {{lm_prefix}}/var/www-data/docroot/portal/"
+      - name: Deploying to document root
+        become: "{{lm_become}}"
+        become_user: root
+        shell: "mkdir -p {{lm_prefix}}/var/www-data/docroot/portal && cp -r {{ source_path }}/labirinto/dist/* {{lm_prefix}}/var/www-data/docroot/portal/"
