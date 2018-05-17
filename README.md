@@ -134,7 +134,13 @@ the installation procedure.
 
 Note that some software may not be available on certain platforms/distributions (most notably Mac OS X).
 
-For a verbose list of installed software, run ``lamachine-list`` once you are inside your LaMachine installation.
+For a verbose list of installed software and its metadata, run ``lamachine-list`` once you are inside your LaMachine
+installation. For more information regarding software metadata, check the corresponding section in the [the contributor
+documentation](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md).
+
+If you enabled and started the webserver in LaMachine, then you have access to a rich portal page giving an overview of
+all installed software and providing access to any software with a web-based interface. This portal is powered by
+[Labirinto](https://github.com/proycon/labirinto).
 
 ## Contribute
 
@@ -145,7 +151,7 @@ documentation](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md
 
 LaMachine can be installed in multiple *flavours*:
 
- * **Local installation** - Installs LaMachine locally in a user environment on a Linux/BSD or Mac OS X machine (multiple per machine possible); does not come with a webserver!
+ * **Local installation** - Installs LaMachine locally in a user environment on a Linux/BSD or Mac OS X machine (multiple per machine possible)
  * **Global installation** - Installs LaMachine globally on a Linux/BSD machine. (only one per machine)
  * **Docker container** - Installs LaMachine in a docker container
  * **Virtual Machine** - Installs LaMachine in a Virtual Machine
@@ -172,7 +178,7 @@ we generally support the following platforms (but certain participating software
  * CentOS 7 / RedHat Enterprise Linux 7
  * Fedora 27
  * Arch Linux
- * Mac OS X 10.13 (High Sierra) - *Limited support only! No webservices/applications. Various optional software will not support Mac OS X either*
+ * Mac OS X 10.13 (High Sierra) - *Limited functionality only! No webservices/applications. Various optional software will not support Mac OS X either*
 
 This concerns the platforms LaMachine runs on natively or on which you can bootstrap your own build (installation path A). The options for host platforms
 for simply running a pre-built LaMachine Virtual Machine or Docker container, are much larger, and also include Windows
@@ -256,7 +262,8 @@ press ENTER and leave it empty, do not run the entire script with escalated priv
 LaMachine comes with several webservices and web applications out of the box
 (source: https://github.com/proycon/clamservices). Most are RESTful webservices served
 using [CLAM](https://proycon.github.io/clam), which also offer a generic web-interface for human end-users. The
-webserver provides a generic portal to all available services.
+webserver provides a generic portal to all available services, powered by
+[Labirinto](https://github.com/proycon/labirinto).
 
 To start (or restart) the webserver and webservices, run ``lamachine-start-webserver`` from within your LaMachine
 installation. You can then connect your browser (on the host system) to http://localhost:8080 (the port may differ if
@@ -345,6 +352,9 @@ You can also limit the size somewhat by setting ``minimal: true`` in your LaMach
 certains tools don't fully work.
 
 Disk space is also, by far, the cheapest resource, in contrast to memory or CPU.
+
+If you use docker, be aware that you may need to increase the size limit if you build a custom LaMachine container and
+run into size issues!
 
 #### Q: Can I run LaMachine in a 32-bit environment?
 
