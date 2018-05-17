@@ -8,5 +8,5 @@ module.exports = {
   LOGO_RIGHT: "true",
   LOGO_LEFT: "true",
   ORGANIZATIONS: '{{portal_organizations|to_json}}',
-  DOMAINS: '{{portal_domains|to_json}}',
+  DOMAINS: '{{portal_domains|to_json}}'
 }
