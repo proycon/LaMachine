@@ -4,6 +4,7 @@
       get_url:
           url: "{{url}}"
           dest: "{{lm_prefix}}/var/codemeta.tmp.json"
+          force: yes
       when: url is defined and url != ""
 
     - name: "Outputting temporary metadata"
