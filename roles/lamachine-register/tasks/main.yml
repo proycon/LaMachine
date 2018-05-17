@@ -3,7 +3,7 @@
     - name: "Download remote metadata"
       get_url:
           url: "{{url}}"
-          dest: "{{lm_prefix}/var/codemeta.tmp.json"
+          dest: "{{lm_prefix}}/var/codemeta.tmp.json"
       when: url is defined and url != ""
 
     - name: "Outputting temporary metadata"
