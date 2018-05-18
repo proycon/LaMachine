@@ -51,7 +51,7 @@
       - name: Installing NodeJS through NVM
         shell: |
           source $NVM_DIR/nvm.sh
-          bash -lc "nvm install stable"
+          nvm install stable
         args:
             executable: /bin/bash
         environment:
