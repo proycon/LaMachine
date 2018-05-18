@@ -1,5 +1,5 @@
 
-- when: "'exclude_when' not in package or not package.exclude_when"
+- when: "'exclude_when' not in package or not package.exclude_when|bool"
   block:
     - name: "Initialisation"
       set_fact:
