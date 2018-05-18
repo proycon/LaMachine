@@ -42,6 +42,7 @@
         copy:
           dest: "{{lm_prefix}}/bin/activate.d/nvm.sh"
           content: |
+            #!/bin/bash
             export NVM_DIR={{lm_prefix}}/src/nvm
             source $NVM_DIR/nvm.sh
             nvm use stable
@@ -51,6 +52,8 @@
         shell: |
           source $NVM_DIR/nvm.sh
           bash -lc "nvm install stable"
+        args:
+            executable: /bin/bash
         environment:
           NVM_DIR: "{{lm_prefix}}/src/nvm"
 
