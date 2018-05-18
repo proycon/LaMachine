@@ -34,6 +34,33 @@
             user: creationix
             repo: nvm
 
+      - name: "Adding activation script for NVM"
+        copy:
+          dest: "{{lm_prefix}}/bin/activate.d/nvm.sh"
+          content: |
+            export NVM_DIR={{lm_prefix}}/src/nvm
+            source $NVM_DIR/nvm.sh
+            nvm use stable
+          mode: u+rwx,a+rx
+
+      - name: Installing NodeJS through NVM
+        shell: |
+          source $NVM_DIR/nvm.sh
+          bash -lc "nvm install stable"
+        environment:
+          NVM_DIR: "{{lm_prefix}}/src/nvm"
+
+      - name: Create NVM alias directory
+        file:
+          path: "{{ lm_prefix }}/src/nvm/alias"
+          state: directory
+
+      - name: Set NodeJS default version for NVM
+        copy:
+          dest: "{{ lm_prefix }}/src/nvm/alias/default"
+          content: "stable"
+
+
 
 
 

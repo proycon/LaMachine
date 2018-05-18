@@ -10,8 +10,10 @@
             repo: labirinto
 
       - name: Installing Labirinto dependencies
-        shell: npm install
-        args:
+        include_role:
+          name: lamachine-run
+        vars:
+          command: npm install
           chdir: "{{ source_path }}/labirinto"
 
       - name: Install webserver configuration
@@ -37,8 +39,10 @@
           - "index.js"
 
       - name: Building Labirinto
-        shell: npm run build
-        args:
+        include_role:
+          name: lamachine-run
+        vars:
+          command: npm run build
           chdir: "{{ source_path }}/labirinto"
 
       - name: Deploying to document root
