@@ -50,7 +50,7 @@
                 git stash -u
               args:
                 chdir: "{{ source_path }}/{{package.repo}}"
-              when: '("untracked working tree files" in gitcheckout.stdout or "would be overwritten by merge" in gitcheckout.stderr) and allow_stash'
+              when: '("untracked working tree files" in gitcheckout.stdout or "would be overwritten" in gitcheckout.stderr) and allow_stash'
             - name: "{{package.repo}} - Checkout latest stable version {{latest_tag.stdout}} (2nd attempt after stash)"
               shell: "git checkout {{latest_tag.stdout}}"
               args:
