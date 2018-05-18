@@ -19,9 +19,8 @@
             when: force is not defined or not force
       when: ansible_distribution|lower == 'macosx' and root and version == "stable" #note: no locality check here, we use homebrew even in local mode
 
-    - name: Link frogdata and uctodata on Mac OS X
+    - name: Link frogdata on Mac OS X
       shell: |
-          ln -sf /usr/local/opt/uctodata/share/ucto/* /usr/local/opt/ucto/share/ucto/
           ln -sf /usr/local/opt/frogdata/share/frog/ /usr/local/opt/frog/share
       when: ansible_distribution|lower == 'macosx' and root and version == "stable" #note: no locality check here, we use homebrew even in local mode
 

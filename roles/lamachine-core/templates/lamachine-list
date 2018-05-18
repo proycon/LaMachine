@@ -3,6 +3,7 @@
 import sys
 import argparse
 from collections import OrderedDict
+from codemeta.codemeta import resolve
 import json
 import yaml
 
@@ -40,7 +41,7 @@ if __name__ == "__main__":
     parser.add_argument('software', nargs='*', help='Software packages to query (if not specified, will return all)')
     args = parser.parse_args()
     with open(args.registry,'r',encoding='utf-8') as f:
-        registry = json.load(f)
+        registry = resolve(json.load(f))
     jsonout = {}
     softwarelist = [ x.lower() for x in args.software ]
     if softwarelist and args.dependencies:

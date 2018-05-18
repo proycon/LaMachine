@@ -86,3 +86,33 @@
               chdir: "{{lm_prefix}}/etc"
           environment: "{{lm_env}}"
 
+        - name: Configure FLAT domain
+          shell: |
+            export PYTHONPATH="{{lm_prefix}}/etc" DJANGO_SETTINGS_MODULE=flat_settings
+            echo -ne "
+
+            username = 'flat'
+            password = 'flat'
+            email = 'flat@localhost'
+
+            from django.contrib.sites.models import Site
+            one = Site.objects.all()[0]
+            one.domain = '{{hostname}}/flat'
+            one.name = 'FLAT'
+            one.save()" | django-admin shell -i python
+          args:
+              executable: /bin/bash
+              chdir: "{{lm_prefix}}/etc"
+          environment: "{{lm_env}}"
+
+        - name: Register FLAT
+          include_role:
+              name: lamachine-register
+          vars:
+            update: "folia-linguistic-annotation-tool"
+            metadata: #add entrypoint metadata to registry
+                identifier: "folia-linguistic-annotation-tool"
+                entryPoints:
+                  - "@type": "EntryPoint"
+                    urlTemplate: "{% if flat_url is defined %}{{flat_url}}{% else %}{{lm_base_url}}/flat{% endif %}"
+                    interfaceType: "WUI"

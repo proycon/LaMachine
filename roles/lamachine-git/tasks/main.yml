@@ -1,5 +1,5 @@
 
-- when: "'exclude_when' not in package or not package.exclude_when"
+- when: "'exclude_when' not in package or not package.exclude_when|bool"
   block:
     - name: "Initialisation"
       set_fact:
@@ -50,7 +50,7 @@
                 git stash -u
               args:
                 chdir: "{{ source_path }}/{{package.repo}}"
-              when: '("untracked working tree files" in gitcheckout.stdout) and allow_stash'
+              when: '("untracked working tree files" in gitcheckout.stdout or "would be overwritten by merge" in gitcheckout.stderr) and allow_stash'
             - name: "{{package.repo}} - Checkout latest stable version {{latest_tag.stdout}} (2nd attempt after stash)"
               shell: "git checkout {{latest_tag.stdout}}"
               args:
@@ -98,7 +98,7 @@
                 git stash -u
               args:
                 chdir: "{{ source_path }}/{{package.repo}}"
-              when: '("untracked working tree files" in gitcheckout.stdout) and allow_stash'
+              when: '("untracked working tree files" in gitcheckout.stdout or "would be overwritten by merge" in gitcheckout.stderr) and allow_stash'
             - name: "{{package.repo}} - Checkout latest master version of (development, second attempt after stash)"
               shell: "git checkout master && git pull"
               args:
@@ -130,6 +130,7 @@
                url: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
                codeRepository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
                version: "{{ latest_commit.stdout }}"
+               producer: "{% if 'user' in package %}{% if package.user in github_clst_users %}{{metadata_producer_clst}}{% else %}{{metadata_producer_unknown}}{% endif %}{% else %}{{metadata_producer_unknown}}{% endif %}"
           when: "do_registration is defined and do_registration"
 
     - name: "{{package.repo}} - Checkout custom version: {{customversion[package.repo]}}"

@@ -379,6 +379,16 @@
       vars:
         package: { github_user: "proycon", github_repo: "codemetapy", pip: "codemetapy" }
 
+    - name: Registering extra metadata
+      include_role:
+          name: lamachine-register
+      vars:
+          url: "{% if 'url' in item %}{{item.url}}{% else %}{% endif %}"
+          codemeta: "{% if 'codemeta' in item %}{{item.codemeta}}{% else %}{% endif %}"
+          metadata: "{% if 'metadata' in item %}{{item.metadata}}{% else %}{}{% endif %}"
+      when: metadata_extra is defined and metadata_extra
+      with_items: "{{metadata_extra}}"
+
     - import_tasks: webserver.yml
       when: webserver is defined and webserver == true
 

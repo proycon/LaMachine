@@ -281,15 +281,24 @@ we encourage you to set up a task that produces an error if the platform is unsu
 ## Software Metadata
 
 LaMachine attempts to register software metadata of all software it explicitly installs, the ``lamachine-register`` role
-that is invoked by various installation procedures takes care of this. The metadata is collected in a
-``lamachine-registry.json`` file and is converted from various formats to [Codemeta](https://codemeta.github.io),
+that is invoked by various installation procedures takes care of this. All software metadata is collected in a
+single ``lamachine-registry.json`` file.
+LaMachine uses the [Codemeta](https://codemeta.github.io) standard for software metadata,
 ensuring a unified metadata format. Metadata from certain sources such as the Python Package Index or CRAN can be
-converted quite well. You can place a ``codemeta.json`` file in the root of your source code repository which LaMachine
-will automatically use. Alternatively, you can augment metadata from the ansible roles if updating the upstream project
+automatically converted quite well.  Our philosophy is that software metadata should be in a simple format and either live right alongside the source code in a
+version controlled repository (e.g. on github, bitbucket, etc), or be obtained from a software repository such as as the
+Python Package Index, CRAN, CPAN, Maven Central and automatically converted to a unified format. This automatic
+conversion is performed by [CodeMetaPy](https://github.com/proycon/codemetapy) or [CodeMetar](https://ropensci.github.io/codemetar/)), included in LaMachine.
+
+You can, and are in fact encouraged to, place a ``codemeta.json`` file in the root of your source code repository, following the proper Codemeta specifications. If you do so, LaMachine
+will automatically use this. Alternatively, you can augment metadata from within the ansible roles themselves if updating the upstream project
 is not an option.
 
-Within LaMachine, the ``lamachine-list`` allows users to access the available metadata from the command line.
+Within LaMachine, the ``lamachine-list`` allows users to access the available metadata from the command line (it will be serialised as YAML).
 
+If you enabled and started the webserver in LaMachine, then you have access to a rich portal page giving an overview of
+all installed software and providing access to any software with a web-based interface. This portal is powered by
+[Labirinto](https://github.com/proycon/labirinto).
 
 ## Testing
 

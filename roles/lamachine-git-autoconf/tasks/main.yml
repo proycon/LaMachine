@@ -1,5 +1,5 @@
 ---
-- when: "'exclude_when' not in package or not package.exclude_when"
+- when: "'exclude_when' not in package or not package.exclude_when|bool"
   block:
     - name: "{{package.repo}} - Obtaining from git"
       import_role:
@@ -80,3 +80,4 @@
            url: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
            codeRepository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
            version: "{{ register_version.stdout }}"
+           producer: "{% if 'user' in package %}{% if package.user in github_clst_users %}{{metadata_producer_clst}}{% else %}{{metadata_producer_unknown}}{% endif %}{% else %}{{metadata_producer_unknown}}{% endif %}"
