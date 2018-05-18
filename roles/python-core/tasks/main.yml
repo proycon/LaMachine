@@ -66,7 +66,7 @@
          - { "pip": fasttext }
          - { "pip": xgboost, "exclude_when": "{% if ansible_distribution|lower == 'macosx' %}true{% else %}false{% endif %}" }
          - { "pip": tqdm }
-         - { "pip": django, "exclude_when": "{% if webserver %}false{% else %}true{% endif %}" }
+         - { "pip": django, "version": "{% if python_version.stdout <= '3.4' %}2.0.5{% endif %}", "exclude_when": "{% if webserver %}false{% else %}true{% endif %}" } #django >=2.1 does not support python 3.4, stick to latest 2.0 release in that case
          - { "pip": uwsgi, "exclude_when": "{% if webserver and not (root and locality=='global' and (ansible_distribution|lower == 'debian' or ansible_distribution|lower == 'ubuntu' or ansible_distribution|lower == 'linux mint')) %}false{% else %}true{% endif %}" } #uwsgi will already be installed globally if on debian/ubuntu in global mode
        loop_control:
            loop_var: package
