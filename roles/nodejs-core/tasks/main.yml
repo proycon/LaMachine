@@ -1,17 +1,74 @@
 ---
-  - name: Installing NodeJS (Linux)
+
+  - when: root or locality == "global"
+    block:
+      - name: Add NodeSource repository (Debian/Ubuntu)
+        become: yes
+        become_user: root
+        shell: bash <(curl -sL https://deb.nodesource.com/setup_10.x)
+        args:
+            executable: /bin/bash
+        when: ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "debian" or ansible_distribution|lower == "linux mint"
+
+      - name: Add NodeSource repository (RedHat EL/CentOS/Fedora)
+        become: yes
+        become_user: root
+        shell: bash <(curl -sL https://rpm.nodesource.com/setup_10.x)
+        args:
+            executable: /bin/bash
+        when: ansible_distribution|lower == "rhel" or ansible_distribution|lower == "centos" or ansible_distribution|lower == "redhat" or ansible_distribution|lower == "fedora"
+
+  - name: Installing NodeJS
     include_role:
       name: lamachine-package-install
     with_items:
       - { debian: nodejs, redhat: nodejs, arch: nodejs, homebrew: node }
-      - { redhat: npm, arch: npm } #npm is already included as a dependency for nodejs often, but listing explicitly just in case (debian stretch and ubuntu xenial do NOT have a separate npm package yet (18.04 does))
+      - { arch: npm } #included in nodejs with the others
     loop_control:
        loop_var: package
     when: root
 
-  - name: Installing npm (Ubuntu 18.04+)
-    include_role:
-      name: lamachine-package-install
-    with_items:
-      - { debian: npm }
-    when: ansible_distribution|lower == "ubuntu" and ansible_distribution_version|string >= "18.04"
+  - when: locality == "local" and not root
+    block:
+      - name: Obtaining NVM
+        include_role:
+          name: lamachine-git
+        vars:
+          package:
+            user: creationix
+            repo: nvm
+
+      - name: "Adding activation script for NVM"
+        copy:
+          dest: "{{lm_prefix}}/bin/activate.d/nvm.sh"
+          content: |
+            #!/bin/bash
+            export NVM_DIR={{lm_prefix}}/src/nvm
+            source $NVM_DIR/nvm.sh
+            nvm use stable
+          mode: u+rwx,a+rx
+
+      - name: Installing NodeJS through NVM
+        shell: |
+          source $NVM_DIR/nvm.sh
+          bash -lc "nvm install stable"
+        args:
+            executable: /bin/bash
+        environment:
+          NVM_DIR: "{{lm_prefix}}/src/nvm"
+
+      - name: Create NVM alias directory
+        file:
+          path: "{{ lm_prefix }}/src/nvm/alias"
+          state: directory
+
+      - name: Set NodeJS default version for NVM
+        copy:
+          dest: "{{ lm_prefix }}/src/nvm/alias/default"
+          content: "stable"
+
+
+
+
+
+
