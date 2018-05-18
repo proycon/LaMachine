@@ -1,17 +1,25 @@
 ---
-  - name: Installing NodeJS (Linux)
+
+  - when: root or locality == "global"
+    block:
+      - name: Add NodeSource repository (Debian/Ubuntu)
+        become: "{{lm_become}}"
+        become_user: root
+        shell: bash <(curl -sL https://deb.nodesource.com/setup_10.x)
+        when: ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "debian" or ansible_distribution|lower == "linux mint"
+
+      - name: Add NodeSource repository (RedHat EL/CentOS/Fedora)
+        become: "{{lm_become}}"
+        become_user: root
+        shell: bash <(curl -sL https://rpm.nodesource.com/setup_10.x)
+        when: ansible_distribution|lower == "rhel" or ansible_distribution|lower == "centos" or ansible_distribution|lower == "redhat" or ansible_distribution|lower == "fedora"
+
+  - name: Installing NodeJS
     include_role:
       name: lamachine-package-install
     with_items:
       - { debian: nodejs, redhat: nodejs, arch: nodejs, homebrew: node }
-      - { redhat: npm, arch: npm } #npm is already included as a dependency for nodejs often, but listing explicitly just in case (debian stretch and ubuntu xenial do NOT have a separate npm package yet (18.04 does))
+      - { arch: npm } #included in nodejs with the others
     loop_control:
        loop_var: package
     when: root
-
-  - name: Installing npm (Ubuntu 18.04+)
-    include_role:
-      name: lamachine-package-install
-    with_items:
-      - { debian: npm }
-    when: ansible_distribution|lower == "ubuntu" and ansible_distribution_version|string >= "18.04"
