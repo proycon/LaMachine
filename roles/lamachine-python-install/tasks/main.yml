@@ -31,7 +31,7 @@
            executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
            version: "{{package.version}}"
       environment: "{{lm_env}}"
-      when: (version == "custom" or ('version' in package and package.version)) and ("github_user" not in package or package.github_user == "") and localenv_type != "conda" and "pip" in package and package.pip != "")
+      when: (version == "custom" or ('version' in package and package.version)) and ("github_user" not in package or package.github_user == "") and localenv_type != "conda" and "pip" in package and package.pip != ""
 
     - name: "{% if 'pip' in package %}{{package.pip}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest release from the Python Package Index (stable)"
       become: "{{lm_become}}"
