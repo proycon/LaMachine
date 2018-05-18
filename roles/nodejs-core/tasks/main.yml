@@ -4,7 +4,14 @@
       name: lamachine-package-install
     with_items:
       - { debian: nodejs, redhat: nodejs, arch: nodejs, homebrew: node }
-      - { debian: npm, redhat: npm, arch: npm } #npm is already included as a dependency for nodejs usually, but listing explicitly just in case
+      - { redhat: npm, arch: npm } #npm is already included as a dependency for nodejs often, but listing explicitly just in case (debian stretch and ubuntu xenial do NOT have a separate npm package yet (18.04 does))
     loop_control:
        loop_var: package
     when: root
+
+  - name: Installing npm (Ubuntu 18.04+)
+    include_role:
+      name: lamachine-package-install
+    with_items:
+      - { debian: npm }
+    when: ansible_distribution|lower == "ubuntu" and ansible_distribution_version|string >= "18.04"
