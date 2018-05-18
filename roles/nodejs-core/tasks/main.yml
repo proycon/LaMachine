@@ -3,7 +3,7 @@
   - when: root or locality == "global"
     block:
       - name: Add NodeSource repository (Debian/Ubuntu)
-        become: "{{lm_become}}"
+        become: yes
         become_user: root
         shell: bash <(curl -sL https://deb.nodesource.com/setup_10.x)
         args:
@@ -11,7 +11,7 @@
         when: ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "debian" or ansible_distribution|lower == "linux mint"
 
       - name: Add NodeSource repository (RedHat EL/CentOS/Fedora)
-        become: "{{lm_become}}"
+        become: yes
         become_user: root
         shell: bash <(curl -sL https://rpm.nodesource.com/setup_10.x)
         args:
