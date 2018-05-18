@@ -1013,13 +1013,14 @@ controller: \"$CONTROLLER\" #internal or external? Is this installation managed 
         echo "prefer_distro: false #prefer using the distribution's packages as much as possible rather than distribution channels such as pip (this will install more conservative versions but may break certain things)" >> $STAGEDCONFIG
     fi
     if [ $OS = "mac" ]; then
-        echo "webserver: false #include a webserver" >> $STAGEDCONFIG
+        echo "webserver: false #include a webserver and web-based services/applications. Disabling this turns all web-based functionality off." >> $STAGEDCONFIG
     else
-        echo "webserver: true #include a webserver" >> $STAGEDCONFIG
+        echo "webserver: true #include a webserver and web-based services/applications. Disabling this turns all web-based functionality off." >> $STAGEDCONFIG
     fi
-echo "http_port: 80 #webserver port (for VM or docker)
+echo "http_port: 80 #webserver port
 mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
 services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all possible services from the software categories you install will be provided. You can remove this and list specific services you want to enable. This is especially needed in case of a LaMachine installation that intends to only provide a single service.
+webservertype: nginx #If set to anything different, the internal webserver will not be enabled/provided by LaMachine (which allows you to run your own external one), do leave webserver: true set as is though.
 " >> $STAGEDCONFIG
     if [[ $FLAVOUR == "local" ]] || [[ "$OS" == "mac" ]]; then
         echo "web_user: \"$USERNAME\"" >> $STAGEDCONFIG
