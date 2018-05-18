@@ -23,3 +23,18 @@
     loop_control:
        loop_var: package
     when: root
+
+  - when: locality == "local" and not root
+    block:
+      - name: Obtaining NVM
+        include_role:
+          name: lamachine-git
+        vars:
+          package:
+            user: creationix
+            repo: nvm
+
+
+
+
+
