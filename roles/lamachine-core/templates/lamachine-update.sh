@@ -8,6 +8,8 @@ boldgreen=${bold}$(tput setaf 2) #  green
 boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
+export LC_ALL=en_US.UTF_8
+
 if [ -e "{{lm_path}}" ]; then
   cd "{{lm_path}}"
 else
