@@ -72,9 +72,9 @@
              metadata_defaults: #'metadata' by caller takes presendence over defaults
                identifier: "{{package.repo|lower}}"
                name: "{{package.repo}}"
-               homepage: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
-               repository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+               codeRepository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
                version: "{{ latest_tag.stdout }}"
+               producer: "{% if 'user' in package %}{% if package.user in github_clst_users %}{{metadata_producer_clst}}{% else %}{{metadata_producer_unknown}}{% endif %}{% else %}{{metadata_producer_unknown}}{% endif %}"
           when: "do_registration is defined and do_registration"
 
     - when: version == "development" or (version == "stable" and ("noreleases" in package and package.noreleases))
