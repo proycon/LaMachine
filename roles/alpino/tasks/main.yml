@@ -78,6 +78,10 @@
            name: Alpino
            author: [ "Gertjan van Noord", "Gosse Bouma" ]
            url: "http://www.let.rug.nl/vannoord/alp/Alpino/"
+           producer:
+             - "@type": Organization
+               name: "University of Groningen"
+               url: https://www.rug.nl
            license: LGPL
            description: "Alpino is a dependency parser for Dutch, developed in the context of the PIONIER Project Algorithms for Linguistic Processing."
 

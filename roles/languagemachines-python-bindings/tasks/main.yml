@@ -48,3 +48,17 @@
       register: test
       changed_when: test.rc != 0
 
+    - name: Updating metadata for CLARIAH software
+      include_role:
+        name: lamachine-register
+      vars:
+        update: "{{item}}"
+        metadata:
+          identifier: "{{item}}"
+          funder:
+            - "@type": Organization
+              name: CLARIAH
+              url: https://clariah.nl
+      with_items:
+        - python-frog
+        - python-ucto

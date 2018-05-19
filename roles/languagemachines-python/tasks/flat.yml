@@ -112,6 +112,7 @@
             update: "folia-linguistic-annotation-tool"
             metadata: #add entrypoint metadata to registry
                 identifier: "folia-linguistic-annotation-tool"
+                funder: "CLARIAH"
                 entryPoints:
                   - "@type": "EntryPoint"
                     urlTemplate: "{% if flat_url is defined %}{{flat_url}}{% else %}{{lm_base_url}}/flat{% endif %}"

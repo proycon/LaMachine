@@ -18,3 +18,21 @@
       register: test
       changed_when: test.rc != 0
 
+
+    - name: Adding affiliation metadata
+      include_role:
+        name: lamachine-register
+      vars:
+        update: "{{item}}"
+        metadata:
+          identifier: "{{item}}"
+          producer:
+            - "@type": Organization
+              name: Computational Lexicology and Terminology Lab
+              url: http://www.cltl.nl/
+              parentOrganization:
+                - "@type": Organization
+                  name: Vrije Universiteit Amsterdam
+      with_items:
+          - KafNafParserPy
+
