@@ -32,50 +32,6 @@
           repo: ticcltools
           user: LanguageMachines
 
-    - name: Create nextflow home
-      file:
-        path: "{{lm_prefix}}/opt/nextflow"
-        state: directory
-
-    - name: Install Nextflow
-      shell: curl -fsSL https://get.nextflow.io | bash
-      args:
-        chdir: "{{lm_prefix}}/bin" #this is where the nextflow binary will be written
-      environment:
-        NXF_HOME: "{{lm_prefix}}/opt/nextflow"
-
-    - name: Register Nextflow
-      include_role:
-         name: lamachine-register
-      vars:
-         metadata:
-           identifier: nextflow
-           name: Nextflow
-           author: [ "Paolo Di Tommaso", "Maria Chatzou", "Evan W Floden", "Pablo Prieto Barja", "Emilio Palumbo", "Cedric Notredame" ]
-           url: "https://www.nextflow.io"
-           license: GPL
-
-    - name: Nextflow test
-      include_role:
-          name: lamachine-run
-      vars:
-          command: "nextflow -version"
-
-    - name: Ensure nextflow script permissions are sane
-      shell: |
-        chmod a+rx {{lm_prefix}}/bin/nextflow
-        find {{ lm_prefix }}/opt/nextflow -type f | xargs chmod 0644
-        find {{ lm_prefix }}/opt/nextflow -type d | xargs chmod 0755
-
-    - name: "Adding activation script for Nextflow"
-      become: "{{lm_become}}"
-      become_user: root
-      copy:
-        dest: "{{lm_prefix}}/bin/activate.d/nextflow.sh"
-        content: |
-          export NXF_HOME={{lm_prefix}}/opt/nextflow
-        mode: u+rwx,a+rx
-
     - name: Install PICCL
       include_role:
         name: lamachine-git
