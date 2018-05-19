@@ -24,6 +24,30 @@
       register: test
       changed_when: test.rc != 0
 
+    - name: Updating metadata for CLARIAH software
+      include_role:
+        name: lamachine-register
+      vars:
+        update: "{{item}}"
+        metadata:
+          identifier: "{{item}}"
+          funder:
+            - "@type": Organization
+              name: CLARIAH
+              url: https://clariah.nl
+      with_items:
+        - clam
+        - folia-tools
+
+    - name: Updating metadata for BabelEnte
+      include_role:
+        name: lamachine-register
+      vars:
+        update: "babelente"
+        metadata:
+          identifier: babelente
+          funder: "TraMOOC"
+
     - name: Testing whether python-based tools start
       include_role:
           name: lamachine-run

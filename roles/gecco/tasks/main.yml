@@ -63,3 +63,12 @@
           command: "gecco --helpmodules"
       register: test
       changed_when: test.rc != 0
+
+    - name: Updating metadata for Gecco
+      include_role:
+        name: lamachine-register
+      vars:
+        update: "gecco"
+        metadata:
+          identifier: "gecco"
+          funder: "Revisely"
