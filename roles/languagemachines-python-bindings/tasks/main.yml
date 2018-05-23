@@ -28,12 +28,11 @@
       include_role:
         name: lamachine-python-install
       vars:
+        do_registration: false #main software was already registered
         package:
           github_user: proycon
           github_repo: colibri-core #always installed from source, will reuse same sourcedir as C++ lib
           git_branch: "{{ current_coco_branch_or_tag.stdout }}"
-        metadata:
-          identifier: colibricore_python
 
     - name: Testing Python bindings
       include_role:
