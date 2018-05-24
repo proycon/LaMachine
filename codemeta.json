@@ -1,0 +1,92 @@
+{
+    "@context": [
+        "https://doi.org/10.5063/schema/codemeta-2.0",
+        "http://schema.org",
+        {
+            "entryPoints": { "@reverse": "schema:actionApplication" },
+            "interfaceType": { "@id": "codemeta:interfaceType" }
+        }
+    ],
+    "@type": "SoftwareSourceCode",
+    "identifier": "lamachine",
+    "name": "LaMachine",
+    "version": "2.2.1",
+    "description": "LaMachine is a unified software distribution for Natural Language Processing. We integrate numerous open-source NLP tools, programming libraries, web-services, and web-applications in a single Virtual Research Environment that can be installed on a wide variety of machines.",
+    "license": "https://spdx.org/licenses/GPL-3.0",
+	"url": "https://proycon.github.io/LaMachine",
+    "producer": {
+        "@id": "https://www.ru.nl/clst",
+        "@type": "Organization",
+        "name": "Centre for Language and Speech Technology",
+        "url": "https://www.ru.nl/clst",
+        "parentOrganization": {
+            "@id": "https://www.ru.nl/cls",
+            "@type": "Organization",
+            "name": "Centre for Language Studies",
+            "url": "https://www.ru.nl/cls",
+            "parentOrganization": {
+                "@id": "https://www.ru.nl",
+                "name": "Radboud University",
+                "@type": "Organization",
+                "url": "https://www.ru.nl",
+                "location": {
+                    "@type": "Place",
+                    "name": "Nijmegen"
+                }
+            }
+
+        }
+    },
+    "author": [
+		{
+			"@id": "https://orcid.org/0000-0002-1046-0006",
+			"@type": "Person",
+			"givenName": "Maarten",
+			"familyName": "van Gompel",
+			"email": "proycon@anaproy.nl",
+			"affiliation": { "@id": "https://www.ru.nl/clst" }
+		}
+	],
+	"sourceOrganization": { "@id": "https://www.ru.nl/clst" },
+	"programmingLanguage": [
+        {
+            "@type": "ComputerLanguage",
+            "identifier": "ansible",
+            "name": "ansible"
+        },
+        {
+            "@type": "ComputerLanguage",
+            "identifier": "bash",
+            "name": "bash"
+        }
+	],
+	"operatingSystem": "POSIX",
+	"codeRepository": "https://github.com/proycon/LaMachine",
+	"funder": [
+		{
+			"@type": "Organization",
+			"name": "CLARIAH",
+			"url": "https://www.clariah.nl"
+		}
+	],
+	"readme": "https://github.com/proycon/LaMachine/blob/master/README.md",
+	"issueTracker": "https://github.com/proycon/LaMachine/issues",
+	"contIntegration": "https://travis-ci.org/proycon/LaMachine",
+	"releaseNotes": "https://github.com/proycon/LaMachine/releases",
+	"developmentStatus": "active",
+	"keywords":  [ "nlp", "natural language processing", "software distribution", "installer", "python" ],
+    "referencePublication": [
+		{
+			"@type": "ScholarlyArticle",
+			"name": "LaMachine: A meta-distribution for NLP software",
+			"author": [ "Maarten van Gompel" ],
+			"isPartOf": {
+				"@type": "PublicationIssue",
+				"datePublished": "2018",
+				"name": "(extended abstracted submitted; still pending review)"
+			},
+			"url": "https://raw.githubusercontent.com/proycon/LaMachine/master/docs/lamachine_extabstract_clarin2018.pdf"
+		}
+	],
+	"dateCreated": "2015-05-17"
+}

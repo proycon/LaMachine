@@ -6,6 +6,10 @@
         package:
             user: proycon
             repo: valkuil-gecco
+        metadata:
+            entryPoints:
+                - { "@type": "EntryPoint", name: "Generic Valkuil interface", urlTemplate: "{{lm_base_url}}/valkuil", interfaceType: "WUI" }
+                - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/valkuil", specification: "{{lm_base_url}}/valkuil/info",  interfaceType: "REST" }
 
     - name: Check if models already downloaded
       stat:
