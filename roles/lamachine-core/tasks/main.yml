@@ -35,7 +35,7 @@
         for f in */; do
           if [[ "$f" != "LaMachine/" ]]; then
             rm -rfv $f
-          done
+          fi
         done
       args:
         executable: /bin/bash
