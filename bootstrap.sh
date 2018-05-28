@@ -70,6 +70,7 @@ usage () {
     echo " ${bold}--username${normal} - Username (or fully qualified domain name) for the target system"
     echo " ${bold}--targetdir${normal} - Set a target directory for local environment creation, this should be an existing path and the local environment will be created under it. Defaults to current working directory."
     echo " ${bold}--services${normal} - Preset enabled services (comma seperated list). Default: all"
+    echo " ${bold}--force${normal} - Preset a default force parameter (set to 1 or 2). Note that this will take effect on ANY subsequent update!"
 }
 
 USER_SET=0 #explicitly set?
@@ -183,6 +184,7 @@ LOCALITY=""
 PRIVATE=0
 ANSIBLE_OPTIONS="-v"
 MINIMAL=0
+FORCE=0
 PREFER_DISTRO=0
 VMMEM=4096
 VAGRANTBOX="debian/contrib-stretch64" #base distribution for VM
@@ -320,6 +322,11 @@ while [[ $# -gt 0 ]]; do
         ;;
         --targetdir)
         TARGETDIR="$2"
+        shift
+        shift
+        ;;
+        --force)
+        FORCE="$2"
         shift
         shift
         ;;
@@ -1024,6 +1031,9 @@ mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
 services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all possible services from the software categories you install will be provided. You can remove this and list specific services you want to enable. This is especially needed in case of a LaMachine installation that intends to only provide a single service.
 webservertype: nginx #If set to anything different, the internal webserver will not be enabled/provided by LaMachine (which allows you to run your own external one), do leave webserver: true set as is though.
 " >> $STAGEDCONFIG
+if [ $FORCE -ne 0 ]; then
+    echo "force: $FORCE #Sets the default force parameter for updates, set to 1 to force updates or 2 to explicitly remove all sources and start from scratch on each update. Remove this line entirely if you don't need it or are in doubt" >> $STAGEDCONFIG
+fi
     if [[ $FLAVOUR == "local" ]] || [[ "$OS" == "mac" ]]; then
         echo "web_user: \"$USERNAME\"" >> $STAGEDCONFIG
         echo "web_group: \"$GROUP\"" >> $STAGEDCONFIG
