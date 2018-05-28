@@ -27,12 +27,19 @@
           msg: Forcing recompilation of all packages
       when: force is defined
 
-    - name: Forced cleaning: Removing source path
+    - name: Forced cleaning: Removing sources
       become: "{{lm_become}}"
       become_user: root
-      file:
-          path: "{{ source_path }}"
-          state: absent
+      shell: |
+        cd {{source_path}} || exit 0
+        for f in */; do
+          if [[ "$f" != "LaMachine/" ]]; then
+            rm -rfv $f
+          done
+        done
+      args:
+        executable: /bin/bash
+        chdir: "{{source_path}}"
       when: force is defined and force|int >= 2
 
     - name: Create home bin directory
