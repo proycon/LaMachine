@@ -27,7 +27,7 @@
           msg: Forcing recompilation of all packages
       when: force is defined
 
-    - name: Forced cleaning: Removing sources
+    - name: "Forced cleaning: Removing sources"
       become: "{{lm_become}}"
       become_user: root
       shell: |
