@@ -928,6 +928,8 @@ version: \"$VERSION\" #stable, development or custom
 localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv), only used when locality == local (don't change this once set)
 locality: \"$LOCALITY\" #local or global? (don't change this once set)
 controller: \"$CONTROLLER\" #internal or external? Is this installation managed inside or outside the environment/host? You can't change this value here, run bootstrap with --external to force this to external.
+maintainer_name: \"$USERNAME\" #Enter your name here to let people know who the maintainer of this LaMachine installation is
+maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
 " > $STAGEDCONFIG
     if [[ $FLAVOUR == "vagrant" ]]; then
         GROUP="vagrant"
