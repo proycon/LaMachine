@@ -27,6 +27,13 @@
           msg: Forcing recompilation of all packages
       when: force is defined
 
+    - name: Forced cleaning: Removing source path
+      become: "{{lm_become}}"
+      become_user: root
+      file:
+          path: "{{ source_path }}"
+          state: absent
+      when: force is defined and force|int >= 2
 
     - name: Create home bin directory
       file:
