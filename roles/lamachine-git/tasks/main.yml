@@ -36,6 +36,7 @@
               shell: "git checkout {{latest_tag.stdout}}"
               args:
                 chdir: "{{ source_path }}/{{package.repo}}"
+              environment: "{{lm_env}}"
               register: gitcheckout
               changed_when: '"Switched to branch" in gitcheckout.stdout'
           rescue:
@@ -50,11 +51,13 @@
                 git stash -u
               args:
                 chdir: "{{ source_path }}/{{package.repo}}"
+              environment: "{{lm_env}}"
               when: '("untracked working tree files" in gitcheckout.stdout or "would be overwritten" in gitcheckout.stderr) and allow_stash'
             - name: "{{package.repo}} - Checkout latest stable version {{latest_tag.stdout}} (2nd attempt after stash)"
               shell: "git checkout {{latest_tag.stdout}}"
               args:
                 chdir: "{{ source_path }}/{{package.repo}}"
+              environment: "{{lm_env}}"
               register: gitcheckout
               changed_when: '"Switched to branch" in gitcheckout.stdout'
 
@@ -98,11 +101,13 @@
                 git stash -u
               args:
                 chdir: "{{ source_path }}/{{package.repo}}"
+              environment: "{{lm_env}}"
               when: '("untracked working tree files" in gitcheckout.stdout or "would be overwritten by merge" in gitcheckout.stderr) and allow_stash'
             - name: "{{package.repo}} - Checkout latest master version of (development, second attempt after stash)"
               shell: "git checkout master && git pull"
               args:
                 chdir: "{{ source_path }}/{{package.repo}}"
+              environment: "{{lm_env}}"
               register: gitcheckout
               changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
 

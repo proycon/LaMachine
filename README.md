@@ -252,7 +252,8 @@ LaMachine's settings and/or the packages to be installed/updated, run ``lamachin
 this can't be used to uninstall software.
 
 The update normally only updates what has changed, if you want to force an update of everything instead, run
-``lamachine-update force=1``.
+``lamachine-update force=1``. You can also use the even stronger ``force=2``, which will forcibly remove all downloaded sources
+and start from scratch.
 
 For Docker and the Virtual Machine flavours, when a SUDO password is being asked by the update script, you can simply
 press ENTER and leave it empty, do not run the entire script with escalated privileges.
