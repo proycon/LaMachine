@@ -56,9 +56,8 @@ usage () {
     echo "  custom = you decide explicitly what exact versions you want (for reproducibility)."
     echo "           this expects you to provide a LaMachine version file with exact version numbers."
     echo " ${bold}--prebuilt${normal} - Download a pre-built image rather than building a new one from scratch (for Docker or Vagrant)"
-    echo " ${bold}--env${normal} [virtualenv|conda] - Local user environment type"
+    echo " ${bold}--env${normal} [virtualenv] - Local user environment type"
     echo "  virtualenv = A simple virtual environment"
-    echo "  conda = provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R). EXPERIMENTAL!!"
     echo " ${bold}--private${normal} - Do not transmit anonymous analytics on this LaMachine build"
     echo " ${bold}--minimal${normal} - Attempt to install less than normal, leaving out extra options. This may break things."
     echo " ${bold}--prefer_distro${normal} - Prefer distribution packages over other channels (such as pip). This generally installs more conserative versions, and less, but might break things."
@@ -932,7 +931,7 @@ conf_name: \"$LM_NAME\" #Name of this LaMachine configuration (don't change this
 flavour: \"$FLAVOUR\" #LaMachine flavour (don't change this once set)
 hostname: \"$HOSTNAME\" #Name of the host (or fully qualified domain name) (changing this won't automatically change the system hostname!)
 version: \"$VERSION\" #stable, development or custom
-localenv_type: \"$LOCALENV_TYPE\" #Local environment type (conda or virtualenv), only used when locality == local (don't change this once set)
+localenv_type: \"$LOCALENV_TYPE\" #Local environment type (virtualenv), only used when locality == local (don't change this once set)
 locality: \"$LOCALITY\" #local or global? (don't change this once set)
 controller: \"$CONTROLLER\" #internal or external? Is this installation managed inside or outside the environment/host? You can't change this value here, run bootstrap with --external to force this to external.
 maintainer_name: \"$USERNAME\" #Enter your name here to let people know who the maintainer of this LaMachine installation is
