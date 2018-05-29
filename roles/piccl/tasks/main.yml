@@ -31,6 +31,8 @@
         package:
           repo: ticcltools
           user: LanguageMachines
+          build_environment:
+             CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
 
     - name: Install PICCL
       include_role:
