@@ -375,7 +375,8 @@ if [ -z "$FLAVOUR" ]; then
         echo "       installs as much as possible in a separate directory"
         echo "       for a particular user; can exists alongside existing"
         echo "       installations. May also be used (limited) by multiple"
-        echo "       users/groups if file permissions allow it."
+        echo "       users/groups if file permissions allow it. Can work without"
+        echo "       root but only if all global dependencies are already satisfied."
         echo "       (uses virtualenv)"
         if [ $WINDOWS -eq 0 ]; then
         echo "  2) in a Virtual Machine"
@@ -385,11 +386,11 @@ if [ -z "$FLAVOUR" ]; then
         echo "       (uses Docker and Ansible)"
         fi
         echo "  4) Globally on this machine"
-        echo "       dedicates the entires machine to LaMachine and"
+        echo "       dedicates the entire machine to LaMachine and"
         echo "       modifies the existing system and may"
-        echo "       interact with existing packages. Requires root."
+        echo "       interact with existing packages. Usually requires root."
         echo "  5) On a remote server"
-        echo "       modifies an existing remote system! Requires root."
+        echo "       modifies an existing remote system! Usually requires root."
         echo "       (uses ansible)"
         echo -n "${bold}Your choice?${normal} [12345] "
         read choice
