@@ -1,4 +1,4 @@
-#!/bin/bash
+
 #======================================
 # LaMachine v2
 #  by Maarten van Gompel
@@ -374,7 +374,8 @@ if [ -z "$FLAVOUR" ]; then
         echo "  1) in a local user environment"
         echo "       installs as much as possible in a separate directory"
         echo "       for a particular user; can exists alongside existing"
-        echo "       installations."
+        echo "       installations. May also be used (limited) by multiple"
+        echo "       users/groups if file permissions allow it."
         echo "       (uses virtualenv)"
         if [ $WINDOWS -eq 0 ]; then
         echo "  2) in a Virtual Machine"
@@ -384,10 +385,11 @@ if [ -z "$FLAVOUR" ]; then
         echo "       (uses Docker and Ansible)"
         fi
         echo "  4) Globally on this machine"
+        echo "       dedicates the entires machine to LaMachine and"
         echo "       modifies the existing system and may"
-        echo "       interact with existing packages"
+        echo "       interact with existing packages. Requires root."
         echo "  5) On a remote server"
-        echo "       modifies an existing remote system!"
+        echo "       modifies an existing remote system! Requires root."
         echo "       (uses ansible)"
         echo -n "${bold}Your choice?${normal} [12345] "
         read choice
