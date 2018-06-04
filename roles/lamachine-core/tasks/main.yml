@@ -112,7 +112,7 @@
 
 
     - name: Link activation script to global environment
-      become: yes
+      become: "{{lm_become}}"
       become_user: root
       file:
         src: "{{homedir}}/bin/lamachine-{{conf_name}}-activate"
@@ -121,7 +121,7 @@
       when: locality == "global"
 
     - name: Link update script to global environment
-      become: yes
+      become: "{{lm_become}}"
       become_user: root
       file:
         src: "{{homedir}}/bin/lamachine-{{conf_name}}-update"
@@ -130,7 +130,7 @@
       when: locality == "global"
 
     - name: Link generic update script to global environment
-      become: yes
+      become: "{{lm_become}}"
       become_user: root
       file:
         src: "{{homedir}}/bin/lamachine-update"
@@ -158,7 +158,7 @@
 
 
     - name: Enable activation script globally
-      become: yes
+      become: "{{lm_become}}"
       become_user: root
       copy:
         dest: "/etc/profile.d/lamachine-activate.sh"
@@ -176,7 +176,7 @@
          state: link
 
     - name: Link default activation script (global)
-      become: yes
+      become: "{{lm_become}}"
       become_user: root
       file:
          src: "{{homedir}}/bin/lamachine-{{conf_name}}-activate"
