@@ -226,12 +226,17 @@
       group: "{{unix_group}}"
       mode: u+rwx,g+rwx,o-rwx
 
-  - name: Install uwsgi-emperor configuration (non-debian)
+  - name: Install uwsgi-emperor configuration
+    become: "{{lm_become}}"
+    become_user: root
     template:
       src: emperor.ini
       dest: "{{lm_prefix}}/etc/uwsgi-emperor/emperor.ini"
       force: yes
       backup: yes
+      owner: "{{unix_user}}"
+      group: "{{unix_group}}"
+      mode: u+rwx,g+rwx,o-rwx
 
   - name: Create document root
     become: "{{lm_become}}"
