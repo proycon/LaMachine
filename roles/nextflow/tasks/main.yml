@@ -44,6 +44,8 @@
         chmod a+rx {{lm_prefix}}/bin/nextflow
         find {{ lm_prefix }}/opt/nextflow -type f | xargs chmod 0644
         find {{ lm_prefix }}/opt/nextflow -type d | xargs chmod 0755
+        find {{ lm_prefix }}/opt/nextflow/tmp -type d | xargs chmod a+rwx #possible low-risk security hole
+        find {{ lm_prefix }}/opt/nextflow/tmp -type f | xargs chmod a+rw #possible low-risk security hole
 
     - name: "Adding activation script for Nextflow"
       become: "{{lm_become}}"
