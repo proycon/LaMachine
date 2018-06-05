@@ -232,7 +232,6 @@
       dest: "{{lm_prefix}}/etc/uwsgi-emperor/emperor.ini"
       force: yes
       backup: yes
-    when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
 
   - name: Create document root
     become: "{{lm_become}}"
