@@ -2,6 +2,8 @@
 
 # -- THIS SCRIPT IS MAINTAINED BY LAMACHINE; DO NOT EDIT IT -- it will be overwritten on update --
 
+export LC_ALL=en_US.UTF-8
+
 {{lm_prefix}}/bin/lamachine-stop-webserver #first we stop any running instances
 
 {% if locality == "global" and root %}
