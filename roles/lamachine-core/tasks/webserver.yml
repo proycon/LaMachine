@@ -172,6 +172,7 @@
             with_items:
               - "mime.types"
               - "uwsgi_params"
+            ignore_errors: yes
 
       - name: Create webserver writable directories (local)
         file:
