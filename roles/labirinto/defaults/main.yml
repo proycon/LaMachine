@@ -6,5 +6,6 @@ portal_organizations:
 portal_domains:
   - "{{hostname}}"
 portal_registry_url: "/metadata.json" #this is a relative URL, labirinto can resolve it automatically
+portal_base: "/" #the base url where the portal will run
 
 
