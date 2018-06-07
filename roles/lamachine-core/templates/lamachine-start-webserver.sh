@@ -24,7 +24,7 @@ else
 fi
 {% else %}
      sudo uwsgi --ini "{{lm_prefix}}/etc/uwsgi-emperor/emperor.ini" --die-on-term 2> "{{lm_prefix}}/var/log/uwsgi/uwsgi.log" >&2 &
-     echo "Note: UWSGI emperor can be found in {{lm_prefix}}/var/log/uwsgi/uwsgi.log"
+     echo "Note: UWSGI emperor log can be found in {{lm_prefix}}/var/log/uwsgi/uwsgi.log"
 {% endif %}
 
 {% if  webservertype == "nginx" %}
@@ -43,9 +43,11 @@ fi
 {% else %}
 #local flavour
 
+echo "Starting uwsgi..."
 uwsgi --ini "{{lm_prefix}}/etc/uwsgi-emperor/emperor.ini" --die-on-term 2> "{{lm_prefix}}/var/log/uwsgi/uwsgi.log" >&2 &
 
 {% if webservertype == "nginx" %}
+ echo "Starting nginx..."
  {% if http_port|int < 1024 %}
     echo "You are using a running the webserver on a privileged port {{http_port}}, sudo required to start">&2
     sudo nginx -c "{{lm_prefix}}/etc/nginx/nginx.conf" -p "{{lm_prefix}}"  -g "pid {{lm_prefix}}/var/run/nginx.pid;"
@@ -57,7 +59,7 @@ uwsgi --ini "{{lm_prefix}}/etc/uwsgi-emperor/emperor.ini" --die-on-term 2> "{{lm
 {% endif %}
 
 
-echo "Note: UWSGI emperor can be found in {{lm_prefix}}/var/log/uwsgi/uwsgi.log"
+echo "Note: UWSGI emperor log can be found in {{lm_prefix}}/var/log/uwsgi/uwsgi.log"
 echo "      Nginx logs can be found in {{lm_prefix}}/var/log/nginx/"
 {% endif %}
 

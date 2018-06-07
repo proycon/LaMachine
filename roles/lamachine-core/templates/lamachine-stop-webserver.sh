@@ -18,7 +18,7 @@ else
      sudo service uwsgi-emperor stop
 fi
 {% else %}
- sudo killall -w uwsgi
+ sudo killall -w uwsgi 2>/dev/null
 {% endif %}
 
 {% if  webservertype == "nginx" %}
@@ -34,10 +34,10 @@ fi
 #local flavour
 
 #kill and restart uwsgi emperor
-killall -w uwsgi
+killall -w uwsgi 2>/dev/null
 
 {% if webservertype == "nginx" %}
-killall -w nginx
+killall -w nginx 2>/dev/null
 {% endif %}
 
 {% endif %}
