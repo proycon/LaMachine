@@ -169,7 +169,7 @@
             copy:
               src: "{{source_path}}/nginx/conf/{{item}}"
               dest: "{{lm_prefix}}/etc/nginx/{{item}}"
-            with_fileglob:
+            with_items:
               - "mime.types"
               - "uwsgi_params"
 
