@@ -139,7 +139,7 @@
         failed_when: nginx.rc == 127
         when: webservertype == "nginx"
 
-      - when: ansible_distribution|lower != "macosx" and webservertype == "nginx" and nginx.rc != 0
+      - when: ansible_distribution|lower != "macosx" and webservertype == "nginx" and (nginx.rc != 0 or force)
         block:
           - block:
               - name: Obtaining local nginx webserver from source
@@ -165,13 +165,13 @@
               dest: "{{ lm_prefix }}/bin/nginx"
               state: link
 
-        - name: Copying extra configuration
-          copy:
-            src: "{{source_path}}/nginx/conf/{{item}}"
-            dest: "{{lm_prefix}}/etc/nginx/{{item}}"
-          with_items:
-            - "mime.types"
-            - "uwsgi_params"
+          - name: Copying extra configuration
+            copy:
+              src: "{{source_path}}/nginx/conf/{{item}}"
+              dest: "{{lm_prefix}}/etc/nginx/{{item}}"
+            with_items:
+              - "mime.types"
+              - "uwsgi_params"
 
       - name: Create webserver writable directories (local)
         file:
