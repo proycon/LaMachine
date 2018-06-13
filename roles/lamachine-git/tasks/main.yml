@@ -98,7 +98,7 @@
                 echo "git add them properly if you want to use any custom changes">&2
                 echo "... allowing for 15 second grace period (CTRL-C in case of panic)..."
                 sleep 15
-                git stash -u
+                git -c "user.name={{maintainer_name}}" -c "user.email={{maintainer.mail}}" stash -u
               args:
                 chdir: "{{ source_path }}/{{package.repo}}"
               environment: "{{lm_env}}"
