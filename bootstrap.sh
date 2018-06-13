@@ -1188,6 +1188,7 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     #run the activation script (this will do the actual initial provision as well)
     bash $HOMEDIR/bin/lamachine-$LM_NAME-start 2>&1 | tee lamachine-$LM_NAME.log
     rc=${PIPESTATUS[0]}
+    hash -r
     echo "======================================================================================"
     if [ $rc -eq 0 ]; then
         if [ $BUILD -eq 0 ]; then
@@ -1224,6 +1225,7 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     echo "$HOSTNAME ansible_connection=local" > $SOURCEDIR/hosts.ini
     $cmd 2>&1 | tee lamachine-$LM_NAME.log
     rc=${PIPESTATUS[0]}
+    hash -r
     if [ $rc -eq 0 ]; then
         echo "======================================================================================"
         echo "${boldgreen}All done, a local LaMachine environment has been built!${normal}"
