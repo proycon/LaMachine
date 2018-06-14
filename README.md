@@ -72,8 +72,8 @@ The above installation path A also offers access to this (except on Windows), bu
 
 To download and use it:
 
-* Ensure you have  [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org) installed on your system.
-* Open a terminal
+* Ensure you have  [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org) installed on your system. Windows users also have to make sure that Hyper-V is <em>disabled</em> in <em> Control Panel → Programs → Turn Windows features on or off → Hyper-V</em>
+* Open a terminal or command prompt
 * Navigate to a folder of your choice (this will the the base folder, files inside will be shared with the VM)
 * Run ``vagrant init proycon/lamachine`` from the terminal, this creates a file named ``Vagrantfile``
 * Open ``Vagrantfile`` in a text editor and change the memory and CPU options to suit your system (the more resources
