@@ -211,7 +211,9 @@
                $('div.command div.text').html("vagrant init proycon/lamachine && vagrant up && vagrant ssh");
                var s = "For this to work, you need to have <a href=\"https://www.vagrantup.com\">Vagrant</a> and <a href=\"https://www.virtualbox.org\">VirtualBox</a> installed on your system.";
                if (os == "posix") {
-                   s = s + ". If you are on Debian/Ubuntu Linux, just run <tt>sudo apt-get install vagrant virtualbox</tt>. ";
+                   s = s + " If you are on Debian/Ubuntu Linux, just run <tt>sudo apt-get install vagrant virtualbox</tt>. ";
+               } else if (os == "win10") {
+                   s = s + " Also make sure Hyper-V is disabled in Windows: <em>Control Panel → Programs → Turn Windows features on or off → Hyper-V</em>";
                }
                $('div.help').html(s );
                $('div.help').css('color','black');
