@@ -4,6 +4,7 @@
       debug:
           var: "{{item}}"
       with_items:
+          - lamachine_version
           - conf_name
           - ansible_distribution
           - ansible_distribution_version

@@ -20,7 +20,7 @@ boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
 echo "${bold}=====================================================================${normal}"
-echo "           ,              ${bold}LaMachine v2.2.6${normal} - NLP Software distribution"
+echo "           ,              ${bold}LaMachine v2.2.7${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
 echo "            /| |\         Centre of Language and Speech Technology"
@@ -508,9 +508,9 @@ fi
 
 if [ -z "$BRANCH" ]; then
     if [[ "$VERSION" == "development" ]]; then
-        BRANCH="master"
+        BRANCH="develop"
     else
-        BRANCH="master"
+        BRANCH="develop"
     fi
 fi
 if [ -z "$GITREPO" ]; then
