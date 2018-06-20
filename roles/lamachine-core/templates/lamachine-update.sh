@@ -9,6 +9,13 @@ boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
 export LC_ALL=en_US.UTF_8
+echo "${bold}=====================================================================${normal}"
+echo "           ,              ${bold}LaMachine v{{lamachine_version}}${normal} - ${boldblue}UPDATER${normal}"
+echo "          ~)                     (http://proycon.github.io/LaMachine)"
+echo "           (----í         Language Machines research group"
+echo "            /| |\         Centre of Language and Speech Technology"
+echo "           / / /|	        Radboud University Nijmegen "
+echo "${bold}=====================================================================${normal}"
 
 if [ -e "{{lm_path}}" ]; then
   cd "{{lm_path}}"
@@ -23,6 +30,9 @@ if ! touch .lastupdate; then
 fi
 if [ -d .git ]; then
     git pull
+else
+    echo "${boldred}WARNING: Unable to update LaMachine controller, not a git repository! Proceeding anyway in 10s (CTRL-C to abort)...${normal}">&2
+    sleep 10
 fi
 FIRST=1
 INTERACTIVE=1
