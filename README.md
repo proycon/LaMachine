@@ -49,7 +49,7 @@ To download and use it, run:
 
 ```
 docker pull proycon/lamachine
-docker run  -p 8080:80 -t -i proycon/lamachine
+docker run  -p 8080:80 -h latest -t -i proycon/lamachine
 ```
 
 This requires you to already have [Docker](https://www.docker.com/) installed and running on your system.
@@ -62,7 +62,7 @@ If you want another release, specify its tag explicitly:
 
 ```
 docker pull proycon/lamachine:develop
-docker run  -p 8080:80 -t -i proycon/lamachine:develop
+docker run  -p 8080:80 -h develop -t -i proycon/lamachine:develop
 ```
 
 ### C) Pre-built Virtual Machine image for Vagrant (recommended for Windows users)
@@ -236,7 +236,7 @@ In this example we assume your LaMachine image has the tag **latest**, which cor
 	* Add the ``-i`` flag if the tool is an interactive tool that reads from standard input (i.e. keyboard input).
 * To start a **new** container with the webserver: ``docker run -p 8080:80 -h hostname -t proycon/lamachine:latest lamachine-start-webserver -f ``
 	* The numbers values for ``-p`` are the port numbers on the host side and on the container side respectively, the latter must always match with the ``http_port`` setting LaMachine has been built with.
-	* Set ``-h`` with the desired hostname, this too must match the setting LaMachine has been built with.
+	* Set ``-h`` with the desired hostname, this too must match the setting LaMachine has been built with!
     * The ``-f`` argument ensures the script waits in the foreground and doesn't exit after starting.
 	* If started in this way, you can connect your webbrowser on the host system to http://127.0.0.1:8080 .
 

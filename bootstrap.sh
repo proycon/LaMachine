@@ -1265,10 +1265,10 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
         echo "======================================================================================"
         if [ $BUILD -eq 1 ]; then
             echo "${boldgreen}All done, a docker image has been built!${normal}"
-            echo "- to create and run a *new* interactive container using this image, run: docker run -p 8080:80 -t -i $DOCKERREPO:$LM_NAME"
+            echo "- to create and run a *new* interactive container using this image, run: docker run -p 8080:80 -h $HOSTNAME -t -i $DOCKERREPO:$LM_NAME"
         else
             echo "${boldgreen}All done, a docker image has been downloaded!${normal}"
-            echo "- to create and run a *new* interactive container using this image, run: docker run -p 8080:80 -t -i $DOCKERREPO"
+            echo "- to create and run a *new* interactive container using this image, run: docker run -p 8080:80 -h latest -t -i $DOCKERREPO"
         fi
     else
         echo "======================================================================================"
