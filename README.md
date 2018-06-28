@@ -318,8 +318,35 @@ For a secure experience using LaMachine, take all of the following into account:
 
 ## Versioning
 
-    (this section needs to be (re)written still!)
+LaMachine comes in three versions, *stable* installs the latest stable releases of all software, *development* installs
+the latest development releases and *custom* installs explicitly specified versions. This section is about the latter
+and is for advanced users.
 
+LaMachine itself also carries a version number, this number corresponds to the version of all the installation scripts
+that make up LaMachine. It is not tied to the versions of any underlying software.
+
+In any LaMachine installation (v2.3.0 and above), you can do ``lamachine-list -v`` to obtain a ``customversions.yml``
+file that explicitly states what software versions are installed. When bootstrapping a new LaMachine
+installation, you can place this ``customversions.yml`` file in the directory where you run the bootstrap, and opt for
+the *custom* version. LaMachine will then install the exact versions specified.
+
+You can edit this ``customversions.yml`` file if you have good reason to opt for very specific versions of certain
+packages. Instead of an appropriate version number, you can also use the strings. Do be be aware that choosing version
+numbers that do not exist or combining versions of different packages that are not compatible will surely break things.
+If things fails, most software providers, us included, will not deliver support on older software versions.
+
+The purpose of this custom versioning feature of LaMachine is to aid scientific reproducibility, with it you can build
+an environment consisting of older software, corresponding to the versions at the time you ran your experiments. In such
+cases you should publish a version of ``customversions.yml`` along with your data (and a copy of the installation
+manifest ideally).
+
+This custom versioning is limited, it only pertains to software that is 1) not provided by the linux distribution
+itself, and 2) explicitly installed by LaMachine, rather than dependencies that are pulled in automatically by package
+managers. Even then, certain sofware is excluded from this scheme as the upstream provider does not provide the
+necessary facilities for obtaining older versions, LaMachine should output a warning in the log if that is the case.
+
+If a strict reproduction environment is desired, we strongly recommend to use the docker or virtual machine flavour of LaMachine and
+archive the entire resulting image.
 
 ## Frequently Asked Questioned & Troubleshooting
 

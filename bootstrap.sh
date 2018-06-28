@@ -1148,6 +1148,9 @@ if [ $BUILD -eq 1 ]; then
 
     #copy staged install to final location
     cp $STAGEDMANIFEST $SOURCEDIR/install.yml || fatalerror "Unable to copy $STAGEDMANIFEST"
+    if [ -e customversions.yml ]; then
+        cp customversions.yml $SOURCEDIR/customversions.yml
+    fi
 fi
 
 HOMEDIR=$(echo ~)
