@@ -19,6 +19,10 @@
         - unzip
       when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linux mint")
 
+    - name: Checking custom version
+      debug:
+          msg: "IMPORTANT NOTE: Custom versioning is NOT supported with Alpino"
+      when: version == "custom"
 
     - name: "Alpino - Download and install"
       shell: |

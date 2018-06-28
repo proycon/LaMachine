@@ -11,6 +11,7 @@
 #
 ################################################################################################################
 - hosts: all
+  ##1##
   roles:
       - lamachine-core                   ## The LaMachine core ##
                                               #you always need this or nothing works; already includes Python 3
@@ -56,6 +57,7 @@
                                              #(>500MB)
      # - kaldi                            ## Kaldi Automatic Speech Recognition Toolkit
                                              #(>7GB !!!! - Not supported on Mac OS X)
+
 
 # NOTE: ensure that all enabled roles are lined up with the same amount of spaces!
 #       (all hyphens must be vertically on the same column!)

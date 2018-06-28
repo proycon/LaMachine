@@ -4,6 +4,11 @@
         path: "{{lm_prefix}}/opt/nextflow"
         state: directory
 
+    - name: Checking custom version
+      debug:
+          msg: "IMPORTANT NOTE: Custom versioning is NOT supported with Nextflow"
+      when: version == "custom"
+
     - name: Install Nextflow
       shell: curl -fsSL https://get.nextflow.io | bash
       args:

@@ -7,7 +7,7 @@
           git:
             repo: "https://github.com/{{package.github_user}}/{{package.github_repo}}"
             dest: "{{ source_path }}/{{ package.github_repo }}"
-            version: "{% if 'version' in package and package.version %}{{ version }}{% elif 'git_branch' in package and package.git_branch %}{{ package.git_branch }}{% else %}master{% endif %}"
+            version: "{% if 'version' in package and package.version %}{{ version }}{% elif version == 'custom' and 'pip' in package and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'development' and customversion[package.pip.lower()] != 'stable' %}{{ customversion[package.pip.lower()] }}{% elif version == 'custom' and 'pip' not in package and package.github_repo.lower() in customversion and customversion[package.github_repo.lower()] != 'development' and customversion[package.github_repo.lower()] != 'stable' %}{{ customversion[package.github_repo.lower()] }}{% elif 'git_branch' in package and package.git_branch %}{{ package.git_branch }}{% else %}master{% endif %}"
             recursive: yes
             update: yes
           environment: "{{lm_env}}"
@@ -29,9 +29,9 @@
            name: "{{package.pip}}"
            state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package %}{{package.state}}{% else %}present{% endif %}"
            executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
-           version: "{{package.version}}"
+           version: "{% if 'version' in package and package.version %}{{package.version}}{% elif version == 'custom' and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'stable' and customversion[package.pip.lower()] != 'development' %}{{customversion[package.pip.lower()]}}{% endif %}"
       environment: "{{lm_env}}"
-      when: (version == "custom" or ('version' in package and package.version)) and ("github_user" not in package or package.github_user == "") and localenv_type != "conda" and "pip" in package and package.pip != ""
+      when: ("pip" in package and package.pip != "" and ((version == "custom" and package.pip.lower() in customversion and customversion[package.pip.lower()] != "stable")  or ('version' in package and package.version and package.version != "stable")) and ("github_user" not in package or package.github_user == ""))
 
     - name: "{% if 'pip' in package %}{{package.pip}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest release from the Python Package Index (stable)"
       become: "{{lm_become}}"
@@ -41,7 +41,7 @@
            state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package %}{{package.state}}{% else %}latest{% endif %}"
            executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
       environment: "{{lm_env}}"
-      when: (('version' not in package or not package.version) and (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == ""))) and localenv_type != "conda" and "pip" in package and package.pip != "")
+      when: ("pip" in package and package.pip != "" and ('version' not in package or not package.version) and (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == "")) or (version == "custom" and package.pip.lower() in customversion and customversion[package.pip.lower()] == "stable")))
 
     - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Checking whether codemeta.json is provided"
       stat:
