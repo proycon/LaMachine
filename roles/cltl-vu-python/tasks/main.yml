@@ -5,6 +5,7 @@
         name: lamachine-python-install
       with_items:
           - { github_user: "cltl", github_repo: "KafNafParserPy", pip: "KafNafParserPy" }
+          - { github_user: "cltl", github_repo: "NAFFoLiAPy", pip: "NAFFoLiAPy" }
       loop_control:
            loop_var: package
 
@@ -12,9 +13,10 @@
       include_role:
           name: lamachine-run
       vars:
-          command: "python3 -c 'import KafNafParserPy'"
+          command: "python3 -c 'import {{item}}'"
       with_items:
           - KafNafParserPy
+          - "naffoliapy.folia2naf"
       register: test
       changed_when: test.rc != 0
 
@@ -35,4 +37,5 @@
                   name: Vrije Universiteit Amsterdam
       with_items:
           - KafNafParserPy
+          - NAFFoLiAPy
 
