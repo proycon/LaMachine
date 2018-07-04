@@ -51,7 +51,7 @@
       when: "'github_repo' in package"
 
 
-    - name: Register software metadata
+    - name: "{% if 'pip' in package %}{{package.pip}}{% else %}{{package.github_repo}}{% endif %} -  Register software metadata"
       include_role:
           name: lamachine-register
       vars:
@@ -61,7 +61,7 @@
              name: "{% if 'pip' in package %}{{package.pip}}{% else %}{{ package.github_repo }}{% endif %}"
              codeRepository: "{% if 'github_repo' in package %}https://github.com/{{package.github_user}}/{{package.github_repo}}{% endif %}"
              producer: "{% if 'github_user' in package %}{% if package.github_user in github_clst_users %}{{metadata_producer_clst}}{% else %}{{metadata_producer_unknown}}{% endif %}{% else %}{{metadata_producer_unknown}}{% endif %}"
-      when: do_registration|bool
+      when: do_registration is defined and do_registration|bool
 
 
 
