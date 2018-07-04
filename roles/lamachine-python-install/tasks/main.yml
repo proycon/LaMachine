@@ -51,7 +51,7 @@
       when: "'github_repo' in package"
 
 
-    - name: Register software metadata
+    - name: {% if 'pip' in package %}{{package.pip}}{% else %}{{package.github_repo}}{% endif %}  Register software metadata
       include_role:
           name: lamachine-register
       vars:
