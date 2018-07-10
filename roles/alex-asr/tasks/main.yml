@@ -18,12 +18,12 @@
          repo: "alex-asr"
 
   - name: Creating lib directory
-	file:
-		path: "{{ source_path }}/alex-asr/libs"
-		state: directory
-		owner: "{{unix_user}}"
-		group: "{{unix_group}}"
-		mode: u+rwx,g+rwsx,a+rx
+    file:
+        path: "{{ source_path }}/alex-asr/libs"
+        state: directory
+        owner: "{{unix_user}}"
+        group: "{{unix_group}}"
+        mode: u+rwx,g+rwsx,a+rx
 
   - name: Linking library path for kaldi
     file:
