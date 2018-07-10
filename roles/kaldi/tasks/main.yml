@@ -22,11 +22,10 @@
       version: "{{kaldi_branch}}"
       force: yes
 
-   - name: Patch OpenFST makefile so that we can link with it statically (needed for Alex-ASR)
-	 shell: |
-        sed -i "s/--enable-far --enable-ngram-fsts/--enable-far --with-pic --enable-ngram-fsts/" Makefile
-	 args:
-		chdir: "{{lm_prefix}}/opt/kaldi/tools"
+  - name: Patch OpenFST makefile so that we can link with it statically (needed for Alex-ASR)
+    shell: sed -i "s/--enable-far --enable-ngram-fsts/--enable-far --with-pic --enable-ngram-fsts/" Makefile
+    args:
+       chdir: "{{lm_prefix}}/opt/kaldi/tools"
 
   - name: Compiling kaldi/tools
     shell: make -j $(nproc)
