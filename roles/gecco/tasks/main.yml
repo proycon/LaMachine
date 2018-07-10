@@ -10,6 +10,13 @@
         - myspell-nl
         - libhunspell-dev
         - libaspell-dev
+        - hunspell
+        - hunspell-nl
+        - hunspell-en-gb
+        - hunspell-en-us
+        - hunspell-es
+        - hunspell-fr
+        - hunspell-de
       when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linux mint")
 
     - name: Installing global dependencies for Gecco (RedHat)
@@ -21,7 +28,14 @@
       with_items:
         - aspell
         - aspell-devel
+        - hunspell
         - hunspell-devel
+        - hunspell-nl
+        - hunspell-en-US
+        - hunspell-en-GB
+        - hunspell-es
+        - hunspell-fr
+        - hunspell-de
       when: root and (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel" or ansible_distribution|lower == "redhat" or ansible_distribution|lower == "fedora")
 
     - name: Installing global dependencies for Gecco (Arch)
@@ -33,6 +47,11 @@
       with_items:
         - aspell
         - hunspell
+        - hunspell-en
+        - hunspell-nl
+        - hunspell-es
+        - hunspell-fr
+        - hunspell-de
       when: root and (ansible_distribution|lower == "arch")
 
     - name: Installing global dependencies for Gecco (Mac OS X)
