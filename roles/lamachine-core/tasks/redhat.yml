@@ -31,7 +31,7 @@
       yum:
         name: "{{item}}"
         state: installed
-      with_items: [psmisc, pkgconfig, git, mercurial, icu, libtool, autoconf, automake, autoconf-archive, nano, make, gcc, gcc-c++, libxml2, libxml2-devel, libxslt, libxslt-devel, libtar, libtar-devel, zlib, zlib-devel, bzip2, bzip2-devel, libcurl, gnutls-devel, libcurl-devel, wget, curl, libexttextcat, libexttextcat-devel, zip, unzip]
+      with_items: [psmisc, pkgconfig, git, mercurial, icu, libtool, autoconf, automake, autoconf-archive, nano, make, gcc, gcc-c++, libxml2, libxml2-devel, libxslt, libxslt-devel, libtar, libtar-devel, zlib, zlib-devel, bzip2, bzip2-devel, libcurl, gnutls-devel, libcurl-devel, wget, curl, libexttextcat, libexttextcat-devel, zip, unzip, pcre, pcre-devel]
 
     - name: Installing Python base packages for CentOS/RHEL (yum)
       become: true
