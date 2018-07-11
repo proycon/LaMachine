@@ -1,4 +1,4 @@
-
+#!/bin/bash
 #======================================
 # LaMachine v2
 #  by Maarten van Gompel

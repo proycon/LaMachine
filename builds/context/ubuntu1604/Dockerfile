@@ -17,5 +17,5 @@ USER lamachine
 WORKDIR /home/lamachine
 RUN wget https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh
 RUN chmod a+x bootstrap.sh
-RUN ./bootstrap.sh --flavour local --branch $BRANCH --version $VERSION --env virtualenv --noninteractive --private --verbose --name $NAME --hostname lamachine-$NAME
+RUN /bin/bash bootstrap.sh --flavour local --branch $BRANCH --version $VERSION --env virtualenv --noninteractive --private --verbose --name $NAME --hostname lamachine-$NAME
 CMD /bin/bash -l /home/lamachine/lamachine-$NAME-activate
