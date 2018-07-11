@@ -34,7 +34,7 @@
         state: latest
         update-cache: yes
         #allow-unauthenticated: yes #there may be unauthenticated packages from other sources already present
-      ignore_errors: "{% if ansible_user_id == 'travis' %}yes{% else %}no{% endif %}" #bit unelegant but sometimes the system is too messy and fails on something (like travis)
+     ignore_errors: "{% if ansible_user_id == 'travis' %}yes{% else %}no{% endif %}" #bit unelegant but sometimes the system is too messy and fails on something (like travis)
       when: nosysupdate is not defined or nosysupdate == false
 
       #############################################################
@@ -45,7 +45,7 @@
       apt:
         name: "{{item}}"
         state: present
-        with_items: [coreutils, procps, lsof, dirmngr, pkg-config, git-core, mercurial, nano, make, gcc, g++, autoconf, automake, autoconf-archive, libtool, autotools-dev, libicu-dev, libxml2-dev, libxslt1-dev, libbz2-dev, zlib1g-dev, libtar-dev, libaspell-dev, libhunspell-dev,  python3, python3-pip, python3-wheel, python3-dev, libboost-all-dev, libboost-python-dev, wget, curl, libexttextcat-dev, libcurl4-gnutls-dev, poppler-utils, perl, zip, unzip, libpcre3-dev, libpcre3]
+      with_items: [coreutils, procps, lsof, dirmngr, pkg-config, git-core, mercurial, nano, make, gcc, g++, autoconf, automake, autoconf-archive, libtool, autotools-dev, libicu-dev, libxml2-dev, libxslt1-dev, libbz2-dev, zlib1g-dev, libtar-dev, libaspell-dev, libhunspell-dev,  python3, python3-pip, python3-wheel, python3-dev, libboost-all-dev, libboost-python-dev, wget, curl, libexttextcat-dev, libcurl4-gnutls-dev, poppler-utils, perl, zip, unzip, libpcre3-dev, libpcre3]
       #dirmngr is needed for gpg apt-get key
 
     - name: Installing python-virtualenv
