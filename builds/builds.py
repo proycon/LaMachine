@@ -65,6 +65,12 @@ buildmatrix = [
         "context": "ubuntu1604",
     },
     {
+        "name": 'stable-venv-ubuntu1804',
+        "flavour": 'local',
+        "version": 'stable',
+        "context": "ubuntu1804",
+    },
+    {
         "name": 'stable-venv-arch',
         "flavour": 'local',
         "version": 'stable',
