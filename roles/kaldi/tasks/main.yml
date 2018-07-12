@@ -22,6 +22,11 @@
       version: "{{kaldi_branch}}"
       force: yes
 
+  - name: Patch OpenFST makefile so that we can link with it statically (needed for Alex-ASR)
+    shell: sed -i "s/--enable-far --enable-ngram-fsts/--enable-far --with-pic --enable-ngram-fsts/" Makefile
+    args:
+       chdir: "{{lm_prefix}}/opt/kaldi/tools"
+
   - name: Compiling kaldi/tools
     shell: make -j $(nproc)
     args :
@@ -59,14 +64,27 @@
         export KALDI_ROOT={{lm_prefix}}/opt/kaldi
       mode: u+rwx,a+rx
 
+  - name: "Kaldi - Get latest commit hash"
+    shell: "git describe --tags || git rev-parse HEAD"
+    args:
+      chdir: "{{ lm_prefix }}/opt/kaldi"
+    register: latest_commit
+    changed_when: False
+
   - name: Register Kaldi
     include_role:
        name: lamachine-register
     vars:
        metadata:
+         identifier: kaldi
          name: Kaldi
+         version: "{{ latest_commit.stdout }}"
          author: (multiple)
-         homepage: "http://kaldi-asr.org/"
+         url: "http://kaldi-asr.org/"
+         codeRepository: "https://github.com/kaldi-asr/kaldi"
          license: Apache
-         summary: "Automatic Speech Recognition Toolkit"
+         description: "Automatic Speech Recognition Toolkit"
+         programmingLanguage: "C++"
+         interfaceType: CLI
+         keywords: [ "speech recognition", "asr", "cuda" ]
 

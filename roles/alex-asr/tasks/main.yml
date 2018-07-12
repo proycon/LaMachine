@@ -1,4 +1,42 @@
 ---
+#this script does most of what https://github.com/UFAL-DSG/alex-asr/blob/master/prepare_env.sh does, but with the latest kaldi that's already in LaMachine
+
+  - name: Obtaining PyFST
+    include_role:
+      name: lamachine-git
+    vars:
+      package:
+         user: "UFAL-DSG"
+         repo: "pyfst"
+
+  - name: Obtaining Alex-ASR #we need to do this in a seperate step as we are preparing the environment before actually installing
+    include_role:
+      name: lamachine-git
+    vars:
+      package:
+         user: "UFAL-DSG"
+         repo: "alex-asr"
+
+  - name: Creating lib directory
+    file:
+        path: "{{ source_path }}/alex-asr/libs"
+        state: directory
+        owner: "{{unix_user}}"
+        group: "{{unix_group}}"
+        mode: u+rwx,g+rwsx,a+rx
+
+  - name: Linking library path for kaldi
+    file:
+      src: "{{lm_prefix}}/opt/kaldi"
+      dest: "{{lm_prefix}}/src/alex-asr/libs/kaldi"
+      state: link
+
+  - name: Linking library path for pyfst
+    file:
+      src: "{{source_path}}/pyfst"
+      dest: "{{lm_prefix}}/src/alex-asr/libs/pyfst"
+      state: link
+
   - name: Installing Alex-ASR
     include_role:
       name: lamachine-python-install
@@ -6,4 +44,4 @@
       package:
          github_user: "UFAL-DSG"
          github_repo: "alex-asr"
-         #pip: "alex_asr"
+

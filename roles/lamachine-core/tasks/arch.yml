@@ -12,7 +12,7 @@
       pacman:
         name: "{{item}}"
         state: installed
-      with_items: [pkg-config, git, mercurial, autoconf-archive, icu, libxml2, zlib, libtar, boost, boost-libs, nano, make, wget curl, libexttextcat, perl, python, python-virtualenv, python-pip]
+      with_items: [pkg-config, git, mercurial, autoconf-archive, icu, libxml2, zlib, libtar, boost, boost-libs, nano, make, wget curl, libexttextcat, perl, python, python-virtualenv, python-pip, zip, unzip, pcre]
 
       #############################################################
       # ANSIBLE installation so we can bootstrap ourselves

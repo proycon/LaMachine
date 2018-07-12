@@ -1,5 +1,5 @@
-FROM ubuntu:xenial
-ARG NAME=stable-venv-ubuntu1604
+FROM ubuntu:bionic
+ARG NAME=stable-venv-ubuntu1804
 ARG VERSION=stable
 ARG BRANCH=master
 EXPOSE 80
