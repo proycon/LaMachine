@@ -69,9 +69,14 @@
        name: lamachine-register
     vars:
        metadata:
+         identifier: kaldi
          name: Kaldi
          author: (multiple)
-         homepage: "http://kaldi-asr.org/"
+         url: "http://kaldi-asr.org/"
+         codeRepository: "https://github.com/kaldi-asr/kaldi"
          license: Apache
-         summary: "Automatic Speech Recognition Toolkit"
+         description: "Automatic Speech Recognition Toolkit"
+         programmingLanguage: "C++"
+         interfaceType: CLI
+         keywords: [ "speech recognition", "asr", "cuda" ]
 
