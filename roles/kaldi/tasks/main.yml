@@ -64,6 +64,13 @@
         export KALDI_ROOT={{lm_prefix}}/opt/kaldi
       mode: u+rwx,a+rx
 
+  - name: "Kaldi - Get latest commit hash"
+    shell: "git describe --tags || git rev-parse HEAD"
+    args:
+      chdir: "{{ lm_prefix }}/opt/kaldi"
+    register: latest_commit
+    changed_when: False
+
   - name: Register Kaldi
     include_role:
        name: lamachine-register
@@ -71,6 +78,7 @@
        metadata:
          identifier: kaldi
          name: Kaldi
+         version: "{{ latest_commit.stdout }}"
          author: (multiple)
          url: "http://kaldi-asr.org/"
          codeRepository: "https://github.com/kaldi-asr/kaldi"
