@@ -25,7 +25,7 @@ export LM_DATA_PATH="{{data_path}}"
 export LM_SOURCEPATH="{{source_path}}"
 unset PYTHONPATH #would most likely mess thing up otherwise
 if [[ "{{ ansible_distribution|lower }}" == "macosx" ]]; then
-export CLANG_CXX_LIBRARY="libc++" #needed for python bindings in lamachine-python-install
+   export CLANG_CXX_LIBRARY="libc++" #needed for python bindings in lamachine-python-install
    export MACOSX_DEPLOYMENT_TARGET="{{ ansible_distribution_version }}"
 fi
 if [[ "$LM_LOCALITY" == "local" ]]; then
