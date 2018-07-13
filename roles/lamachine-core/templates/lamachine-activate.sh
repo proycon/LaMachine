@@ -48,6 +48,11 @@ else
         fi
     done
 fi
+if [ ! -z "$MANPATH" ]; then
+    export MANPATH=$LM_PREFIX/man:$MANPATH
+else
+    export MANPATH=$LM_PREFIX/man
+fi
 if [[ "$LAMACHINE_QUIET" != "1" ]]; then
   cat $LM_PREFIX/etc/motd
 fi
