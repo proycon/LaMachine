@@ -16,7 +16,7 @@
         - hunspell-en-us
         - hunspell-es
         - hunspell-fr
-        - hunspell-de
+        - hunspell-de-de
       when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linux mint")
 
     - name: Installing global dependencies for Gecco (RedHat)
