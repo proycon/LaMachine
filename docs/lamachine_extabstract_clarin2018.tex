@@ -29,10 +29,10 @@
 % Uncomment the following line ONLY if you need two author rows
 %\setlength\titlebox{80mm}
 
-\author{Maarten van Gompel \\
+\author{Maarten van Gompel  and Iris Hendrickx\\
   Centre for Language and Speech Technology (CLST) \\
   Radboud University, Nijmegen, the Netherlands \\
-  {\tt proycon@anaproy.nl} \\ %\And % if needed: this makes a second column
+  {\tt proycon@anaproy.nl, i.hendrickx@let.ru.nl} \\ %\And % if needed: this makes a second column
   \url{https://proycon.github.io/LaMachine}
 %  Second Author \\
 %  Department (optional)\\
@@ -61,14 +61,15 @@ We introduce LaMachine, a unified Natural Language Processing (NLP) open-source 
 installation and deployment of a large amount of software projects that have been developed in the scope of the
 CLARIN-NL project and its current successor CLARIAH. Special attention is paid to encouragement of good software
 development practises and reuse of established infrastructure in the scientific and open-source software development
-community.
+community. We illustrate the usage of LaMachine in an exploratory text mining project at the Dutch Health Inspectorate where LaMachine was applied to create a research environment for automatic text analysis for health care quality monitoring.
 \end{abstract}
 
 \section{Introduction} \label{intro}
 
 Software is a key deliverable and a vital component for research in projects such as those under the CLARIN umbrella. It
-is software that provides researchers the instruments to yield for their research; without it a lot of research would
-become highly unfeasible or right-out impossible. It is CLARIN's core mission to make digital language resources,
+is software that provides researchers the instruments to yield for their research;
+% without it a lot of research wouldbecome highly unfeasible or right-out impossible. 
+It is CLARIN's core mission to make digital language resources,
 including software, available to the wider research community.
 
 We see that NLP software often takes on complex forms such as processing pipelines invoking various individual
@@ -84,6 +85,7 @@ lower-level interfaces are often a prerequisite to build higher-level interfaces
 LaMachine chosen, it makes a good virtual research environment for a data scientist, whether on a personal computer or on a computing
 cluster, a good development environment for a developer or a good deployment method for production servers in for
 example CLARIN centres.
+We demonstrate how LaMachine can create a fully functioning and standalone research environment for text mining  and NLP for Dutch texts in a use case project at the Healthcare Inspectorate.
 
 
 \section{Architecture}
@@ -119,22 +121,23 @@ direct remote provisioning through Ansible (for production servers), or an insta
 machine or local in a custom directory for a specific user. Pre-built docker containers and virtual machines with a
 limited selection of participating software are regularly uploaded to the Docker Hub and Vagrant Cloud, respectively.
 
-Installation of LaMachine begins with a single bootstrap command\footnote{See
-\url{https://proycon.github.io/LaMachine}}.  It may interactively query the users for their software preferences, e.g.
-the flavour of LaMachine and the set of software to install, which is never static but can be customized by the user.
-The user may also opt for installing the latest releases, the more experimental development versions of the software, or
-specific custom versions (to facilitate scientific reproducibility). The bootstrap procedure detects and installs
-the necessary prerequisites automatically and eventually invokes Ansible to perform the bulk of the work.
-
-After a successful build, the user may interact with LaMachine either through the command line, which offers a standard
-shell and enables access to all lower-level tools and programming languages; or through his or her webbrowser, which
-when enabled offers a simple portal page towards all installed web-capable tools. Amongst these services is also a
-Jupyter Notebook environment\footnote{\url{https://jupyter.org/}}, which offers a more graphical scripting environment
-for e.g. Python and R that has gained great popularity in the scientific community.
-
-The current version of LaMachine comes with some simple data sharing facilities only: we provide a
-single shared dataspace between host and VM/container (where applicable), or allow simple upload. Extensive data
-search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.
+%%iris: ik heb dit stukje geintegreerd in de  case study...
+%Installation of LaMachine begins with a single bootstrap command\footnote{See
+%\url{https://proycon.github.io/LaMachine}}.  It may interactively query the users for their software preferences, e.g.
+%the flavour of LaMachine and the set of software to install, which is never static but can be customized by the user.
+%The user may also opt for installing the latest releases, the more experimental development versions of the software, or
+%specific custom versions (to facilitate scientific reproducibility). The bootstrap procedure detects and installs
+%the necessary prerequisites automatically and eventually invokes Ansible to perform the bulk of the work.
+%
+%After a successful build, the user may interact with LaMachine either through the command line, which offers a standard
+%shell and enables access to all lower-level tools and programming languages; or through his or her webbrowser, which
+%when enabled offers a simple portal page towards all installed web-capable tools. Amongst these services is also a
+%Jupyter Notebook environment\footnote{\url{https://jupyter.org/}}, which offers a more graphical scripting environment
+%for e.g. Python and R that has gained great popularity in the scientific community.
+%
+%The current version of LaMachine comes with some simple data sharing facilities only: we provide a
+%single shared dataspace between host and VM/container (where applicable), or allow simple upload. Extensive data
+%search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.
 
 With LaMachine we also attempt to harmonise the metadata of all installed software, by converting metadata from upstream repositories to
 the CodeMeta standard\footnote{\url{https://codemeta.github.io/}, described in JSON-LD} \cite{codemeta,codemetar} where possible, or encouraging software developers to provide
@@ -152,11 +155,35 @@ Amsterdam as well. Moreover, LaMachine incorporates a large number of renowned t
 offering most notably a mature Python environment\footnote{scipy, numpy, scikit-learn, matplotlib, nltk, spacy, pytorch,
 keras, gensim, etc...}, but also R and Java.
 
+
+\section{Case study}\label{sec-case}
+
+We participated the ZonMw project entitled ``Tekstmining in het toezicht: een exploratieve studie naar de automatische verwerking van klachten ingediend bij het Landelijk Meldpunt Zorg"\footnote{project website: \url{https://www.zonmw.nl/nl/onderzoek-resultaten/kwaliteit-van-zorg/programmas/project-detail/effectief-toezicht/tekstmining-in-het-toezicht-een-exploratieve-studie-naar-de-automatische-verwerking-van-klachten-in/}. } led by IQhealthcare\footnote{\url{http://www.iqhealthcare.nl/nl/}}, the scientific center for healthcare quality of RadboudUMC.
+This project took place at the Dutch Health Inspectorate and aimed to apply text mining techniques to health care complaints that have been registered at the national contact point for health care (Landelijk Meldpunt Zorg \url{https://www.landelijkmeldpuntzorg.nl})
+We investigated the usefulness of text mining to categorise and cluster complaints, to automatically determine the severity of incoming complaints, to extract patterns  and to identify risk cases. This project turned out to be a good test case of the applicability and usefulness of the LaMachine software as a standalone research environment.
+As the complaint data is highly sensitive, this data could not leave the secure servers from the health inspectorate and was stored an environment without internet acces. We needed to bring the software to the data via a shared folder.
+
+We created a pre-compiled virtual image of LaMachine\footnote Installation of LaMachine begins with a single bootstrap command, see
+\url{https://proycon.github.io/LaMachine}} and succeeded in running it as a 64-bits Arch Linux-based VM inside another VM with Windows 2012 in which we did have administrative rights but no internet acces. In terms of hardware we ran on a machine with 8 cores and  32gb internal memory available.
+%using VirtualBox and Vagrnt on the Windows VM
+Lamachine provided a fully functional research environment and we ran all our expeirments within LaMachine. We interacted with LaMachine both through the command line, which offers a standard
+shell and enables access to all lower-level tools and programming languages; or through the (offline) webbrowser to apply the Jupyter Notebook environment\footnote{\url{https://jupyter.org/}}, which offers a more graphical scripting environment
+for e.g. Python and R that has gained great popularity in the scientific community.
+
+LaMachine comes with some simple data sharing facilities that allowed us to acces the sensitive complaint data via a  single shared dataspace between host and the VM. (Note that extensive data search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.)
+
+We used many of the available tools in LaMachine within this project: Frog for linguistic annotation of the textual content of the complaints, Timbl and the scikit-learn Python package \cite{scikit-learn} for classification, T-scan for feature creation and colibri-core for n-gram analysis.
+
+
+%het doel van deze studie is om automatische tekstanalysetechnieken (tekstmining) toe te passen op de klachten die bij het Landelijk Meldpunt Zorg binnenkomen. Zo hopen we eventuele trends en patronen te vinden die meer inzicht geven in de aard en de relevantie van de klachten. De verwachting is om zo potentiële risicogevallen te ontdekken die op basis van de behandeling van individuele klachten nog niet waren gesignaleerd. 
+
 \section{Conclusion \& Future work}
 
 The recent release of LaMachine v2, which constituted a full rewrite, has opened up LaMachine to outside
 contribution. Contributor documentation has been written, and at this stage, we greatly welcome external participants
-to join in. Aside from the incorporation of new relevant software, the main objectives for the future are to provide
+to join in. Use cases as the example in section \ref{sec-case} contributing to thorough testing and running of LaMachine in less ideal circumstances such as nested VM constructions and offline usage.
+
+Aside from the incorporation of new relevant software, the main objectives for the future are to provide
 greater \emph{interoperability} between the included tools through better \emph{high-level interfaces} for the
 researcher. We see this as a bottom-up process and have now established a firm foundation to build upon. Note that such
 proposed interfaces, including the current portal application in LaMachine, are always considered separate independent
@@ -170,7 +197,12 @@ Resource Switchboard~\cite{switchboard}. An important part of our future focus w
 with the higher-level tools emerging from the VRE efforts, but also with other parts of the CLARIN infrastructure;
 single-sign on authentication being a notable example here.
 
-\bibliographystyle{acl}
+\section*{Acknowlegdement}
+
+This research was funded by NWO CLARIN-NL, CLARIAH and the ZonMw project {\it Tekstmining in het toezicht: een exploratieve studie naar de automatische verwerking van klachten ingediend bij het Landelijk Meldpunt Zorg}, project number 516004614.
+We thank Tim Voets for his valuable contribution and help in the ZonMw project.
+
+\bibliographystyle{plain}
 \bibliography{lamachine}
 
 
