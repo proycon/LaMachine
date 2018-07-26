@@ -90,13 +90,14 @@ We demonstrate how LaMachine can create a fully functioning and standalone resea
 
 \section{Architecture}
 
-Being an open-source NLP software distribution, LaMachine is constrained to POSIX-compliant platforms; this primarily
-means Linux, but also BSD and, with some restrictions, macOS. This stands in contrast with mobile platforms
-(Android/iOS/etc), native Windows/mac desktop software, or certain interface types in general such as classical desktop
-GUI applications, all of which fall beyond the scope of LaMachine. Software that is incorporated must 1) bear some
-relevance to NLP, 2) be under a recognised open-source license, 3) be deposited in a public version controlled
-repository\footnote{e.g. Github, Gitlab, Bitbucket} and 4) have a release protocol (with semantic versioning) using the
-proper technology-specific channels.
+Being an open-source NLP software distribution, LaMachine is constrained to Unix-like platforms; this primarily means
+Linux, but also BSD and, with some restrictions, macOS. Cygwin\footnote{A unix environment on Windows} is not tested or
+supported. This constaint stands in contrast with mobile platforms (Android/iOS/etc), native Windows/mac desktop software, or
+certain interface types in general such as classical desktop GUI applications, all of which fall beyond the scope of
+LaMachine. Software that is incorporated must 1) bear some relevance to NLP, 2) be under a recognised open-source
+license, 3) be deposited in a public version controlled repository\footnote{e.g. Github, Gitlab, Bitbucket, provided the
+repository is public} and 4) have
+a release protocol (with semantic versioning) using the proper technology-specific channels.
 
 LaMachine is a \emph{meta distribution} as it can be installed in various contexts. At its core, LaMachine consists of a
 set of machine-parsable instructions on how to obtain, install and configure software. These are implemented using
