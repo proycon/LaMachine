@@ -92,26 +92,27 @@ We demonstrate how LaMachine can create a fully functioning and standalone resea
 
 Being an open-source NLP software distribution, LaMachine is constrained to Unix-like platforms; this primarily means
 Linux, but also BSD and, with some restrictions, macOS. Cygwin\footnote{A unix environment on Windows} is not tested or
-supported. This constaint stands in contrast with mobile platforms (Android/iOS/etc), native Windows/mac desktop software, or
-certain interface types in general such as classical desktop GUI applications, all of which fall beyond the scope of
-LaMachine. Software that is incorporated must 1) bear some relevance to NLP, 2) be under a recognised open-source
-license, 3) be deposited in a public version controlled repository\footnote{e.g. Github, Gitlab, Bitbucket, provided the
-repository is public} and 4) have
-a release protocol (with semantic versioning) using the proper technology-specific channels.
+supported. This constraint stands in contrast with mobile platforms (Android/iOS/etc), native Windows/mac desktop
+software, or certain interface types in general such as classical desktop GUI applications, all of which fall beyond the
+scope of LaMachine. However, virtualisation technology enables deployment on a wider range of platforms, including
+Windows.  All software that is incorporated in LaMachine must 1) bear some relevance to NLP, 2) be under a recognised
+open-source license, 3) be deposited in a public version controlled repository\footnote{e.g. Github, Gitlab, Bitbucket,
+provided the repository is public} and 4) have a release protocol (with semantic versioning) using the proper
+technology-specific channels.
 
 LaMachine is a \emph{meta distribution} as it can be installed in various contexts. At its core, LaMachine consists of a
-set of machine-parsable instructions on how to obtain, install and configure software. These are implemented using
-Ansible\footnote{\url{https://www.ansible.com}}.  This is notably different from the more classical notion of Linux
-distributions, which generally provide their own repositories with (often binary) software packages. LaMachine builds on
-this already available infrastructure by taking these repositories as a given and only needs to know which
-repositories to use.  Similarly, there are different programming-language-specific ecosystems providing their own
-repositories, such as the Python Package Index\footnote{\url{https://pypi.org}} for Python,
+set of machine-parsable instructions on how to obtain, build (e.g. compile from source), install and configure software.
+These are implemented using Ansible\footnote{\url{https://www.ansible.com}}.  This is notably different from the more
+classical notion of Linux distributions, which generally provide their own repositories with (often binary) software
+packages. LaMachine builds on this already established infrastructure by taking these repositories as a given and only
+needs to know which repositories to use.  Similarly, there are different programming-language-specific ecosystems
+providing their own repositories, such as the Python Package Index\footnote{\url{https://pypi.org}} for Python,
 CRAN\footnote{\url{https://cran.r-project.org/}} for R, CPAN\footnote{\url{https://www.cpan.org}} for Perl, Maven
-Central\footnote{\url{https://search.maven.org}} for Java.  LaMachine again relies on those to pull and install
-software from and never forks, archives, or modifies the software in any way. In doing so, we compel participating
-software projects to adhere to well-established distribution standards and ensure the software is more sustainable
-towards the future \cite{softwarequality}. Moreover, we ensure that LaMachine never becomes a prerequisite for the software but merely a
-courtesy or convenience.
+Central\footnote{\url{https://search.maven.org}} for Java.  LaMachine again relies on those to pull and install software
+from and never forks, archives, or modifies the software in any way. In doing so, we compel participating software
+projects to adhere to well-established distribution standards and ensure the software is more sustainable towards the
+future \cite{softwarequality}. Moreover, we ensure that LaMachine never becomes a prerequisite for the software but
+merely a courtesy or convenience.
 
 LaMachine provides ample flexibility that allows it to be deployable in different contexts. First of all there is
 flexibility with regard to the target platform, where we support several major GNU/Linux distributions (Debian, Ubuntu,
@@ -140,7 +141,7 @@ limited selection of participating software are regularly uploaded to the Docker
 %single shared dataspace between host and VM/container (where applicable), or allow simple upload. Extensive data
 %search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.
 
-With LaMachine we also attempt to harmonise the metadata of all installed software, by converting metadata from upstream repositories to
+LaMachine we also aims to harmonise the metadata of all installed software, by converting metadata from upstream repositories to
 the CodeMeta standard\footnote{\url{https://codemeta.github.io/}, described in JSON-LD} \cite{codemeta,codemetar} where possible, or encouraging software developers to provide
 their own. This in turn enables other tools to do proper service discovery and provenance logging.
 
@@ -170,15 +171,18 @@ test case of the applicability and usefulness of LaMachine as a standalone resea
 As the complaint data is highly sensitive, it could not leave the secure servers from the health inspectorate and was
 stored an environment without internet access. We needed to bring the software to the data via a shared folder.
 
-We used a virtual machine (VM) image of LaMachine\footnote{Installation of LaMachine begins with a single bootstrap command, see
-\url{https://proycon.github.io/LaMachine}} and succeeded in running it as a 64-bits Linux-based VM inside another
+We used a virtual machine (VM) image of LaMachine. Installation of LaMachine always begins with a single bootstrap
+command\footnote{see
+\url{https://proycon.github.io/LaMachine}} and we opted to build a VM and succeeded in running this 64-bits Linux-based VM inside another
 VM with Windows 2012 in which we did have administrative rights but no internet access, i.e. the VM that was offered to
 us for this project. In terms of hardware we ran on a
 machine with 8 cores and  32GB internal memory available.
 %using VirtualBox and Vagrnt on the Windows VM
 Lamachine provided a fully functional research environment and we ran all our experiments within LaMachine. We interacted with LaMachine both through the command line, which offers a standard
-shell and enables access to all lower-level tools and programming languages; or through the (offline) webbrowser to use the Jupyter Notebook environment\footnote{\url{https://jupyter.org/}}, which offers a more graphical scripting environment
-for e.g. Python and R that has gained great popularity in the scientific community.
+shell and enables access to all lower-level tools and programming languages; and through the (offline) webbrowser to use the Jupyter Notebook environment\footnote{\url{https://jupyter.org/}}, which offers a more graphical scripting environment
+for e.g. Python and R that has gained great popularity in the scientific community. Moreover, LaMachine also offers a portal
+website with access and overview of all locally installed tools, including web services and web applications.
+%Dit was er nog niet in de use-case formeel gezien
 
 LaMachine comes with some simple data sharing facilities that allowed us to access the sensitive complaint data via a single shared dataspace between host and the VM. (Note that extensive data search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.)
 
