@@ -120,16 +120,17 @@ CentOS, RedHat Enterprise Linux, Fedora, Arch Linux), as well as macOS. Second, 
 regard to the form, where we support \emph{containerisation} through Docker\footnote{\url{https://www.docker.com}},
 \emph{virtualisation} through Vagrant\footnote{\url{https://vagrant.org}} and VirtualBox\footnote{\url{https://www.virtualbox.org}},
 direct remote provisioning through Ansible (for production servers), or an installation that is either global to the
-machine or local in a custom directory for a specific user. Pre-built docker containers and virtual machines with a
+machine or local in a custom directory for a specific user. Pre-built docker containers and virtual machine images with a
 limited selection of participating software are regularly uploaded to the Docker Hub and Vagrant Cloud, respectively.
 
-%%iris: ik heb dit stukje geintegreerd in de  case study...
-%Installation of LaMachine begins with a single bootstrap command\footnote{See
-%\url{https://proycon.github.io/LaMachine}}.  It may interactively query the users for their software preferences, e.g.
-%the flavour of LaMachine and the set of software to install, which is never static but can be customized by the user.
-%The user may also opt for installing the latest releases, the more experimental development versions of the software, or
-%specific custom versions (to facilitate scientific reproducibility). The bootstrap procedure detects and installs
-%the necessary prerequisites automatically and eventually invokes Ansible to perform the bulk of the work.
+%%iris: ik heb dit stukje geintegreerd in de  case study... (ik heb de eerste paragraaf toch nog even hier opgenomen)
+Installation of LaMachine begins with a single bootstrap command\footnote{See
+\url{https://proycon.github.io/LaMachine}}.  It may interactively query the users for their software preferences, e.g.
+the flavour of LaMachine and the set of software to install, which is never static but can be customized by the user.
+The user may also opt for installing the latest releases, the more experimental development versions of the software, or
+specific custom versions (to facilitate scientific reproducibility). The bootstrap procedure detects and installs
+the necessary prerequisites automatically and eventually invokes Ansible to perform the bulk of the work.
+
 %
 %After a successful build, the user may interact with LaMachine either through the command line, which offers a standard
 %shell and enables access to all lower-level tools and programming languages; or through his or her webbrowser, which
@@ -172,23 +173,21 @@ test case of the applicability and usefulness of LaMachine as a standalone resea
 As the complaint data is highly sensitive, it could not leave the secure servers from the health inspectorate and was
 stored an environment without internet access. We needed to bring the software to the data via a shared folder.
 
-We used a virtual machine (VM) image of LaMachine. Installation of LaMachine always begins with a single bootstrap
-command\footnote{see
-\url{https://proycon.github.io/LaMachine}} and we opted to build a VM and succeeded in running this 64-bits Linux-based VM inside another
-VM with Windows 2012 in which we did have administrative rights but no internet access, i.e. the VM that was offered to
-us for this project. In terms of hardware we ran on a
-machine with 8 cores and  32GB internal memory available.
+We used a virtual machine (VM) image of LaMachine and we ran this 64-bits Linux-based VM inside another
+VM with Windows 2012, provided to us by the health inspectorate for this project, in which we did have administrative rights but no internet access
+In terms of hardware we ran on a machine with 8 cores and  32GB internal memory available.
 %using VirtualBox and Vagrnt on the Windows VM
 Lamachine provided a fully functional research environment and we ran all our experiments within LaMachine. We interacted with LaMachine both through the command line, which offers a standard
 shell and enables access to all lower-level tools and programming languages; and through the (offline) webbrowser to use the Jupyter Notebook environment\footnote{\url{https://jupyter.org/}}, which offers a more graphical scripting environment
 for e.g. Python and R that has gained great popularity in the scientific community. Moreover, LaMachine also offers a portal
 website with access and overview of all locally installed tools, including web services and web applications.
-%Dit was er nog niet in de use-case formeel gezien
+%Dit laatste was er nog niet in de use-case formeel gezien, maar wil het toch noemen
 
 LaMachine comes with some simple data sharing facilities that allowed us to access the sensitive complaint data via a single shared dataspace between host and the VM. (Note that extensive data search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.)
 
-We used many of the available tools in LaMachine within this project: Frog for linguistic annotation of the textual content of the complaints, Timbl and the scikit-learn Python package \cite{scikit-learn} for classification, T-scan for feature creation and colibri-core for n-gram analysis.
-
+We used many of the available tools in LaMachine within this project: Frog for linguistic annotation of the textual
+content of the complaints, Timbl and the scikit-learn Python package \cite{scikit-learn} for classification, T-scan for
+feature extraction and colibri-core for n-gram analysis.
 
 %het doel van deze studie is om automatische tekstanalysetechnieken (tekstmining) toe te passen op de klachten die bij het Landelijk Meldpunt Zorg binnenkomen. Zo hopen we eventuele trends en patronen te vinden die meer inzicht geven in de aard en de relevantie van de klachten. De verwachting is om zo potentiële risicogevallen te ontdekken die op basis van de behandeling van individuele klachten nog niet waren gesignaleerd.
 
