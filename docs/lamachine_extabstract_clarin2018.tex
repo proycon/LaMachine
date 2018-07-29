@@ -145,9 +145,11 @@ the necessary prerequisites automatically and eventually invokes Ansible to perf
 %search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.
 
 LaMachine also aims to harmonise the metadata of all installed software, by converting metadata from upstream
-repositories\footnote{i.e. repositories that where tool providers depositor their software} to
-the CodeMeta standard\footnote{\url{https://codemeta.github.io/}, described in JSON-LD} \cite{codemeta,codemetar} where possible, or encouraging software developers to provide
-their own. This in turn enables other tools to do proper service discovery and provenance logging.
+repositories\footnote{i.e. the repositories where tool providers deposit their software} to the CodeMeta
+standard\footnote{\url{https://codemeta.github.io/}, described in JSON-LD} \cite{codemeta,codemetar} where possible, or
+encouraging software developers to provide their own. This in turn enables other tools to do proper service discovery
+and provenance logging. Leveraging this metadata, LaMachine comes with a webserver that offers a portal website with
+access and overview of all locally installed tools, including web services and web applications.
 
 \section{Software}
 
@@ -164,26 +166,26 @@ keras, gensim, etc...}, but also R and Java.
 
 \section{Case study}\label{sec-case}
 
-We participated in the dutch ZonMw project entitled ``Tekstmining in het toezicht: een exploratieve studie naar de
-automatische verwerking van klachten ingediend bij het Landelijk Meldpunt Zorg"\footnote{project website:
+We participated in the dutch ZonMw project titled \emph{``Tekstmining in het toezicht: een exploratieve studie naar de
+    automatische verwerking van klachten ingediend bij het Landelijk Meldpunt Zorg''} \footnote{project website:
 \url{https://www.zonmw.nl/nl/onderzoek-resultaten/kwaliteit-van-zorg/programmas/project-detail/effectief-toezicht/tekstmining-in-het-toezicht-een-exploratieve-studie-naar-de-automatische-verwerking-van-klachten-in/}.
 } led by IQhealthcare\footnote{\url{http://www.iqhealthcare.nl/nl/}}, the scientific centre for healthcare quality of RadboudUMC.
-This project took place at the Dutch Health Inspectorate and aimed to apply text mining techniques to health care complaints that have been registered at the national contact point for health care (Landelijk Meldpunt Zorg \url{https://www.landelijkmeldpuntzorg.nl})
+This project took place at the Dutch Health Inspectorate and aimed to apply text mining techniques to health care
+complaints that have been registered at the national contact point for health care (Landelijk Meldpunt
+Zorg\footnote{\url{https://www.landelijkmeldpuntzorg.nl}})
 We investigated the usefulness of text mining to categorise and cluster complaints, to automatically determine the
 severity of incoming complaints, to extract patterns  and to identify risk cases. This project turned out to be a good
 test case of the applicability and usefulness of LaMachine as a standalone research environment.
-As the complaint data is highly sensitive, it could not leave the secure servers from the health inspectorate and was
-stored an environment without internet access. We needed to bring the software to the data via a shared folder.
+As the complaint data is highly sensitive, it could not leave the secure servers of the health inspectorate and was
+stored in an environment without internet access. We needed to bring the software to the data via a shared folder.
 
 We used a virtual machine (VM) image of LaMachine and we ran this 64-bits Linux-based VM inside another
-VM with Windows 2012, provided to us by the health inspectorate for this project, in which we did have administrative rights but no internet access
-In terms of hardware we ran on a machine with 8 cores and  32GB internal memory available.
+VM with Windows 2012, provided to us by the health inspectorate for this project, in which we did have administrative
+rights but no internet access. In terms of hardware we ran on a machine with 8 cores and  32GB internal memory available.
 %using VirtualBox and Vagrnt on the Windows VM
-Lamachine provided a fully functional research environment and we ran all our experiments within LaMachine. We interacted with LaMachine both through the command line, which offers a standard
+LaMachine provided a fully functional research environment and we ran all our experiments within LaMachine. We interacted with LaMachine both through the command line, which offers a standard
 shell and enables access to all lower-level tools and programming languages; and through the (offline) webbrowser to use the Jupyter Notebook environment\footnote{\url{https://jupyter.org/}}, which offers a more graphical scripting environment
-for e.g. Python and R that has gained great popularity in the scientific community. Moreover, LaMachine also offers a portal
-website with access and overview of all locally installed tools, including web services and web applications.
-%Dit laatste was er nog niet in de use-case formeel gezien, maar wil het toch noemen
+for e.g. Python and R that has gained great popularity in the scientific community.
 
 LaMachine comes with some simple data sharing facilities that allowed us to access the sensitive complaint data via a single shared dataspace between host and the VM. (Note that extensive data search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.)
 
