@@ -166,10 +166,9 @@ keras, gensim, etc...}, but also R and Java.
 
 \section{Case study}\label{sec-case}
 
-We participated in the dutch ZonMw project titled \emph{``Tekstmining in het toezicht: een exploratieve studie naar de
-    automatische verwerking van klachten ingediend bij het Landelijk Meldpunt Zorg''} \footnote{project website:
+We participated in a small Dutch national project titled \emph{`` Text mining for Inspection: an exploratory study on automatic analysis of health care complaints''} \footnote{project website:
 \url{https://www.zonmw.nl/nl/onderzoek-resultaten/kwaliteit-van-zorg/programmas/project-detail/effectief-toezicht/tekstmining-in-het-toezicht-een-exploratieve-studie-naar-de-automatische-verwerking-van-klachten-in/}.
-} led by IQhealthcare\footnote{\url{http://www.iqhealthcare.nl/nl/}}, the scientific centre for healthcare quality of RadboudUMC.
+} led by IQhealthcare\footnote{\url{http://www.iqhealthcare.nl/nl/}}, the scientific centre for healthcare quality of RadboudUMC hospital.
 This project took place at the Dutch Health Inspectorate and aimed to apply text mining techniques to health care
 complaints that have been registered at the national contact point for health care (Landelijk Meldpunt
 Zorg\footnote{\url{https://www.landelijkmeldpuntzorg.nl}})
@@ -190,8 +189,7 @@ for e.g. Python and R that has gained great popularity in the scientific communi
 LaMachine comes with some simple data sharing facilities that allowed us to access the sensitive complaint data via a single shared dataspace between host and the VM. (Note that extensive data search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.)
 
 We used many of the available tools in LaMachine within this project: Frog for linguistic annotation of the textual
-content of the complaints, Timbl and the scikit-learn Python package \cite{scikit-learn} for classification, T-scan for
-feature extraction and colibri-core for n-gram analysis.
+content of the complaint and the scikit-learn Python package \cite{scikit-learn} for classification, T-scan \cite{tscan} for feature extraction in the form of text characteristics and colibri-core for n-gram analysis.
 
 %het doel van deze studie is om automatische tekstanalysetechnieken (tekstmining) toe te passen op de klachten die bij het Landelijk Meldpunt Zorg binnenkomen. Zo hopen we eventuele trends en patronen te vinden die meer inzicht geven in de aard en de relevantie van de klachten. De verwachting is om zo potentiële risicogevallen te ontdekken die op basis van de behandeling van individuele klachten nog niet waren gesignaleerd.
 
@@ -219,7 +217,7 @@ single-sign on authentication being a notable example here.
 
 This research was funded by NWO CLARIN-NL, CLARIAH and the ZonMw project {\it Tekstmining in het toezicht: een exploratieve studie naar de automatische verwerking van klachten ingediend bij het Landelijk Meldpunt Zorg}, project number 516004614. We thank all project partners: the Dutch Health Inspectorate, IQhealthcare, and Tim Voets for their valuable contributions and help in the ZonMw project.
 
-\bibliographystyle{plain}
+
 \bibliography{lamachine}
 
 
