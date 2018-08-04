@@ -54,6 +54,7 @@
                                              #(>250MB)
      # - spacy                            ## spaCy is a library for advanced Natural Language Processing in Python and Cython ##
                                              #(>500MB)
+     # - pytorch                          ## Deep-learning library for Python
      # - kaldi                            ## Kaldi Automatic Speech Recognition Toolkit
                                              #(>7GB !!!! - Not supported on Mac OS X)
 
