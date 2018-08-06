@@ -337,6 +337,7 @@
       args:
         executable: /bin/bash
       register: global_python_version
+      ignore_errors: True
       changed_when: False
 
     - name: Testing whether virtualenv python is outdated
