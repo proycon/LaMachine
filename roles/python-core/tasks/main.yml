@@ -38,7 +38,7 @@
          - { "pip": flask, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
          - { "pip": cherrypy, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
          - { "pip": jinja2, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
-         - { "pip": django, "version": "{% if python_version.stdout <= '3.4' %}2.0.5{% endif %}", "exclude_when": "{% if webserver %}false{% else %}true{% endif %}" } #django >=2.1 does not support python 3.4, stick to latest 2.0 release in that case
+         - { "pip": django, "version": "{% if python_version.stdout <= '3.4' %}1.11.15{% endif %}", "exclude_when": "{% if webserver %}false{% else %}true{% endif %}" } #django >=2.1 does not support python 3.4, stick to latest 1.11 release in that case (this is an LTS release)
        loop_control:
            loop_var: package
      - name: "Installing generic 3rd party Python Packages via pip (2)"
