@@ -1,3 +1,4 @@
+---
 - when: "'exclude_when' not in package or not package.exclude_when|bool"
   block:
     - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Installing from github (development/custom)"
