@@ -23,3 +23,22 @@
       path: /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
     when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
     ignore_errors: yes
+
+  - name: Create java classpath
+    become: "{{lm_become}}"
+    become_user: root
+    file:
+        path: "{{ lm_prefix }}/lib/java"
+        state: directory
+        owner: "{{unix_user}}"
+        group: "{{unix_group}}"
+        mode: u+rwx,g+rwsx,a+rx
+
+  - name: "Adding activation script for Java classpath"
+    become: "{{lm_become}}"
+    become_user: root
+    copy:
+      dest: "{{lm_prefix}}/bin/activate.d/java.sh"
+      content: |
+        export CLASSPATH={{lm_prefix}}/lib/java
+      mode: u+rwx,a+rx

@@ -1,0 +1,61 @@
+- when: "'exclude_when' not in package or not package.exclude_when|bool"
+  block:
+    - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Installing from github (development/custom)"
+      block:
+        - name: "{{package.github_repo}} - Git clone/pull latest {% if 'git_branch' in package %}{{ package.git_branch }}{% else %}master{% endif %}" #we always do this, even if we're not using the source for installation (we still need to check for codemeta.json)
+          git:
+            repo: "https://github.com/{{package.github_user}}/{{package.github_repo}}"
+            dest: "{{ source_path }}/{{ package.github_repo }}"
+            version: "{% if 'version' in package and package.version %}{{ version }}{% elif 'git_branch' in package and package.git_branch %}{{ package.git_branch }}{% else %}master{% endif %}"
+            recursive: yes
+            update: yes
+          environment: "{{lm_env}}"
+          when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and ("ignore_git" not in package or not package.ignore_git)'
+
+        - name: "{{package.github_repo}} - Building JAR package (development/custom)"
+          shell: "mvn package"
+          args:
+            chdir: "{{ source_path }}/{{package.github_repo}}{% if 'setupdir' in package %}/{{ package.setupdir }}{% endif %}"
+          environment: "{{lm_env}}"
+          when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and (version == "development" or ("group_id" not in package or package.group_id == ""))'
+
+          #TODO: copy the resulting JAR file to {{lm_prefix}}/lib/java
+
+    - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% else %}(NOT APPLICABLE){% endif %} - Installing custom version from Maven Central"
+      maven_artifact:
+          group_id: "{{package.group_id}}"
+          artifact_id: "{{package.artifact_id}}"
+          version: "{{package.version}}"
+          classifier: "{% if 'classifier' in package %}{{package.classifier}}{% endif %}"
+      environment: "{{lm_env}}"
+      when: (version == "custom" or ('version' in package and package.version)) and ("github_user" not in package or package.github_user == "") and "artifact_id" in package and package.artifact_id != ""
+
+    - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest version from Maven Central (stable)"
+      maven_artifact:
+          group_id: "{{package.group_id}}"
+          artifact_id: "{{package.artifact_id}}"
+          version: "latest"
+          classifier: "{% if 'classifier' in package %}{{package.classifier}}{% endif %}"
+      environment: "{{lm_env}}"
+      when: (('version' not in package or not package.version) and (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == ""))) and "artifact_id" in package and package.artifact_id != "")
+
+    - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Checking whether codemeta.json is provided"
+      stat:
+        path: "{{ source_path }}/{{package.github_repo}}/codemeta.json"
+      register: have_codemeta
+      changed_when: False
+      when: "'github_repo' in package"
+
+
+    - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% else %}{{package.github_repo}}{% endif %} -  Register software metadata"
+      include_role:
+          name: lamachine-register
+      vars:
+          codemeta: "{% if 'github_repo' in package and have_codemeta.stat.exists %}{{ source_path }}/{{package.github_repo}}/codemeta.json{% endif %}"
+          metadata_defaults:
+             identifier: "{% if 'artifact_id' in package %}{{package.artifact_id|lower}}{% else %}{{ package.github_repo|lower }}{% endif %}"
+             name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% else %}{{ package.github_repo }}{% endif %}"
+             codeRepository: "{% if 'github_repo' in package %}https://github.com/{{package.github_user}}/{{package.github_repo}}{% endif %}"
+             producer: "{% if 'github_user' in package %}{% if package.github_user in github_clst_users %}{{metadata_producer_clst}}{% else %}{{metadata_producer_unknown}}{% endif %}{% else %}{{metadata_producer_unknown}}{% endif %}"
+      when: do_registration is defined and do_registration|bool
+
