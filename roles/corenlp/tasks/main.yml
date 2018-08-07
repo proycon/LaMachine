@@ -1,0 +1,12 @@
+---
+    - name: Installing Stanford CoreNLP
+      include_role:
+        name: lamachine-maven-install
+      with_items:
+        - { artifact_id: "stanford-corenlp", group_id: "edu.stanford.nlp" } #github_user: "stanfordNLP", github_repo: "CoreNLP" (compilation from source implementation not finished yet)
+        - { artifact_id: "stanford-corenlp", group_id: "edu.stanford.nlp", classifier: "models" }
+        - { artifact_id: "stanford-corenlp", group_id: "edu.stanford.nlp", classifier: "models-chinese" }
+        - { artifact_id: "stanford-corenlp", group_id: "edu.stanford.nlp", classifier: "models-arabic" }
+        - { artifact_id: "stanford-corenlp", group_id: "edu.stanford.nlp", classifier: "models-spanish" }
+        - { artifact_id: "stanford-corenlp", group_id: "edu.stanford.nlp", classifier: "models-french" }
+        - { artifact_id: "stanford-corenlp", group_id: "edu.stanford.nlp", classifier: "models-german" }
