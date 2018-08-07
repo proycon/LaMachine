@@ -13,10 +13,10 @@
     - name: Updating base system (Homebrew)
       homebrew:
         update_homebrew: yes
-        upgrade_all: yes
+        upgrade_all: "{% if nosysupdate is not defined or nosysupdate == 0 %}yes{% else %}no{% endif %}"
       ignore_errors: yes
-      when: nosysupdate is not defined or nosysupdate == 0
 
+      when:
     - block:
         - name: Installing common base packages (Homebrew)
           homebrew:
@@ -38,7 +38,6 @@
             - ansible
             - boost
             - boost-python3
-          when: nosysupdate is not defined or nosysupdate == false
       rescue:
         - name: "Error invoking Homebrew"
           fail:
