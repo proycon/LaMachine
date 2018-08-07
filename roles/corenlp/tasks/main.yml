@@ -10,3 +10,5 @@
         - { artifact_id: "stanford-corenlp", group_id: "edu.stanford.nlp", classifier: "models-spanish" }
         - { artifact_id: "stanford-corenlp", group_id: "edu.stanford.nlp", classifier: "models-french" }
         - { artifact_id: "stanford-corenlp", group_id: "edu.stanford.nlp", classifier: "models-german" }
+      loop_control:
+        loop_var: package
