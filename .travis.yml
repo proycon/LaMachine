@@ -80,5 +80,5 @@ install:
     - if [[ $TRAVIS_OS_NAME == "linux" ]] && [[ "$EXTRAOPT" == "--noroot" ]]; then sudo apt-get install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev libgnutls-dev python3 python-virtualenv python3-dev libexttextcat-dev; fi #install global dependencies manually because we pretend not to have root
     - if [[ $TRAVIS_OS_NAME == "osx" ]]; then wget https://pypi.python.org/packages/source/p/pip/pip-8.0.1.tar.gz && tar -xvzf pip*.tar.gz; cd pip*; sudo python setup.py install; cd ..; fi #prevent bootstrap from querying this interactively
 script:
-    - bash bootstrap.sh --name $CONF_NAME --branch develop --flavour $FLAVOUR --version $VERSION --env $LOCALENV_TYPE --private --minimal --prefer-distro --noninteractive $EXTRAOPT --verbose
+    - bash bootstrap.sh --name $CONF_NAME --branch develop --flavour $FLAVOUR --version $VERSION --env $LOCALENV_TYPE --private --minimal --prefer-distro --noninteractive $EXTRAOPT --verbose --nosysupdate
 

@@ -15,6 +15,7 @@
         update_homebrew: yes
         upgrade_all: yes
       ignore_errors: yes
+      when: nosysupdate is not defined or nosysupdate == 0
 
     - block:
         - name: Installing common base packages (Homebrew)

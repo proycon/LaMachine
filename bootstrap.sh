@@ -185,6 +185,7 @@ ANSIBLE_OPTIONS="-v"
 MINIMAL=0
 FORCE=0
 PREFER_DISTRO=0
+NOSYSUPDATE=0
 VMMEM=4096
 VAGRANTBOX="debian/contrib-stretch64" #base distribution for VM
 DOCKERREPO="proycon/lamachine"
@@ -327,6 +328,10 @@ while [[ $# -gt 0 ]]; do
         --force)
         FORCE="$2"
         shift
+        shift
+        ;;
+        --nosysupdate)
+        NOSYSUPDATE=1
         shift
         ;;
         --services)
@@ -1043,6 +1048,9 @@ webservertype: nginx #If set to anything different, the internal webserver will 
 " >> $STAGEDCONFIG
 if [ $FORCE -ne 0 ]; then
     echo "force: $FORCE #Sets the default force parameter for updates, set to 1 to force updates or 2 to explicitly remove all sources and start from scratch on each update. Remove this line entirely if you don't need it or are in doubt" >> $STAGEDCONFIG
+fi
+if [ $NOSYSUPDATE -ne 0 ]; then
+    echo "nosysupdate: $NOSYSUPDATE #Skips updating the global packages provided by the distribution" >> $STAGEDCONFIG
 fi
     if [[ $FLAVOUR == "local" ]] || [[ "$OS" == "mac" ]]; then
         echo "web_user: \"$USERNAME\"" >> $STAGEDCONFIG
