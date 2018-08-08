@@ -29,8 +29,12 @@
           version: "{{package.version}}"
           classifier: "{% if 'classifier' in package %}{{package.classifier}}{% endif %}"
           dest: "{{lm_prefix}}/lib/java"
+          timeout: 30
       environment: "{{lm_env}}"
       when: (version == "custom" or ('version' in package and package.version)) and ("github_user" not in package or package.github_user == "") and "artifact_id" in package and package.artifact_id != ""
+
+    - name: Short delay
+      wait_for: timeout=1
 
     - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest version from Maven Central (stable)"
       maven_artifact:
@@ -39,8 +43,12 @@
           version: "latest"
           classifier: "{% if 'classifier' in package %}{{package.classifier}}{% endif %}"
           dest: "{{lm_prefix}}/lib/java"
+          timeout: 30
       environment: "{{lm_env}}"
       when: (('version' not in package or not package.version) and (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == ""))) and "artifact_id" in package and package.artifact_id != "")
+
+    - name: Short delay
+      wait_for: timeout=1
 
     - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Checking whether codemeta.json is provided"
       stat:
