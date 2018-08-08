@@ -57,6 +57,8 @@
      # - pytorch                          ## Deep-learning library for Python
      # - kaldi                            ## Kaldi Automatic Speech Recognition Toolkit
                                              #(>7GB !!!! - Not supported on Mac OS X)
+     # - corenlp                          ## Stanford CoreNLP (including all models)
+                                             #(>2GB)
 
 # NOTE: ensure that all enabled roles are lined up with the same amount of spaces!
 #       (all hyphens must be vertically on the same column!)
