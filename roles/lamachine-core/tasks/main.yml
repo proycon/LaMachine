@@ -385,16 +385,22 @@
           chdir: "{{source_path}}"
       when: private is not defined or not private
 
-    - name: "Finding global pip3"
-      shell: which pip3
-      register: pip
-      when: locality == "global"
-
     - name: Upgrade pip
       become: "{{lm_become}}"
       become_user: root
       shell: pip3 install --upgrade pip
       environment: "{{lm_env}}"
+
+    - name: Rehash
+      shell: hash -r pip
+      args:
+        executable: /bin/bash
+      environment: "{{lm_env}}"
+
+    - name: "Finding global pip3"
+      shell: which pip3
+      register: pip
+      when: locality == "global"
 
     - name: Install LaMachine list script
       template:
