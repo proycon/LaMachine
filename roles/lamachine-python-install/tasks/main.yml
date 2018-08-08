@@ -30,6 +30,7 @@
            state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package %}{{package.state}}{% else %}present{% endif %}"
            executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
            version: "{{package.version}}"
+           extra_args: "--upgrade-strategy only-if-needed"
       environment: "{{lm_env}}"
       when: (version == "custom" or ('version' in package and package.version)) and ("github_user" not in package or package.github_user == "") and localenv_type != "conda" and "pip" in package and package.pip != ""
 
@@ -40,6 +41,7 @@
            name: "{{package.pip}}"
            state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package %}{{package.state}}{% else %}latest{% endif %}"
            executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
+           extra_args: "--upgrade-strategy only-if-needed"
       environment: "{{lm_env}}"
       when: (('version' not in package or not package.version) and (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == ""))) and localenv_type != "conda" and "pip" in package and package.pip != "")
 
