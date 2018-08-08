@@ -390,6 +390,12 @@
       register: pip
       when: locality == "global"
 
+    - name: Upgrade pip
+      become: "{{lm_become}}"
+      become_user: root
+      shell: pip3 install --upgrade pip
+      environment: "{{lm_env}}"
+
     - name: Install LaMachine list script
       template:
         src: lamachine-list
