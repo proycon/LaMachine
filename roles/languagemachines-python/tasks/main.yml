@@ -74,7 +74,7 @@
                github_repo: "flat"
                pip: "FoLiA-Linguistic-Annotation-Tool"
             metadata:
-              identifier: "flat"
+              identifier: "folia-linguistic-annotation-tool"
               name: "FLAT: FoLiA Linguistic Annotation Tool"
               entryPoints:
                 - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/flat", interfaceType: "WUI" }
