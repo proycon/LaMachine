@@ -40,5 +40,5 @@
     copy:
       dest: "{{lm_prefix}}/bin/activate.d/java.sh"
       content: |
-        export CLASSPATH={{lm_prefix}}/lib/java
+        export CLASSPATH="{{lm_prefix}}/lib/java/*"
       mode: u+rwx,a+rx

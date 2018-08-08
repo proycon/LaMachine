@@ -330,6 +330,21 @@
       environment: "{{lm_env}}"
       changed_when: False
 
+    - name: Obtaining global Python version
+      shell: |
+             #!/bin/bash
+             [[ -f /usr/bin/python3 ]] && /usr/bin/python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'
+      args:
+        executable: /bin/bash
+      register: global_python_version
+      ignore_errors: True
+      changed_when: False
+
+    - name: Testing whether virtualenv python is outdated
+      fail:
+        msg: "The global Python 3 on this system has been updated to {{ global_python_version.stdout }} and is now newer than the Python in this virtual environment ({{python_version.stdout}}). This may cause issues so we recommend to create a new LaMachine environment from scratch by following the instructions on https://proycon.github.io/LaMachine. You will most likely want to delete the current environment ({{local_prefix}}) first, assuming you stored no valuable data inside. If you really want to ignore this message and attempt to continue upgrading anyway, add the parameter nopythoncheck=1 when invoking lamachine-update."
+      when: global_python_version.stdout != "" and global_python_version.stdout > python_version.stdout and locality == "local" and localenv_type == "virtualenv" and (nopythoncheck is not defined or nopythoncheck == 0)
+
     - name: Installing ansible locally (virtualenv)
       pip:
           name: "ansible"
@@ -374,6 +389,12 @@
       shell: which pip3
       register: pip
       when: locality == "global"
+
+    - name: Upgrade pip
+      become: "{{lm_become}}"
+      become_user: root
+      shell: pip3 install --upgrade pip
+      environment: "{{lm_env}}"
 
     - name: Install LaMachine list script
       template:

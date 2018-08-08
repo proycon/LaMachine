@@ -24,6 +24,7 @@
         name: "*"
         state: latest
         update_cache: yes
+      when: "nosysupdate is not defined or nosysupdate == 0"
 
     - name: installing common base packages (yum)
       become: true
@@ -31,6 +32,7 @@
       yum:
         name: "{{item}}"
         state: installed
+        update_cache: "{% if nosysupdate is not defined or nosysupdate == 0 %}yes{% else %}no{% endif %}"
       with_items: [psmisc, pkgconfig, git, mercurial, icu, libtool, autoconf, automake, autoconf-archive, nano, make, gcc, gcc-c++, libxml2, libxml2-devel, libxslt, libxslt-devel, libtar, libtar-devel, zlib, zlib-devel, bzip2, bzip2-devel, libcurl, gnutls-devel, libcurl-devel, wget, curl, libexttextcat, libexttextcat-devel, zip, unzip, pcre, pcre-devel]
 
     - name: Installing Python base packages for CentOS/RHEL (yum)

@@ -4,7 +4,7 @@
       become_user: root
       pacman:
          update_cache: yes
-         upgrade: yes
+         upgrade: "{% if nosysupdate is not defined or nosysupdate == 0 %}no{% else %}yes{% endif %}"
 
     - name: installing common base packages (Arch)
       become: true

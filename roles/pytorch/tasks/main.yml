@@ -1,0 +1,10 @@
+---
+    - name: "Installing PyTorch"
+      include_role:
+          name: lamachine-python-install
+      with_items:
+          - { pip: torch }
+          - { pip: torchvision }
+      loop_control:
+           loop_var: package
+

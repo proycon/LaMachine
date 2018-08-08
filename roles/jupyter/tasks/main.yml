@@ -1,0 +1,12 @@
+---
+
+   - name: "Installing JupyterLab"
+     include_role:
+         name: lamachine-python-install
+     with_items:
+       - pip: jupyterlab
+         state: latest
+     loop_control:
+         loop_var: package
+
+
