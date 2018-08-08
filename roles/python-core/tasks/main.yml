@@ -21,7 +21,11 @@
              - python3-jinja2
          when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint"
 
-
+ - name: Upgrade pip
+   become: "{{lm_become}}"
+   become_user: root
+   shell: pip3 install --upgrade pip
+   environment: "{{lm_env}}"
 
  - when: localenv_type == "virtualenv"
    block:
