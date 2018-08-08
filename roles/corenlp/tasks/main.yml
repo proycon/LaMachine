@@ -10,8 +10,6 @@
         - { artifact_id: "stanford-corenlp", group_id: "edu.stanford.nlp", classifier: "models-spanish" }
         - { artifact_id: "stanford-corenlp", group_id: "edu.stanford.nlp", classifier: "models-french" }
         - { artifact_id: "stanford-corenlp", group_id: "edu.stanford.nlp", classifier: "models-german" }
-      retries: 5 #the upstream repository notoriously fails some connections
-      delay: 3
       loop_control:
         loop_var: package
 

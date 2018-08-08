@@ -31,6 +31,10 @@
           dest: "{{lm_prefix}}/lib/java"
           timeout: 30
       environment: "{{lm_env}}"
+      retries: 5 #the upstream repository notoriously fails some connections
+      delay: 3
+      register: resultcustom
+      until: resultcustom.rc == 0
       when: (version == "custom" or ('version' in package and package.version)) and ("github_user" not in package or package.github_user == "") and "artifact_id" in package and package.artifact_id != ""
 
     - name: Short delay
@@ -45,6 +49,10 @@
           dest: "{{lm_prefix}}/lib/java"
           timeout: 30
       environment: "{{lm_env}}"
+      retries: 5 #the upstream repository notoriously fails some connections
+      delay: 3
+      register: resultstable
+      until: resultstable.rc == 0
       when: (('version' not in package or not package.version) and (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == ""))) and "artifact_id" in package and package.artifact_id != "")
 
     - name: Short delay
