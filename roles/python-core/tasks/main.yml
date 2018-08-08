@@ -22,7 +22,6 @@
          when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint"
 
 
-
  - when: localenv_type == "virtualenv"
    block:
      - name: "Installing generic 3rd party Python Packages via pip (1)"

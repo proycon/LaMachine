@@ -1,3 +1,4 @@
+---
 - when: "'exclude_when' not in package or not package.exclude_when|bool"
   block:
     - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Installing from github (development/custom)"
@@ -27,6 +28,7 @@
           artifact_id: "{{package.artifact_id}}"
           version: "{{package.version}}"
           classifier: "{% if 'classifier' in package %}{{package.classifier}}{% endif %}"
+          dest: "{{lm_prefix}}/lib/java"
       environment: "{{lm_env}}"
       when: (version == "custom" or ('version' in package and package.version)) and ("github_user" not in package or package.github_user == "") and "artifact_id" in package and package.artifact_id != ""
 
@@ -36,6 +38,7 @@
           artifact_id: "{{package.artifact_id}}"
           version: "latest"
           classifier: "{% if 'classifier' in package %}{{package.classifier}}{% endif %}"
+          dest: "{{lm_prefix}}/lib/java"
       environment: "{{lm_env}}"
       when: (('version' not in package or not package.version) and (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == ""))) and "artifact_id" in package and package.artifact_id != "")
 
