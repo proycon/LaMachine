@@ -38,6 +38,9 @@ if [[ "$LM_LOCALITY" == "local" ]]; then
     export LM_LOCAL_PREFIX={{local_prefix}}
     export LM_PREFIX={{local_prefix}}
     export LM_OLD_PS1="$PS1"
+    {% if python_version is defined %}
+    export LM_PYTHONVERSION="{{python_version}}"
+    {% endif %}
     if [ -d $LM_LOCAL_PREFIX ]; then
         if [[ "$LM_LOCALENV_TYPE" == "conda" ]]; then
             source activate lamachine-{{conf_name}}
@@ -48,7 +51,10 @@ if [[ "$LM_LOCALITY" == "local" ]]; then
     fi
 else
     export LM_PREFIX="{{global_prefix}}"
-    export PYTHONPATH="{{global_prefix}}"
+    {% if python_version is defined %}
+    export PYTHONPATH="{{global_prefix}}/lib/python{{python_version}}/site-packages"
+    export LM_PYTHONVERSION="{{python_version}}"
+    {% endif %}
     for f in $LM_PREFIX/bin/activate.d/*.sh; do
         if [ ! -z "$f" ]; then
             source $f
