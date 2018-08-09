@@ -36,6 +36,7 @@ if __name__ == "__main__":
     #parser.add_argument('--yaml', help="Read metadata from standard input (YAML format)", action='store_true',required=False)
     parser.add_argument('-r', "--registry", type=str,help="Short output", action='store',required=False, default="{{lm_prefix}}/var/lamachine-registry.json")
     parser.add_argument('-s', "--short", help="Short output", action='store_true',required=False)
+    parser.add_argument('-v', "--versions", help="Outputs a customversions.yml file which you can use to bootstrap another LaMachine with the exact same versions", action='store_true',required=False)
     parser.add_argument("--json", help="Short output", action='store_true',required=False)
     parser.add_argument("--dependencies", help="Include all dependencies as well", action='store_true',required=False)
     parser.add_argument('software', nargs='*', help='Software packages to query (if not specified, will return all)')
@@ -43,6 +44,7 @@ if __name__ == "__main__":
     with open(args.registry,'r',encoding='utf-8') as f:
         registry = resolve(json.load(f))
     jsonout = {}
+    yamlout = {}
     softwarelist = [ x.lower() for x in args.software ]
     if softwarelist and args.dependencies:
         for data in sorted(registry['@graph'], key=lambda x: x['identifier'].lower()):
@@ -52,14 +54,24 @@ if __name__ == "__main__":
                         if 'identifier' in dep and dep['identifier'].lower() not in softwarelist:
                             softwarelist.append(dep['identifier'].lower())
 
+    if args.versions:
+        print("customversion:")
     for data in sorted(registry['@graph'], key=lambda x: x['identifier'].lower()):
         if not softwarelist or data['identifier'].lower() in softwarelist:
-            if args.short:
+            if args.versions:
+                yamlout[data['identifier'].lower()] = data['version']
+                print("  " + data['identifier'].lower() + ': "' + data['version'] + '"')
+            elif args.short:
                 print('{0: <20}'.format(data['identifier'].lower()) + "\t" + '{0: <30}'.format(data.get('name','unknown')) + "\t" + data.get('version','unknown')+ "\t" + data.get('description',''))
             elif args.json:
                 jsonout[data['identifier'].lower()] = data
             else:
                 print(yaml.dump({data['identifier'].lower(): yaml_simplify(data)}, default_flow_style=False))
 
-    if args.json:
+    if args.versions:
+        with open("customversions.yml",'w',encoding='utf-8') as f:
+            print(yaml.dump({"customversion": yamlout}, default_flow_style=False), file=f)
+        print("(Also written to customversions.yml)",file=sys.stderr)
+    elif args.json:
         print(json.dumps(jsonout, ensure_ascii=False,indent=4))
+

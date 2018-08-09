@@ -20,7 +20,7 @@ boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
 echo "${bold}=====================================================================${normal}"
-echo "           ,              ${bold}LaMachine v2.2.12${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
+echo "           ,              ${bold}LaMachine v2.3.0${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
 echo "            /| |\         Centre of Language and Speech Technology"
@@ -513,9 +513,9 @@ fi
 
 if [ -z "$BRANCH" ]; then
     if [[ "$VERSION" == "development" ]]; then
-        BRANCH="develop"
+        BRANCH="custom"
     else
-        BRANCH="develop"
+        BRANCH="custom"
     fi
 fi
 if [ -z "$GITREPO" ]; then
@@ -1130,12 +1130,18 @@ if [ $BUILD -eq 1 ]; then
             else
                 echo "- hosts: all" > $STAGEDMANIFEST
             fi
+            if [ "$VERSION" = "custom" ]; then
+                echo "  vars_files: [ customversions.yml ]" >> $STAGEDMANIFEST
+            fi
             echo "  roles: [ lamachine-core, $INSTALL ]" >> $STAGEDMANIFEST
         else
             #use the template
             cp $SOURCEDIR/install-template.yml $STAGEDMANIFEST || fatalerror "Unable to copy $SOURCEDIR/install-template.yml"
             if [ "$FLAVOUR" = "remote" ]; then
                 sed -i "s/hosts: all/hosts: $HOSTNAME/g" $STAGEDMANIFEST || fatalerror "Unable to run sed"
+            fi
+            if [ "$VERSION" = "custom" ]; then
+                sed -i "s/##1##/vars_files: [ customversions.yml ]/" $STAGEDMANIFEST || fatalerror "Unable to run sed"
             fi
         fi
     fi
@@ -1150,6 +1156,9 @@ if [ $BUILD -eq 1 ]; then
 
     #copy staged install to final location
     cp $STAGEDMANIFEST $SOURCEDIR/install.yml || fatalerror "Unable to copy $STAGEDMANIFEST"
+    if [ -e customversions.yml ]; then
+        cp customversions.yml $SOURCEDIR/customversions.yml
+    fi
 fi
 
 HOMEDIR=$(echo ~)
