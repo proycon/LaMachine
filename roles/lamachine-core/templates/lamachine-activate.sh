@@ -48,6 +48,7 @@ if [[ "$LM_LOCALITY" == "local" ]]; then
     fi
 else
     export LM_PREFIX="{{global_prefix}}"
+    export PYTHONPATH="{{global_prefix}}"
     for f in $LM_PREFIX/bin/activate.d/*.sh; do
         if [ ! -z "$f" ]; then
             source $f
