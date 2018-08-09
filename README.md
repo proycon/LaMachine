@@ -120,17 +120,20 @@ the installation procedure.
     * [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction (initially developed at TiCC, Tilburg University).
 * Major third party software (not exhaustive!):
     * [Python](https://python.org)
-    * [NumPy](http://www.numpy.org/) and [SciPy](http://www.numpy.org/) - Python libraries for scientific computing
-    * [Matplotlib](http://matplotlib.org) - A Python 2D plotting library producing publication quality figures
-    * [Scikit-learn](http://matplotlib.org) - Machine learning in Python
-    * [Tesseract](https://github.com/tesseract-ocr/tesseract) - Open Source Optical Character Recognition (OCR)
-    * [IPython](http://ipython.org/) and [Jupyter](https://jupyter.org/) - A rich architecture for interactive computing.
-    * [Pandas](http://pandas.pydata.org/) - Python Data Analysis Library
-    * [NLTK](http://www.nltk.org) - Natural Language Toolkit for Python
-    * [Hunspell](http://hunspell.github.io) - A spell checker
-    * [NextFlow](http://www.nextflow.io) - A system and language for writing parallel and scalable pipelines in a portable manner.
+      * [NumPy](http://www.numpy.org/) and [SciPy](http://www.numpy.org/) - Python libraries for scientific computing
+      * [Matplotlib](http://matplotlib.org) - A Python 2D plotting library producing publication quality figures
+      * [Scikit-learn](http://matplotlib.org) - Machine learning in Python
+      * [IPython](http://ipython.org/) and [Jupyter](https://jupyter.org/) - A rich architecture for interactive computing.
+      * [Pandas](http://pandas.pydata.org/) - Python Data Analysis Library
+      * [NLTK](http://www.nltk.org) - Natural Language Toolkit for Python
+      * [PyTorch](https://pytorch.org) - Deep-learning library for Python
     * [R](https://r-project.org)
     * [Java](http://openjdk.java.net/)
+      * [NextFlow](http://www.nextflow.io) - A system and language for writing parallel and scalable pipelines in a portable manner.
+      * [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/) - Various types of linguistic enrichment
+    * [Hunspell](http://hunspell.github.io) - A spell checker
+    * [Tesseract](https://github.com/tesseract-ocr/tesseract) - Open Source Optical Character Recognition (OCR)
+    * [Tensorflow](https://tensorflow.org) - Open-source machine learning framework
 
 Note that some software may not be available on certain platforms/distributions (most notably Mac OS X).
 
