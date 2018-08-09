@@ -513,9 +513,9 @@ fi
 
 if [ -z "$BRANCH" ]; then
     if [[ "$VERSION" == "development" ]]; then
-        BRANCH="develop"
+        BRANCH="pipfix"
     else
-        BRANCH="develop"
+        BRANCH="pipfix"
     fi
 fi
 if [ -z "$GITREPO" ]; then
