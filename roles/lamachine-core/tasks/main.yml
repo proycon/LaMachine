@@ -163,7 +163,7 @@
         dest: "/etc/sudoers.d/lamachine"
         content: |
                  Defaults env_keep += "PYTHONPATH"                                                                                                                                                                                                                        Defaults secure_path = {{global_prefix}}/bin:{{global_prefix}}/sbin:/sbin:/bin:/usr/sbin:/usr/bin
-      when: locality = "global"
+      when: root and locality == "global"
 
     - name: Adding global library path to ldconfig
       become: yes
