@@ -157,13 +157,138 @@
     - import_tasks: virtualenv.yml
       when: localenv_type == 'virtualenv' and locality == "local"
 
-    - name: Enable sudo access to LaMachine
-      become: yes
+
+    - name: Enable activation script globally
+      become: "{{lm_become}}"
+      become_user: root
       copy:
-        dest: "/etc/sudoers.d/lamachine"
+        dest: "/etc/profile.d/lamachine-activate.sh"
         content: |
-                 Defaults env_keep += "PYTHONPATH"                                                                                                                                                                                                                        Defaults secure_path = {{global_prefix}}/bin:{{global_prefix}}/sbin:/sbin:/bin:/usr/sbin:/usr/bin
-      when: locality = "global"
+          #!/bin/bash
+          export PATH={{global_prefix}}/bin:$PATH
+          source {{global_prefix}}/bin/lamachine-{{conf_name}}-activate
+        mode: a+rx
+      when: locality == "global"
+
+    - name: Link default activation script (local)
+      file:
+         src: "{{homedir}}/bin/lamachine-{{conf_name}}-activate"
+         dest: "{{homedir}}/bin/lamachine-activate"
+         state: link
+
+    - name: Link default activation script (global)
+      become: "{{lm_become}}"
+      become_user: root
+      file:
+         src: "{{homedir}}/bin/lamachine-{{conf_name}}-activate"
+         dest: "{{global_prefix}}/bin/lamachine-activate"
+         state: link
+      when: locality == "global"
+
+
+    - name: Backward compatibility update script
+      file:
+        src: "{{homedir}}/bin/lamachine-{{ conf_name }}-update"
+        dest: "{{homedir}}/bin/lamachine-update.sh"
+        force: true
+        state: link
+
+    - name: Create source directory
+      become: "{{lm_become}}"
+      become_user: root
+      file:
+          path: "{{ source_path }}"
+          state: directory
+          owner: "{{unix_user}}"
+          group: "{{unix_group}}"
+          mode: u+rwx,g+rwsx,a+rx
+
+    - name: Create shared data directory
+      become: "{{lm_become}}"
+      become_user: root
+      file:
+          path: "{{ data_path }}"
+          state: directory
+          owner: "{{unix_user}}"
+          group: "{{unix_group}}"
+          mode: u+rwx,g+rwsx,a+rx
+
+    - name: Create directories
+      become: "{{lm_become}}"
+      become_user: root
+      file:
+          path: "{{ lm_prefix }}/{{item}}"
+          state: directory
+          owner: "{{unix_user}}"
+          group: "{{unix_group}}"
+          mode: u+rwx,g+rwsx,a+rx
+      with_items:
+          - bin
+          - "bin/activate.d"
+          - etc
+          - lib
+          - include
+          - sbin
+          - share
+          - opt
+          - var
+          - "var/log"
+          - "var/run"
+
+    - name: Install motd
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: motd
+        dest: "{{lm_prefix}}/etc/motd"
+        force: yes
+        backup: yes
+
+
+    - name: Check existence of LaMachine source dir (migration v2.0.0 -> v2.0.1)
+      stat:
+         path: "{{ lm_prefix }}/LaMachine"
+      register: lamachine_v2_0_0_source
+
+    - name: Copy LaMachine controller to prefix
+      become: "{{lm_become}}"
+      become_user: root
+      shell: |
+          if [[ -e "{{lamachine_path}}/bootstrap.sh" ]] && [[ ! -e "{{source_path}}/LaMachine/bootstrap.sh" ]]; then
+            if [[ "{{source_path}}" != "{{lamachine_path}}/"* ]]; then
+              echo "Copy {{lamachine_path}} -> {{source_path}}/LaMachine">&2
+              cp -Rp "{{lamachine_path}}" "{{source_path}}/LaMachine"
+              exit $?
+            else
+              #source path is nested inside lamachine_path (usually bootstrap.sh was run inside a LaMachine git clone)
+              #copy would recurse endlessly, link instead:
+              ln -s "{{lamachine_path}}" "{{source_path}}/LaMachine"
+              exit $?
+            fi
+          else
+            exit 123
+          fi
+      args:
+        executable: /bin/bash
+      register: controllercopy
+      when: (controller is defined and controller == "internal") or lamachine_v2_0_0_source.stat.exists
+      failed_when: controllercopy.rc > 0 and controllercopy.rc != 123
+      changed_when: controllercopy.rc > 0 and controllercopy.rc != 123
+
+
+    - name: LaMachine source dir migration (v2.0.0 -> v2.0.1)
+      become: "{{lm_become}}"
+      become_user: root
+      file:
+         path: "{{ lm_prefix }}/LaMachine"
+         state: absent
+
+    - name: Create local Ansible hosts file
+      copy:
+        dest: "{{source_path}}/LaMachine/hosts.ini"
+        content: "{{hostname}} ansible_connection=local"
+        force: "no"
+      when: controller is defined and controller == "internal"
 
     - name: Adding global library path to ldconfig
       become: yes
