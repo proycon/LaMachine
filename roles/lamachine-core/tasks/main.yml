@@ -157,6 +157,13 @@
     - import_tasks: virtualenv.yml
       when: localenv_type == 'virtualenv' and locality == "local"
 
+    - name: Enable sudo access to LaMachine
+      become: yes
+      copy:
+        dest: "/etc/sudoers.d/lamachine"
+        content: |
+                 Defaults env_keep += "PYTHONPATH"                                                                                                                                                        Defaults secure_path = {{global_prefix}}/bin:{{global_prefix}}/sbin:/sbin:/bin:/usr/sbin:/usr/bin
+      when: root and locality == "global"
 
     - name: Enable activation script globally
       become: "{{lm_become}}"
