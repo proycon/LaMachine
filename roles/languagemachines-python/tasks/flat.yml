@@ -59,7 +59,7 @@
               mode: u+rw,a+r
 
         - name: Applying migrations
-          shell: "PYTHONPATH={{lm_prefix}}/etc DJANGO_SETTINGS_MODULE=flat_settings django-admin migrate --run-syncdb"
+          shell: "PYTHONPATH={{lm_prefix}}/etc:{% if root and locality =="global" %}{{global_prefix}}/lib64/python{{python_version.stdout}}/site-packages:{{global_prefix}}/lib/python{{python_version.stdout}}/site-packages{% endif %} DJANGO_SETTINGS_MODULE=flat_settings django-admin migrate --run-syncdb"
           args:
               executable: /bin/bash
               chdir: "{{lm_prefix}}/etc"
@@ -67,8 +67,8 @@
 
         - name: Create FLAT superuser
           shell: |
-            export PYTHONPATH="{{lm_prefix}}/etc" DJANGO_SETTINGS_MODULE=flat_settings
-            echo -ne "
+            export PYTHONPATH={{lm_prefix}}/etc:{% if root and locality =="global" %}{{global_prefix}}/lib64/python{{python_version.stdout}}/site-packages:{{global_prefix}}/lib/python{{python_version.stdout}}/site-packages{% endif %} DJANGO_SETTINGS_MODULE=flat_settings
+            echo -ne ""
             from django.contrib.auth.models import User
 
             username = 'flat'
@@ -88,8 +88,8 @@
 
         - name: Configure FLAT domain
           shell: |
-            export PYTHONPATH="{{lm_prefix}}/etc" DJANGO_SETTINGS_MODULE=flat_settings
-            echo -ne "
+            export PYTHONPATH={{lm_prefix}}/etc:{% if root and locality =="global" %}{{global_prefix}}/lib64/python{{python_version.stdout}}/site-packages:{{global_prefix}}/lib/python{{python_version.stdout}}/site-packages{% endif %} DJANGO_SETTINGS_MODULE=flat_settings
+            echo -ne ""
 
             username = 'flat'
             password = 'flat'
