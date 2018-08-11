@@ -16,7 +16,7 @@
         - name: "{{package.github_repo}} - Installing python package (development/custom)"
           become: "{{lm_become}}"
           become_user: root
-          shell: "python3 {% if 'setup' in package and package.setup %}{{package.setup}}{% else %}setup.py{% endif %} install"
+          shell: "python3 {% if 'setup' in package and package.setup %}{{package.setup}}{% else %}setup.py{% endif %} install {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %}"
           args:
             chdir: "{{ source_path }}/{{package.github_repo}}{% if 'setupdir' in package %}/{{ package.setupdir }}{% endif %}"
           environment: "{{lm_env}}"
@@ -30,7 +30,7 @@
            state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package %}{{package.state}}{% else %}present{% endif %}"
            executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
            version: "{% if 'version' in package and package.version %}{{package.version}}{% elif version == 'custom' and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'stable' and customversion[package.pip.lower()] != 'development' %}{{customversion[package.pip.lower()]}}{% endif %}"
-           extra_args: "--upgrade-strategy only-if-needed"
+           extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %}"
       environment: "{{lm_env}}"
       when: ("pip" in package and package.pip != "" and ((version == "custom" and package.pip.lower() in customversion and customversion[package.pip.lower()] != "stable")  or ('version' in package and package.version and package.version != "stable")) and ("github_user" not in package or package.github_user == ""))
 
@@ -41,7 +41,7 @@
            name: "{{package.pip}}"
            state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package %}{{package.state}}{% else %}latest{% endif %}"
            executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
-           extra_args: "--upgrade-strategy only-if-needed"
+           extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %}"
       environment: "{{lm_env}}"
       when: ("pip" in package and package.pip != "" and ('version' not in package or not package.version) and (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == "")) or (version == "custom" and package.pip.lower() in customversion and customversion[package.pip.lower()] == "stable")))
 

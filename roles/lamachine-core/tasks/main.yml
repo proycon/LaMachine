@@ -157,6 +157,14 @@
     - import_tasks: virtualenv.yml
       when: localenv_type == 'virtualenv' and locality == "local"
 
+    - name: Enable sudo access to LaMachine
+      become: yes
+      copy:
+        dest: "/etc/sudoers.d/lamachine"
+        content: |
+                 Defaults env_keep += "PYTHONPATH"
+                 Defaults secure_path = {{global_prefix}}/bin:{{global_prefix}}/sbin:/sbin:/bin:/usr/sbin:/usr/bin
+      when: root and locality == "global"
 
     - name: Enable activation script globally
       become: "{{lm_become}}"
@@ -330,6 +338,19 @@
       environment: "{{lm_env}}"
       changed_when: False
 
+    - name: Linking to current python library path (global)
+      become: "{{lm_become}}"
+      become_user: root
+      file:
+         src: "{{global_prefix}}/{{item}}/python{{python_version.stdout}}" #should ignore when it does not exist
+         dest: "{{global_prefix}}/{{item}}/python-current"
+         state: link
+         force: yes
+      with_items:
+         - lib
+         - lib64 #this is used on some distributions like CentOS
+      when: locality == "global"
+
     - name: Obtaining global Python version
       shell: |
              #!/bin/bash
@@ -344,6 +365,7 @@
       fail:
         msg: "The global Python 3 on this system has been updated to {{ global_python_version.stdout }} and is now newer than the Python in this virtual environment ({{python_version.stdout}}). This may cause issues so we recommend to create a new LaMachine environment from scratch by following the instructions on https://proycon.github.io/LaMachine. You will most likely want to delete the current environment ({{local_prefix}}) first, assuming you stored no valuable data inside. If you really want to ignore this message and attempt to continue upgrading anyway, add the parameter nopythoncheck=1 when invoking lamachine-update."
       when: global_python_version.stdout != "" and global_python_version.stdout > python_version.stdout and locality == "local" and localenv_type == "virtualenv" and (nopythoncheck is not defined or nopythoncheck == 0)
+
 
     - name: Installing ansible locally (virtualenv)
       pip:
@@ -385,7 +407,7 @@
           chdir: "{{source_path}}"
       when: private is not defined or not private
 
-    - name: Upgrade pip
+    - name: Upgrade pip #we need at least pip10, this is not always the case in distro-supplied packages
       become: "{{lm_become}}"
       become_user: root
       shell: pip3 install --upgrade pip
@@ -396,6 +418,13 @@
       register: pip
       environment: "{{lm_env}}"
       when: locality == "global"
+
+    - name: Recreate LaMachine activation script (2nd time) #needed because the PYTHONPATH might not have been set earlier yet
+      template:
+        src: lamachine-activate.sh
+        dest: "{{homedir}}/bin/lamachine-{{ conf_name }}-activate"
+        force: yes
+        mode: u+rwx,a+rx
 
     - name: Install LaMachine list script
       template:
