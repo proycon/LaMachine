@@ -349,6 +349,7 @@
       with_items:
          - lib
          - lib64 #this is used on some distributions like CentOS
+      ignore_errors: yes
       when: locality == "global"
 
     - name: Obtaining global Python version
