@@ -67,7 +67,7 @@
 
         - name: Create FLAT superuser
           shell: |
-            export PYTHONPATH={{lm_prefix}}/etc:{% if root and locality == 'global' %}{{lm_pythonpath}}{% endif %} DJANGO_SETTINGS_MODULE=flat_settings
+            export PYTHONPATH="{{lm_prefix}}/etc:{% if root and locality == 'global' %}{{lm_pythonpath}}{% endif %}" DJANGO_SETTINGS_MODULE=flat_settings
             echo -ne ""
             from django.contrib.auth.models import User
 
@@ -88,7 +88,7 @@
 
         - name: Configure FLAT domain
           shell: |
-            export PYTHONPATH={{lm_prefix}}/etc:{% if root and locality =="global" %}{{lm_pythonpath}}{% endif %} DJANGO_SETTINGS_MODULE=flat_settings
+            export PYTHONPATH="{{lm_prefix}}/etc:{% if root and locality == 'global' %}{{lm_pythonpath}}{% endif %}" DJANGO_SETTINGS_MODULE=flat_settings
             echo -ne ""
 
             username = 'flat'
