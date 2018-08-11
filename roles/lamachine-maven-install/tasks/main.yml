@@ -26,7 +26,7 @@
       maven_artifact:
           group_id: "{{package.group_id}}"
           artifact_id: "{{package.artifact_id}}"
-          version: "{{package.version}}"
+          version: "{% if 'version' in package and package.version %}{{package.version}}{% elif version == 'custom' and package.artifact_id.lower() in customversion and customversion[package.artifact_id.lower()] != 'stable' and customversion[package.artifact_id.lower()] != 'development' %}{{customversion[package.artifact_id.lower()]}}{% endif %}"
           classifier: "{% if 'classifier' in package %}{{package.classifier}}{% endif %}"
           dest: "{{lm_prefix}}/lib/java"
           timeout: 30
@@ -70,5 +70,6 @@
              name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% else %}{{ package.github_repo }}{% endif %}"
              codeRepository: "{% if 'github_repo' in package %}https://github.com/{{package.github_user}}/{{package.github_repo}}{% endif %}"
              producer: "{% if 'github_user' in package %}{% if package.github_user in github_clst_users %}{{metadata_producer_clst}}{% else %}{{metadata_producer_unknown}}{% endif %}{% else %}{{metadata_producer_unknown}}{% endif %}"
+             version: "{% if 'version' in package and package.version %}{{package.version}}{% elif version == 'custom' and package.artifact_id.lower() in customversion and customversion[package.artifact_id.lower()] != 'stable' and customversion[package.artifact_id.lower()] != 'development' %}{{customversion[package.artifact_id.lower()]}}{% endif %}"
       when: do_registration is defined and do_registration|bool
 
