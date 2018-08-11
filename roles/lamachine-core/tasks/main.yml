@@ -345,10 +345,10 @@
          src: "{{global_prefix}}/{{item}}/python{{python_version.stdout}}" #should ignore when it does not exist
          dest: "{{global_prefix}}/{{item}}/python-current"
          state: link
+         force: yes
       with_items:
          - lib
          - lib64 #this is used on some distributions like CentOS
-      ignore_errors: yes #don't complain if the source doesn't exist
       when: locality == "global"
 
     - name: Obtaining global Python version
