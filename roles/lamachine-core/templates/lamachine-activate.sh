@@ -51,8 +51,8 @@ if [[ "$LM_LOCALITY" == "local" ]]; then
     fi
 else
     export LM_PREFIX="{{global_prefix}}"
+    export PYTHONPATH="{{lm_pythonpath}}"
     {% if python_version is defined %}
-    export PYTHONPATH="{{global_prefix}}/lib64/python{{python_version.stdout}}/site-packages:{{global_prefix}}/lib/python{{python_version.stdout}}/site-packages"
     export LM_PYTHONVERSION="{{python_version.stdout}}"
     {% endif %}
     for f in $LM_PREFIX/bin/activate.d/*.sh; do

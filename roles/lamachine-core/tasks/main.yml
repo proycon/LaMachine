@@ -338,6 +338,18 @@
       environment: "{{lm_env}}"
       changed_when: False
 
+    - name: Linking to current python library path (global)
+      become: "{{lm_become}}"
+      become_user: root
+      file:
+         src: "{{global_prefix}}/{{item}}/python/{{python_version.stdout}}" #should ignore when it does not exist
+         dest: "{{global_prefix}}/{{item}}/python/current"
+         state: link
+      with_items:
+         - lib
+         - lib64 #this is used on some distributions like CentOS
+      when: locality == "global"
+
     - name: Obtaining global Python version
       shell: |
              #!/bin/bash
