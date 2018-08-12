@@ -59,8 +59,11 @@ if __name__ == "__main__":
     for data in sorted(registry['@graph'], key=lambda x: x['identifier'].lower()):
         if not softwarelist or data['identifier'].lower() in softwarelist:
             if args.versions:
-                yamlout[data['identifier'].lower()] = data['version']
-                print("  " + data['identifier'].lower() + ': "' + data['version'] + '"')
+                if 'version' in data:
+                    yamlout[data['identifier'].lower()] = data['version']
+                    print("  " + data['identifier'].lower() + ': "' + data['version'] + '"')
+                else:
+                    print("WARNING: No version information for " + data['identifier'],file=sys.stderr)
             elif args.short:
                 print('{0: <20}'.format(data['identifier'].lower()) + "\t" + '{0: <30}'.format(data.get('name','unknown')) + "\t" + data.get('version','unknown')+ "\t" + data.get('description',''))
             elif args.json:
