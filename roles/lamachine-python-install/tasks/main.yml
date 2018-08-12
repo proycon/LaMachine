@@ -47,7 +47,7 @@
               version: "{% if 'version' in package and package.version %}{{package.version}}{% elif version == 'custom' and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'stable' and customversion[package.pip.lower()] != 'development' %}{{customversion[package.pip.lower()]}}{% endif %}"
               extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %} --ignore-installed" #only last option is different
          environment: "{{lm_env}}"
-         when: "'would lead only to a partial uninstall' in pipinstallstable.stderr"
+         #when: "'would lead only to a partial uninstall' in pipinstallstable.stderr"
 
 
     - block:
@@ -72,7 +72,7 @@
                executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
                extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %} --ignore-installed" #only last option is different
           environment: "{{lm_env}}"
-          when: "'would lead only to a partial uninstall' in pipinstallstable.stderr"
+          #when: "'would lead only to a partial uninstall' in pipinstallstable.stderr"
 
 
     - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Checking whether codemeta.json is provided"
