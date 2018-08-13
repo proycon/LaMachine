@@ -59,8 +59,13 @@ uwsgi --ini "{{lm_prefix}}/etc/uwsgi-emperor/emperor.ini" --die-on-term 2> "{{lm
 {% endif %}
 
 
+
 echo "Note: UWSGI emperor log can be found in {{lm_prefix}}/var/log/uwsgi/uwsgi.log"
 echo "      Nginx logs can be found in {{lm_prefix}}/var/log/nginx/"
+{% endif %}
+
+{% if lab %}
+jupyter lab --no-browser --config={{lm_prefix}}/etc/jupyter_notebook_config.py &
 {% endif %}
 
 if [ "$1" = "-f" ]; then

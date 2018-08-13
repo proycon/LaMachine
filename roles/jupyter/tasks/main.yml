@@ -1,12 +1,32 @@
 ---
 
-   - name: "Installing JupyterLab"
-     include_role:
-         name: lamachine-python-install
-     with_items:
-       - pip: jupyterlab
-         state: latest
-     loop_control:
-         loop_var: package
+  - name: "Installing JupyterLab"
+    include_role:
+        name: lamachine-python-install
+    with_items:
+      - pip: jupyterlab
+    loop_control:
+        loop_var: package
 
+  - name: Install webserver configuration for JupyterLab
+    become: "{{lm_become}}"
+    become_user: root
+    template:
+      src: "nginx/jupyter.conf"
+      dest: "{{lm_prefix}}/etc/nginx.d/jupyter.conf"
+      force: yes
+      owner: "{{unix_user}}"
+      group: "{{unix_group}}"
+    when: webservertype == "nginx"
 
+  - name: Install JupyterLab configuration
+    become: "{{lm_become}}"
+    become_user: root
+    template:
+      src: "jupyter_notebook_config.py"
+      dest: "{{lm_prefix}}/etc/jupyter_notebook_config.py"
+      force: yes
+      owner: "{{unix_user}}"
+      group: "{{unix_group}}"
+
+ #TODO: register metadata
