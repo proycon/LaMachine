@@ -29,7 +29,7 @@
          become_user: root
          pip:
               name: "{{package.pip}}"
-              state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package %}{{package.state}}{% else %}present{% endif %}"
+              state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package and package.state %}{{package.state}}{% else %}present{% endif %}"
               executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
               version: "{% if 'version' in package and package.version %}{{package.version}}{% elif version == 'custom' and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'stable' and customversion[package.pip.lower()] != 'development' %}{{customversion[package.pip.lower()]|version_n}}{% endif %}"
               extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %}"
@@ -42,7 +42,7 @@
          become_user: root
          pip:
               name: "{{package.pip}}"
-              state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package %}{{package.state}}{% else %}present{% endif %}"
+              state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package and package.state %}{{package.state}}{% else %}present{% endif %}"
               executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
               version: "{% if 'version' in package and package.version %}{{package.version}}{% elif version == 'custom' and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'stable' and customversion[package.pip.lower()] != 'development' %}{{customversion[package.pip.lower()]|version_n}}{% endif %}"
               extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %} --ignore-installed" #only last option is different
@@ -56,7 +56,7 @@
           become_user: root
           pip:
                name: "{{package.pip}}"
-               state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package %}{{package.state}}{% else %}latest{% endif %}"
+               state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package and package.state %}{{package.state}}{% else %}latest{% endif %}"
                executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
                extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %}"
           environment: "{{lm_env}}"
@@ -68,7 +68,7 @@
           become_user: root
           pip:
                name: "{{package.pip}}"
-               state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package %}{{package.state}}{% else %}latest{% endif %}"
+               state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package and package.state %}{{package.state}}{% else %}latest{% endif %}"
                executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
                extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %} --ignore-installed" #only last option is different
           environment: "{{lm_env}}"

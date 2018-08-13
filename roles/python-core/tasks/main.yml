@@ -28,15 +28,15 @@
        include_role:
            name: lamachine-python-install
        with_items: #more or less in dependency order
-         - { "pip": cython, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
-         - { "pip": lxml, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
-         - { "pip": pyyaml, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
-         - { "pip": numpy, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
-         - { "pip": matplotlib, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
-         - { "pip": requests, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
-         - { "pip": flask, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
-         - { "pip": cherrypy, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
-         - { "pip": jinja2, "state": "{% if prefer_distro %}present{% else %}latest{% endif %}" }
+         - { "pip": cython, "state": "{% if prefer_distro or version == "custom" %}present{% else %}latest{% endif %}" }
+         - { "pip": lxml, "state": "{% if prefer_distro or version == "custom" %}present{% else %}latest{% endif %}" }
+         - { "pip": pyyaml, "state": "{% if prefer_distro or version == "custom" %}present{% else %}latest{% endif %}" }
+         - { "pip": numpy, "state": "{% if prefer_distro or version == "custom" %}present{% else %}latest{% endif %}" }
+         - { "pip": matplotlib, "state": "{% if prefer_distro or version == "custom" %}present{% else %}latest{% endif %}" }
+         - { "pip": requests, "state": "{% if prefer_distro or version == "custom" %}present{% else %}latest{% endif %}" }
+         - { "pip": flask, "state": "{% if prefer_distro or version == "custom" %}present{% else %}latest{% endif %}" }
+         - { "pip": cherrypy, "state": "{% if prefer_distro or version == "custom" %}present{% else %}latest{% endif %}" }
+         - { "pip": jinja2, "state": "{% if prefer_distro or version == "custom" %}present{% else %}latest{% endif %}" }
          - { "pip": django, "version": "{% if python_version.stdout <= '3.4' %}2.0.5{% endif %}", "exclude_when": "{% if webserver %}false{% else %}true{% endif %}" } #django >=2.1 does not support python 3.4, stick to latest 2.0 release in that case
        loop_control:
            loop_var: package
