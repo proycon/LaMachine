@@ -140,7 +140,7 @@
     - when: version == "custom" and package.repo.lower() in customversion and customversion[package.repo.lower()] != "stable" and customversion[package.repo.lower()] != "development"
       block:
         - name: "{{package.repo}} - Checkout custom version: {{customversion[package.repo.lower()]}}"
-          shell: "git checkout {{customversion[package.repo.lower()]}} && git pull"
+          shell: "git checkout {{customversion[package.repo.lower()]}}"
           args:
             chdir: "{{ source_path }}/{{package.repo}}"
           register: gitcheckout
