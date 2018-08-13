@@ -28,7 +28,7 @@
               with_fileglob:
                 - "{{source_path}}/{{package.github_repo}}/target/*.jar"
 
-    - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% else %}(NOT APPLICABLE){% endif %} - Installing custom version from Maven Central"
+    - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% if 'classifier' in package %}:{{package.classifier}}{% endif %}{% else %}(NOT APPLICABLE){% endif %} - Installing custom version from Maven Central"
       maven_artifact:
           group_id: "{{package.group_id}}"
           artifact_id: "{{package.artifact_id}}"
@@ -43,7 +43,7 @@
       until: resultcustom is succeeded
       when: (version == "custom" or ('version' in package and package.version)) and ("github_user" not in package or package.github_user == "") and "artifact_id" in package and package.artifact_id != ""
 
-    - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest version from Maven Central (stable)"
+    - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% if 'classifier' in package %}:{{package.classifier}}{% endif %}{% else %}(NOT APPLICABLE){% endif %} - Installing latest version from Maven Central (stable)"
       maven_artifact:
           group_id: "{{package.group_id}}"
           artifact_id: "{{package.artifact_id}}"
@@ -66,7 +66,7 @@
       when: "'github_repo' in package"
 
 
-    - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% else %}{{package.github_repo}}{% endif %} -  Register software metadata"
+    - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% if 'classifier' in package %}:{{package.classifier}}{% endif %}{% else %}{{package.github_repo}}{% endif %} -  Register software metadata"
       include_role:
           name: lamachine-register
       vars:
