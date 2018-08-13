@@ -1038,11 +1038,11 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "webserver: true #include a webserver and web-based services/applications. Disabling this turns all web-based functionality off." >> $STAGEDCONFIG
     fi
     if [ $SUDO -eq 1 ]; then
-        echo "http_port: 80 #webserver port" >> $STAGEDCONFIG
+        echo "http_port: 80 #webserver port, you may want to change this to a port like 8080 if you don't want to run on a reserved port or already have something running there!" >> $STAGEDCONFIG
     else
         echo "http_port: 8080 #webserver port" >> $STAGEDCONFIG
     fi
-echo "mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
+echo "mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker only)
 services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all possible services from the software categories you install will be provided. You can remove this and list specific services you want to enable. This is especially needed in case of a LaMachine installation that intends to only provide a single service.
 webservertype: nginx #If set to anything different, the internal webserver will not be enabled/provided by LaMachine (which allows you to run your own external one), do leave webserver: true set as is though.
 " >> $STAGEDCONFIG
