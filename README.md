@@ -21,7 +21,7 @@ that expose some of the functionality to a larger audience.
 ### A) Guided installation with custom build option (recommended)
 
 To build your own LaMachine instance, in any of the possible flavours, or to download a pre-built image, open a terminal
-on your Linux, BSD or Mac OS X system and run the following command:
+on your Linux, BSD or MacOS system and run the following command:
 
 ```
 bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/master/bootstrap.sh)
@@ -135,7 +135,7 @@ the installation procedure.
     * [Tesseract](https://github.com/tesseract-ocr/tesseract) - Open Source Optical Character Recognition (OCR)
     * [Tensorflow](https://tensorflow.org) - Open-source machine learning framework
 
-Note that some software may not be available on certain platforms/distributions (most notably Mac OS X).
+Note that some software may not be available on certain platforms/distributions (most notably macOS).
 
 For a verbose list of installed software and its metadata, run ``lamachine-list`` once you are inside your LaMachine
 installation. For more information regarding software metadata, check the corresponding section in the [the contributor
@@ -154,7 +154,7 @@ documentation](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md
 
 LaMachine can be installed in multiple *flavours*:
 
- * **Local installation** - Installs LaMachine locally in a user environment on a Linux/BSD or Mac OS X machine (multiple per machine possible)
+ * **Local installation** - Installs LaMachine locally in a user environment on a Linux/BSD or macOS machine (multiple per machine possible)
  * **Global installation** - Installs LaMachine globally on a Linux/BSD machine. (only one per machine)
  * **Docker container** - Installs LaMachine in a docker container
  * **Virtual Machine** - Installs LaMachine in a Virtual Machine
@@ -181,7 +181,7 @@ we generally support the following platforms (but certain participating software
  * CentOS 7 / RedHat Enterprise Linux 7
  * Fedora 27
  * Arch Linux
- * Mac OS X 10.13 (High Sierra) - *Limited functionality only! No webservices/applications. Various optional software will not support Mac OS X either*
+ * macOS 10.13 (High Sierra) - *Limited functionality only! No webservices/applications. Various optional software will not support macOS either*
 
 This concerns the platforms LaMachine runs on natively or on which you can bootstrap your own build (installation path A). The options for host platforms
 for simply running a pre-built LaMachine Virtual Machine or Docker container, are much larger, and also include Windows
@@ -346,7 +346,8 @@ manifest ideally).
 This custom versioning is limited, it only pertains to software that is 1) not provided by the linux distribution
 itself, and 2) explicitly installed by LaMachine, rather than dependencies that are pulled in automatically by package
 managers. Even then, certain sofware is excluded from this scheme as the upstream provider does not provide the
-necessary facilities for obtaining older versions, LaMachine should output a warning in the log if that is the case.
+necessary facilities for obtaining older versions, LaMachine should output a warning in the log if that is the case. It
+is also not supported on MacOS.
 
 If a strict reproduction environment is desired, we strongly recommend to use the docker or virtual machine flavour of LaMachine and
 archive the entire resulting image.
@@ -364,7 +365,7 @@ Frog, ucto and Timbl, we provide packages for:
  * Debian Linux 9 [stretch] or higher -- Consult the [package state](https://qa.debian.org/developer.php?login=proycon@anaproy.nl).
  * Ubuntu Linux 18.04 or higher
  * Arch Linux  -- https://aur.archlinux.org/packages/?SeB=m&K=proycon
- * Mac OS X (homebrew) -- https://github.com/fbkarsdorp/homebrew-lamachine/tree/master/Formula
+ * macOS (homebrew) -- https://github.com/fbkarsdorp/homebrew-lamachine/tree/master/Formula
  * A final alternative is obtaining all software sources manually (from github or tarballs) and compiling everything yourself, which can be a tedious endeavour.
 
 Python software is generally provided through the [Python Package Index](https://pypi.python.org) and can be installed
