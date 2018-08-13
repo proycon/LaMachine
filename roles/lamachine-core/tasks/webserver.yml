@@ -165,6 +165,22 @@
               dest: "{{ lm_prefix }}/bin/nginx"
               state: link
 
+          - name: Create webserver writable directories (local)
+            file:
+                path: "{{ lm_prefix }}/{{item}}"
+                state: directory
+                owner: "{{unix_user}}"
+                mode: u+rwx,a+rx
+            with_items:
+                - "var/log/uwsgi"
+                - "var/log/nginx"
+                - "var/www-data"
+                - "var/www-data/tmp"
+                - "etc/nginx"
+                - "etc/nginx/conf.d"
+                - "etc/uwsgi-emperor"
+                - "etc/uwsgi-emperor/vassals"
+
           - name: Copying extra configuration
             copy:
               src: "{{source_path}}/nginx/conf/{{item}}"
@@ -174,21 +190,6 @@
               - "uwsgi_params"
             ignore_errors: yes
 
-      - name: Create webserver writable directories (local)
-        file:
-            path: "{{ lm_prefix }}/{{item}}"
-            state: directory
-            owner: "{{unix_user}}"
-            mode: u+rwx,a+rx
-        with_items:
-            - "var/log/uwsgi"
-            - "var/log/nginx"
-            - "var/www-data"
-            - "var/www-data/tmp"
-            - "etc/nginx"
-            - "etc/nginx/conf.d"
-            - "etc/uwsgi-emperor"
-            - "etc/uwsgi-emperor/vassals"
 
       - name: Installing uwsgi locally
         pip:
@@ -200,11 +201,15 @@
     become: "{{lm_become}}"
     become_user: root
     template:
-      src: nginx.conf
-      dest: "{{lm_prefix}}/etc/nginx/nginx.conf"
+      src: "{{item}}"
+      dest: "{{lm_prefix}}/etc/nginx/{{item}}"
       force: yes
       owner: "{{unix_user}}"
       group: "{{unix_group}}"
+    with_items:
+      - nginx.conf
+      - mime.types
+      - uwsgi_params
     when: webservertype == "nginx"
 
   - name: Adding webserver start script

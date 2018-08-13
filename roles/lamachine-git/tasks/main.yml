@@ -16,7 +16,7 @@
         chdir: "{{ source_path }}"
       when: not repo_path.stat.exists
 
-    - when: version == "stable" and ("noreleases" not in package or not package.noreleases)
+    - when: (version == "stable" and ("noreleases" not in package or not package.noreleases)) or (version == "custom" and package.repo.lower() in customversion and customversion[package.repo.lower()] == "stable")
       block:
         - name: "{{package.repo}} - Get new git tags from remote"
           shell: "git fetch --tags"
@@ -80,7 +80,7 @@
                producer: "{% if 'user' in package %}{% if package.user in github_clst_users %}{{metadata_producer_clst}}{% else %}{{metadata_producer_unknown}}{% endif %}{% else %}{{metadata_producer_unknown}}{% endif %}"
           when: "do_registration is defined and do_registration"
 
-    - when: version == "development" or (version == "stable" and ("noreleases" in package and package.noreleases))
+    - when: version == "development" or (version == "stable" and ("noreleases" in package and package.noreleases)) or (version == "custom" and package.repo.lower() in customversion and customversion[package.repo.lower()] == "development")
       block:
         - block:
             - name: "{{package.repo}} - Checkout latest master version of (development)"
@@ -137,10 +137,30 @@
                producer: "{% if 'user' in package %}{% if package.user in github_clst_users %}{{metadata_producer_clst}}{% else %}{{metadata_producer_unknown}}{% endif %}{% else %}{{metadata_producer_unknown}}{% endif %}"
           when: "do_registration is defined and do_registration"
 
-    - name: "{{package.repo}} - Checkout custom version: {{customversion[package.repo]}}"
-      shell: "git checkout {{customversion[package.repo]}} && git pull"
-      args:
-        chdir: "{{ source_path }}/{{package.repo}}"
-      changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
-      when: version == "custom"
+    - when: version == "custom" and package.repo.lower() in customversion and customversion[package.repo.lower()] != "stable" and customversion[package.repo.lower()] != "development"
+      block:
+        - name: "{{package.repo}} - Checkout custom version: {{customversion[package.repo.lower()]}}"
+          shell: "git checkout {{customversion[package.repo.lower()]}}"
+          args:
+            chdir: "{{ source_path }}/{{package.repo}}"
+          register: gitcheckout
+          changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
 
+        - name: "{{package.repo}} - Checking whether codemeta.json is provided (custom)"
+          stat:
+            path: "{{ source_path }}/{{package.repo}}/codemeta.json"
+          register: have_codemeta
+          changed_when: False
+
+        - name: "{{package.repo}} - Register (custom)"
+          include_role:
+             name: lamachine-register
+          vars:
+             codemeta: "{% if have_codemeta.stat.exists %}{{ source_path }}/{{package.repo}}/codemeta.json{% endif %}"
+             metadata_defaults: #'metadata' by caller takes presendence over defaults
+               identifier: "{{package.repo|lower}}"
+               name: "{{package.repo}}"
+               codeRepository: "{% if 'giturl' in package %}{{package.giturl}}{%else%}https://github.com/{{package.user}}/{{package.repo}}{% endif %}"
+               version: "{{ customversion[package.repo.lower()] }}"
+               producer: "{% if 'user' in package %}{% if package.user in github_clst_users %}{{metadata_producer_clst}}{% else %}{{metadata_producer_unknown}}{% endif %}{% else %}{{metadata_producer_unknown}}{% endif %}"
+          when: "do_registration is defined and do_registration"

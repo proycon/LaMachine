@@ -7,26 +7,32 @@
           git:
             repo: "https://github.com/{{package.github_user}}/{{package.github_repo}}"
             dest: "{{ source_path }}/{{ package.github_repo }}"
-            version: "{% if 'version' in package and package.version %}{{ version }}{% elif 'git_branch' in package and package.git_branch %}{{ package.git_branch }}{% else %}master{% endif %}"
+            version: "{% if 'version' in package and package.version %}{{ version }}{% elif version == 'custom' and 'artifact_id' in package and package.artifact_id.lower() in customversion and customversion[package.artifact_id.lower()] != 'development' and customversion[package.artifact_id.lower()] != 'stable' %}{{ customversion[package.artifact_id.lower()]|version_v }}{% elif version == 'custom' and 'artifact_id' not in package and package.github_repo.lower() in customversion and customversion[package.github_repo.lower()] != 'development' and customversion[package.github_repo.lower()] != 'stable' %}{{ customversion[package.github_repo.lower()]|version_v }}{% elif 'git_branch' in package and package.git_branch %}{{ package.git_branch }}{% else %}master{% endif %}"
             recursive: yes
             update: yes
           environment: "{{lm_env}}"
           when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and ("ignore_git" not in package or not package.ignore_git)'
 
-        - name: "{{package.github_repo}} - Building JAR package (development/custom)"
-          shell: "mvn package"
-          args:
-            chdir: "{{ source_path }}/{{package.github_repo}}{% if 'setupdir' in package %}/{{ package.setupdir }}{% endif %}"
-          environment: "{{lm_env}}"
-          when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and (version == "development" or ("group_id" not in package or package.group_id == ""))'
+        - when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and (version == "development" or ("artifact_id" not in package or package.artifact_id == ""))'
+          block:
+            - name: "{{package.github_repo}} - Building JAR package (development/custom)"
+              shell: "mvn package"
+              args:
+                chdir: "{{ source_path }}/{{package.github_repo}}{% if 'setupdir' in package %}/{{ package.setupdir }}{% endif %}"
+              environment: "{{lm_env}}"
 
-          #TODO: copy the resulting JAR file to {{lm_prefix}}/lib/java
+            - name: "{{package.github_repo}} - Installing JAR packages (development/custom)"
+              copy:
+                src: "{{item}}"
+                dest: "{{ lm_prefix}}/lib/java"
+              with_fileglob:
+                - "{{source_path}}/{{package.github_repo}}/target/*.jar"
 
-    - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% else %}(NOT APPLICABLE){% endif %} - Installing custom version from Maven Central"
+    - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% if 'classifier' in package %}:{{package.classifier}}{% endif %}{% else %}(NOT APPLICABLE){% endif %} - Installing custom version from Maven Central"
       maven_artifact:
           group_id: "{{package.group_id}}"
           artifact_id: "{{package.artifact_id}}"
-          version: "{{package.version}}"
+          version: "{% if 'version' in package and package.version %}{{package.version}}{% elif version == 'custom' and package.artifact_id.lower() in customversion and customversion[package.artifact_id.lower()] != 'stable' and customversion[package.artifact_id.lower()] != 'development' %}{{customversion[package.artifact_id.lower()]|version_n}}{% endif %}"
           classifier: "{% if 'classifier' in package %}{{package.classifier}}{% endif %}"
           dest: "{{lm_prefix}}/lib/java"
           timeout: 30
@@ -37,7 +43,7 @@
       until: resultcustom is succeeded
       when: (version == "custom" or ('version' in package and package.version)) and ("github_user" not in package or package.github_user == "") and "artifact_id" in package and package.artifact_id != ""
 
-    - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% else %}(NOT APPLICABLE){% endif %} - Installing latest version from Maven Central (stable)"
+    - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% if 'classifier' in package %}:{{package.classifier}}{% endif %}{% else %}(NOT APPLICABLE){% endif %} - Installing latest version from Maven Central (stable)"
       maven_artifact:
           group_id: "{{package.group_id}}"
           artifact_id: "{{package.artifact_id}}"
@@ -60,7 +66,7 @@
       when: "'github_repo' in package"
 
 
-    - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% else %}{{package.github_repo}}{% endif %} -  Register software metadata"
+    - name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% if 'classifier' in package %}:{{package.classifier}}{% endif %}{% else %}{{package.github_repo}}{% endif %} -  Register software metadata"
       include_role:
           name: lamachine-register
       vars:
@@ -70,5 +76,6 @@
              name: "{% if 'artifact_id' in package %}{{package.artifact_id}}{% else %}{{ package.github_repo }}{% endif %}"
              codeRepository: "{% if 'github_repo' in package %}https://github.com/{{package.github_user}}/{{package.github_repo}}{% endif %}"
              producer: "{% if 'github_user' in package %}{% if package.github_user in github_clst_users %}{{metadata_producer_clst}}{% else %}{{metadata_producer_unknown}}{% endif %}{% else %}{{metadata_producer_unknown}}{% endif %}"
+             version: "{% if 'version' in package and package.version %}{{package.version}}{% elif version == 'custom' and package.artifact_id.lower() in customversion and customversion[package.artifact_id.lower()] != 'stable' and customversion[package.artifact_id.lower()] != 'development' %}{{customversion[package.artifact_id.lower()]}}{% endif %}"
       when: do_registration is defined and do_registration|bool
 

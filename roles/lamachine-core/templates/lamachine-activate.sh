@@ -23,7 +23,6 @@ export LM_GLOBAL_PREFIX="{{global_prefix}}"
 export LM_LOCALENV_TYPE="{{localenv_type}}"
 export LM_DATA_PATH="{{data_path}}"
 export LM_SOURCEPATH="{{source_path}}"
-unset PYTHONPATH #would most likely mess thing up otherwise
 if [[ "{{ ansible_distribution|lower }}" == "macosx" ]]; then
    export CLANG_CXX_LIBRARY="libc++" #needed for python bindings in lamachine-python-install
    export MACOSX_DEPLOYMENT_TARGET="{{ ansible_distribution_version }}"
@@ -35,6 +34,7 @@ if [[ -z "$LANG" ]] || [[ "$LANG" != *"UTF-8"* ]]; then
     export LC_ALL=en_US.UTF-8
 fi
 if [[ "$LM_LOCALITY" == "local" ]]; then
+    unset PYTHONPATH #would most likely mess thing up otherwise
     export LM_LOCAL_PREFIX={{local_prefix}}
     export LM_PREFIX={{local_prefix}}
     export LM_OLD_PS1="$PS1"
@@ -51,8 +51,8 @@ if [[ "$LM_LOCALITY" == "local" ]]; then
     fi
 else
     export LM_PREFIX="{{global_prefix}}"
+    export PYTHONPATH="{{lm_pythonpath}}"
     {% if python_version is defined %}
-    export PYTHONPATH="{{global_prefix}}/lib/python{{python_version.stdout}}/site-packages"
     export LM_PYTHONVERSION="{{python_version.stdout}}"
     {% endif %}
     for f in $LM_PREFIX/bin/activate.d/*.sh; do

@@ -20,7 +20,7 @@ boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
 echo "${bold}=====================================================================${normal}"
-echo "           ,              ${bold}LaMachine v2.2.13${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
+echo "           ,              ${bold}LaMachine v2.3.0${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
 echo "            /| |\         Centre of Language and Speech Technology"
@@ -54,7 +54,7 @@ usage () {
     echo "  stable = you get the latest releases deemed stable (recommended)"
     echo "  development = you get the very latest development versions for testing, this may not always work as expected!"
     echo "  custom = you decide explicitly what exact versions you want (for reproducibility)."
-    echo "           this expects you to provide a LaMachine version file with exact version numbers."
+    echo "           this expects you to provide a LaMachine version file (customversions.yml) with exact version numbers."
     echo " ${bold}--prebuilt${normal} - Download a pre-built image rather than building a new one from scratch (for Docker or Vagrant)"
     echo " ${bold}--env${normal} [virtualenv] - Local user environment type"
     echo "  virtualenv = A simple virtual environment"
@@ -497,8 +497,11 @@ if [[ "$VERSION" == "undefined" ]]; then
     echo "${bold}LaMachine comes in several versions:${normal}"
     echo " 1) a stable version; you get the latest releases deemed stable (recommended)"
     echo " 2) a development version; you get the very latest development versions for testing, this may not always work as expected!"
-    echo " 3) custom version; you decide explicitly what exact versions you want (for reproducibility)."
-    echo "    this expects you to provide a LaMachine version file with exact version numbers."
+    echo " 3) custom version; you decide explicitly what exact versions you want (for reproducibility);"
+    echo "    this expects you to provide a LaMachine version file (customversions.yml) with exact version numbers."
+    if [[ "$OS" == "mac" ]]; then
+        echo "    NOTE: CUSTOM VERSIONING IS NOT SUPPORTED ON MAC OS X!"
+    fi
     while true; do
         echo -n "${bold}Which version do you want to install?${normal} [123] "
         read choice
@@ -1038,11 +1041,11 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "webserver: true #include a webserver and web-based services/applications. Disabling this turns all web-based functionality off." >> $STAGEDCONFIG
     fi
     if [ $SUDO -eq 1 ]; then
-        echo "http_port: 80 #webserver port" >> $STAGEDCONFIG
+        echo "http_port: 80 #webserver port, you may want to change this to a port like 8080 if you don't want to run on a reserved port or already have something running there!" >> $STAGEDCONFIG
     else
         echo "http_port: 8080 #webserver port" >> $STAGEDCONFIG
     fi
-echo "mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker)
+echo "mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker only)
 services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all possible services from the software categories you install will be provided. You can remove this and list specific services you want to enable. This is especially needed in case of a LaMachine installation that intends to only provide a single service.
 webservertype: nginx #If set to anything different, the internal webserver will not be enabled/provided by LaMachine (which allows you to run your own external one), do leave webserver: true set as is though.
 " >> $STAGEDCONFIG
@@ -1130,12 +1133,18 @@ if [ $BUILD -eq 1 ]; then
             else
                 echo "- hosts: all" > $STAGEDMANIFEST
             fi
+            if [ "$VERSION" = "custom" ]; then
+                echo "  vars_files: [ customversions.yml ]" >> $STAGEDMANIFEST
+            fi
             echo "  roles: [ lamachine-core, $INSTALL ]" >> $STAGEDMANIFEST
         else
             #use the template
             cp $SOURCEDIR/install-template.yml $STAGEDMANIFEST || fatalerror "Unable to copy $SOURCEDIR/install-template.yml"
             if [ "$FLAVOUR" = "remote" ]; then
                 sed -i "s/hosts: all/hosts: $HOSTNAME/g" $STAGEDMANIFEST || fatalerror "Unable to run sed"
+            fi
+            if [ "$VERSION" = "custom" ]; then
+                sed -i "s/##1##/vars_files: [ customversions.yml ]/" $STAGEDMANIFEST || fatalerror "Unable to run sed"
             fi
         fi
     fi
@@ -1150,6 +1159,9 @@ if [ $BUILD -eq 1 ]; then
 
     #copy staged install to final location
     cp $STAGEDMANIFEST $SOURCEDIR/install.yml || fatalerror "Unable to copy $STAGEDMANIFEST"
+    if [ -e customversions.yml ]; then
+        cp customversions.yml $SOURCEDIR/customversions.yml
+    fi
 fi
 
 HOMEDIR=$(echo ~)

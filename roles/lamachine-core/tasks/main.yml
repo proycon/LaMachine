@@ -23,6 +23,19 @@
           - prefer_distro
           - minimal
 
+    - name: "Outputting custom versions"
+      debug:
+          var: "{{customversion}}|to_json"
+      when: version == "custom"
+
+    - when: version == "custom" and ansible_distribution|lower == 'macosx'
+      block:
+        - name: "Checking custom versioning compatibility"
+          debug:
+              msg: "IMPORTANT NOTE: Custom versioning is not supported on Mac OS X! Things may fail or not end up as expected!!"
+        - name: "Giving you a minute to contemplate the above important note and/or the meaning of life..."
+          wait_for: timeout=60
+
     - name: Checking force option
       debug:
           msg: Forcing recompilation of all packages
@@ -157,6 +170,14 @@
     - import_tasks: virtualenv.yml
       when: localenv_type == 'virtualenv' and locality == "local"
 
+    - name: Enable sudo access to LaMachine
+      become: yes
+      copy:
+        dest: "/etc/sudoers.d/lamachine"
+        content: |
+                 Defaults env_keep += "PYTHONPATH"
+                 Defaults secure_path = {{global_prefix}}/bin:{{global_prefix}}/sbin:/sbin:/bin:/usr/sbin:/usr/bin
+      when: root and locality == "global"
 
     - name: Enable activation script globally
       become: "{{lm_become}}"
@@ -329,6 +350,20 @@
       register: python_version
       environment: "{{lm_env}}"
       changed_when: False
+
+    - name: Linking to current python library path (global)
+      become: "{{lm_become}}"
+      become_user: root
+      file:
+         src: "{{global_prefix}}/{{item}}/python{{python_version.stdout}}" #should ignore when it does not exist
+         dest: "{{global_prefix}}/{{item}}/python-current"
+         state: link
+         force: yes
+      with_items:
+         - lib
+         - lib64 #this is used on some distributions like CentOS
+      ignore_errors: yes
+      when: locality == "global"
 
     - name: Obtaining global Python version
       shell: |
