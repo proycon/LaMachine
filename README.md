@@ -91,9 +91,9 @@ up`` and ``vagrant ssh`` again.
 ## Included Software
 
 LaMachine includes a wide variety of open-source NLP software. You can select which software you want to include during
-the installation procedure.
+the installation procedure (or any subsequent update).
 
-* by the Centre of Language and Speech Technology, Radboud University Nijmegen
+* by the Centre of Language and Speech Technology, Radboud University Nijmegen (CLST, RU)
     * [Timbl](https://languagemachines.github.io/timbl) - Tilburg Memory Based Learner
     * [Ucto](https://languagemachines.github.io/ucto) - Tokenizer
     * [Frog](https://languagemachines.github.io/frog) - Frog is an integration of various memory-based natural language processing (NLP) modules developed for Dutch. It can do Part-of-Speech tagging, lemmatisation, named entity recogniton, shallow parsing, dependency parsing and morphological analysis.
@@ -112,11 +112,11 @@ the installation procedure.
     * [FLAT](https://github.com/proycon/flat) - FoLiA Linguistic Annotation Tool
     * [TICCLTools](https://github.com/LanguageMachines/ticcltools) - Tools that together constitute the bulk of TICCL: Text Induced Corpus-Cleanup.
     * [PICCL](https://github.com/LanguageMachines/PICCL) - PICCL: A set of workflows for corpus building through OCR, post-correction (using TICCL) and Natural Language Processing.
-* by the University of Groningen
+* by the University of Groningen (RUG)
     * [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) - a dependency parser and tagger for Dutch
-* by the Vrije Universiteit Amsterdam
+* by the Vrije Universiteit Amsterdam (VU)
     * [KafNafParserPy](https://github.com/cltl/KafNafParserPy) - A python module to parse NAF files
-* by Utrecht University
+* by Utrecht University (UU)
     * [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction (initially developed at TiCC, Tilburg University).
 * Major third party software (not exhaustive!):
     * [Python](https://python.org)
@@ -127,11 +127,12 @@ the installation procedure.
       * [Pandas](http://pandas.pydata.org/) - Python Data Analysis Library
       * [NLTK](http://www.nltk.org) - Natural Language Toolkit for Python
       * [PyTorch](https://pytorch.org) - Deep-learning library for Python
+      * [Spacy](https://spacy.io) - Industrial-Strength NLP in Python
     * [R](https://r-project.org)
     * [Java](http://openjdk.java.net/)
       * [NextFlow](http://www.nextflow.io) - A system and language for writing parallel and scalable pipelines in a portable manner.
       * [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/) - Various types of linguistic enrichment
-    * [Hunspell](http://hunspell.github.io) - A spell checker
+    * [Hunspell](https://hunspell.github.io) - A spell checker
     * [Tesseract](https://github.com/tesseract-ocr/tesseract) - Open Source Optical Character Recognition (OCR)
     * [Tensorflow](https://tensorflow.org) - Open-source machine learning framework
 
