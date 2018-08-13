@@ -25,7 +25,7 @@
 
     - name: "Outputting custom versions"
       debug:
-          var: "{{customversion}}"
+          var: "{{customversion}}|to_json"
       when: version == "custom"
 
     - name: Checking force option
