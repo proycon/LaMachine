@@ -143,6 +143,7 @@
           shell: "git checkout {{customversion[package.repo.lower()]}} && git pull"
           args:
             chdir: "{{ source_path }}/{{package.repo}}"
+          register: gitcheckout
           changed_when: '("Switched to branch" in gitcheckout.stdout) or ("files changed" in gitcheckout.stdout)'
 
         - name: "{{package.repo}} - Checking whether codemeta.json is provided (custom)"
