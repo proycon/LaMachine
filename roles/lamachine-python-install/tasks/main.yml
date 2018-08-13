@@ -7,7 +7,7 @@
           git:
             repo: "https://github.com/{{package.github_user}}/{{package.github_repo}}"
             dest: "{{ source_path }}/{{ package.github_repo }}"
-            version: "{% if 'version' in package and package.version %}{{ version }}{% elif version == 'custom' and 'pip' in package and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'development' and customversion[package.pip.lower()] != 'stable' %}{{ customversion[package.pip.lower()] }}{% elif version == 'custom' and 'pip' not in package and package.github_repo.lower() in customversion and customversion[package.github_repo.lower()] != 'development' and customversion[package.github_repo.lower()] != 'stable' %}{{ customversion[package.github_repo.lower()] }}{% elif 'git_branch' in package and package.git_branch %}{{ package.git_branch }}{% else %}master{% endif %}"
+            version: "{% if 'version' in package and package.version %}{{ version }}{% elif version == 'custom' and 'pip' in package and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'development' and customversion[package.pip.lower()] != 'stable' %}{{ customversion[package.pip.lower()]|version_v }}{% elif version == 'custom' and 'pip' not in package and package.github_repo.lower() in customversion and customversion[package.github_repo.lower()] != 'development' and customversion[package.github_repo.lower()] != 'stable' %}{{ customversion[package.github_repo.lower()]|version_v }}{% elif 'git_branch' in package and package.git_branch %}{{ package.git_branch }}{% else %}master{% endif %}"
             recursive: yes
             update: yes
           environment: "{{lm_env}}"
@@ -31,7 +31,7 @@
               name: "{{package.pip}}"
               state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package %}{{package.state}}{% else %}present{% endif %}"
               executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
-              version: "{% if 'version' in package and package.version %}{{package.version}}{% elif version == 'custom' and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'stable' and customversion[package.pip.lower()] != 'development' %}{{customversion[package.pip.lower()]}}{% endif %}"
+              version: "{% if 'version' in package and package.version %}{{package.version}}{% elif version == 'custom' and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'stable' and customversion[package.pip.lower()] != 'development' %}{{customversion[package.pip.lower()]|version_n}}{% endif %}"
               extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %}"
          environment: "{{lm_env}}"
          register: pipinstall
@@ -44,7 +44,7 @@
               name: "{{package.pip}}"
               state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package %}{{package.state}}{% else %}present{% endif %}"
               executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
-              version: "{% if 'version' in package and package.version %}{{package.version}}{% elif version == 'custom' and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'stable' and customversion[package.pip.lower()] != 'development' %}{{customversion[package.pip.lower()]}}{% endif %}"
+              version: "{% if 'version' in package and package.version %}{{package.version}}{% elif version == 'custom' and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'stable' and customversion[package.pip.lower()] != 'development' %}{{customversion[package.pip.lower()]|version_n}}{% endif %}"
               extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %} --ignore-installed" #only last option is different
          environment: "{{lm_env}}"
          #when: "'would lead only to a partial uninstall' in pipinstallstable.stderr"
