@@ -45,13 +45,13 @@
         <div class="row">
             <div class="col-md-5 title">
                 <h3>Get Started.</h3>
-                <h4>LaMachine comes in various flavours, it can be installed as a Virtual Machine, a Docker container, or directly on your Linux or Mac OS X system.<br><br> Start the bootstrap procedure by running a single command and let it guide you through your custom build, or just use one of our pre-built images with Vagrant or Docker!</h4>
+                <h4>LaMachine comes in various flavours, it can be installed as a Virtual Machine, a Docker container, or directly on your Linux or macOS system.<br><br> Start the bootstrap procedure by running a single command and let it guide you through your custom build, or just use one of our pre-built images with Vagrant or Docker!</h4>
             </div>
             <div class="col-md-7 options-sets">
                 <div class="option-row os" data-key="os">
                     <div class="option-label">Your Operating System?</div>
                     <div class="option-set">
-                        <div class="btn selected" id="os_posix">Linux, BSD, or Mac OS X</div>
+                        <div class="btn selected" id="os_posix">Linux, BSD, or macOS</div>
                         <div class="btn" id="os_win10">Windows 10 / 2016</div>
                         <div class="btn" id="os_win7">Older Windows</div>
                     </div>
@@ -104,7 +104,7 @@
              <a name="software"></a>
              <h3>Software</h3>
              <ul>
-                <li>by the Centre for Language and Speech Technology, Radboud University Nijmegen
+                <li>by the Centre for Language and Speech Technology, Radboud University Nijmegen (CLST, RU)
                 <ul>
                     <li><a href="https://languagemachines.github.io/timbl">Timbl</a> - Tilburg Memory Based Learner (previously by TiCC, Tilburg University)</li>
                     <li><a href="https://languagemachines.github.io/ucto">Ucto</a> - A rule-based tokeniser supporting multiple languages</li>
@@ -126,11 +126,14 @@
                     <li><a href="https://github.com/LanguageMachines/ticcltools">TicclTools</a> - Tools that together constitute the bulk of TICCL: Text Induced Corpus-Cleanup.</li>
                     <li><a href="https://github.com/LanguageMachines/PICCL">PICCL</a> - Pipelines for spelling correction and OCR post-correction system, implements TICCL (also by Tilburg University)</li>
                 </ul></li>
-                <li>by the University of Groningen<ul>
+                <li>by the University of Groningen (RUG)<ul>
                 <li><a href="http://www.let.rug.nl/vannoord/alp/Alpino/">Alpino</a>, a dependency parser and tagger for Dutch</li>
                 </ul></li>
-                <li>by Utrecht University<ul>
+                <li>by Utrecht University (UU)<ul>
                     <li><a href="https://github.com/proycon/tscan">T-scan</a> - T-scan is a Dutch text analytics tool for readability prediction (initially developed at TiCC, Tilburg University)</li>
+                </ul></li>
+                <li>by the Vrije Universiteit Amsterdam (VU)<ul>
+                    <li><a href="(https://github.com/cltl/KafNafParserPy">KafNafParserPy</a> - A python module to parse NAF files</li>
                 </ul></li>
                 <li>Major third party software (not exhaustive!)<ul>
                     <li><a href="https://www.python.org">Python</a>
@@ -139,14 +142,22 @@
                         <li><a href="https://www.scipy.org">Scipy</a></li>
                         <li><a href="https://matplotlib.org">Matplotlib</a></li>
                         <li><a href="http://ipython.org">IPython</a></li>
-                        <li><a href="http://pandas.pydata.org">Pandas</a></li>
-                        <li><a href="http://scikit-learn.org">Scikit-learn</a></li>
-                        <li><a href="http://www.nltk.org">NLTK</a></li>
-                        <li><a href="https://spacy.io">Spacy</a></li>
+                        <li><a href="http://pandas.pydata.org">Pandas</a> - Python Data Analysis Library</li>
+                        <li><a href="http://scikit-learn.org">Scikit-learn</a> - Machine learning in Python</li>
+                        <li><a href="http://www.nltk.org">NLTK</a> - Natural Language Toolkit for Python</li>
+                        <li><a href="https://spacy.io">Spacy</a> - Industrial-Strength NLP in Python</li>
+                        <li><a href="https://pytorch.org">PyTorch</a> - Deep learning library</li>
                     </ul></li>
-                    <li><a href="https://jupyter.org">Jupyter</a></li>
+                    <li><a href="https://www.java.com">Java</a>
+                    <ul>
+                       <li><a href="http://www.nextflow.io">Nextflow</a> - A system and language for writing parallel and scalable pipelines in a portable manner. (written in Groovy)</a></li>
+                       <li><a href="https://stanfordnlp.github.io/CoreNLP/">Stanford CoreNLP</a></li>
+                    </ul></li>
                     <li><a href="https://r-project.org">R</a></li>
-                    <li><a href="https://www.nextflow.io">Nextflow</a></li>
+                    <li><a href="https://jupyter.org">Jupyter</a></li>
+                    <li><a href="https://github.com/tesseract-ocr/tesseract">Tesseract</a> - Open Source Optical Character Recognition (OCR)</li>
+                    <li><a href="https://hunspell.github.io">Hunspell</a> - A spell checker</li>
+                    <li><a href="https://tensorflow.org">Tensorflow</a> - Open-source machine learning framework</li>
                 </ul></li>
 
 
@@ -205,7 +216,7 @@
                }
            } else if (mode == "docker") {
                $('div.command div.text').html("docker pull proycon/lamachine:latest && docker run -p 8080:80 -t -i proycon/lamachine:latest");
-               $('div.help').html("For this to work, you need to have Docker installed and running on your system. On Linux or Mac OS X, you can install it with: <tt>curl -fsSL get.docker.com -o get-docker.sh &amp;&amp; sh get-docker.sh</tt>");
+               $('div.help').html("For this to work, you need to have Docker installed and running on your system. On Linux or macOS, you can install it with: <tt>curl -fsSL get.docker.com -o get-docker.sh &amp;&amp; sh get-docker.sh</tt>");
                $('div.help').css('color','black');
            } else if (mode == "vagrant") {
                $('div.command div.text').html("vagrant init proycon/lamachine && vagrant up && vagrant ssh");
