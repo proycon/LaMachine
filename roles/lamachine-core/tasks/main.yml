@@ -28,6 +28,14 @@
           var: "{{customversion}}|to_json"
       when: version == "custom"
 
+    - when: version == "custom" and ansible_distribution|lower == 'macosx'
+      block:
+        - name: "Checking custom versioning compatibility"
+          debug:
+              msg: "IMPORTANT NOTE: Custom versioning is not supported on Mac OS X! Things may fail or not end up as expected!!"
+        - name: "Giving you a minute to contemplate the above important note and/or the meaning of life..."
+              wait_for: timeout=60
+
     - name: Checking force option
       debug:
           msg: Forcing recompilation of all packages

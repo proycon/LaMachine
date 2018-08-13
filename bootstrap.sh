@@ -499,6 +499,9 @@ if [[ "$VERSION" == "undefined" ]]; then
     echo " 2) a development version; you get the very latest development versions for testing, this may not always work as expected!"
     echo " 3) custom version; you decide explicitly what exact versions you want (for reproducibility);"
     echo "    this expects you to provide a LaMachine version file (customversions.yml) with exact version numbers."
+    if [[ "$OS" == "mac" ]]; then
+        echo "    NOTE: CUSTOM VERSIONING IS NOT SUPPORTED ON MAC OS X!"
+    fi
     while true; do
         echo -n "${bold}Which version do you want to install?${normal} [123] "
         read choice
