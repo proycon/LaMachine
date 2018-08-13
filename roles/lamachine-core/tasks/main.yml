@@ -23,6 +23,11 @@
           - prefer_distro
           - minimal
 
+    - name: "Outputting custom versions"
+      debug:
+          var: "{{customversion}}"
+      when: version == "custom"
+
     - name: Checking force option
       debug:
           msg: Forcing recompilation of all packages
