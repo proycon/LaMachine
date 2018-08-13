@@ -3,7 +3,7 @@
   block:
     - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Installing from github (development/custom)"
       block:
-        - name: "{{package.github_repo}} - Git clone/pull latest {% if 'git_branch' in package %}{{ package.git_branch }}{% else %}master{% endif %}" #we always do this, even if we're not using the source for installation (we still need to check for codemeta.json)
+        - name: "{{package.github_repo}} - Git clone/pull {% if 'git_branch' in package %}{{ package.git_branch }}{% endif %}" #we always do this, even if we're not using the source for installation (we still need to check for codemeta.json)
           git:
             repo: "https://github.com/{{package.github_user}}/{{package.github_repo}}"
             dest: "{{ source_path }}/{{ package.github_repo }}"
@@ -20,7 +20,7 @@
           args:
             chdir: "{{ source_path }}/{{package.github_repo}}{% if 'setupdir' in package %}/{{ package.setupdir }}{% endif %}"
           environment: "{{lm_env}}"
-          when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and (version == "development" or ("pip" not in package or package.pip == ""))'
+          when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and (version == "development" or ("pip" not in package or package.pip == ""))' #always use this when there is no pip version
 
 
     - block:
@@ -35,7 +35,7 @@
               extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %}"
          environment: "{{lm_env}}"
          register: pipinstall
-         when: ("pip" in package and package.pip != "" and ((version == "custom" and package.pip.lower() in customversion and customversion[package.pip.lower()] != "stable")  or ('version' in package and package.version and package.version != "stable")) and ("github_user" not in package or package.github_user == ""))
+         when: ("pip" in package and package.pip != "" and ((version == "custom" and package.pip.lower() in customversion and customversion[package.pip.lower()] != "stable")  or ('version' in package and package.version and package.version != "stable")))
       rescue:
        - name: "{% if 'pip' in package %}{{package.pip}}{% else %}(NOT APPLICABLE){% endif %} - Installing custom version from the Python Package Index (Without uninstalling)"
          become: "{{lm_become}}"
