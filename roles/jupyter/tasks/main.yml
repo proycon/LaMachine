@@ -1,45 +1,47 @@
 ---
 
-  - name: "Installing JupyterLab"
-    include_role:
-        name: lamachine-python-install
-    vars:
-      package:
-        pip: jupyterlab
+  - when: ansible_distribution|lower != 'macosx'
+    block:
+      - name: "Installing JupyterLab"
+        include_role:
+            name: lamachine-python-install
+        vars:
+          package:
+            pip: jupyterlab
 
-  - name: Install webserver configuration for JupyterLab
-    become: "{{lm_become}}"
-    become_user: root
-    template:
-      src: "nginx/jupyter.conf"
-      dest: "{{lm_prefix}}/etc/nginx/conf.d/jupyter.conf"
-      force: yes
-      owner: "{{unix_user}}"
-      group: "{{unix_group}}"
-    when: webservertype == "nginx"
+      - name: Install webserver configuration for JupyterLab
+        become: "{{lm_become}}"
+        become_user: root
+        template:
+          src: "nginx/jupyter.conf"
+          dest: "{{lm_prefix}}/etc/nginx/conf.d/jupyter.conf"
+          force: yes
+          owner: "{{unix_user}}"
+          group: "{{unix_group}}"
+        when: webservertype == "nginx"
 
-  - name: Install JupyterLab configuration
-    become: "{{lm_become}}"
-    become_user: root
-    template:
-      src: "jupyter_notebook_config.py"
-      dest: "{{lm_prefix}}/etc/jupyter_notebook_config.py"
-      force: yes
-      owner: "{{unix_user}}"
-      group: "{{unix_group}}"
+      - name: Install JupyterLab configuration
+        become: "{{lm_become}}"
+        become_user: root
+        template:
+          src: "jupyter_notebook_config.py"
+          dest: "{{lm_prefix}}/etc/jupyter_notebook_config.py"
+          force: yes
+          owner: "{{unix_user}}"
+          group: "{{unix_group}}"
 
-  - name: Register Jupyter Lab metadata
-    include_role:
-        name: lamachine-register
-    vars:
-      update: "jupyterlab"
-      metadata: #add entrypoint metadata to registry
-          identifier: "jupyterlab"
-          name: "JupyterLab"
-          description: "JupyterLab is an interactive development environment for working with notebooks, code (e.g. Python, R) and data. Additionally, JupyterLab enables you to use text editors, terminals, data file viewers, and other custom components side by side with notebooks in a tabbed work area. This JupyterLab installation in LaMachine offers you access to all installed libraries and files and as-such offers a powerful but user friendly way for data scientists to use LaMachine from the browser."
-          keywords: ["lab","IDE","python","notebook","scripting environment"]
-          entryPoints:
-            - "@type": "EntryPoint"
-              urlTemplate: "{{lm_base_url}}/lab"
-              interfaceType: "WUI"
+      - name: Register Jupyter Lab metadata
+        include_role:
+            name: lamachine-register
+        vars:
+          update: "jupyterlab"
+          metadata: #add entrypoint metadata to registry
+              identifier: "jupyterlab"
+              name: "JupyterLab"
+              description: "JupyterLab is an interactive development environment for working with notebooks, code (e.g. Python, R) and data. Additionally, JupyterLab enables you to use text editors, terminals, data file viewers, and other custom components side by side with notebooks in a tabbed work area. This JupyterLab installation in LaMachine offers you access to all installed libraries and files and as-such offers a powerful but user friendly way for data scientists to use LaMachine from the browser."
+              keywords: ["lab","IDE","python","notebook","scripting environment"]
+              entryPoints:
+                - "@type": "EntryPoint"
+                  urlTemplate: "{{lm_base_url}}/lab"
+                  interfaceType: "WUI"
 
