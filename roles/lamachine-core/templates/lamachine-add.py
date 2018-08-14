@@ -5,8 +5,8 @@ import argparse
 import os
 from collections import defaultdict
 
-MANIFEST = "{{lm_sourcepath}}/LaMachine/install.yml"
-ROLEDIR = "{{lm_sourcepath}}/LaMachine/roles"
+MANIFEST = "{{source_path}}/LaMachine/install.yml"
+ROLEDIR = "{{source_path}}/LaMachine/roles"
 
 if __name__ == '__main__':
     descriptions = defaultdict(str)
