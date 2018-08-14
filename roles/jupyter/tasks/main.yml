@@ -9,6 +9,13 @@
           package:
             pip: jupyterlab
 
+     #- name: "Installing JupyterLab Git Extension"
+     #  include_role:
+     #      name: lamachine-python-install
+     #  vars:
+     #    package:
+     #      pip: jupyterlab_git
+
       - name: Install webserver configuration for JupyterLab
         become: "{{lm_become}}"
         become_user: root
