@@ -25,9 +25,10 @@ if __name__ == '__main__':
             lab_passwd_hash = passwd()
             r = os.system("sed -i 's/lab_password_sha1.*/lab_password_sha1: \"" + lab_passwd_hash + "\"/' " + CONFFILE)
             if r != 0:
-                print("Password scheduled to update, please run lamachine-update now",file=sys.stderr)
-            else:
-                print("Failure updating password in " + CONFFILE + "!",file=sys.stderr)
+                #no lab password yet? append
+                with open(CONFFILE,'a','utf-8') as f:
+                    print('lab_password_sha1: "' + lab_passwd_hash + '"')
+            print("Password scheduled to update, please run lamachine-update now",file=sys.stderr)
         else:
             print("No such target: ", target,file=sys.stderr)
 
