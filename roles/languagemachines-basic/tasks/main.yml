@@ -1,9 +1,5 @@
 ---
 
-    - name: Checking if a C++ compiler is available
-      import_role:
-        name: check_cc
-
     - name: Installation on Mac OS X using homebrew
       block:
           - name: Ensuring legacy homebrew/science tap is removed
