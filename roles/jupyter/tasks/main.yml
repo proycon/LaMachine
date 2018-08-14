@@ -35,7 +35,8 @@
       update: "jupyterlab"
       metadata: #add entrypoint metadata to registry
           identifier: "jupyterlab"
-          description: "JupyterLab is an interactive development environment for working with notebooks, code (e.g. Python, R) and data. Most importantly, JupyterLab has full support for Jupyter notebooks. Additionally, JupyterLab enables you to use text editors, terminals, data file viewers, and other custom components side by side with notebooks in a tabbed work area. This JupyterLab installation in LaMachine offers you access to all installed libraries and files and as-such offers a powerful but user friendly way for data scientists to use LaMachine from the browser."
+          name: "JupyterLab"
+          description: "JupyterLab is an interactive development environment for working with notebooks, code (e.g. Python, R) and data. Additionally, JupyterLab enables you to use text editors, terminals, data file viewers, and other custom components side by side with notebooks in a tabbed work area. This JupyterLab installation in LaMachine offers you access to all installed libraries and files and as-such offers a powerful but user friendly way for data scientists to use LaMachine from the browser."
           keywords: ["lab","IDE","python","notebook","scripting environment"]
           entryPoints:
             - "@type": "EntryPoint"
