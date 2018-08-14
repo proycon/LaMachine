@@ -274,6 +274,15 @@
         force: yes
         mode: u+rwx,a+rx
 
+    - name: Installing lamachine-passwd script
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: lamachine-passwd.py
+        dest: "{{lm_prefix}}/lamachine-passwd"
+        force: yes
+        mode: u+rwx,a+rx
+
     - name: Check existence of LaMachine source dir (migration v2.0.0 -> v2.0.1)
       stat:
          path: "{{ lm_prefix }}/LaMachine"
