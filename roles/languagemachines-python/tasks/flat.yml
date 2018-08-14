@@ -72,7 +72,7 @@
             from django.contrib.auth.models import User
 
             username = 'flat'
-            password = 'flat'
+            password = '{{flat_password}}'
             email = 'flat@localhost'
 
             if User.objects.filter(username=username).count() == 0:

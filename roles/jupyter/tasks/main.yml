@@ -12,7 +12,7 @@
     become_user: root
     template:
       src: "nginx/jupyter.conf"
-      dest: "{{lm_prefix}}/etc/nginx.d/jupyter.conf"
+      dest: "{{lm_prefix}}/etc/nginx/conf.d/jupyter.conf"
       force: yes
       owner: "{{unix_user}}"
       group: "{{unix_group}}"
