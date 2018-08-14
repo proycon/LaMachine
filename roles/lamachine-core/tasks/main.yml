@@ -270,7 +270,7 @@
       become_user: root
       template:
         src: lamachine-add.py
-        dest: "{{lm_prefix}}/lamachine-add"
+        dest: "{{lm_prefix}}/bin/lamachine-add"
         force: yes
         mode: u+rwx,a+rx
 
@@ -279,7 +279,7 @@
       become_user: root
       template:
         src: lamachine-passwd.py
-        dest: "{{lm_prefix}}/lamachine-passwd"
+        dest: "{{lm_prefix}}/bin/lamachine-passwd"
         force: yes
         mode: u+rwx,a+rx
 
