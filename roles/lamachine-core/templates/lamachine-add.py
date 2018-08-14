@@ -19,7 +19,7 @@ if __name__ == '__main__':
     package = None
     roles = False
     endline = None
-    returncore = 0
+    returncode = 0
     #parse installation manifest and extract packages and descriptions
     with open(MANIFEST,'r',encoding='utf-8') as f:
         for i, line in enumerate(f):
@@ -63,11 +63,12 @@ if __name__ == '__main__':
         if appendpackages:
             assert endline is not None
             with open(MANIFEST,'r',encoding='utf-8') as f_in:
-                with open(MANIFEST + '.tmp','r',encoding='utf-8') as f_out:
+                with open(MANIFEST + '.tmp','w',encoding='utf-8') as f_out:
                     for i, line in enumerate(f_in):
                         if i == endline:
                             for package in appendpackages:
                                 print('      - ' + package + '       ##', file=f_out)
                         f_out.write(line)
+                os.rename(MANIFEST +'.tmp', MANIFEST)
 
     sys.exit(returncode)
