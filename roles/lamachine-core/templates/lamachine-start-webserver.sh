@@ -67,8 +67,10 @@ echo "      Nginx logs can be found in {{lm_prefix}}/var/log/nginx/"
 {% if lab %}
 echo "Starting Jupyter Lab..."
 killall jupyter-lab 2> /dev/null
+cd "{{data_path}}"
 jupyter lab --no-browser --config={{lm_prefix}}/etc/jupyter_notebook_config.py >/dev/null 2>{{lm_prefix}}/var/log/jupyterlab.log &
-echo "Note:     Jupyer Lab logs can be found in {{lm_prefix}}/var/log/jupyterlab.log"
+echo "Note:     Jupyter Lab logs can be found in {{lm_prefix}}/var/log/jupyterlab.log"
+cd -
 {% endif %}
 
 if [ "$1" = "-f" ]; then
