@@ -69,3 +69,11 @@
    loop_control:
        loop_var: package
    when: minimal is not defined or not minimal
+
+ - name: Installing additional minor python packages for NLP
+   include_role:
+     name: lamachine-python-install
+   with_items:
+       - { github_user: "EmilStenstrom", github_repo: "connlu", pip: "connlu" } #Connl-U parser
+   loop_control:
+        loop_var: package
