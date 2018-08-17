@@ -13,5 +13,12 @@
       loop_control:
         loop_var: package
 
+    - name: Installing CoreNLP-python
+      include_role:
+        name: lamachine-python-install
+      vars:
+        package:
+          pip: corenlp-python
+
 
 
