@@ -74,6 +74,6 @@
    include_role:
      name: lamachine-python-install
    with_items:
-       - { github_user: "EmilStenstrom", github_repo: "connlu", pip: "connlu" } #Connl-U parser
+       - { github_user: "EmilStenstrom", github_repo: "conllu", pip: "conllu" } #Connl-U parser
    loop_control:
         loop_var: package
