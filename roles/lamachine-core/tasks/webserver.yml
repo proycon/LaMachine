@@ -20,6 +20,12 @@
             state: link
         ignore_errors: yes
 
+
+      - name: Installing uwsgi (Homebrew)
+        homebrew:
+          name: uwsgi
+          state: present
+
   - when: root and locality=="global"
     block:
 
@@ -219,6 +225,7 @@
           name: "uwsgi"
           state: latest
           executable: "{{lm_prefix}}/bin/pip"
+        when: ansible_distribution|lower != "macosx"
 
   - name: Install webserver configuration
     become: "{{lm_become}}"

@@ -16,7 +16,6 @@
         upgrade_all: "{% if nosysupdate is not defined or nosysupdate == 0 %}yes{% else %}no{% endif %}"
       ignore_errors: yes
 
-      when:
     - block:
         - name: Installing common base packages (Homebrew)
           homebrew:
