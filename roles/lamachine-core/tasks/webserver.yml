@@ -191,8 +191,10 @@
             ignore_errors: yes
 
       - name: Patch for macOS so uwsgi installation can work
+        file:
             src: "{{ lm_prefix}}/lib/python{{python_version.stdout}}/config-{{python_version.stdout}}-darwin"
             dest: "{{ lm_prefix}}/lib/python{{python_version.stdout}}/config-{{python_version.stdout}}"
+            state: link
         ignore_errors: yes
         when: ansible_distribution|lower == "macosx"
 
