@@ -25,6 +25,7 @@
         homebrew:
           name: uwsgi
           state: present
+          install_options: "--with-python"
 
   - when: root and locality=="global"
     block:
