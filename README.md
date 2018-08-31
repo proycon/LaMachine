@@ -289,7 +289,7 @@ expose them to the outside world!**
 
 ### Jupyter Lab
 
-LaMachine comes with an installation of Jupyter Lab, which provides an excellent entry-point to LaMachine as it provides
+LaMachine comes with an installation of [Jupyter Lab](https://jupyterlab.readthedocs.io/en/latest/), which provides an excellent entry-point to LaMachine as it provides
 a web-based scripting environment or IDE (for Python and R), web-based terminal access, and especially access to the
 ubiquitous Jupyter Notebooks that enjoy great popularity in data science and beyond.
 
