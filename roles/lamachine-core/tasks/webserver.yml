@@ -1,10 +1,24 @@
 ---
-  - name: Installing webserver (Mac OS X)
-    homebrew:
-      name: "{{item}}"
-      state: latest
-    with_items: [nginx]
-    when: (ansible_distribution|lower == "macosx" and webservertype == "nginx")
+  - when: (ansible_distribution|lower == "macosx" and webservertype == "nginx")
+    block:
+      - name: Installing webserver (macOS)
+        homebrew:
+          name: "{{item}}"
+          state: latest
+        with_items: [nginx]
+
+      - name: Link nginx from global prefix
+        file:
+          src: "/usr/local/etc/nginx"
+          dest: "{{ lm_prefix }}/etc/nginx"
+          state: link
+
+      - name: Patch for macOS so uwsgi installation can work
+        file:
+            src: "{{ lm_prefix}}/lib/python{{python_version.stdout}}/config-{{python_version.stdout}}-darwin"
+            dest: "{{ lm_prefix}}/lib/python{{python_version.stdout}}/config-{{python_version.stdout}}"
+            state: link
+        ignore_errors: yes
 
   - when: root and locality=="global"
     block:
@@ -35,7 +49,6 @@
               name: nginx
               state: latest
             when: (ansible_distribution|lower == "archlinux")
-
 
       - name: Installing uwsgi globally (Debian/Ubuntu)
         become: true
@@ -131,39 +144,26 @@
 
   - when: locality=="local"
     block:
-      - name: "Finding nginx"
-        shell: which nginx
-        register: nginx
-        environment:
-            PATH: "{{local_prefix}}/bin:/usr/sbin:{{ansible_env.PATH}}"
-        failed_when: nginx.rc == 127
-        when: webservertype == "nginx"
 
-      - when: webservertype == "nginx" and (nginx.rc != 0 or (force is defined and force))
+      - name: Create writable directories for uwsgi (local)
+        file:
+            path: "{{ lm_prefix }}/{{item}}"
+            state: directory
+            owner: "{{unix_user}}"
+            mode: u+rwx,a+rx
+        with_items:
+            - "var/log/uwsgi"
+            - "etc/uwsgi-emperor"
+            - "etc/uwsgi-emperor/vassals"
+
+      - when: webservertype == "nginx"
         block:
-          - block:
-              - name: Obtaining local nginx webserver from source
-                hg:
-                  repo: https://hg.nginx.org/nginx
-                  dest: "{{source_path}}/nginx"
-                  force: "yes"
-            rescue:
-              - name: Obtaining local nginx webserver from source (2nd attempt, insecure fallback)
-                shell: hg clone --insecure https://hg.nginx.org/nginx
-                args:
-                  chdir: "{{source_path}}"
-
-          - name: "Compiling and installing local nginx webserver"
-            shell: "auto/configure --prefix={{lm_prefix}} && make && make install"
-            args:
-                chdir: "{{ source_path }}/nginx"
-            environment: "{{lm_env}}"
-
-          - name: Linking to nginx binary
-            file:
-              src: "{{ lm_prefix}}/sbin/nginx"
-              dest: "{{ lm_prefix }}/bin/nginx"
-              state: link
+          - name: "Finding nginx"
+            shell: which nginx
+            register: nginx
+            environment:
+                PATH: "{{local_prefix}}/bin:/usr/sbin:{{ansible_env.PATH}}"
+            failed_when: nginx.rc == 127
 
           - name: Create webserver writable directories (local)
             file:
@@ -172,38 +172,53 @@
                 owner: "{{unix_user}}"
                 mode: u+rwx,a+rx
             with_items:
-                - "var/log/uwsgi"
                 - "var/log/nginx"
                 - "var/www-data"
                 - "var/www-data/tmp"
                 - "etc/nginx"
                 - "etc/nginx/conf.d"
-                - "etc/uwsgi-emperor"
-                - "etc/uwsgi-emperor/vassals"
 
-          - name: Copying extra configuration
-            copy:
-              src: "{{source_path}}/nginx/conf/{{item}}"
-              dest: "{{lm_prefix}}/etc/nginx/{{item}}"
-            with_items:
-              - "mime.types"
-              - "uwsgi_params"
-            ignore_errors: yes
+          - when: ansible_distribution|lower != "macosx" and (nginx.rc != 0 or (force is defined and force))
+            block:
+              - block:
+                  - name: Obtaining local nginx webserver from source
+                    hg:
+                      repo: https://hg.nginx.org/nginx
+                      dest: "{{source_path}}/nginx"
+                      force: "yes"
+                rescue:
+                  - name: Obtaining local nginx webserver from source (2nd attempt, insecure fallback)
+                    shell: hg clone --insecure https://hg.nginx.org/nginx
+                    args:
+                      chdir: "{{source_path}}"
 
-      - name: Patch for macOS so uwsgi installation can work
-        file:
-            src: "{{ lm_prefix}}/lib/python{{python_version.stdout}}/config-{{python_version.stdout}}-darwin"
-            dest: "{{ lm_prefix}}/lib/python{{python_version.stdout}}/config-{{python_version.stdout}}"
-            state: link
-        ignore_errors: yes
-        when: ansible_distribution|lower == "macosx"
+              - name: "Compiling and installing local nginx webserver"
+                shell: "auto/configure --prefix={{lm_prefix}} && make && make install"
+                args:
+                    chdir: "{{ source_path }}/nginx"
+                environment: "{{lm_env}}"
+
+              - name: Linking to nginx binary
+                file:
+                  src: "{{ lm_prefix}}/sbin/nginx"
+                  dest: "{{ lm_prefix }}/bin/nginx"
+                  state: link
+
+              - name: Copying extra configuration
+                copy:
+                  src: "{{source_path}}/nginx/conf/{{item}}"
+                  dest: "{{lm_prefix}}/etc/nginx/{{item}}"
+                with_items:
+                  - "mime.types"
+                  - "uwsgi_params"
+                ignore_errors: yes
+
 
       - name: Installing uwsgi locally
         pip:
           name: "uwsgi"
           state: latest
           executable: "{{lm_prefix}}/bin/pip"
-
 
   - name: Install webserver configuration
     become: "{{lm_become}}"
