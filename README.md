@@ -277,15 +277,32 @@ Most are RESTful webservices served using [CLAM](https://proycon.github.io/clam)
 web-interface for human end-users. The webserver provides a generic portal to all available services, powered by
 [Labirinto](https://github.com/proycon/labirinto), as shown in the screenshot below:
 
-![portal_screenshot](/docs/screenshot_portal.jpg?raw=true "Portal Screenshot")
+![portal_screenshot](/docs/screenshot_portal.jpg?raw=true "Screenshot of the portal in LaMachine")
 
 To start (or restart) the webserver and webservices, run ``lamachine-start-webserver`` from within your LaMachine
 installation. You can then connect your browser (on the host system) to http://localhost:8080 (the port may differ if
-you changed the default value). On virtual machines, the webserver will be automatically started at boot usually. For
+you changed the default value). On virtual machines, the webserver will be automatically started at boot. For
 docker you can do: ``docker run -p 8080:80 -h hostname -t proycon/lamachine:latest lamachine-start-webserver -f ``
 
-Note that there is no currently or poor authentication enabled on the webservices, so do not
-expose them to the outside world!
+**Warning: There is no currently or poor authentication enabled on the webservices, so do not
+expose them to the outside world!**
+
+### Jupyter Lab
+
+LaMachine comes with an installation of Jupyter Lab, which provides an excellent entry-point to LaMachine as it provides
+a web-based scripting environment or IDE (for Python and R), web-based terminal access, and especially access to the
+ubiquitous Jupyter Notebooks that enjoy great popularity in data science and beyond.
+
+You can access your Jupyter Lab installation from the portal website of your LaMachine installation. By default
+LaMachine also preinstalls the interactive [Python Course for the Humanities](http://www.karsdorp.io/python-course/) for you, so you can get started right
+away.
+
+![Jupyter Lab in LaMachine](/docs/screenshot_lab.jpg?raw=true "Jupyter Lab in LaMachine screenshot")
+
+The default password for the Lab environment is *lamachine*, you can change this with ``lamachine-passwd lab``.
+
+**Warning: Do not expose this service to the world without a strong customised password as it allows arbitrary code execution and full
+access to your system!**
 
 ## Privacy
 
