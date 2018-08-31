@@ -250,8 +250,9 @@ what you need (``docker start``, ``docker attach``).
 
 ### Updating LaMachine
 
-When you are inside LaMachine, you can update it by running ``lamachine-update``, if you first want to edit your
-LaMachine's settings and/or the packages to be installed/updated, run ``lamachine-update --edit`` instead. Do note that
+When you are inside LaMachine, you can update it by running ``lamachine-update``, if you want to add
+extra software packages to your installation, run ``lamachine-add`` first (add ``--list`` for a list of installable packages).
+You can also edit LaMachine's settings and/or directly edit the list of packages to be installed/updated with ``lamachine-update --edit``. Do note that
 this can't be used to uninstall software.
 
 The update normally only updates what has changed, if you want to force an update of everything instead, run
