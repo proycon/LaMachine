@@ -41,6 +41,9 @@
       - jupyter                          ## Jupyter Lab Environment, provides a powerful scripting IDE and terminal from the web-browser
                                               #CAUTION: Allows arbitrary code execution over network!!! (password protected)
                                               #Once installed, change the default password by running: lamachine-passwd lab
+      - python-course                    ## Python Course for the Humanities by Folgert Karsdorp et al. ##
+                                              # http://www.karsdorp.io/python-course/
+                                              #(requires jupyter)
      # - nextflow                         ## Nextflow: Data-driven computational pipelines ##
      # - piccl                            ## PICCL: Workflows for Post-OCR correction and normalisation and pseudo-modernisation of historical text. ##
                                              # [2.2GB! - not supported on Mac OS X]

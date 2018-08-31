@@ -16,6 +16,20 @@
      #    package:
      #      pip: jupyterlab_git
 
+      - name: Create directory for notebooks
+        file:
+          path: "{{lm_prefix}}/var/notebooks"
+          mode: u+rwx,a+rx
+          state: directory
+          owner: "{{unix_user}}"
+          group: "{{unix_group}}"
+
+      - name: "Link to shared data directory from notebook path"
+        file:
+          src: "{{data_path}}"
+          dest: "{{lm_prefix}}/var/notebooks/shared_data"
+          state: link
+
       - name: Install webserver configuration for JupyterLab
         become: "{{lm_become}}"
         become_user: root
