@@ -191,11 +191,21 @@
             ignore_errors: yes
 
 
-      - name: Installing uwsgi locally
+      - name: Installing uwsgi locally (linux)
         pip:
           name: "uwsgi"
           state: latest
           executable: "{{lm_prefix}}/bin/pip"
+        when: ansible_distribution|lower != "macosx"
+
+      - name: Installing uwsgi locally (macOS)
+        pip:
+          name: "uwsgi"
+          state: latest
+          executable: "{{lm_prefix}}/bin/pip"
+        env:
+          CC: /usr/bin/llvm-gcc
+        when: ansible_distribution|lower == "macosx"
 
   - name: Install webserver configuration
     become: "{{lm_become}}"
