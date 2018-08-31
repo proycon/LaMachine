@@ -190,22 +190,18 @@
               - "uwsgi_params"
             ignore_errors: yes
 
-
-      - name: Installing uwsgi locally (linux)
-        pip:
-          name: "uwsgi"
-          state: latest
-          executable: "{{lm_prefix}}/bin/pip"
-        when: ansible_distribution|lower != "macosx"
-
-      - name: Installing uwsgi locally (macOS)
-        pip:
-          name: "uwsgi"
-          state: latest
-          executable: "{{lm_prefix}}/bin/pip"
-        env:
-          CC: /usr/bin/llvm-gcc
+      - name: Patch for macOS so uwsgi installation can work
+            src: "{{ lm_prefix}}/lib/python{{python_version.stdout}}/config-{{python_version.stdout}}-darwin"
+            src: "{{ lm_prefix}}/lib/python{{python_version.stdout}}/config-{{python_version.stdout}}"
+        ignore_errors: yes
         when: ansible_distribution|lower == "macosx"
+
+      - name: Installing uwsgi locally
+        pip:
+          name: "uwsgi"
+          state: latest
+          executable: "{{lm_prefix}}/bin/pip"
+
 
   - name: Install webserver configuration
     become: "{{lm_become}}"
