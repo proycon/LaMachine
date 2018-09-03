@@ -159,7 +159,7 @@
       when: (ansible_distribution|lower == 'redhat' or ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'fedora') and root
 
     - import_tasks: arch.yml
-      when: (ansible_distribution|lower == 'archlinux') and root
+      when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro') and root
 
     - import_tasks: macosx.yml
       when: (ansible_distribution|lower == 'macosx')
@@ -265,6 +265,23 @@
         force: yes
         backup: yes
 
+    - name: Installing lamachine-add script
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: lamachine-add.py
+        dest: "{{lm_prefix}}/bin/lamachine-add"
+        force: yes
+        mode: u+rwx,a+rx
+
+    - name: Installing lamachine-passwd script
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: lamachine-passwd.py
+        dest: "{{lm_prefix}}/bin/lamachine-passwd"
+        force: yes
+        mode: u+rwx,a+rx
 
     - name: Check existence of LaMachine source dir (migration v2.0.0 -> v2.0.1)
       stat:

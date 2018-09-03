@@ -12,3 +12,11 @@
         - { artifact_id: "stanford-corenlp", group_id: "edu.stanford.nlp", classifier: "models-german" }
       loop_control:
         loop_var: package
+
+    - name: Installing CoreNLP-python
+      include_role:
+        name: lamachine-python-install
+      vars:
+        package:
+          pip: corenlp-python
+

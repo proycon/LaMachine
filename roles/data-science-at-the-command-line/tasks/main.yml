@@ -1,0 +1,35 @@
+---
+    - name: Clone book repository
+      include_role:
+        name: lamachine-git
+      vars:
+        package:
+          user: jeroenjanssens
+          repo: data-science-at-the-command-line
+
+    - name: "Symlink data-science-at-the-command-line in {{lm_prefix}}/opt"
+      file:
+        src: "{{source_path}}/data-science-at-the-command-line"
+        dest: "{{lm_prefix}}/opt/data-science-at-the-command-line"
+        state: link
+
+    - name: Copy tools
+      become: "{{lm_become}}"
+      become_user: root
+      copy:
+        src: "{{item}}"
+        dest: "{{ lm_prefix}}/bin"
+      with_fileglob:
+        - "{{lm_path}}/data-science-at-the-command-line/tools/*"
+
+    - name: Installing additional Python packages used by the book #but not otherwise offered by LaMachine yet
+      include_role:
+        name: lamachine-python-install
+      with_items:
+          - { pip: "awscli" }
+          - { pip: "skll" }
+          - { pip: "bigmler" }
+          - { pip: "cssselect" }
+      loop_control:
+           loop_var: package
+

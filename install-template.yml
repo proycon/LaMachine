@@ -3,7 +3,8 @@
 #                                   LaMachine Installation Manifest
 #
 # INSTRUCTIONS: Comment or remove categories/roles you do not want to install, dependencies will be automatically
-# resolved even when not explicitly mentioned)
+# resolved even when not explicitly mentioned). Instead of editing this file, you can always add additional
+# packages using lamachine-add once the system is installed.
 #
 # NOTE: ensure that all enabled roles are lined up with the same amount of spaces!
 #       (all hyphens must be vertically on the same column!)
@@ -15,12 +16,17 @@
   roles:
       - lamachine-core                   ## The LaMachine core ##
                                               #you always need this or nothing works; already includes Python 3
+      - python-core                      ## Core 3rd party scientific python packages ###
+                                              #(provides: numpy, scipy, pandas, matplotlib, scikit-learn, nltk, and more)
+      - java-core                        ## Java 8, Maven ##
+      - r-core                           ## R with core R packages ##
+      - nodejs-core                      ## Node.js with NPM ##
+      - extra-utils                      ## Extra command-line utilities useful for data science
+                                              #(provides: jq, ack, graphviz, gnuplot, glances, csvkit, xmlstarlet and a lot more)
       - languagemachines-basic           ## Generic & Dutch NLP tools written in C++ ##
                                               #by the Language Machines Research group,
                                               #Centre for Language and Speech Technology, Radboud University Nijmegen
                                               #(provides: timbl, frog, ucto, folia, mbt, wopr, Colibri Core)
-      - python-core                      ## Core 3rd party scientific python packages ###
-                                              #(provides: numpy, scipy, pandas, matplotlib, scikit-learn, nltk, and more)
       - languagemachines-python          ## Python-based NLP tools and libraries and web applications/services ##
                                               #by the Language Machines Research group,
                                               #Centre for Language and Speech Technology, Radboud University Nijmegen
@@ -29,12 +35,15 @@
                                              #(provides python-ucto, python-frog, python-timbl, colibricore)
       - cltl-vu-python                   ## Python software by the Computational Lexicology & Terminology Lab, VU Amsterdam
                                              #(provides KafNafParserPy)
-      - java-core                        ## Java 8, Maven ##
-      - r-core                           ## R with core R packages ##
-      - nodejs-core                      ## Node.js with NPM ##
       - labirinto                        ## Labirinto provides the LaMachine Portal website, providing access to all installed webservices ##
                                               #by the Language Machines Research group,
                                               #Centre for Language and Speech Technology, Radboud University Nijmegen
+      - jupyter                          ## Jupyter Lab Environment, provides a powerful scripting IDE and terminal from the web-browser
+                                              #CAUTION: Allows arbitrary code execution over network!!! (password protected)
+                                              #Once installed, change the default password by running: lamachine-passwd lab
+      - python-course                    ## Python Course for the Humanities by Folgert Karsdorp et al. ##
+                                              # http://www.karsdorp.io/python-course/
+                                              #(requires jupyter)
      # - nextflow                         ## Nextflow: Data-driven computational pipelines ##
      # - piccl                            ## PICCL: Workflows for Post-OCR correction and normalisation and pseudo-modernisation of historical text. ##
                                              # [2.2GB! - not supported on Mac OS X]

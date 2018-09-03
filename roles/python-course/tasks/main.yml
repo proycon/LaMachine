@@ -1,0 +1,29 @@
+---
+    - name: Install python course
+      include_role:
+        name: lamachine-git
+      vars:
+        package:
+          user: fbkarsdorp
+          repo: python-course
+
+    - name: "Symlink python-course in {{lm_prefix}}/opt"
+      file:
+        src: "{{source_path}}/python-course"
+        dest: "{{lm_prefix}}/opt/python-course"
+        state: link
+
+    - name: "Symlink python-course in {{lm_prefix}}/var/notebooks"
+      file:
+        src: "{{source_path}}/python-course"
+        dest: "{{lm_prefix}}/var/notebooks/python-course"
+        state: link
+
+    - name: Installing additional Python packages used by the course
+      include_role:
+        name: lamachine-python-install
+      with_items:
+          - { pip: "whoosh" }
+      loop_control:
+           loop_var: package
+

@@ -13,8 +13,10 @@ Welcome to LaMachine!
   - run lamachine-list to see a verbose list of all installed software
      add -s for a short sorted view
 {% if (controller is defined and controller != "external") or controller is not defined %}
+  - run lamachine-add to add extra software collections to this installation
+     add the --list flag to see a list of installable packages
   - run lamachine-update to update and test your LaMachine installation (provided you have sufficient permission)
-     add the --edit flag if you want to install extra software.
+     add the --edit flag to edit settings and/or the installation manifest directly
 {% endif %}
 {% if webserver %}
   - run lamachine-start-webserver to (re)start the webserver (provided you have sufficient permission)

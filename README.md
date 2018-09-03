@@ -28,7 +28,7 @@ bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/master/bootst
 ```
 
 This will prompt you for some questions on how you would like your LaMachine installation and allows you to include precisely
-the software you want or need and ensures that all is up to date.
+the software you want or need and ensures that all is up to date. A screenshot is shown at the end of this subsection.
 
 Are you on Windows 10 or 2016? Then you need to run this command in a Linux subsystem; to do this you must first install
 the Linux Subsystem with a distribution of your choice (we recommend Ubuntu) from the Microsoft Store. Follow the
@@ -39,6 +39,8 @@ Machine as explained in installation path C.
 Building LaMachine can take quite some time, depending also on your computer's resources, internet connection, and the
 amount of software you selected to install. Half an hour to an hour is a normal build time. The bootstrap script
 alternatively also offers the option to download pre-built images (installation path B & C).
+
+![LaMachine bootstrap](/docs/screenshot_bootstrap.jpg?raw=true "LaMachine Bootstrap")
 
 ### B) Pre-built container image for Docker
 
@@ -112,18 +114,22 @@ the installation procedure (or any subsequent update).
     * [FLAT](https://github.com/proycon/flat) - FoLiA Linguistic Annotation Tool
     * [TICCLTools](https://github.com/LanguageMachines/ticcltools) - Tools that together constitute the bulk of TICCL: Text Induced Corpus-Cleanup.
     * [PICCL](https://github.com/LanguageMachines/PICCL) - PICCL: A set of workflows for corpus building through OCR, post-correction (using TICCL) and Natural Language Processing.
+    * [Labirinto](https://github.com/proycon/labirinto) - A web-based portal listing all available tools in LaMachine, an ideal starting point for LaMachine
 * by the University of Groningen (RUG)
     * [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) - a dependency parser and tagger for Dutch
 * by the Vrije Universiteit Amsterdam (VU)
     * [KafNafParserPy](https://github.com/cltl/KafNafParserPy) - A python module to parse NAF files
 * by Utrecht University (UU)
     * [T-scan](https://github.com/proycon/tscan) - T-scan is a Dutch text analytics tool for readability prediction (initially developed at TiCC, Tilburg University).
+* by Meertens Instituut
+    * [Python Course for the Humanities](http://www.karsdorp.io/python-course/) - Interactive tutorial and introduction into programming with Python for the humanities by Folgert Karsdorp & Maarten van Gompel (CLST, Nijmegen)
 * Major third party software (not exhaustive!):
     * [Python](https://python.org)
       * [NumPy](http://www.numpy.org/) and [SciPy](http://www.numpy.org/) - Python libraries for scientific computing
       * [Matplotlib](http://matplotlib.org) - A Python 2D plotting library producing publication quality figures
       * [Scikit-learn](http://matplotlib.org) - Machine learning in Python
       * [IPython](http://ipython.org/) and [Jupyter](https://jupyter.org/) - A rich architecture for interactive computing.
+        * **[Jupyter Lab](https://jupyterlab.readthedocs.io/en/stable/)** - The successor of the popular Jupyter Notebooks, offers notebooks, a web-based IDE, terminals. An ideal entry point to get started with LaMachine and all it contains!
       * [Pandas](http://pandas.pydata.org/) - Python Data Analysis Library
       * [NLTK](http://www.nltk.org) - Natural Language Toolkit for Python
       * [PyTorch](https://pytorch.org) - Deep-learning library for Python
@@ -206,6 +212,8 @@ Run the generated activation script to activate the local environment (here we a
 * Run ``source lamachine-stable-activate`` or ``lamachine-stable-activate``, this script should be located in your
   ``~/bin`` directory.
 
+![LaMachine terminal screenshot](/docs/screenshot_venv_activate.jpg?raw=true "Activating the LaMachine local environment")
+
 ### Virtual Machine
 
 If you built your own LaMachine you have various scripts at your disposal (here we assume your LaMachine VM is called **stable**!):
@@ -251,8 +259,9 @@ what you need (``docker start``, ``docker attach``).
 
 ### Updating LaMachine
 
-When you are inside LaMachine, you can update it by running ``lamachine-update``, if you first want to edit your
-LaMachine's settings and/or the packages to be installed/updated, run ``lamachine-update --edit`` instead. Do note that
+When you are inside LaMachine, you can update it by running ``lamachine-update``, if you want to add
+extra software packages to your installation, run ``lamachine-add`` first (add ``--list`` for a list of installable packages).
+You can also edit LaMachine's settings and/or directly edit the list of packages to be installed/updated with ``lamachine-update --edit``. Do note that
 this can't be used to uninstall software.
 
 The update normally only updates what has changed, if you want to force an update of everything instead, run
@@ -265,18 +274,36 @@ press ENTER and leave it empty, do not run the entire script with escalated priv
 ### Webservices and web applications
 
 LaMachine comes with several webservices and web applications out of the box
-(source: https://github.com/proycon/clamservices). Most are RESTful webservices served
-using [CLAM](https://proycon.github.io/clam), which also offer a generic web-interface for human end-users. The
-webserver provides a generic portal to all available services, powered by
-[Labirinto](https://github.com/proycon/labirinto).
+Most are RESTful webservices served using [CLAM](https://proycon.github.io/clam), which also offer a generic
+web-interface for human end-users. The webserver provides a generic portal to all available services, powered by
+[Labirinto](https://github.com/proycon/labirinto), as shown in the screenshot below:
+
+![portal_screenshot](/docs/screenshot_portal.jpg?raw=true "Screenshot of the portal in LaMachine")
 
 To start (or restart) the webserver and webservices, run ``lamachine-start-webserver`` from within your LaMachine
 installation. You can then connect your browser (on the host system) to http://localhost:8080 (the port may differ if
-you changed the default value). On virtual machines, the webserver will be automatically started at boot usually. For
+you changed the default value). On virtual machines, the webserver will be automatically started at boot. For
 docker you can do: ``docker run -p 8080:80 -h hostname -t proycon/lamachine:latest lamachine-start-webserver -f ``
 
-Note that there is no currently or poor authentication enabled on the webservices, so do not
-expose them to the outside world!
+**Warning: There is no currently or poor authentication enabled on the webservices, so do not
+expose them to the outside world!**
+
+### Jupyter Lab
+
+LaMachine comes with an installation of [Jupyter Lab](https://jupyterlab.readthedocs.io/en/latest/), which provides an excellent entry-point to LaMachine as it provides
+a web-based scripting environment or IDE (for Python and R), web-based terminal access, and especially access to the
+ubiquitous Jupyter Notebooks that enjoy great popularity in data science and beyond.
+
+You can access your Jupyter Lab installation from the portal website of your LaMachine installation. By default
+LaMachine also preinstalls the interactive [Python Course for the Humanities](http://www.karsdorp.io/python-course/) for you, so you can get started right
+away.
+
+![Jupyter Lab in LaMachine](/docs/screenshot_lab.jpg?raw=true "Jupyter Lab in LaMachine screenshot")
+
+The default password for the Lab environment is *lamachine*, you can change this with ``lamachine-passwd lab``.
+
+**Warning: Do not expose this service to the world without a strong customised password as it allows arbitrary code execution and full
+access to your system!**
 
 ## Privacy
 

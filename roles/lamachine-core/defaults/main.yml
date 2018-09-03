@@ -1,5 +1,5 @@
 ---
-lamachine_version: "2.3.1" #also change in bootstrap.sh and codemeta.json
+lamachine_version: "2.4.0" #also change in bootstrap.sh and codemeta.json
 conf_name: "default"
 version: "stable" #stable, development or custom
 controller: internal
@@ -20,6 +20,10 @@ maintainer_mail: "{{unix_user}}@{{hostname}}" #Maintainer mail
 http_port: 80 #webserver port
 services:
   - all
+lab: true #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)
+lab_password_sha1: "sha1:fa40baddab88:c498070b5885ee26ed851104ddef37926459b0c4" #default password: lamachine
+lab_allow_origin: "*" #hosts that may access the lab environment
+flat_password: "flat" #admin password for flat
 # defaults file for miniconda (not used now)
 miniconda_mirror : https://repo.continuum.io/miniconda
 miniconda_python_ver : 3
