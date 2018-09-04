@@ -19,6 +19,7 @@
               - frogdata
               - frog
               - foliautils
+              - wopr
             when: force is defined and force
           - name: Installing from homebrew
             command: "brew install {{item}}" #TODO: toad still missing cause it failed to compile earlier
@@ -33,6 +34,7 @@
               - frogdata
               - frog
               - foliautils
+              - wopr
             register: macosx
             when: force is not defined or not force
       when: ansible_distribution|lower == 'macosx' and root and version == "stable" #note: no locality check here, we use homebrew even in local mode
