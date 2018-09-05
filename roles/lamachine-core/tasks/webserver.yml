@@ -17,7 +17,7 @@
         become: "{{lm_become}}"
         become_user: root
         file:
-            path: "{{ lm_prefix }}/nginx/conf.d"
+            path: "{{ lm_prefix }}/etc/nginx/conf.d"
             state: directory
             owner: "{{unix_user}}"
             group: "{{web_group}}"
