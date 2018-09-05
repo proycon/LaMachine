@@ -1035,11 +1035,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
     else
         echo "prefer_distro: false #prefer using the distribution's packages as much as possible rather than distribution channels such as pip (this will install more conservative versions but may break certain things)" >> $STAGEDCONFIG
     fi
-    if [ $OS = "mac" ]; then
-        echo "webserver: false #include a webserver and web-based services/applications. Disabling this turns all web-based functionality off." >> $STAGEDCONFIG
-    else
-        echo "webserver: true #include a webserver and web-based services/applications. Disabling this turns all web-based functionality off." >> $STAGEDCONFIG
-    fi
+    echo "webserver: true #include a webserver and web-based services/applications. Disabling this turns all web-based functionality off." >> $STAGEDCONFIG
     if [ $SUDO -eq 1 ]; then
         echo "http_port: 80 #webserver port, you may want to change this to a port like 8080 if you don't want to run on a reserved port or already have something running there!" >> $STAGEDCONFIG
     else

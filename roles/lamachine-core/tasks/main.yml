@@ -487,7 +487,7 @@
       with_items: "{{metadata_extra}}"
 
     - import_tasks: webserver.yml
-      when: webserver is defined and webserver == true
+      when: webserver is defined and webserver
 
     - name: "Adding custom activation script"
       become: "{{lm_become}}"
