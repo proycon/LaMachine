@@ -37,6 +37,27 @@
               - wopr
             register: macosx
             when: force is not defined or not force
+
+            #we still need to download the sources to check for codemeta.json
+            #and register the metadata, this is not ideal, eventually we should
+            #read the codemeta.json from the brew packages as there may be version
+            #discrepancies otherwise
+          - name: Obtaining sources and registering metadata if present (macOS)
+            include_role:
+              name: lamachine-git
+            vars:
+              do_registration: true
+            with_items:
+              - { user: "LanguageMachines", repo: "ticcutils" }
+              - { user: "LanguageMachines", repo: "libfolia" }
+              - { user: "LanguageMachines", repo: "ucto" }
+              - { user: "LanguageMachines", repo: "frog" }
+              - { user: "LanguageMachines", repo: "timbl" }
+              - { user: "LanguageMachines", repo: "mbt" }
+              - { user: "LanguageMachines", repo: "foliautils" }
+            loop_control:
+              loop_var: package
+
       when: ansible_distribution|lower == 'macosx' and root and version == "stable" #note: no locality check here, we use homebrew even in local mode
 
     - name: Link frogdata on Mac OS X

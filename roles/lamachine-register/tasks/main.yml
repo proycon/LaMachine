@@ -22,7 +22,7 @@
         dest: "{{lm_prefix}}/var/tmpmetadata.json"
         force: yes
 
-    - name: "{% if 'pip' in package and package.pip %}{{package.pip}}{% endif %} - Registering metadata "
+    - name: "{% if 'pip' in package and package.pip %}{{package.pip}} - {% endif %} Registering metadata"
       shell: |
         #!/bin/bash
         # what we do here is build a chain of metadata, each one updating over the last, effectively merging all the fields
