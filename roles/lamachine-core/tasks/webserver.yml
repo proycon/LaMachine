@@ -120,6 +120,8 @@
             group: "{{web_group}}"
             mode: u+rwx,g+rwsx,a+rx
         with_items:
+            - "etc/nginx"
+            - "etc/nginx/conf.d"
             - "var/log/uwsgi"
             - "var/log/nginx"
             - "var/www-data"
