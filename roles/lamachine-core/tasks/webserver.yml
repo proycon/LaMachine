@@ -13,6 +13,16 @@
           dest: "{{ lm_prefix }}/etc/nginx"
           state: link
 
+      - name: Add nginx/conf.d directory
+        become: "{{lm_become}}"
+        become_user: root
+        file:
+            path: "{{ lm_prefix }}/nginx/conf.d"
+            state: directory
+            owner: "{{unix_user}}"
+            group: "{{web_group}}"
+            mode: u+rwx,g+rwsx,a+rx
+
       - name: Patch for macOS so uwsgi installation can work
         file:
             src: "{{ lm_prefix}}/lib/python{{python_version.stdout}}/config-{{python_version.stdout}}-darwin"
@@ -120,8 +130,6 @@
             group: "{{web_group}}"
             mode: u+rwx,g+rwsx,a+rx
         with_items:
-            - "etc/nginx"
-            - "etc/nginx/conf.d"
             - "var/log/uwsgi"
             - "var/log/nginx"
             - "var/www-data"
@@ -132,6 +140,7 @@
           src: "/etc/nginx"
           dest: "{{ lm_prefix }}/etc/nginx"
           state: link
+        when: ansible_distribution|lower != "macosx"
 
       - name: Link uwsgi-emperor from global prefix (debian)
         file:
