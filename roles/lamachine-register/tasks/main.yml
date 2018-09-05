@@ -1,6 +1,15 @@
 ---
 
-    - name: "Download remote metadata"
+    - name: "Registering metadata: overview"
+      debug:
+          var: "{{item}}"
+      with_items:
+          - update
+          - package
+          - metadata_defaults
+          - metadata
+
+    - name: "Download remote metadata {% if url is defined and url %}from {{url}}{% endif %}"
       get_url:
           url: "{{url}}"
           dest: "{{lm_prefix}}/var/codemeta.tmp.json"
@@ -13,7 +22,7 @@
         dest: "{{lm_prefix}}/var/tmpmetadata.json"
         force: yes
 
-    - name: "Registering metadata"
+    - name: "{% if 'pip' in package and package.pip %}{{package.pip}} - {% endif %} Registering metadata"
       shell: |
         #!/bin/bash
         # what we do here is build a chain of metadata, each one updating over the last, effectively merging all the fields
