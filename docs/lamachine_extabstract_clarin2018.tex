@@ -108,20 +108,18 @@ These are implemented using Ansible\footnote{\url{https://www.ansible.com}}.  Th
 classical notion of Linux distributions, which generally provide their own repositories with (often binary) software
 packages. LaMachine builds on this already established infrastructure by taking these repositories as a given and only
 needs to know which repositories to use.  Similarly, there are different programming-language-specific ecosystems
-providing their own repositories, such as the Python Package Index\footnote{\url{https://pypi.org}} for Python,
-CRAN\footnote{\url{https://cran.r-project.org/}} for R, CPAN\footnote{\url{https://www.cpan.org}} for Perl, Maven
-Central\footnote{\url{https://search.maven.org}} for Java.  LaMachine again relies on those to pull and install software
-from and never forks, archives, or modifies the software in any way. In doing so, we compel participating software
-projects to adhere to well-established distribution standards and ensure the software is more sustainable towards the
-future \cite{softwarequality}. Moreover, we ensure that LaMachine never becomes a prerequisite for the software but
-merely a courtesy or convenience.
+providing their own repositories, such as the Python Package Index for Python, CRAN for R, CPAN for Perl, Maven Central
+for Java.  LaMachine again relies on those to pull and install software from and never forks, archives, or modifies the
+software in any way. In doing so, we compel participating software projects to adhere to well-established distribution
+standards and ensure the software is more sustainable towards the future \cite{softwarequality}. Moreover, we ensure
+that LaMachine never becomes a prerequisite for the software but merely a courtesy or convenience.
 
 LaMachine provides ample flexibility that allows it to be deployable in different contexts. First of all there is
 flexibility with regard to the target platform, where we support several major GNU/Linux distributions (Debian, Ubuntu,
 CentOS, RedHat Enterprise Linux, Fedora, Arch Linux), as well as macOS (although with more limitations). Second, there is
 flexibility with regard to the form, where we support \emph{containerisation} through
-Docker\footnote{\url{https://www.docker.com}}, \emph{virtualisation} through Vagrant\footnote{\url{https://vagrant.org}}
-and VirtualBox\footnote{\url{https://www.virtualbox.org}}, direct remote provisioning through Ansible (for production
+Docker\footnote{\url{https://www.docker.com}}, \emph{virtualisation} through Vagrant
+and VirtualBox\footnote{\url{https://vagrant.org}, \url{https://www.virtualbox.org}}, direct remote provisioning through Ansible (for production
 servers), or an installation that is either global to the machine or local in a custom directory for a specific user
 (using \texttt{virtualenv}). Pre-built docker containers and virtual machine images with a limited selection of participating software are regularly
 uploaded to the Docker Hub and Vagrant Cloud, respectively. The different flavours all offer a different degree of
@@ -159,6 +157,14 @@ access and overview of all installed tools, including web services and web appli
 Jupyter Lab\footnote{\url{https://jupyter.org/}} environment which provides a web-based Integrated Development
 Environment (IDE) for scripting in Python and R, web-based terminal access, and so-called \emph{notebooks} which mix
 text, code and data output and have gained great popularity in data science community nowadays.
+
+
+\begin{figure}[htb] \begin{center}
+\includegraphics[width=160.0mm]{doublescreenshot.jpg}
+\end{center}
+\caption{Screenshot excerpts of the Portal Web-app inside LaMachine (left) and the Jupyter Lab environment (right)}
+\label{fig:arch}
+\end{figure}
 
 \section{Software}
 
@@ -200,7 +206,7 @@ the Jupyter Notebook environment.
 LaMachine comes with some simple data sharing facilities that allowed us to access the sensitive complaint data via a single shared dataspace between host and the VM. (Note that extensive data search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.)
 
 We used many of the available tools in LaMachine within this project: Frog for linguistic annotation of the textual
-content of the complaint and the scikit-learn Python package \cite{scikit-learn} for classification, T-scan \cite{tscan} for feature extraction in the form of text characteristics and colibri-core for n-gram analysis.
+content of the complaint and the scikit-learn Python package for classification, T-scan for feature extraction in the form of text characteristics and colibri-core for n-gram analysis.
 
 %het doel van deze studie is om automatische tekstanalysetechnieken (tekstmining) toe te passen op de klachten die bij het Landelijk Meldpunt Zorg binnenkomen. Zo hopen we eventuele trends en patronen te vinden die meer inzicht geven in de aard en de relevantie van de klachten. De verwachting is om zo potentiële risicogevallen te ontdekken die op basis van de behandeling van individuele klachten nog niet waren gesignaleerd.
 
