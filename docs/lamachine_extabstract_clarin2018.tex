@@ -148,21 +148,26 @@ LaMachine also aims to harmonise the metadata of all installed software, by conv
 repositories\footnote{i.e. the repositories where tool providers deposit their software} to the CodeMeta
 standard\footnote{\url{https://codemeta.github.io/}, described in JSON-LD} \cite{codemeta,codemetar} where possible, or
 encouraging software developers to provide their own. This in turn enables other tools to do proper service discovery
-and provenance logging. Leveraging this metadata, LaMachine comes with a webserver that offers a portal website with
-access and overview of all locally installed tools, including web services and web applications.
+and provenance logging.
+
+Leveraging this metadata, LaMachine comes with a webserver that offers a portal website with
+access and overview of all installed tools, including web services and web applications. It also comes with a
+Jupyter Lab\footnote{\url{https://jupyter.org/}} environment which provides a web-based Integrated Development
+Environment (IDE) for scripting in Python and R, web-based terminal access, and so-called \emph{notebooks} which mix
+text and code and have gained great popularity in data science community nowadays.
 
 \section{Software}
 
-As LaMachine was conceived initially\footnote{LaMachine exists since May 2015 and has been used extensively ever since by
-numerous users} as the primary means of distribution of the software stack developed at CLST,
-Radboud University Nijmegen, it includes a lot of our software. A full list goes beyond the scope of this overview; we
-will merely mention some CLARIN-NL/CLARIAH-funded tools: ucto (a tokeniser), Frog (an NLP suite for Dutch), FoLiA (Format
-for Linguistic Annotation, with assorted tools), FLAT (a web-based linguistic Annotation tool), PICCL (an OCR and
-post-OCR correction pipeline) and CLAM. We already include some relevant software by the University of Groningen and VU
-Amsterdam as well. Moreover, LaMachine incorporates a large number of renowned tools by external international parties,
-offering most notably a mature Python environment\footnote{scipy, numpy, scikit-learn, matplotlib, nltk, spacy, pytorch,
-keras, gensim, etc...}, but also R and Java.
-
+As LaMachine was conceived initially as the primary means of distribution of the software stack developed at CLST, Radboud University
+Nijmegen, it includes a lot of our software. LaMachine exists since May 2015 and has been used extensively ever since
+by numerous users. A full list of included software goes beyond the scope of this overview; we will merely mention
+some CLARIN-NL/CLARIAH-funded tools: ucto (a tokeniser), Frog (an NLP suite for Dutch), FoLiA (Format for Linguistic
+Annotation, with assorted tools), FLAT (a web-based linguistic Annotation tool), PICCL (an OCR and post-OCR correction
+pipeline) and CLAM. We already include some relevant software by the University of Groningen (such as Alpino, a
+dependency parser) and VU Amsterdam as well. Moreover, LaMachine incorporates a large number of renowned tools by
+external international parties, offering most notably a mature Python environment with renowned scientific modules such
+as scipy, numpy, scikit-learn, matplotlib, nltk, spacy, pytorch, keras, gensim, and many others, but also R, Java and tools
+such as Stanford CoreNLP.
 
 \section{Case study}\label{sec-case}
 
@@ -183,8 +188,8 @@ VM with Windows Server 2012, provided to us by the health inspectorate for this 
 rights but no internet access. In terms of hardware we ran on a machine with 8 cores and  32GB internal memory available.
 %using VirtualBox and Vagrnt on the Windows VM
 LaMachine provided a fully functional research environment and we ran all our experiments within LaMachine. We interacted with LaMachine both through the command line, which offers a standard
-shell and enables access to all lower-level tools and programming languages; and through the (offline) webbrowser to use the Jupyter Notebook environment\footnote{\url{https://jupyter.org/}}, which offers a more graphical scripting environment
-for e.g. Python and R that has gained great popularity in the scientific community.
+shell and enables access to all lower-level tools and programming languages; and through the (offline) webbrowser to use
+the Jupyter Notebook environment.
 
 LaMachine comes with some simple data sharing facilities that allowed us to access the sensitive complaint data via a single shared dataspace between host and the VM. (Note that extensive data search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.)
 
