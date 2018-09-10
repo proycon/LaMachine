@@ -129,13 +129,13 @@ offers the least amount of overhead.
 
 %%iris: ik heb dit stukje geintegreerd in de  case study... (ik heb de eerste paragraaf toch nog even hier opgenomen)
 Installation of LaMachine begins with a single bootstrap command\footnote{See
-\url{https://proycon.github.io/LaMachine}}.  It may interactively query the users for their software preferences, e.g.
-the flavour of LaMachine and the set of software to install, which is never static but can be customized by the user.
-The user may also opt for installing the latest releases, the more experimental development versions of the software, or
-specific custom versions (to facilitate scientific reproducibility). The bootstrap procedure detects and installs
-the necessary prerequisites automatically and eventually invokes Ansible to perform the bulk of the work.
+\url{https://proycon.github.io/LaMachine}}.  It can interactively query the users for their software preferences
+\emph{(stored as the host configuration)}, e.g. the flavour of LaMachine, as well as the set of software to install,
+\emph{the installation manifest}. This set is never static but can be customized by the user.  The user may also opt for installing the latest releases, the more
+experimental development versions of the software, or specific custom versions (to facilitate scientific
+reproducibility). The bootstrap procedure detects and installs the necessary prerequisites automatically and eventually
+invokes Ansible to perform the bulk of the work.  Figure~\ref{fig:arch} provides a schematic view.
 
-%
 %After a successful build, the user may interact with LaMachine either through the command line, which offers a standard
 %shell and enables access to all lower-level tools and programming languages; or through his or her webbrowser, which
 %when enabled offers a simple portal page towards all installed web-capable tools. Amongst these services is also a
@@ -145,6 +145,13 @@ the necessary prerequisites automatically and eventually invokes Ansible to perf
 %The current version of LaMachine comes with some simple data sharing facilities only: we provide a
 %single shared dataspace between host and VM/container (where applicable), or allow simple upload. Extensive data
 %search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.
+
+\begin{figure}[htb] \begin{center}
+\includegraphics[width=135.0mm]{architecture.png}
+\end{center}
+\caption{\footnotesize{A schematic representation of the LaMachine architecture}}
+\label{fig:arch}
+\end{figure}
 
 LaMachine also aims to harmonise the metadata of all installed software, by converting metadata from upstream
 repositories, i.e. the repositories where tool providers deposit their software, to a common standard called CodeMeta
@@ -158,6 +165,8 @@ Jupyter Lab\footnote{\url{https://jupyter.org/}} environment which provides a we
 Environment (IDE) for scripting in Python and R, web-based terminal access, and so-called \emph{notebooks} which mix
 text, code and data output and have gained great popularity in data science community nowadays.
 
+
+
 \section{Software}
 
 LaMachine exists since May 2015 and has been used extensively ever since by numerous users, in 2018 version 2 was
@@ -167,11 +176,11 @@ of included software goes beyond the scope of this overview; we will merely ment
 ucto (a tokeniser), Frog (an NLP suite for Dutch), FoLiA (Format for Linguistic Annotation, with assorted tools), FLAT
 (a web-based linguistic Annotation tool), PICCL (an OCR and post-OCR correction pipeline) and CLAM. However, this
 project is not limited to one research group and is open to participation by other software providers, especially those
-also in CLARIAH and the upcoming CLARIAH PLUS project. We already include some relevant software by the University of
-Groningen (such as Alpino, a dependency parser) and VU Amsterdam. Moreover, LaMachine incorporates a large number of
-renowned tools by external international parties, offering most notably a mature Python environment with renowned
-scientific modules such as scipy, numpy, scikit-learn, matplotlib, nltk, spacy, pytorch, keras, gensim, tensorflow, and many others,
-but also R, Java and tools such as Stanford CoreNLP and Kaldi.
+also in CLARIAH and the upcoming CLARIAH PLUS project. We already include some relevant software by other CLARIAH
+partners. Moreover, LaMachine incorporates a large number of renowned tools by external international parties, offering
+most notably a mature Python environment with renowned scientific modules such as scipy, numpy, scikit-learn,
+matplotlib, nltk, spacy, pytorch, keras, gensim, tensorflow, and many others, but also R, Java and tools such as
+Stanford CoreNLP and Kaldi.
 
 \section{Case study}\label{sec-case}
 
@@ -195,7 +204,8 @@ LaMachine provided a fully functional research environment and we ran all our ex
 shell and enables access to all lower-level tools and programming languages; and through the (offline) webbrowser to use
 the Jupyter Notebook environment.
 
-LaMachine comes with some simple data sharing facilities that allowed us to access the sensitive complaint data via a single shared dataspace between host and the VM. (Note that extensive data search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.)
+LaMachine comes with some simple data sharing facilities that allowed us to access the sensitive complaint data via a
+single shared dataspace between host and the VM. Extensive data search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.
 
 We used many of the available tools in LaMachine within this project: Frog for linguistic annotation of the textual
 content of the complaint and the scikit-learn Python package for classification, T-scan for feature extraction in the form of text characteristics and colibri-core for n-gram analysis.
