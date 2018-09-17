@@ -486,6 +486,16 @@
       when: metadata_extra is defined and metadata_extra
       with_items: "{{metadata_extra}}"
 
+    - name: Register metadata for certain base packages (apt/debian) #should be in debian.yml but codemetapy is not available at that stage yet, so we do it here for now:
+      shell: |
+        #!/bin/bash
+        apt show {{item}} | {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i apt
+      args:
+        executable: /bin/bash
+      environment: "{{lm_env}}"
+      when: "'debian' in package and (ansible_distribution|lower == 'debian' or ansible_distribution|lower == 'ubuntu' or  ansible_distribution|lower == 'linux mint')"
+      with_items: [python3, libboost-python, libicu, libxml2, libxslt1, gcc, g++, autoconf, automakes, libaspell, libhunspell, curl]
+
     - import_tasks: webserver.yml
       when: webserver is defined and webserver
 
