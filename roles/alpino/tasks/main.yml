@@ -73,6 +73,12 @@
         force: yes
         mode: u+rwx,a+rx
 
+    - name: "Get Alpino version"
+      shell: "cat version"
+      args:
+        chdir: "{{ lm_prefix }}/opt/Alpino"
+      register: alpino_version
+
     - name: Register ALPINO
       include_role:
          name: lamachine-register
@@ -80,6 +86,7 @@
          metadata:
            identifier: alpino
            name: Alpino
+           version: "{{alpino_version.stdout}}"
            author: [ "Gertjan van Noord", "Gosse Bouma" ]
            url: "http://www.let.rug.nl/vannoord/alp/Alpino/"
            producer:
