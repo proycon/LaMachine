@@ -20,7 +20,7 @@
       include_role:
           name: lamachine-run
       vars:
-        command: "nextflow -version | grep --colour=never version | sed s/\s*version\s//"
+        command: "nextflow -version | grep --colour=never version | sed 's/\s*version\s//'"
       register: nextflow_version
 
     - name: Register Nextflow #this is third-party and doesn't have a codemeta.json, so we just take care of everything right here:
