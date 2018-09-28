@@ -1,0 +1,4 @@
+---
+dependencies:
+  - { role: languagemachines-python } #for clam
+  - { role: kaldi }
