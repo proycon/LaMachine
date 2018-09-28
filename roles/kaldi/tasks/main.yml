@@ -5,7 +5,7 @@
       msg: "Kaldi is not supported on Mac OS X"
     when: ansible_distribution|lower == "macosx"
 
-  - name: Installing global dependencies for Kaldi and alex-asr
+  - name: Installing global dependencies for Kaldi
     include_role:
       name: lamachine-package-install
     with_items:
@@ -14,6 +14,24 @@
     loop_control:
         loop_var: package
     when: root
+
+  - name: "Obtaining and compiling atlas-lapack from AUR (this takes a LONG time!)"
+    shell: |
+      git clone https://aur.archlinux.org/atlas-lapack.git
+      cd atlas-lapack
+      makepkg
+    args:
+      chdir: "{{source_dir}}"
+    when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro')
+
+  - name: "Installing atlas-lapack from AUR"
+    shell: |
+      #!/bin/bash
+      makepkg
+      pacman -U atlas*xz
+    args:
+      chdir: "{{source_dir}}/atlas-lapack"
+    when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro') and root
 
   - name: "Checking out Kaldi"
     git:
