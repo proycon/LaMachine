@@ -27,7 +27,7 @@
     when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro')
 
   - name: "Installing atlas-lapack from AUR"
-    become: "{{lm_become}}"
+    become: yes
     become_user: root
     shell: |
       #!/bin/bash
