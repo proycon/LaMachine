@@ -351,10 +351,10 @@
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="2880"
-     inkscape:window-height="1732"
-     inkscape:window-x="0"
-     inkscape:window-y="68"
+     inkscape:window-width="3840"
+     inkscape:window-height="2128"
+     inkscape:window-x="3840"
+     inkscape:window-y="32"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata1274">
@@ -364,7 +364,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1123,14 +1123,12 @@
          x="24.946428"
          y="-773.43378"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.11111069px;line-height:16.61000061px;font-family:Sans;-inkscape-font-specification:Sans;stroke-width:0.26458332px"
-         id="tspan4762">installation and deployment of a large amount of software projects, may of which developed in the scope of</tspan><tspan
+         id="tspan4762">installation and deployment of a large amount of software projects, many of which were developed in the scope</tspan><tspan
          sodipodi:role="line"
          x="24.946428"
          y="-756.82373"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.11111069px;line-height:16.61000061px;font-family:Sans;-inkscape-font-specification:Sans;stroke-width:0.26458332px"
-         id="tspan4754">CLARIN-NL/CLARIAH. LaMachine provides a kind of <tspan
-   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans"
-   id="tspan4768">Virtual Laboratory for data scientists.</tspan></tspan></text>
+         id="tspan4754">of CLARIN-NL/CLARIAH. LaMachine provides a kind of Virtual Laboratory for data scientists.</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:6.61458302px;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
