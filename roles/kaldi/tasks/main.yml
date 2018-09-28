@@ -21,7 +21,7 @@
       cd atlas-lapack
       makepkg
     args:
-      chdir: "{{source_dir}}"
+      chdir: "{{source_path}}"
     when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro')
 
   - name: "Installing atlas-lapack from AUR"
@@ -30,7 +30,7 @@
       makepkg
       pacman -U atlas*xz
     args:
-      chdir: "{{source_dir}}/atlas-lapack"
+      chdir: "{{source_path}}/atlas-lapack"
     when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro') and root
 
   - name: "Checking out Kaldi"
