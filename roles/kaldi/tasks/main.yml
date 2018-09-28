@@ -31,7 +31,7 @@
     become_user: root
     shell: |
       #!/bin/bash
-      pacman -U atlas*xz
+      pacman -U --noconfirm atlas*xz
     args:
       chdir: "{{source_path}}/atlas-lapack"
     when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro') and root
