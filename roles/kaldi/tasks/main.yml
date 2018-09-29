@@ -9,6 +9,8 @@
     include_role:
       name: lamachine-package-install
     with_items:
+      - { debian: sox, redhat: sox }
+      - { debian: subversion, redhat: subversion }
       - { debian: libatlas-base-dev, redhat: atlas-devel }
       - { debian: gfortran, redhat: libgfortran, arch: gcc-fortran }
     loop_control:
