@@ -98,6 +98,23 @@
               regexp='^/dev/sdb1'
               line='/dev/sdb1    /mnt/lamachine   ext4   rw,errors=remount-ro,discard   0 0'
 
+          - name: Migrating existing global prefix
+            become: yes
+            become_user: root
+            shell: |
+              if [ -L "{{global_prefix}}" ]; then
+                echo "Nothing to migrate"
+                exit 2
+              elif [ -d "{{global_prefix}}" ]; then
+                mv {{global_prefix}}/* /mnt/lamachine
+                rm -rf {{global_prefix}}
+              fi
+            args:
+              executable: /bin/bash
+            register: migration
+            changed_when: migration.rc != 2
+            failed_when: migration.rc != 2 and migration.rc != 0
+
           - name: Ensure global prefix is a link to the extra disk
             become: "{{lm_become}}"
             become_user: root
