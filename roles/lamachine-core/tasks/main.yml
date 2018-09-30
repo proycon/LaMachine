@@ -41,7 +41,7 @@
           msg: Forcing recompilation of all packages
       when: force is defined
 
-      when: flavour == "vagrant" and extra_disksize is defined and extra_disksize > 0 and locality == "global"
+    - when: flavour == "vagrant" and extra_disksize is defined and extra_disksize > 0 and locality == "global"
       block:
           - name: "Adding extra LaMachine partition" #only if it does not exist yet
             become: yes
