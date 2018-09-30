@@ -109,6 +109,7 @@
               name: lamachine-register
           vars:
               update: "{{item}}"
+              allow_failure: "yes" #in cae the app is not installed
               metadata: #add entrypoint metadata to registry
                   identifier: "{{item}}"
                   entryPoints:
