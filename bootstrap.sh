@@ -1001,7 +1001,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         else
             echo "ansible_python_interpreter: \"/usr/bin/python3\" #Python interpreter for Vagrant to use with Ansible. This interpreter must be already available in vagrant box $VAGRANTBOX, you may want to set it to python2 instead" >> $STAGEDCONFIG
         fi
-        echo "extra_disksize: \"$DISKSIZE\" #Size in GB of extra disk in VM" >> $STAGEDCONFIG
+        echo "extra_disksize: $DISKSIZE #Size in GB of extra disk in VM" >> $STAGEDCONFIG
         #echo "vagrant_disksize: \"$DISKSIZE\" #Increase this if you plan to install particularly large software!" >> $STAGEDCONFIG
     elif [[ $FLAVOUR == "docker" ]]; then
         GROUP="lamachine"
