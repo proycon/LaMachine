@@ -35,5 +35,5 @@
       args:
         executable: /bin/bash
       register: register_result
-      failed_when: "((allow_failure is not defined or allow_failure != "yes") and register_result.rc != 0) or (allow_failure == "yes" and register_result.rc != 0 and register_result.rc != 3)"
+      failed_when: "((allow_failure is not defined or allow_failure != 'yes') and register_result.rc != 0) or (allow_failure == 'yes' and register_result.rc != 0 and register_result.rc != 3)"
       environment: "{{lm_env}}"

@@ -35,7 +35,7 @@
       file:
           path: "{{lm_prefix}}/opt/fame_resources"
           state: absent
-      ignore_fail: yes #in case it isn't there in the first place
+      ignore_errors: yes #in case it isn't there in the first place
 
     - name: Creating directory for resources
       become: "{{lm_become}}"
