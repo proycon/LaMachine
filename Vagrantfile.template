@@ -67,26 +67,26 @@ Vagrant.configure(2) do |config|
 
      if lamachine_config['resize_disk'] > 0
           #this does not work on all distros! only optimized for the debian basebox used by LaMachine
-          if ARGV[0] == "up" && ! File.exist?("#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/lamachine.vdi")
-              vb.customize [
-                  "clonehd", "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/contrib-stretch.vmdk",
-                             "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/lamachine.vdi",
+          if ARGV[0] == "up" && ! File.exist?("#{ENV["HOME"]}/VirtualBox VMs/#{virtualbox.name}/lamachine.vdi")
+              virtualbox.customize [
+                  "clonehd", "#{ENV["HOME"]}/VirtualBox VMs/#{virtualbox.name}/contrib-stretch.vmdk",
+                             "#{ENV["HOME"]}/VirtualBox VMs/#{virtualbox.name}/lamachine.vdi",
                   "--format", "VDI"
               ]
-              vb.customize [
-                  "modifyhd", "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/lamachine.vdi",
+              virtualbox.customize [
+                  "modifyhd", "#{ENV["HOME"]}/VirtualBox VMs/#{virtualbox.name}/lamachine.vdi",
                   "--resize", lamachine_config['resize_disk'] * 1024
               ]
-              vb.customize [
+              virtualbox.customize [
                   "storageattach", :id,
                   "--storagectl", "SATAController",
                   "--port", "0",
                   "--device", "0",
                   "--type", "hdd",
                   "--nonrotational", "on",
-                  "--medium", "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/lamachine.vdi"
+                  "--medium", "#{ENV["HOME"]}/VirtualBox VMs/#{virtualbox.name}/lamachine.vdi"
               ]
-          end
+         end
      end
   end
   #
