@@ -70,7 +70,7 @@ usage () {
     echo " ${bold}--targetdir${normal} - Set a target directory for local environment creation, this should be an existing path and the local environment will be created under it. Defaults to current working directory."
     echo " ${bold}--services${normal} - Preset enabled services (comma seperated list). Default: all"
     echo " ${bold}--force${normal} - Preset a default force parameter (set to 1 or 2). Note that this will take effect on ANY subsequent update!"
-    echo " ${bold}--disksize${normal} - Sets extra disksize for VMs, you'll want to use  this if you plan to include particularly large software"
+    echo " ${bold}--disksize${normal} - Sets extra disksize for VMs; you'll want to use  this if you plan to include particularly large software and exceed the default 8GB"
 }
 
 USER_SET=0 #explicitly set?
@@ -1001,8 +1001,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         else
             echo "ansible_python_interpreter: \"/usr/bin/python3\" #Python interpreter for Vagrant to use with Ansible. This interpreter must be already available in vagrant box $VAGRANTBOX, you may want to set it to python2 instead" >> $STAGEDCONFIG
         fi
-        echo "extra_disksize: $DISKSIZE #Size in GB of extra disk in VM" >> $STAGEDCONFIG
-        #echo "vagrant_disksize: \"$DISKSIZE\" #Increase this if you plan to install particularly large software!" >> $STAGEDCONFIG
+        echo "extra_disksize: $DISKSIZE #Size in GB of dedicated LaMachine disk in the VM (separated from boot image, needed if you plan to exceed the default 8GB total)" >> $STAGEDCONFIG
     elif [[ $FLAVOUR == "docker" ]]; then
         GROUP="lamachine"
         echo "unix_user: \"lamachine\"" >> $STAGEDCONFIG

@@ -68,25 +68,21 @@ Vagrant.configure(2) do |config|
      if lamachine_config['extra_disksize'] > 0
           #this does not work on all distros! only optimized for the debian basebox
           #used by LaMachine
-          if ARGV[0] == "up" && ! File.exist?("./extradisk.vdi")
+          if ARGV[0] == "up" && ! File.exist?("./lamachine.vdi")
             vb.customize [
               'createhd',
-              '--filename', "./extradisk.vdi",
+              '--filename', "./lamachine.vdi",
               '--format', 'VDI',
               '--size', lamachine_config['extra_disksize'] * 1024
             ]
 
             vb.customize [
               'storageattach', :id,
-              '--storagectl', 'SATA Controller',
+              '--storagectl', 'SCSI', #does this work on all systems?
               '--port', 1, '--device', 0,
               '--type', 'hdd', '--medium',
-              './extradisk.vdi'
+              './lamachine.vdi'
             ]
-          end
-          if ARGV[0] == "up" && ! File.exist?("./extradisk.vdi")
-            # Run script to map new disk
-            config.vm.provision "shell", path: "vm_expanddisk.sh"
           end
      end
   end

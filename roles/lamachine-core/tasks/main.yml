@@ -41,6 +41,66 @@
           msg: Forcing recompilation of all packages
       when: force is defined
 
+      when: flavour == "vagrant" and extra_disksize is defined and extra_disksize > 0 and locality == "global"
+      block:
+          - name: "Adding extra LaMachine partition" #only if it does not exist yet
+            become: yes
+            become_user: root
+            parted:
+              device: /dev/sdb
+              number: 1
+              state: present
+
+          - name: "Formatting extra LaMachine partition" #only if it does not exist yet
+            become: yes
+            become_user: root
+            filesystem:
+              dev: /dev/sdb1
+              fstype: ext4
+
+          - name: Creating mountpoint
+            become: yes
+            become_user: root
+            file:
+                path: "/mnt/lamachine"
+                mode: u+rwx,a+rx
+                state: directory
+
+          - mount: "Mounting extra LaMachine partition"
+            become: yes
+            become_user: root
+            mount:
+              fstype: ext4
+              src: /dev/sdb1
+              path: /mnt/lamachine
+              state: mounted
+
+          - name: Adding LaMachine partition to /etc/fstab
+            become: yes
+            become_user: root
+            lineinfile:
+              dest=/etc/fstab
+              backup=yes
+              backrefs=yes
+              state=present
+              regexp='^/dev/sdb1'
+              line='/dev/sdb1    /mnt/lamachine   ext4   rw,errors=remount-ro,discard   0 0'
+
+           - name: Ensure global prefix is a link to the extra disk
+             become: "{{lm_become}}"
+             become_user: root
+             file:
+               src: "/mnt/lamachine"
+               dest: "{{global_prefix}}"
+               state: link
+
+    - name: Create global prefix directory
+      file:
+          path: "{{global_prefix}}"
+          mode: u+rwx,a+rx
+          state: directory
+      when: locality == "global" and not (flavour == "vagrant" and extra_disksize is defined and extra_disksize > 0)
+
     - name: "Forced cleaning: Removing sources"
       become: "{{lm_become}}"
       become_user: root
@@ -62,12 +122,6 @@
           mode: u+rwx,a+rx
           state: directory
 
-    - name: Create global prefix directory
-      file:
-          path: "{{global_prefix}}"
-          mode: u+rwx,a+rx
-          state: directory
-      when: locality == "global"
 
     - name: Ensure home directory is world-traversable
       file:
