@@ -1081,13 +1081,13 @@ services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all po
 webservertype: nginx #If set to anything different, the internal webserver will not be enabled/provided by LaMachine (which allows you to run your own external one), do leave webserver: true set as is though.
 " >> $STAGEDCONFIG
 if [[ $OS == "mac" ]] || [[ "$FLAVOUR" == "remote" ]]; then
-    echo "lab: false #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)"
+    echo "lab: false #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)" >> $STAGEDCONFIG
 else
-    echo "lab: true #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)"
+    echo "lab: true #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)" >> $STAGEDCONFIG
 fi
-echo "lab_password_sha1: \"sha1:fa40baddab88:c498070b5885ee26ed851104ddef37926459b0c4\" #default password for Jupyter Lab: lamachine, change this with 'lamachine-passwd lab'"
-echo "lab_allow_origin: \"*\" #hosts that may access the lab environment"
-echo "flat_password: \"flat\" #initial password for the FLAT administrator (if installed; username 'flat'), updating this later has no effect (edit in FLAT itself)!"
+echo "lab_password_sha1: \"sha1:fa40baddab88:c498070b5885ee26ed851104ddef37926459b0c4\" #default password for Jupyter Lab: lamachine, change this with 'lamachine-passwd lab'" >> $STAGEDCONFIG
+echo "lab_allow_origin: \"*\" #hosts that may access the lab environment" >> $STAGEDCONFIG
+echo "flat_password: \"flat\" #initial password for the FLAT administrator (if installed; username 'flat'), updating this later has no effect (edit in FLAT itself)!" >> $STAGEDCONFIG
 if [ $FORCE -ne 0 ]; then
     echo "force: $FORCE #Sets the default force parameter for updates, set to 1 to force updates or 2 to explicitly remove all sources and start from scratch on each update. Remove this line entirely if you don't need it or are in doubt" >> $STAGEDCONFIG
 fi
