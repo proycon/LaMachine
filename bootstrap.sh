@@ -611,7 +611,7 @@ if [ "$FLAVOUR" == "vagrant" ]; then
     if ! which vagrant; then
         NEED+=("vagrant")
         NEED+=("vbguest")
-        NEED+=("disksize")
+        NEED+=("vagrant-disksize")
     else
         echo "Checking available vagrant plugins"
         if vagrant plugin list | grep vbguest; then
@@ -622,7 +622,7 @@ if [ "$FLAVOUR" == "vagrant" ]; then
         if vagrant plugin list | grep disksize; then
             echo "ok"
         else
-            NEED+=("disksize")
+            NEED+=("vagrant-disksize")
         fi
     fi
 fi
