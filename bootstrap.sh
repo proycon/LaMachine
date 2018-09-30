@@ -70,7 +70,7 @@ usage () {
     echo " ${bold}--targetdir${normal} - Set a target directory for local environment creation, this should be an existing path and the local environment will be created under it. Defaults to current working directory."
     echo " ${bold}--services${normal} - Preset enabled services (comma seperated list). Default: all"
     echo " ${bold}--force${normal} - Preset a default force parameter (set to 1 or 2). Note that this will take effect on ANY subsequent update!"
-    echo " ${bold}--disksize${normal} - Sets disksize for VMs (default 10GB), you'll want to increase this if you plan to include particularly large software"
+    echo " ${bold}--disksize${normal} - Sets extra disksize for VMs, you'll want to use  this if you plan to include particularly large software"
 }
 
 USER_SET=0 #explicitly set?
@@ -188,7 +188,7 @@ FORCE=0
 PREFER_DISTRO=0
 NOSYSUPDATE=0
 VMMEM=4096
-DISKSIZE="10GB"
+DISKSIZE=0 #for extra disk in VM (in GB)
 VAGRANTBOX="debian/contrib-stretch64" #base distribution for VM
 DOCKERREPO="proycon/lamachine"
 CONTROLLER="internal"
@@ -611,7 +611,7 @@ if [ "$FLAVOUR" == "vagrant" ]; then
     if ! which vagrant; then
         NEED+=("vagrant")
         NEED+=("vbguest")
-        NEED+=("vagrant-disksize")
+        #NEED+=("vagrant-disksize")
     else
         echo "Checking available vagrant plugins"
         if vagrant plugin list | grep vbguest; then
@@ -619,11 +619,11 @@ if [ "$FLAVOUR" == "vagrant" ]; then
         else
             NEED+=("vbguest")
         fi
-        if vagrant plugin list | grep disksize; then
-            echo "ok"
-        else
-            NEED+=("vagrant-disksize")
-        fi
+        #if vagrant plugin list | grep disksize; then
+        #    echo "ok"
+        #else
+        #    NEED+=("vagrant-disksize")
+        #fi
     fi
 fi
 
@@ -704,27 +704,27 @@ for package in ${NEED[@]}; do
             echo "${boldred}Automated installation of vagrant-vbguest failed!${normal}"
             if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
         fi
-    elif [ "$package" = "vagrant-disksize" ]; then
-        cmd="sudo vagrant plugin install vagrant-disksize"
-        echo "The vagrant-disksize plugin is required for building VMs. ${bold}Install automatically?${normal}"
-        if [ ! -z "$cmd" ]; then
-            while true; do
-                echo -n "${bold}Run:${normal} $cmd ? [yn] "
-                if [ "$INTERACTIVE" -eq 1 ]; then
-                    read yn
-                else
-                    yn="y"
-                fi
-                case $yn in
-                    [Yy]* ) $cmd; break;;
-                    [Nn]* ) break;;
-                    * ) echo "Please answer yes or no.";;
-                esac
-            done
-        else
-            echo "${boldred}Automated installation of vagrant-disksize failed!${normal}"
-            if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
-        fi
+    #elif [ "$package" = "vagrant-disksize" ]; then
+    #    cmd="sudo vagrant plugin install vagrant-disksize"
+    #    echo "The vagrant-disksize plugin is required for building VMs. ${bold}Install automatically?${normal}"
+    #    if [ ! -z "$cmd" ]; then
+    #        while true; do
+    #            echo -n "${bold}Run:${normal} $cmd ? [yn] "
+    #            if [ "$INTERACTIVE" -eq 1 ]; then
+    #                read yn
+    #            else
+    #                yn="y"
+    #            fi
+    #            case $yn in
+    #                [Yy]* ) $cmd; break;;
+    #                [Nn]* ) break;;
+    #                * ) echo "Please answer yes or no.";;
+    #            esac
+    #        done
+    #    else
+    #        echo "${boldred}Automated installation of vagrant-disksize failed!${normal}"
+    #        if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
+    #    fi
     elif [ "$package" = "docker" ]; then
         echo "We expect users of docker to be able to install docker themselves."
         echo "Docker was not found on your system yet!"
@@ -1001,7 +1001,8 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         else
             echo "ansible_python_interpreter: \"/usr/bin/python3\" #Python interpreter for Vagrant to use with Ansible. This interpreter must be already available in vagrant box $VAGRANTBOX, you may want to set it to python2 instead" >> $STAGEDCONFIG
         fi
-        echo "vagrant_disksize: \"$DISKSIZE\" #Increase this if you plan to install particularly large software!" >> $STAGEDCONFIG
+        echo "extra_disksize: \"$DISKSIZE\" #Size in GB of extra disk in VM" >> $STAGEDCONFIG
+        #echo "vagrant_disksize: \"$DISKSIZE\" #Increase this if you plan to install particularly large software!" >> $STAGEDCONFIG
     elif [[ $FLAVOUR == "docker" ]]; then
         GROUP="lamachine"
         echo "unix_user: \"lamachine\"" >> $STAGEDCONFIG
