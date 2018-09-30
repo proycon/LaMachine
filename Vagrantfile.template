@@ -65,29 +65,28 @@ Vagrant.configure(2) do |config|
      vb.cpus = lamachine_config['vm_cpus']
      vb.customize ["modifyvm", :id, "--nictype1", "Am79C973"]
 
-     if lamachine_config['extra_disksize'] > 0
-          #this does not work on all distros! only optimized for the debian basebox
-          #used by LaMachine
-          if ARGV[0] == "up" && ! File.exist?("./extradisk.vdi")
-            vb.customize [
-              'createhd',
-              '--filename', "./extradisk.vdi",
-              '--format', 'VDI',
-              '--size', lamachine_config['extra_disksize'] * 1024
-            ]
-
-            vb.customize [
-              'storageattach', :id,
-              '--storagectl', 'SATA Controller',
-              '--port', 1, '--device', 0,
-              '--type', 'hdd', '--medium',
-              './extradisk.vdi'
-            ]
-          end
-          if ARGV[0] == "up" && ! File.exist?("./extradisk.vdi")
-            # Run script to map new disk
-            config.vm.provision "shell", path: "vm_expanddisk.sh"
-          end
+     if lamachine_config['resize_disk'] > 0
+          #this does not work on all distros! only optimized for the debian basebox used by LaMachine
+          if ARGV[0] == "up" && ! File.exist?("#{ENV["HOME"]}/VirtualBox VMs/#{virtualbox.name}/lamachine.vdi")
+              virtualbox.customize [
+                  "clonehd", "#{ENV["HOME"]}/VirtualBox VMs/#{virtualbox.name}/contrib-stretch.vmdk",
+                             "#{ENV["HOME"]}/VirtualBox VMs/#{virtualbox.name}/lamachine.vdi",
+                  "--format", "VDI"
+              ]
+              virtualbox.customize [
+                  "modifyhd", "#{ENV["HOME"]}/VirtualBox VMs/#{virtualbox.name}/lamachine.vdi",
+                  "--resize", lamachine_config['resize_disk'] * 1024
+              ]
+              virtualbox.customize [
+                  "storageattach", :id,
+                  "--storagectl", "SATAController",
+                  "--port", "0",
+                  "--device", "0",
+                  "--type", "hdd",
+                  "--nonrotational", "on",
+                  "--medium", "#{ENV["HOME"]}/VirtualBox VMs/#{virtualbox.name}/lamachine.vdi"
+              ]
+         end
      end
   end
   #
