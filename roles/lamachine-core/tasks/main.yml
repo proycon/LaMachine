@@ -66,7 +66,7 @@
                 mode: u+rwx,a+rx
                 state: directory
 
-          - mount: "Mounting extra LaMachine partition"
+          - name: "Mounting extra LaMachine partition"
             become: yes
             become_user: root
             mount:
