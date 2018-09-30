@@ -68,10 +68,10 @@ Vagrant.configure(2) do |config|
      if lamachine_config['extra_disksize'] > 0
           #this does not work on all distros! only optimized for the debian basebox
           #used by LaMachine
-          if ARGV[0] == "up" && ! File.exist?("./lamachine.vdi")
+          if ARGV[0] == "up" && ! File.exist?("#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/lamachine.vdi")
             vb.customize [
               'createhd',
-              '--filename', "./lamachine.vdi",
+              '--filename', "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/lamachine.vdi",
               '--format', 'VDI',
               '--size', lamachine_config['extra_disksize'] * 1024
             ]
@@ -81,7 +81,7 @@ Vagrant.configure(2) do |config|
               '--storagectl', 'SATA Controller',
               '--port', 1, '--device', 0,
               '--type', 'hdd', '--medium',
-              './lamachine.vdi'
+              "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/lamachine.vdi"
             ]
           end
      end

@@ -86,10 +86,10 @@
               regexp='^/dev/sdb1'
               line='/dev/sdb1    /mnt/lamachine   ext4   rw,errors=remount-ro,discard   0 0'
 
-           - name: Ensure global prefix is a link to the extra disk
-             become: "{{lm_become}}"
-             become_user: root
-             file:
+          - name: Ensure global prefix is a link to the extra disk
+            become: "{{lm_become}}"
+            become_user: root
+            file:
                src: "/mnt/lamachine"
                dest: "{{global_prefix}}"
                state: link
