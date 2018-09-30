@@ -21,7 +21,7 @@ Vagrant.configure(2) do |config|
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = lamachine_config['vagrant_box']
   config.vm.define "lamachine-vm"
-  config.vm.disksize.size = lamachine_config['vagrant_disksize']
+  config.disksize.size = lamachine_config['vagrant_disksize']
 
 
   # Disable automatic box update checking. If you disable this, then
