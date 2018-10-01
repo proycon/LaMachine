@@ -56,14 +56,10 @@
         tmp_dest: "{{lm_prefix}}/opt/"
 
 
-    - name: Unpacking resources
-      unarchive:
-        src: "{{lm_prefix}}/opt/fame_resources.tar.gz"
-        dest: "{{lm_prefix}}/opt/"
-
     - name: Finalising resource installation
       shell: |
           #!/bin/bash
+          tar xzf fame_resources.tar.gz
           rm -rf fame_resources.tar.gz
           mv resources/* .
           chown -R {{unix_user}}:{{unix_group}} .
