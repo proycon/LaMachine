@@ -52,8 +52,8 @@
         url: https://applejack.science.ru.nl/downloads/fame/fame/fame_resources.tar.gz
         url_username: "{{fame_user}}"
         url_password: "{{fame_password}}"
-        dest: "{{lm_prefix}}/opt/fame_resources.tar.gz"
-        tmp_dest: "{{lm_prefix}}/opt/"
+        dest: "{{lm_prefix}}/opt/fame_resources/fame_resources.tar.gz"
+        tmp_dest: "{{lm_prefix}}/opt/fame_resources"
 
 
     - name: Finalising resource installation
