@@ -52,7 +52,9 @@
         url: https://applejack.science.ru.nl/downloads/fame/fame/fame_resources.tar.gz
         url_username: "{{fame_user}}"
         url_password: "{{fame_password}}"
-        dest: "{{lm_prefix}}/opt/fame_resources"
+        dest: "{{lm_prefix}}/opt/fame_resources.tar.gz"
+        tmp_dest: "{{lm_prefix}}/opt/"
+
 
     - name: Unpacking resources
       unarchive:
