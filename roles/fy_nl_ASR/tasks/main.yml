@@ -58,8 +58,8 @@
 
     - name: Unpacking resources
       unarchive:
-        src: "{{lm_prefix}}/opt/fame_resources/fame_resources.tar.gz"
-        dest: "{{lm_prefix}}/opt/fame_resources/"
+        src: "{{lm_prefix}}/opt/fame_resources.tar.gz"
+        dest: "{{lm_prefix}}/opt/"
 
     - name: Finalising resource installation
       shell: |
