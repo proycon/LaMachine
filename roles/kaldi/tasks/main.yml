@@ -6,9 +6,9 @@
     when: ansible_distribution|lower == "macosx"
 
   - name: "Configuration Overview for kaldi"
-     debug:
+    debug:
          var: "{{item}}"
-     with_items:
+    with_items:
          - kaldi_branch
          - kaldi_source
          - kaldi_test_ignore_errors
