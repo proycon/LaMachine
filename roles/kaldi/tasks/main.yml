@@ -48,7 +48,7 @@
       chdir: "{{source_path}}/atlas-lapack"
     when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro') and root
 
-  - when: recompile_kaldi is not defined or recompile_kaldi == "yes" #default
+  - when: recompile_kaldi is not defined or recompile_kaldi #default
     block:
       - name: "Checking out Kaldi"
         git:
