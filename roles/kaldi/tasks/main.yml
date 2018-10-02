@@ -5,6 +5,16 @@
       msg: "Kaldi is not supported on Mac OS X"
     when: ansible_distribution|lower == "macosx"
 
+  - name: "Configuration Overview for kaldi"
+     debug:
+         var: "{{item}}"
+     with_items:
+         - kaldi_branch
+         - kaldi_source
+         - kaldi_test_ignore_errors
+         - kaldi_configure_options
+         - recompile_kaldi
+
   - name: Installing global dependencies for Kaldi
     include_role:
       name: lamachine-package-install
