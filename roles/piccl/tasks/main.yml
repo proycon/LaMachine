@@ -14,7 +14,6 @@
         - { debian: tesseract-ocr-eng, arch: tesseract-data-eng } #English is already included on redhat? no package tesseract-data-eng
         - { debian: tesseract-ocr-nld, redhat: tesseract-langpack-nld, arch: tesseract-data-nld }
         - { debian: tesseract-ocr-deu, redhat: tesseract-langpack-deu, arch: tesseract-data-deu }
-        - { debian: tesseract-ocr-deu-frak, redhat: tesseract-langpack-deu_frak, arch: tesseract-data-deu_frak }
         - { debian: tesseract-ocr-fra, redhat: tesseract-langpack-fra, arch: tesseract-data-fra }
         - { debian: poppler-utils, redhat: poppler-utils, arch: poppler }
         - { debian: djvulibre-bin, redhat: djvulibre, arch: djvulibre }
@@ -23,6 +22,15 @@
         - { debian: perl, redhat: perl, arch: perl }
       loop_control:
           loop_var: package
+
+    - name: Installing optional global dependencies for PICCL
+      include_role:
+        name: lamachine-package-install
+      with_items:
+        - { debian: tesseract-ocr-deu-frak, redhat: tesseract-langpack-deu_frak, arch: tesseract-data-deu_frak } #not present in Ubuntu 18.04 anymore (#117)
+      loop_control:
+          loop_var: package
+      ignore_errors: yes #not present on all distros so allow failure
 
     - name: Installing TICCLtools
       include_role:
