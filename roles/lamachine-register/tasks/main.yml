@@ -2,12 +2,14 @@
 
     - name: "Registering metadata: overview"
       debug:
-          var: "{{item}}"
+          var: "{{var_item}}"
       with_items:
           - update
           - package
           - metadata_defaults
           - metadata
+      loop_control:
+          loop_var: var_item
 
     - name: "Download remote metadata {% if url is defined and url %}from {{url}}{% endif %}"
       get_url:
