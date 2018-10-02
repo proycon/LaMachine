@@ -443,6 +443,29 @@ if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
             * ) echo "Please answer with the corresponding number of your preference..";;
         esac
     done
+
+    if [[ "$FLAVOUR" == "vagrant" ]] && [ $BUILD -eq 1 ] && [ $DISKSIZE -eq 0 ]; then
+        echo "${bold}Allocate extra diskspace?${normal}"
+        echo "  The standard LaMachine disk is limited in size (about 9GB). If you plan to include certain very large software"
+        echo "  collections that LaMachine offers (such as kaldi, valkuil) then this is not sufficient and"
+        echo "  you need to allocate an extra virtual disk, specify the size below:"
+        echo "  Just enter 0 if you do not need this; you don't need this for the default selection of software."
+        echo -n "${bold}How much extra diskspace to reserve?${normal} [0 or size in GB] "
+        read choice
+        case $choice in
+            [0-9]* ) DISKSIZE=$choice;;
+            * ) echo "Please answer with the corresponding size in GB (use 0 if you don't need an extra disk)";;
+        esac
+    elif [[ "$FLAVOUR" == "docker" ]] && [ $BUILD -eq 1 ] && [ $DISKSIZE -eq 0 ]; then
+        echo "${bold}Container diskspace${normal}"
+        echo "  A standard docker container is limited in size (usually 10GB). If you plan to include certain very large optional software"
+        echo "  collections that LaMachine offers (such as kaldi, valkuil) then this is not sufficient and"
+        echo "  you need to increase the base size of your containers (depending on the storage driver you use for docker)."
+        echo "  Consult the docker documentation at https://docs.docker.com/storage/storagedriver/ and do so now if you need this."
+        echo "  You don't need this for the default selection of software."
+        echo -n "${bold}Press ENTER when ready to continue${normal}"
+        read choice
+    fi
   fi
 fi
 
