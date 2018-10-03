@@ -23,6 +23,7 @@ Vagrant.configure(2) do |config|
   config.vm.define "lamachine-vm"
 
 
+
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
@@ -63,6 +64,27 @@ Vagrant.configure(2) do |config|
      vb.memory = lamachine_config['vm_memory'] #you will want to increase the memory limit for many applications!!
      vb.cpus = lamachine_config['vm_cpus']
      vb.customize ["modifyvm", :id, "--nictype1", "Am79C973"]
+
+     if lamachine_config['extra_disksize'] > 0
+          #this does not work on all distros! only optimized for the debian basebox
+          #used by LaMachine
+          if ARGV[0] == "up" && ! File.exist?("#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/lamachine.vdi")
+            vb.customize [
+              'createhd',
+              '--filename', "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/lamachine.vdi",
+              '--format', 'VDI',
+              '--size', lamachine_config['extra_disksize'] * 1024
+            ]
+
+            vb.customize [
+              'storageattach', :id,
+              '--storagectl', 'SATA Controller',
+              '--port', 1, '--device', 0,
+              '--type', 'hdd', '--medium',
+              "#{ENV["HOME"]}/VirtualBox VMs/#{vb.name}/lamachine.vdi"
+            ]
+          end
+     end
   end
   #
   # View the documentation for the provider you are using for more

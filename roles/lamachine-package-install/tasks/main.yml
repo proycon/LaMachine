@@ -5,7 +5,7 @@
       become_user: root
       apt:
         name: "{{package.debian}}"
-        state: installed
+        state: present
       when: root and "debian" in package and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linux mint")
 
     - name: "{% if 'debian' in package %}{{package.debian}}{% else %}(NOT APPLICABLE){% endif %} - Registering package metadata (Debian/Ubuntu)"
@@ -22,7 +22,7 @@
       become_user: root
       yum:
         name: "{{package.redhat}}"
-        state: installed
+        state: present
       when: root and "redhat" in package and (ansible_distribution|lower == "redhat" or ansible_distribution|lower == "centos" or  ansible_distribution|lower == "fedora" or ansible_distribution|lower == "rhel")
 
     - name: "{% if 'arch' in package %}{{package.arch}}{% else %}(NOT APPLICABLE){% endif %} - Installing global dependency (Arch)"
@@ -30,11 +30,11 @@
       become_user: root
       pacman:
         name: "{{package.arch}}"
-        state: installed
+        state: present
       when: root and "arch" in package and (ansible_distribution|lower == "archlinux")
 
     - name: "{% if 'homebrew' in package %}{{package.homebrew}}{% else %}(NOT APPLICABLE){% endif %} - Installing global dependency (Mac OS X/Homebrew)"
       homebrew:
         name: "{{package.homebrew}}"
-        state: installed
+        state: present
       when: '"homebrew" in package and (ansible_distribution|lower == "macosx")'

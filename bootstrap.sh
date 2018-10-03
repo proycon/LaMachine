@@ -20,7 +20,7 @@ boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
 echo "${bold}=====================================================================${normal}"
-echo "           ,              ${bold}LaMachine v2.4.1${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
+echo "           ,              ${bold}LaMachine v2.4.2${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
 echo "            /| |\         Centre of Language and Speech Technology"
@@ -70,6 +70,7 @@ usage () {
     echo " ${bold}--targetdir${normal} - Set a target directory for local environment creation, this should be an existing path and the local environment will be created under it. Defaults to current working directory."
     echo " ${bold}--services${normal} - Preset enabled services (comma seperated list). Default: all"
     echo " ${bold}--force${normal} - Preset a default force parameter (set to 1 or 2). Note that this will take effect on ANY subsequent update!"
+    echo " ${bold}--disksize${normal} - Sets extra disksize for VMs; you'll want to use  this if you plan to include particularly large software and exceed the default 8GB"
 }
 
 USER_SET=0 #explicitly set?
@@ -187,6 +188,7 @@ FORCE=0
 PREFER_DISTRO=0
 NOSYSUPDATE=0
 VMMEM=4096
+DISKSIZE=0 #for extra disk in VM (in GB)
 VAGRANTBOX="debian/contrib-stretch64" #base distribution for VM
 DOCKERREPO="proycon/lamachine"
 CONTROLLER="internal"
@@ -339,6 +341,11 @@ while [[ $# -gt 0 ]]; do
         shift
         shift
         ;;
+        --disksize)
+        DISKSIZE="$2"
+        shift
+        shift
+        ;;
         --vmmem) #extra ansible parameters
         VMMEM=$2
         shift
@@ -436,6 +443,29 @@ if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
             * ) echo "Please answer with the corresponding number of your preference..";;
         esac
     done
+
+    if [[ "$FLAVOUR" == "vagrant" ]] && [ $BUILD -eq 1 ] && [ $DISKSIZE -eq 0 ]; then
+        echo "${bold}Allocate extra diskspace?${normal}"
+        echo "  The standard LaMachine disk is limited in size (about 9GB). If you plan to include certain very large software"
+        echo "  collections that LaMachine offers (such as kaldi, valkuil) then this is not sufficient and"
+        echo "  you need to allocate an extra virtual disk, specify the size below:"
+        echo "  Just enter 0 if you do not need this; you don't need this for the default selection of software."
+        echo -n "${bold}How much extra diskspace to reserve?${normal} [0 or size in GB] "
+        read choice
+        case $choice in
+            [0-9]* ) DISKSIZE=$choice;;
+            * ) echo "Please answer with the corresponding size in GB (use 0 if you don't need an extra disk)";;
+        esac
+    elif [[ "$FLAVOUR" == "docker" ]] && [ $BUILD -eq 1 ] && [ $DISKSIZE -eq 0 ]; then
+        echo "${bold}Container diskspace${normal}"
+        echo "  A standard docker container is limited in size (usually 10GB). If you plan to include certain very large optional software"
+        echo "  collections that LaMachine offers (such as kaldi, valkuil) then this is not sufficient and"
+        echo "  you need to increase the base size of your containers (depending on the storage driver you use for docker)."
+        echo "  Consult the docker documentation at https://docs.docker.com/storage/storagedriver/ and do so now if you need this."
+        echo "  You don't need this for the default selection of software."
+        echo -n "${bold}Press ENTER when ready to continue${normal}"
+        read choice
+    fi
   fi
 fi
 
@@ -604,6 +634,7 @@ if [ "$FLAVOUR" == "vagrant" ]; then
     if ! which vagrant; then
         NEED+=("vagrant")
         NEED+=("vbguest")
+        #NEED+=("vagrant-disksize")
     else
         echo "Checking available vagrant plugins"
         if vagrant plugin list | grep vbguest; then
@@ -611,6 +642,11 @@ if [ "$FLAVOUR" == "vagrant" ]; then
         else
             NEED+=("vbguest")
         fi
+        #if vagrant plugin list | grep disksize; then
+        #    echo "ok"
+        #else
+        #    NEED+=("vagrant-disksize")
+        #fi
     fi
 fi
 
@@ -691,6 +727,27 @@ for package in ${NEED[@]}; do
             echo "${boldred}Automated installation of vagrant-vbguest failed!${normal}"
             if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
         fi
+    #elif [ "$package" = "vagrant-disksize" ]; then
+    #    cmd="sudo vagrant plugin install vagrant-disksize"
+    #    echo "The vagrant-disksize plugin is required for building VMs. ${bold}Install automatically?${normal}"
+    #    if [ ! -z "$cmd" ]; then
+    #        while true; do
+    #            echo -n "${bold}Run:${normal} $cmd ? [yn] "
+    #            if [ "$INTERACTIVE" -eq 1 ]; then
+    #                read yn
+    #            else
+    #                yn="y"
+    #            fi
+    #            case $yn in
+    #                [Yy]* ) $cmd; break;;
+    #                [Nn]* ) break;;
+    #                * ) echo "Please answer yes or no.";;
+    #            esac
+    #        done
+    #    else
+    #        echo "${boldred}Automated installation of vagrant-disksize failed!${normal}"
+    #        if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
+    #    fi
     elif [ "$package" = "docker" ]; then
         echo "We expect users of docker to be able to install docker themselves."
         echo "Docker was not found on your system yet!"
@@ -776,7 +833,7 @@ for package in ${NEED[@]}; do
                 #add PPA
                 cmd="sudo apt-get update && sudo apt-get $NONINTERACTIVEFLAGS install software-properties-common && sudo apt-add-repository -y ppa:ansible/ansible && sudo apt-get update && sudo apt-get $NONINTERACTIVEFLAGS install ansible"
             else
-                cmd="sudo echo 'deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main' >> /etc/apt/sources.list && sudo apt-get $NONINTERACTIVEFLAGS update && sudo apt-get $NONINTERACTIVEFLAGS install ansible"
+                cmd="echo 'deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main' | sudo tee -a /etc/apt/sources.list && sudo apt-get $NONINTERACTIVEFLAGS update && sudo apt-get $NONINTERACTIVEFLAGS install gnupg && sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 && sudo apt-get $NONINTERACTIVEFLAGS update && sudo apt-get $NONINTERACTIVEFLAGS --allow-unauthenticated install ansible"
             fi
         elif [ "$OS" = "redhat" ]; then
             cmd="sudo yum  $NONINTERACTIVEFLAGS install ansible"
@@ -967,6 +1024,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         else
             echo "ansible_python_interpreter: \"/usr/bin/python3\" #Python interpreter for Vagrant to use with Ansible. This interpreter must be already available in vagrant box $VAGRANTBOX, you may want to set it to python2 instead" >> $STAGEDCONFIG
         fi
+        echo "extra_disksize: $DISKSIZE #Size in GB of dedicated LaMachine disk in the VM (separated from boot image, needed if you plan to exceed the default 8GB total)" >> $STAGEDCONFIG
     elif [[ $FLAVOUR == "docker" ]]; then
         GROUP="lamachine"
         echo "unix_user: \"lamachine\"" >> $STAGEDCONFIG
@@ -1046,13 +1104,13 @@ services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all po
 webservertype: nginx #If set to anything different, the internal webserver will not be enabled/provided by LaMachine (which allows you to run your own external one), do leave webserver: true set as is though.
 " >> $STAGEDCONFIG
 if [[ $OS == "mac" ]] || [[ "$FLAVOUR" == "remote" ]]; then
-    echo "lab: false #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)"
+    echo "lab: false #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)" >> $STAGEDCONFIG
 else
-    echo "lab: true #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)"
+    echo "lab: true #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)" >> $STAGEDCONFIG
 fi
-echo "lab_password_sha1: \"sha1:fa40baddab88:c498070b5885ee26ed851104ddef37926459b0c4\" #default password for Jupyter Lab: lamachine, change this with 'lamachine-passwd lab'"
-echo "lab_allow_origin: \"*\" #hosts that may access the lab environment"
-echo "flat_password: \"flat\" #initial password for the FLAT administrator (if installed; username 'flat'), updating this later has no effect (edit in FLAT itself)!"
+echo "lab_password_sha1: \"sha1:fa40baddab88:c498070b5885ee26ed851104ddef37926459b0c4\" #default password for Jupyter Lab: lamachine, change this with 'lamachine-passwd lab'" >> $STAGEDCONFIG
+echo "lab_allow_origin: \"*\" #hosts that may access the lab environment" >> $STAGEDCONFIG
+echo "flat_password: \"flat\" #initial password for the FLAT administrator (if installed; username 'flat'), updating this later has no effect (edit in FLAT itself)!" >> $STAGEDCONFIG
 if [ $FORCE -ne 0 ]; then
     echo "force: $FORCE #Sets the default force parameter for updates, set to 1 to force updates or 2 to explicitly remove all sources and start from scratch on each update. Remove this line entirely if you don't need it or are in doubt" >> $STAGEDCONFIG
 fi

@@ -109,6 +109,7 @@
               name: lamachine-register
           vars:
               update: "{{item}}"
+              allow_failure: "yes" #in case the app is not installed
               metadata: #add entrypoint metadata to registry
                   identifier: "{{item}}"
                   entryPoints:
@@ -126,6 +127,7 @@
               name: lamachine-register
           vars:
             update: "colibri-core"
+            allow_failure: "yes" #in case the app is not installed
             metadata: #add entrypoint metadata to registry
                 identifier: "colibri-core"
                 entryPoints:
@@ -150,6 +152,7 @@
             - clamservices
             - django
             - flat
+            - babelente
           environment: "{{lm_env}}"
 
         - name: "Install webserver configuration"

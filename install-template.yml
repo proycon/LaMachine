@@ -69,6 +69,12 @@
                                              #(>7GB !!!! - Not supported on Mac OS X)
      # - corenlp                          ## Stanford CoreNLP (including all models)
                                              #(>2GB)
+     # - fy_nl_ASR                        ## Frisian-Dutch Speech Recognition system with webservice
+                                             #(>9GB !!!! - Not supported on Mac OS X)
+                                             #Relies on kaldi, another 7GB!!
+                                             #Authorization is required for this; ensure to
+                                             #set fame_user and fame_password in your LaMachine configuration
+                                             #contact h.vandenheuvel@let.ru.nl to request access
 
 
 # NOTE: ensure that all enabled roles are lined up with the same amount of spaces!
