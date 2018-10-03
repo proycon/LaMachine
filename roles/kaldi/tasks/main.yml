@@ -5,6 +5,16 @@
       msg: "Kaldi is not supported on Mac OS X"
     when: ansible_distribution|lower == "macosx"
 
+  - name: "Configuration Overview for kaldi"
+    debug:
+         var: "{{item}}"
+    with_items:
+         - kaldi_branch
+         - kaldi_source
+         - kaldi_test_ignore_errors
+         - kaldi_configure_options
+         - recompile_kaldi
+
   - name: Installing global dependencies for Kaldi
     include_role:
       name: lamachine-package-install
@@ -38,7 +48,7 @@
       chdir: "{{source_path}}/atlas-lapack"
     when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro') and root
 
-  - when: recompile_kaldi == "yes" #default
+  - when: recompile_kaldi is not defined or recompile_kaldi #default
     block:
       - name: "Checking out Kaldi"
         git:
@@ -46,13 +56,11 @@
           dest: "{{lm_prefix}}/opt/kaldi"
           version: "{{kaldi_branch}}"
           force: yes
-        when: recompile_kaldi != "no"
 
       - name: Patch OpenFST makefile so that we can link with it statically (needed for Alex-ASR)
         shell: sed -i "s/--enable-far --enable-ngram-fsts/--enable-far --with-pic --enable-ngram-fsts/" Makefile
         args:
            chdir: "{{lm_prefix}}/opt/kaldi/tools"
-        when: recompile_kaldi != "no"
 
       - name: Compiling kaldi/tools
         shell: make -j $(nproc)
@@ -66,7 +74,6 @@
         shell: "./configure {{kaldi_configure_options}}"
         args:
           chdir: "{{lm_prefix}}/opt/kaldi/src"
-        when: recompile_kaldi != "no"
 
       - name: Compiling kaldi/src
         shell: make -j $(nproc)
