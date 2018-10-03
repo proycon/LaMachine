@@ -44,6 +44,7 @@
         fi
         ln -sf $DIR {{lm_prefix}}/opt/{{item}}
       with_items:
+        - clam
         - fy_nl_ASR
       environment: "{{lm_env}}"
 
