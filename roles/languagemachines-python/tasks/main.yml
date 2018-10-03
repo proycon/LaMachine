@@ -152,6 +152,7 @@
             - clamservices
             - django
             - flat
+            - babelente
           environment: "{{lm_env}}"
 
         - name: "Install webserver configuration"
