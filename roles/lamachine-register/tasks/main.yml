@@ -1,14 +1,14 @@
 ---
 
-  - name: "Registering metadata: overview"
-    debug:
-         var: "{{update}}"
-  - debug:
-         var: "{{package|to_json}}"
-  - debug:
-         var: "{{metadata_defaults|to_json}}"
-  - debug:
-         var: "{{metadata|to_json}}"
+    - name: "Registering metadata: overview"
+      debug:
+           var: "{{update}}"
+    - debug:
+           var: "{{package|to_json}}"
+    - debug:
+           var: "{{metadata_defaults|to_json}}"
+    - debug:
+           var: "{{metadata|to_json}}"
 
     - name: "Download remote metadata {% if url is defined and url %}from {{url}}{% endif %}"
       get_url:
