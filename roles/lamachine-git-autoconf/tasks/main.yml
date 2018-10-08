@@ -5,7 +5,6 @@
       import_role:
         name: lamachine-git
       vars:
-        package: "{{package}}"
         do_registration: false
 
     - name: "{{package.repo}} - Checking whether recompilation is needed"
