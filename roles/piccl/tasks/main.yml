@@ -26,10 +26,11 @@
     - name: Installing optional global dependencies for PICCL
       include_role:
         name: lamachine-package-install
-      package:
-        debian: "tesseract-ocr-deu-frak" #not present in Ubuntu 18.04 anymore (#117)
-        redhat: tesseract-langpack-deu_frak
-        arch: tesseract-data-deu_frak
+      vars:
+        package:
+          debian: "tesseract-ocr-deu-frak" #not present in Ubuntu 18.04 anymore (#117)
+          redhat: tesseract-langpack-deu_frak
+          arch: tesseract-data-deu_frak
       when: not (ansible_distribution|lower == "ubuntu" and ansible_distribution_version|string >= "18.04")
       ignore_errors: yes #not present on all distros so allow failure
 
