@@ -951,24 +951,26 @@ if [ -z "$LM_NAME" ]; then
     exit 2
 fi
 
-DETECTEDHOSTNAME=$(hostname --fqdn)
-if [ -z "$DETECTEDHOSTNAME" ] || [ "$FLAVOUR" = "vagrant" ] || [ "$FLAVOUR" = "docker" ]; then
-    DETECTEDHOSTNAME="$LM_NAME"
-fi
-
-if [ -z "$HOSTNAME" ] && [ $INTERACTIVE -eq 0 ]; then
-    HOSTNAME=$DETECTEDHOSTNAME
-fi
-
-if [ -z "$HOSTNAME" ]; then
-    echo "The hostname or fully qualified domain name (FDQN) determines how your LaMachine installation can be referenced on a network."
-    if [ "$FLAVOUR" = "remote" ]; then
-        echo "This determines the remote machine LaMachine will be installed on!"
+if [ $BUILD -eq 1 ]; then
+    DETECTEDHOSTNAME=$(hostname --fqdn)
+    if [ -z "$DETECTEDHOSTNAME" ] || [ "$FLAVOUR" = "vagrant" ] || [ "$FLAVOUR" = "docker" ]; then
+        DETECTEDHOSTNAME="$LM_NAME"
     fi
-    echo -n "${bold}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal} "
-    read HOSTNAME
-    if [ -z "$HOSTNAME" ]; then
+
+    if [ -z "$HOSTNAME" ] && [ $INTERACTIVE -eq 0 ]; then
         HOSTNAME=$DETECTEDHOSTNAME
+    fi
+
+    if [ -z "$HOSTNAME" ]; then
+        echo "The hostname or fully qualified domain name (FDQN) determines how your LaMachine installation can be referenced on a network."
+        if [ "$FLAVOUR" = "remote" ]; then
+            echo "This determines the remote machine LaMachine will be installed on!"
+        fi
+        echo -n "${bold}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal} "
+        read HOSTNAME
+        if [ -z "$HOSTNAME" ]; then
+            HOSTNAME=$DETECTEDHOSTNAME
+        fi
     fi
 fi
 
@@ -1251,11 +1253,16 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
         fi
     else
         cp -f $SOURCEDIR/Vagrantfile.prebuilt $SOURCEDIR/Vagrantfile || fatalerror "Unable to copy Vagrantfile"
-        sed -i s/lamachine-vm/$HOSTNAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
-        sed -i s/HOSTNAME/$HOSTNAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+        sed -i s/lamachine-vm/$LM_NAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         if [ $INTERACTIVE -eq 1 ]; then
-            echo "${bold}Opening Vagrant configuration in editor for final configuration...${normal}"
-            sleep 3
+            #not needed for BUILD=1 because most interesting parameters inherited from the ansible host configuration
+            echo "${bold}Do you want to open the vagrant configuration in an editor for final configuration? (recommended to increase memory/cpu cores) [yn]${normal}"
+            read choice
+            case $choice in
+                [n]* ) break;;
+                [y]* ) BUILD=0;  break;;
+                * ) echo "Please answer with the y or n..";;
+            esac
             if ! "$EDITOR" "$SOURCEDIR/Vagrantfile"; then
                 echo "aborted by editor..." >&2
                 exit 2
