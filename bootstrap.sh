@@ -524,25 +524,28 @@ if [ -z "$LOCALENV_TYPE" ]; then
     LOCALENV_TYPE="virtualenv"
 fi
 
-if [[ "$VERSION" == "undefined" ]]; then
-    echo "${bold}LaMachine comes in several versions:${normal}"
-    echo " 1) a stable version; you get the latest releases deemed stable (recommended)"
-    echo " 2) a development version; you get the very latest development versions for testing, this may not always work as expected!"
-    echo " 3) custom version; you decide explicitly what exact versions you want (for reproducibility);"
-    echo "    this expects you to provide a LaMachine version file (customversions.yml) with exact version numbers."
-    if [[ "$OS" == "mac" ]]; then
-        echo "    NOTE: CUSTOM VERSIONING IS NOT SUPPORTED ON MAC OS X!"
+
+if [ $BUILD -eq 1 ]; then
+    if [[ "$VERSION" == "undefined" ]]; then
+        echo "${bold}LaMachine comes in several versions:${normal}"
+        echo " 1) a stable version; you get the latest releases deemed stable (recommended)"
+        echo " 2) a development version; you get the very latest development versions for testing, this may not always work as expected!"
+        echo " 3) custom version; you decide explicitly what exact versions you want (for reproducibility);"
+        echo "    this expects you to provide a LaMachine version file (customversions.yml) with exact version numbers."
+        if [[ "$OS" == "mac" ]]; then
+            echo "    NOTE: CUSTOM VERSIONING IS NOT SUPPORTED ON MAC OS X!"
+        fi
+        while true; do
+            echo -n "${bold}Which version do you want to install?${normal} [123] "
+            read choice
+            case $choice in
+                [1]* ) VERSION=stable; break;;
+                [2]* ) VERSION=development; break;;
+                [3]* ) VERSION=custom; break;;
+                * ) echo "Please answer with the corresponding number of your preference..";;
+            esac
+        done
     fi
-    while true; do
-        echo -n "${bold}Which version do you want to install?${normal} [123] "
-        read choice
-        case $choice in
-            [1]* ) VERSION=stable; break;;
-            [2]* ) VERSION=development; break;;
-            [3]* ) VERSION=custom; break;;
-            * ) echo "Please answer with the corresponding number of your preference..";;
-        esac
-    done
 fi
 
 if [ -z "$BRANCH" ]; then
