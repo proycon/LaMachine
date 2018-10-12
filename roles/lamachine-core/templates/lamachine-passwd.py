@@ -23,7 +23,7 @@ if __name__ == '__main__':
             from notebook.auth import passwd
             print("Enter a password for the JupyterLab environment:")
             lab_passwd_hash = passwd()
-            r = os.system("sed -i 's/lab_password_sha1.*/lab_password_sha1: \"" + lab_passwd_hash + "\"/' " + CONFFILE)
+            r = os.system("sed -i.bak 's/lab_password_sha1.*/lab_password_sha1: \"" + lab_passwd_hash + "\"/' " + CONFFILE)
             if r != 0:
                 #no lab password yet? append
                 with open(CONFFILE,'a','utf-8') as f:

@@ -46,7 +46,7 @@ if __name__ == '__main__':
         appendpackages = []
         for package in args.packages:
             if package in descriptions:
-                r = os.system("sed -i 's/# - " + package + "/ - " + package +"/' " + MANIFEST)
+                r = os.system("sed -i.bak 's/# - " + package + "/ - " + package +"/' " + MANIFEST)
                 if r == 0:
                     print("Added " + package + " to installation manifest; you can now run lamachine-update to install it",file=sys.stderr)
                 else:
