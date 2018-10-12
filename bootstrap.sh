@@ -20,7 +20,7 @@ boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
 echo "${bold}=====================================================================${normal}"
-echo "           ,              ${bold}LaMachine v2.4.2${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
+echo "           ,              ${bold}LaMachine v2.4.3${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
 echo "            /| |\         Centre of Language and Speech Technology"
@@ -948,24 +948,26 @@ if [ -z "$LM_NAME" ]; then
     exit 2
 fi
 
-DETECTEDHOSTNAME=$(hostname --fqdn)
-if [ -z "$DETECTEDHOSTNAME" ] || [ "$FLAVOUR" = "vagrant" ] || [ "$FLAVOUR" = "docker" ]; then
-    DETECTEDHOSTNAME="$LM_NAME"
-fi
-
-if [ -z "$HOSTNAME" ] && [ $INTERACTIVE -eq 0 ]; then
-    HOSTNAME=$DETECTEDHOSTNAME
-fi
-
-if [ -z "$HOSTNAME" ]; then
-    echo "The hostname or fully qualified domain name (FDQN) determines how your LaMachine installation can be referenced on a network."
-    if [ "$FLAVOUR" = "remote" ]; then
-        echo "This determines the remote machine LaMachine will be installed on!"
+if [ $BUILD -eq 1 ]; then
+    DETECTEDHOSTNAME=$(hostname --fqdn)
+    if [ -z "$DETECTEDHOSTNAME" ] || [ "$FLAVOUR" = "vagrant" ] || [ "$FLAVOUR" = "docker" ]; then
+        DETECTEDHOSTNAME="$LM_NAME"
     fi
-    echo -n "${bold}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal} "
-    read HOSTNAME
-    if [ -z "$HOSTNAME" ]; then
+
+    if [ -z "$HOSTNAME" ] && [ $INTERACTIVE -eq 0 ]; then
         HOSTNAME=$DETECTEDHOSTNAME
+    fi
+
+    if [ -z "$HOSTNAME" ]; then
+        echo "The hostname or fully qualified domain name (FDQN) determines how your LaMachine installation can be referenced on a network."
+        if [ "$FLAVOUR" = "remote" ]; then
+            echo "This determines the remote machine LaMachine will be installed on!"
+        fi
+        echo -n "${bold}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal} "
+        read HOSTNAME
+        if [ -z "$HOSTNAME" ]; then
+            HOSTNAME=$DETECTEDHOSTNAME
+        fi
     fi
 fi
 
@@ -1169,22 +1171,23 @@ else
     fi
 fi
 
-if [ $BUILD -eq 1 ]; then
-    if [ -z "$SOURCEDIR" ]; then
-        echo "Cloning LaMachine git repo ($GITREPO $BRANCH)..."
-        if [ ! -d LaMachine ]; then
-            git clone $GITREPO -b $BRANCH LaMachine || fatalerror "Unable to clone LaMachine git repository"
-        fi
-        SOURCEDIR=$BASEDIR/lamachine-controller/$LM_NAME/LaMachine
-        cd $SOURCEDIR
-    else
-        echo "Updating LaMachine git..."
-        cd $SOURCEDIR
-        if [ "$SOURCEDIR" != "$BASEDIR" ]; then
-            git checkout $BRANCH #only switch branches if we're not already in a git repo the user cloned himself
-        fi
+if [ -z "$SOURCEDIR" ]; then
+    echo "Cloning LaMachine git repo ($GITREPO $BRANCH)..."
+    if [ ! -d LaMachine ]; then
+        git clone $GITREPO -b $BRANCH LaMachine || fatalerror "Unable to clone LaMachine git repository"
     fi
-    git pull #make sure we're up to date
+    SOURCEDIR=$BASEDIR/lamachine-controller/$LM_NAME/LaMachine
+    cd $SOURCEDIR
+else
+    echo "Updating LaMachine git..."
+    cd $SOURCEDIR
+    if [ "$SOURCEDIR" != "$BASEDIR" ]; then
+        git checkout $BRANCH #only switch branches if we're not already in a git repo the user cloned himself
+    fi
+fi
+git pull #make sure we're up to date
+
+if [ $BUILD -eq 1 ]; then
     #copying staged configuration to final location
     cp $STAGEDCONFIG "$SOURCEDIR/host_vars/$HOSTNAME.yml" || fatalerror "Unable to copy $STAGEDCONFIG"
 
