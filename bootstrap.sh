@@ -156,7 +156,7 @@ if [ "$OS" = "unknown" ]; then
         OS="redhat"
     fi
 fi
-if grep -q Microsoft /proc/version; then
+if grep -q Microsoft /proc/version 2> /dev/null; then
   echo "(Windows Linux Subsystem detected)">&2
   WINDOWS=1 #we are running in the Windows Linux Subsystem
 else
