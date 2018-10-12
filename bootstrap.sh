@@ -711,7 +711,7 @@ for package in ${NEED[@]}; do
             echo "Please install vagrant manually from https://www.vagrantup.com/downloads.html and VirtualBox from https://www.virtualbox.org/" && echo " .. press ENTER when done or CTRL-C to abort..." && read
         fi
     elif [ "$package" = "vbguest" ]; then
-        cmd="sudo vagrant plugin install vagrant-vbguest"
+        cmd="vagrant plugin install vagrant-vbguest"
         echo "The vagrant-vbguest plugin is required for building VMs. ${bold}Install automatically?${normal}"
         if [ ! -z "$cmd" ]; then
             while true; do
@@ -732,7 +732,7 @@ for package in ${NEED[@]}; do
             if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
         fi
     #elif [ "$package" = "vagrant-disksize" ]; then
-    #    cmd="sudo vagrant plugin install vagrant-disksize"
+    #    cmd="vagrant plugin install vagrant-disksize"
     #    echo "The vagrant-disksize plugin is required for building VMs. ${bold}Install automatically?${normal}"
     #    if [ ! -z "$cmd" ]; then
     #        while true; do
