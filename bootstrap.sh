@@ -20,7 +20,7 @@ boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
 echo "${bold}=====================================================================${normal}"
-echo "           ,              ${bold}LaMachine v2.4.3${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
+echo "           ,              ${bold}LaMachine v2.4.4${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
 echo "            /| |\         Centre of Language and Speech Technology"
@@ -711,7 +711,7 @@ for package in ${NEED[@]}; do
             echo "Please install vagrant manually from https://www.vagrantup.com/downloads.html and VirtualBox from https://www.virtualbox.org/" && echo " .. press ENTER when done or CTRL-C to abort..." && read
         fi
     elif [ "$package" = "vbguest" ]; then
-        cmd="sudo vagrant plugin install vagrant-vbguest"
+        cmd="vagrant plugin install vagrant-vbguest"
         echo "The vagrant-vbguest plugin is required for building VMs. ${bold}Install automatically?${normal}"
         if [ ! -z "$cmd" ]; then
             while true; do
@@ -732,7 +732,7 @@ for package in ${NEED[@]}; do
             if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
         fi
     #elif [ "$package" = "vagrant-disksize" ]; then
-    #    cmd="sudo vagrant plugin install vagrant-disksize"
+    #    cmd="vagrant plugin install vagrant-disksize"
     #    echo "The vagrant-disksize plugin is required for building VMs. ${bold}Install automatically?${normal}"
     #    if [ ! -z "$cmd" ]; then
     #        while true; do
@@ -1210,10 +1210,10 @@ if [ $BUILD -eq 1 ]; then
             #use the template
             cp $SOURCEDIR/install-template.yml $STAGEDMANIFEST || fatalerror "Unable to copy $SOURCEDIR/install-template.yml"
             if [ "$FLAVOUR" = "remote" ]; then
-                sed -i "s/hosts: all/hosts: $HOSTNAME/g" $STAGEDMANIFEST || fatalerror "Unable to run sed"
+                sed -i.bak "s/hosts: all/hosts: $HOSTNAME/g" $STAGEDMANIFEST || fatalerror "Unable to run sed"
             fi
             if [ "$VERSION" = "custom" ]; then
-                sed -i "s/##1##/vars_files: [ customversions.yml ]/" $STAGEDMANIFEST || fatalerror "Unable to run sed"
+                sed -i.bak "s/##1##/vars_files: [ customversions.yml ]/" $STAGEDMANIFEST || fatalerror "Unable to run sed"
             fi
         fi
     fi
@@ -1248,12 +1248,12 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     if [ $BUILD -eq 1 ]; then
         if [ ! -f $SOURCEDIR/Vagrantfile ]; then
             cp -f $SOURCEDIR/Vagrantfile.template $SOURCEDIR/Vagrantfile || fatalerror "Unable to copy Vagrantfile"
-            sed -i s/lamachine-vm/$HOSTNAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
-            sed -i s/HOSTNAME/$HOSTNAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+            sed -i.bak s/lamachine-vm/$HOSTNAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+            sed -i.bak s/HOSTNAME/$HOSTNAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         fi
     else
         cp -f $SOURCEDIR/Vagrantfile.prebuilt $SOURCEDIR/Vagrantfile || fatalerror "Unable to copy Vagrantfile"
-        sed -i s/lamachine-vm/$LM_NAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+        sed -i.bak s/lamachine-vm/$LM_NAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         if [ $INTERACTIVE -eq 1 ]; then
             #not needed for BUILD=1 because most interesting parameters inherited from the ansible host configuration
             echo "${bold}Do you want to open the vagrant configuration in an editor for final configuration? (recommended to increase memory/cpu cores) [yn]${normal}"
@@ -1346,7 +1346,7 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
     fi
     if [ $BUILD -eq 1 ]; then
         echo "Building docker image.."
-        sed -i "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install.yml || fatalerror "Unable to run sed"
+        sed -i.bak "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install.yml || fatalerror "Unable to run sed"
         #echo "$HOSTNAME ansible_connection=local" > $SOURCEDIR/hosts.ini #not needed
         docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME --build-arg HOSTNAME=$HOSTNAME . 2>&1 | tee lamachine-$LM_NAME.log
         rc=${PIPESTATUS[0]}
