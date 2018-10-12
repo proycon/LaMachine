@@ -951,26 +951,24 @@ if [ -z "$LM_NAME" ]; then
     exit 2
 fi
 
-if [ $BUILD -eq 1 ]; then
-    DETECTEDHOSTNAME=$(hostname --fqdn)
-    if [ -z "$DETECTEDHOSTNAME" ] || [ "$FLAVOUR" = "vagrant" ] || [ "$FLAVOUR" = "docker" ]; then
-        DETECTEDHOSTNAME="$LM_NAME"
-    fi
+DETECTEDHOSTNAME=$(hostname --fqdn)
+if [ -z "$DETECTEDHOSTNAME" ] || [ "$FLAVOUR" = "vagrant" ] || [ "$FLAVOUR" = "docker" ]; then
+    DETECTEDHOSTNAME="$LM_NAME"
+fi
 
-    if [ -z "$HOSTNAME" ] && [ $INTERACTIVE -eq 0 ]; then
-        HOSTNAME=$DETECTEDHOSTNAME
-    fi
+if [ -z "$HOSTNAME" ] && [ $INTERACTIVE -eq 0 ]; then
+    HOSTNAME=$DETECTEDHOSTNAME
+fi
 
+if [ -z "$HOSTNAME" ]; then
+    echo "The hostname or fully qualified domain name (FDQN) determines how your LaMachine installation can be referenced on a network."
+    if [ "$FLAVOUR" = "remote" ]; then
+        echo "This determines the remote machine LaMachine will be installed on!"
+    fi
+    echo -n "${bold}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal} "
+    read HOSTNAME
     if [ -z "$HOSTNAME" ]; then
-        echo "The hostname or fully qualified domain name (FDQN) determines how your LaMachine installation can be referenced on a network."
-        if [ "$FLAVOUR" = "remote" ]; then
-            echo "This determines the remote machine LaMachine will be installed on!"
-        fi
-        echo -n "${bold}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal} "
-        read HOSTNAME
-        if [ -z "$HOSTNAME" ]; then
-            HOSTNAME=$DETECTEDHOSTNAME
-        fi
+        HOSTNAME=$DETECTEDHOSTNAME
     fi
 fi
 
