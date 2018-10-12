@@ -20,7 +20,7 @@ boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
 echo "${bold}=====================================================================${normal}"
-echo "           ,              ${bold}LaMachine v2.4.2${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
+echo "           ,              ${bold}LaMachine v2.4.3${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
 echo "            /| |\         Centre of Language and Speech Technology"
@@ -156,7 +156,7 @@ if [ "$OS" = "unknown" ]; then
         OS="redhat"
     fi
 fi
-if grep -q Microsoft /proc/version; then
+if grep -q Microsoft /proc/version 2> /dev/null; then
   echo "(Windows Linux Subsystem detected)">&2
   WINDOWS=1 #we are running in the Windows Linux Subsystem
 else
@@ -524,25 +524,28 @@ if [ -z "$LOCALENV_TYPE" ]; then
     LOCALENV_TYPE="virtualenv"
 fi
 
-if [[ "$VERSION" == "undefined" ]]; then
-    echo "${bold}LaMachine comes in several versions:${normal}"
-    echo " 1) a stable version; you get the latest releases deemed stable (recommended)"
-    echo " 2) a development version; you get the very latest development versions for testing, this may not always work as expected!"
-    echo " 3) custom version; you decide explicitly what exact versions you want (for reproducibility);"
-    echo "    this expects you to provide a LaMachine version file (customversions.yml) with exact version numbers."
-    if [[ "$OS" == "mac" ]]; then
-        echo "    NOTE: CUSTOM VERSIONING IS NOT SUPPORTED ON MAC OS X!"
+
+if [ $BUILD -eq 1 ]; then
+    if [[ "$VERSION" == "undefined" ]]; then
+        echo "${bold}LaMachine comes in several versions:${normal}"
+        echo " 1) a stable version; you get the latest releases deemed stable (recommended)"
+        echo " 2) a development version; you get the very latest development versions for testing, this may not always work as expected!"
+        echo " 3) custom version; you decide explicitly what exact versions you want (for reproducibility);"
+        echo "    this expects you to provide a LaMachine version file (customversions.yml) with exact version numbers."
+        if [[ "$OS" == "mac" ]]; then
+            echo "    NOTE: CUSTOM VERSIONING IS NOT SUPPORTED ON MAC OS X!"
+        fi
+        while true; do
+            echo -n "${bold}Which version do you want to install?${normal} [123] "
+            read choice
+            case $choice in
+                [1]* ) VERSION=stable; break;;
+                [2]* ) VERSION=development; break;;
+                [3]* ) VERSION=custom; break;;
+                * ) echo "Please answer with the corresponding number of your preference..";;
+            esac
+        done
     fi
-    while true; do
-        echo -n "${bold}Which version do you want to install?${normal} [123] "
-        read choice
-        case $choice in
-            [1]* ) VERSION=stable; break;;
-            [2]* ) VERSION=development; break;;
-            [3]* ) VERSION=custom; break;;
-            * ) echo "Please answer with the corresponding number of your preference..";;
-        esac
-    done
 fi
 
 if [ -z "$BRANCH" ]; then
@@ -948,24 +951,26 @@ if [ -z "$LM_NAME" ]; then
     exit 2
 fi
 
-DETECTEDHOSTNAME=$(hostname --fqdn)
-if [ -z "$DETECTEDHOSTNAME" ] || [ "$FLAVOUR" = "vagrant" ] || [ "$FLAVOUR" = "docker" ]; then
-    DETECTEDHOSTNAME="$LM_NAME"
-fi
-
-if [ -z "$HOSTNAME" ] && [ $INTERACTIVE -eq 0 ]; then
-    HOSTNAME=$DETECTEDHOSTNAME
-fi
-
-if [ -z "$HOSTNAME" ]; then
-    echo "The hostname or fully qualified domain name (FDQN) determines how your LaMachine installation can be referenced on a network."
-    if [ "$FLAVOUR" = "remote" ]; then
-        echo "This determines the remote machine LaMachine will be installed on!"
+if [ $BUILD -eq 1 ]; then
+    DETECTEDHOSTNAME=$(hostname --fqdn)
+    if [ -z "$DETECTEDHOSTNAME" ] || [ "$FLAVOUR" = "vagrant" ] || [ "$FLAVOUR" = "docker" ]; then
+        DETECTEDHOSTNAME="$LM_NAME"
     fi
-    echo -n "${bold}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal} "
-    read HOSTNAME
-    if [ -z "$HOSTNAME" ]; then
+
+    if [ -z "$HOSTNAME" ] && [ $INTERACTIVE -eq 0 ]; then
         HOSTNAME=$DETECTEDHOSTNAME
+    fi
+
+    if [ -z "$HOSTNAME" ]; then
+        echo "The hostname or fully qualified domain name (FDQN) determines how your LaMachine installation can be referenced on a network."
+        if [ "$FLAVOUR" = "remote" ]; then
+            echo "This determines the remote machine LaMachine will be installed on!"
+        fi
+        echo -n "${bold}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal} "
+        read HOSTNAME
+        if [ -z "$HOSTNAME" ]; then
+            HOSTNAME=$DETECTEDHOSTNAME
+        fi
     fi
 fi
 
@@ -1169,22 +1174,23 @@ else
     fi
 fi
 
-if [ $BUILD -eq 1 ]; then
-    if [ -z "$SOURCEDIR" ]; then
-        echo "Cloning LaMachine git repo ($GITREPO $BRANCH)..."
-        if [ ! -d LaMachine ]; then
-            git clone $GITREPO -b $BRANCH LaMachine || fatalerror "Unable to clone LaMachine git repository"
-        fi
-        SOURCEDIR=$BASEDIR/lamachine-controller/$LM_NAME/LaMachine
-        cd $SOURCEDIR
-    else
-        echo "Updating LaMachine git..."
-        cd $SOURCEDIR
-        if [ "$SOURCEDIR" != "$BASEDIR" ]; then
-            git checkout $BRANCH #only switch branches if we're not already in a git repo the user cloned himself
-        fi
+if [ -z "$SOURCEDIR" ]; then
+    echo "Cloning LaMachine git repo ($GITREPO $BRANCH)..."
+    if [ ! -d LaMachine ]; then
+        git clone $GITREPO -b $BRANCH LaMachine || fatalerror "Unable to clone LaMachine git repository"
     fi
-    git pull #make sure we're up to date
+    SOURCEDIR=$BASEDIR/lamachine-controller/$LM_NAME/LaMachine
+    cd $SOURCEDIR
+else
+    echo "Updating LaMachine git..."
+    cd $SOURCEDIR
+    if [ "$SOURCEDIR" != "$BASEDIR" ]; then
+        git checkout $BRANCH #only switch branches if we're not already in a git repo the user cloned himself
+    fi
+fi
+git pull #make sure we're up to date
+
+if [ $BUILD -eq 1 ]; then
     #copying staged configuration to final location
     cp $STAGEDCONFIG "$SOURCEDIR/host_vars/$HOSTNAME.yml" || fatalerror "Unable to copy $STAGEDCONFIG"
 
@@ -1247,11 +1253,16 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
         fi
     else
         cp -f $SOURCEDIR/Vagrantfile.prebuilt $SOURCEDIR/Vagrantfile || fatalerror "Unable to copy Vagrantfile"
-        sed -i s/lamachine-vm/$HOSTNAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
-        sed -i s/HOSTNAME/$HOSTNAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+        sed -i s/lamachine-vm/$LM_NAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         if [ $INTERACTIVE -eq 1 ]; then
-            echo "${bold}Opening Vagrant configuration in editor for final configuration...${normal}"
-            sleep 3
+            #not needed for BUILD=1 because most interesting parameters inherited from the ansible host configuration
+            echo "${bold}Do you want to open the vagrant configuration in an editor for final configuration? (recommended to increase memory/cpu cores) [yn]${normal}"
+            read choice
+            case $choice in
+                [n]* ) break;;
+                [y]* ) BUILD=0;  break;;
+                * ) echo "Please answer with the y or n..";;
+            esac
             if ! "$EDITOR" "$SOURCEDIR/Vagrantfile"; then
                 echo "aborted by editor..." >&2
                 exit 2
