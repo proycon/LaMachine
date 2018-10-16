@@ -1,10 +1,6 @@
 
 - when: "'exclude_when' not in package or not package.exclude_when|bool"
   block:
-    - name: "Initialisation"
-      set_fact:
-          package_copy: "{{package}}"
-
     - name: "{{package.repo}} - Check if repository exists"
       stat:
         path: "{{ source_path }}/{{package.repo}}"
