@@ -27,6 +27,19 @@
         - oersetter
       environment: "{{lm_env}}"
 
+    - when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linux mint") and root
+      block:
+        - name: Get git-lfs installation script
+          get_url:
+            url: https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh
+            dest: "{{source_path}}/git-lfs-script.deb.sh"
+        - name: Install git-lfs
+          become: yes
+          become_user: root
+          shell: "./git-lfs-script.deb.sh"
+          args:
+            chdir: "{{source_path}}"
+
     - name: Ensure git LFS support is installed
       shell: "git lfs install"
 
