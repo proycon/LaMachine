@@ -40,6 +40,8 @@
           args:
             chdir: "{{source_path}}"
         - name: Install git-lfs
+          become: yes
+          become_user: root
           apt:
             name: git-lfs
             state: latest
