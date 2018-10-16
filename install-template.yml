@@ -75,6 +75,8 @@
                                              #Authorization is required for this; ensure to
                                              #set fame_user and fame_password in your LaMachine configuration
                                              #contact h.vandenheuvel@let.ru.nl to request access
+     # - moses                            ## Moses MT Decoder
+                                            # 7GB - Debian/Ubuntu only for now
 
 
 # NOTE: ensure that all enabled roles are lined up with the same amount of spaces!
