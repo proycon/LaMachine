@@ -1,0 +1,83 @@
+---
+
+    - name: Installing webservice
+      include_role:
+        name: lamachine-python-install
+      vars:
+        package:
+           github_user: "proycon"
+           github_repo: "oersetter-webservice"
+           metadata:
+             identifier: "oersetter"
+
+    - name: Link Python package installation in opt/
+      become: "{{lm_become}}"
+      become_user: root
+      shell: |
+        export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
+        if [ ! -e "$DIR" ]; then
+            echo "Unable to find dir"
+            exit 2
+        fi
+        if [ -e "{{lm_prefix}}/opt/{{item}}" ]; then
+          rm "{{lm_prefix}}/opt/{{item}}"
+        fi
+        ln -sf $DIR {{lm_prefix}}/opt/{{item}}
+      with_items:
+        - oersetter
+      environment: "{{lm_env}}"
+
+    - name: Ensure git LFS support is installed
+      shell: "git lfs install"
+
+    - name: Obtaining Oersetter Models
+      git:
+        repo: "https://bitbucket.org/fryske-akademy/oersetter-models.git"
+        dest: "{{lm_prefix}}/opt/oersetter-models"
+        update: yes
+
+    - name: "Install webserver configuration for oersetter"
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: "nginx/oersetter.conf"
+        dest: "{{lm_prefix}}/etc/nginx/conf.d/oersetter.conf"
+        force: yes
+        backup: yes
+        owner: "{{unix_user}}"
+      when: webservertype == "nginx"
+
+    - name: "Install uwsgi configuration for oersetter"
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: "uwsgi/oersetter.ini"
+        dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/oersetter.ini"
+        force: yes
+        backup: yes
+        owner: "{{web_user}}"
+        group: "{{web_group}}"
+
+    - name: "Install clam configuration for oersetter"
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: "clam/oersetter.config.yml"
+        dest: "{{lm_prefix}}/etc/oersetter.config.yml"
+        force: yes
+        backup: yes
+        owner: "{{unix_user}}"
+
+    - name: Register webservice metadata
+      include_role:
+          name: lamachine-register
+      vars:
+          update: "{{item}}"
+          metadata: #add entrypoint metadata to registry
+              identifier: "{{item}}"
+              entryPoints:
+                - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "WUI", mediatorApplication: "#oersetter" }
+                - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "REST", specification: "{{lm_base_url}}/{{item}}/info",  mediatorApplication: "#oersetter" }
+      when: '"all" in services or item in services'
+      with_items:
+        - oersetter
