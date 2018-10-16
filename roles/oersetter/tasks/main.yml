@@ -33,12 +33,17 @@
           get_url:
             url: https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh
             dest: "{{source_path}}/git-lfs-script.deb.sh"
-        - name: Install git-lfs
+        - name: Add git-lfs repository
           become: yes
           become_user: root
           shell: "bash ./git-lfs-script.deb.sh"
           args:
             chdir: "{{source_path}}"
+        - name: Install git-lfs
+          apt:
+            name: git-lfs
+            state: latest
+            update_cache: yes
 
     - name: Ensure git LFS support is installed
       shell: "git lfs install"
