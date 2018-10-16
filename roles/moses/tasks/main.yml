@@ -27,7 +27,7 @@
     - name: Compile Moses
       shell: |
         #!/bin/bash
-        ./bjam -j$(nproc) --prefix="{{prefix}}"
+        ./bjam -j$(nproc) --prefix="{{lm_prefix}}"
       args:
         chdir: "{{source_path}}/mosesdecoder"
 
