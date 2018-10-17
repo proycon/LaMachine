@@ -20,7 +20,7 @@ boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
 echo "${bold}=====================================================================${normal}"
-echo "           ,              ${bold}LaMachine v2.4.4${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
+echo "           ,              ${bold}LaMachine v2.4.5${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
 echo "            /| |\         Centre of Language and Speech Technology"
