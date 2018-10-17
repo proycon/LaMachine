@@ -1,9 +1,11 @@
 ---
-- name: "Installing Python Package: overview"
+- name: "Installing Python Package: overview :: package"
+  debug:
+       var: package
+
+- name: "Installing Python Package: overview :: do_registration"
   debug:
        var: do_registration
-- debug:
-       var: package
 
 - when: "'exclude_when' not in package or not package.exclude_when|bool"
   block:

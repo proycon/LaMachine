@@ -1,4 +1,4 @@
 ---
+do_registration: true
 package:
   git_branch: master
-do_registration: true

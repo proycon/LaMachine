@@ -1,13 +1,16 @@
 ---
 
-    - name: "Registering metadata: overview"
+    - name: "Registering metadata: overview :: update"
       debug:
            var: update
-    - debug:
+    - name: "Registering metadata: overview :: package"
+      debug:
            var: package
-    - debug:
+    - name: "Registering metadata: overview :: metadata_defaults"
+      debug:
            var: metadata_defaults
-    - debug:
+    - name: "Registering metadata: overview :: metadata"
+      debug:
            var: metadata
 
     - name: "Download remote metadata {% if url is defined and url %}from {{url}}{% endif %}"
