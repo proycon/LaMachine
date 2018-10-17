@@ -1,0 +1,8 @@
+port: 8810
+urlprefix: "oersetter"
+root: "{{lm_prefix}}/var/www-data/oersetter.clam/"
+bindir: "{{lm_prefix}}/bin/"
+mtsystem_nlfy_host: 'localhost'
+mtsystem_nlfy_port: 2003
+mtsystem_fynl_host: 'localhost'
+mtsystem_fynl_port: 2002

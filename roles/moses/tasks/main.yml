@@ -1,0 +1,38 @@
+---
+
+    - name: Check for unsupported OS for Moses
+      fail:
+        msg: "Moses is only on supported Debian/Ubuntu and Arch for now, it may not work on your OS !!!"
+      when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linux mint" or ansible_distribution|lower == "archlinux" or ansible_distribution|lower == "manjaro")
+
+    - name: Installing global dependencies for Moses
+      include_role:
+        name: lamachine-package-install
+      with_items:
+        - { debian: perl, redhat: perl, arch: perl }
+        - { debian: libxmlrpc-c++8-dev, arch: xmlrpc-c }
+        - { debian: libxmlrpc-c++8v5 }
+        - { debian: libxmlrpc-core-c3-dev }
+      loop_control:
+          loop_var: package
+
+    - name: Obtain Moses
+      include_role:
+        name: lamachine-git
+      vars:
+        package:
+          user: moses-smt
+          repo: mosesdecoder
+
+    - name: Compile Moses
+      shell: |
+        #!/bin/bash
+        ./bjam -j$(nproc) --prefix="{{lm_prefix}}"
+      args:
+        chdir: "{{source_path}}/mosesdecoder"
+
+    - name: "Symlink Moses in {{lm_prefix}}/opt/moses"
+      file:
+        src: "{{source_path}}/mosesdecoder"
+        dest: "{{lm_prefix}}/opt/moses"
+        state: link
