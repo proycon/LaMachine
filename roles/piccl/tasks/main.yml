@@ -51,6 +51,7 @@
         package:
           user: LanguageMachines
           repo: PICCL
+        do_registration: true
 
     - name: "Symlink PICCL in {{lm_prefix}}/opt"
       file:
