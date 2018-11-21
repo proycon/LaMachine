@@ -501,7 +501,7 @@ if [[ "$LOCALITY" == "local" ]]; then
 
     if [ $INTERACTIVE -ne 0 ]; then
         echo "${bold}Where do you want to create the local user environment?${normal}"
-        echo " By default, a directory will be created under your current location, which is $(pwd)"
+        echo " By default, a new directory will be created *under* your current location, which is $(pwd)"
         echo " If this is what you want, just press ENTER, "
         echo " Otherwise, type a new existing path: "
         echo -n "${bold}Where do you want to create the local user environment?${normal} [press ENTER for $(pwd)] "
