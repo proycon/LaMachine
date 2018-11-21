@@ -20,7 +20,7 @@ boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
 echo "${bold}=====================================================================${normal}"
-echo "           ,              ${bold}LaMachine v2.4.5${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
+echo "           ,              ${bold}LaMachine v2.4.6${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
 echo "            /| |\         Centre of Language and Speech Technology"
@@ -501,7 +501,7 @@ if [[ "$LOCALITY" == "local" ]]; then
 
     if [ $INTERACTIVE -ne 0 ]; then
         echo "${bold}Where do you want to create the local user environment?${normal}"
-        echo " By default, a directory will be created under your current location, which is $(pwd)"
+        echo " By default, a new directory will be created *under* your current location, which is $(pwd)"
         echo " If this is what you want, just press ENTER, "
         echo " Otherwise, type a new existing path: "
         echo -n "${bold}Where do you want to create the local user environment?${normal} [press ENTER for $(pwd)] "

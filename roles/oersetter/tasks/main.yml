@@ -65,7 +65,7 @@
         force: yes
         backup: yes
         owner: "{{unix_user}}"
-      when: webservertype == "nginx"
+      when: webservertype == "nginx" and ('"all" in services or "oersetter" in services')
 
     - name: "Install uwsgi configuration for oersetter"
       become: "{{lm_become}}"
@@ -77,6 +77,7 @@
         backup: yes
         owner: "{{web_user}}"
         group: "{{web_group}}"
+      when: '"all" in services or "oersetter" in services'
 
     - name: "Install clam configuration for oersetter"
       become: "{{lm_become}}"
