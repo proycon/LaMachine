@@ -36,6 +36,8 @@ usage () {
     echo "       (uses Vagrant and VirtualBox)"
     echo "  docker = in a Docker container"
     echo "       (uses Docker and Ansible)"
+    echo "  singularity = in a Singularity container"
+    echo "       (uses Singularity and Ansible)"
     echo "  local = in a local user environment"
     echo "       installs as much as possible in a separate directory"
     echo "       for a particular user, can exists alongside existing"
@@ -405,6 +407,10 @@ if [ -z "$FLAVOUR" ]; then
         echo "  5) On a remote server"
         echo "       modifies an existing remote system! Usually requires root."
         echo "       (uses ansible)"
+        if [ $WINDOWS -eq 0 ]; then
+        echo "  6) in a Singularity container"
+        echo "       (uses Singularity and Ansible)"
+        fi
         echo -n "${bold}Your choice?${normal} [12345] "
         read choice
         case $choice in
@@ -413,6 +419,7 @@ if [ -z "$FLAVOUR" ]; then
             [3]* ) FLAVOUR="docker";  break;;
             [4]* ) FLAVOUR="global";  break;;
             [5]* ) FLAVOUR="remote"; break;;
+            [6]* ) FLAVOUR="singularity"; break;;
             * ) echo "Please answer with the corresponding number of your preference..";;
         esac
     done
@@ -425,7 +432,7 @@ elif [[ "$FLAVOUR" == "remote" ]]; then #alias
 fi
 
 if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
-  if [[ "$FLAVOUR" == "vagrant" || "$FLAVOUR" == "docker" ]]; then
+  if [[ "$FLAVOUR" == "vagrant" || "$FLAVOUR" == "docker" || "$FLAVOUR" == "singularity" ]]; then
     while true; do
         echo "${bold}Do you want to build a new personalised LaMachine image or use and download a prebuilt one?${normal}"
         echo "  1) Build a new image"
@@ -588,7 +595,7 @@ else
     if ! which git; then
         NEED+=("git")
     fi
-    if [ "$FLAVOUR" = "docker" ]; then
+    if [ "$FLAVOUR" = "docker" ] || [ "$FLAVOUR" = "singularity" ]; then
         NEED_VIRTUALENV=0 #Do we need a virtualenv with ansible for the controller? Never for docker, all ansible magic happens inside the docker container
     else
         NEED_VIRTUALENV=1 #Do we need a virtualenv with ansible for the controller? (this is a default we will attempt to falsify)
@@ -660,6 +667,12 @@ if [ "$FLAVOUR" == "docker" ]; then
         if ! which docker.io; then
             NEED+=("docker")
         fi
+    fi
+fi
+if [ "$FLAVOUR" == "singularity" ]; then
+    echo "Looking for singularity..."
+    if ! which singularity; then
+        NEED+=("singularity")
     fi
 fi
 
@@ -756,6 +769,11 @@ for package in ${NEED[@]}; do
         echo "We expect users of docker to be able to install docker themselves."
         echo "Docker was not found on your system yet!"
         echo "Please install docker, start the daemon, and press ENTER to continue (or CTRL-C) to abort."
+        read
+    elif [ "$package" = "singularity" ]; then
+        echo "We expect users of singularity to be able to install singularity themselves."
+        echo "Singularity was not found on your system yet!"
+        echo "Please install singularity, start the daemon, and press ENTER to continue (or CTRL-C) to abort."
         read
     elif [ "$package" = "brew" ]; then
         echo "Homebrew (https://brew.sh) is required on Mac OS X but was not found yet"
@@ -1041,6 +1059,16 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
+    elif [[ $FLAVOUR == "singularity" ]]; then
+        GROUP="lamachine"
+        echo "unix_user: \"lamachine\" #do not change this for singularity!" >> $STAGEDCONFIG #TODO: not sure about this yet for singularity
+        echo "unix_group: \"lamachine\" #must be same as unix_user, changing this is not supported yet" >> $STAGEDCONFIG
+        echo "homedir: \"/home/lamachine\"" >> $STAGEDCONFIG
+        echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared (do not change this for singularity!" >> $STAGEDCONFIG
+        echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
+        echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path (do not change this for singularity)" >> $STAGEDCONFIG
+        echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
+        echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
     else
         echo "unix_user: \"$USERNAME\"" >> $STAGEDCONFIG
         echo "unix_group: \"$GROUP\"" >> $STAGEDCONFIG
@@ -1072,7 +1100,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
             echo "source_path: \"$BASEDIR/$LM_NAME/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
         fi
     fi
-    if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "remote" ]]; then
+    if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "singularity" ]] || [[ $FLAVOUR == "remote" ]]; then
         echo "root: true #Do you have root on the target system?" >> $STAGEDCONFIG
     elif [ $SUDO -eq 1 ]; then
         echo "root: true #Do you have root on the target system?" >> $STAGEDCONFIG
@@ -1234,7 +1262,7 @@ if [ $BUILD -eq 1 ]; then
 fi
 
 HOMEDIR=$(echo ~)
-if [[ "$FLAVOUR" == "vagrant" ]] || [[ "$FLAVOUR" == "docker" ]]; then
+if [[ "$FLAVOUR" == "vagrant" ]] || [[ "$FLAVOUR" == "docker" ]] || [[ "$FLAVOUR" == "singularity" ]]; then
     if [[ ! -e $HOMEDIR/bin ]]; then
         echo "Creating $HOMEDIR/bin on host machine..."
         mkdir -p $HOMEDIR/bin
@@ -1373,6 +1401,40 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
             echo "   The log file has been written to $(pwd)/lamachine-$LM_NAME.log (include it with any bug report)"
         fi
     fi
+elif [[ "$FLAVOUR" == "singularity" ]]; then
+    if [ $BUILD -eq 1 ]; then
+        echo "Building singularity image.."
+        sed -i.bak "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install.yml || fatalerror "Unable to run sed"
+        cp $SOURCEDIR/Singularity $SOURCEDIR/Singularity.def
+        sed -i.bak "s/\$HOSTNAME/$HOSTNAME/g" $SOURCEDIR/Singularity.def || fatalerror "Unable to run sed"
+        sed -i.bak "s/\$ANSIBLE_OPTIONS/$ANSIBLE_OPTIONS/g" $SOURCEDIR/Singularity.def || fatalerror "Unable to run sed"
+        #echo "$HOSTNAME ansible_connection=local" > $SOURCEDIR/hosts.ini #not needed
+        singularity build --bind $SOURCEDIR,/lamachine:$BASEDIR,/data $LM_NAME.sif $SOURCEDIR/Singularity.def 2>&1 | tee lamachine-$LM_NAME.log
+        rc=${PIPESTATUS[0]}
+    else
+        echo "Pulling pre-built singularity image.."
+        singularity pull LaMachine #TODO
+        rc=$?
+    fi
+    if [ $rc -eq 0 ]; then
+        echo "======================================================================================"
+        if [ $BUILD -eq 1 ]; then
+            echo "${boldgreen}All done, a singularity image has been built!${normal}"
+            echo "- to create and run a *new* interactive container using this image, run: singularity run -p 8080:80 -h $HOSTNAME -t -i $singularityREPO:$LM_NAME"
+        else
+            echo "${boldgreen}All done, a singularity image has been downloaded!${normal}"
+            echo "- to create and run a *new* interactive container using this image, run: singularity run -p 8080:80 -h latest -t -i $singularityREPO"
+        fi
+    else
+        echo "======================================================================================"
+        echo "${boldred}The singularity build has failed unfortunately.${normal} You have several options:"
+        echo " - Retry the bootstrap, possibly tweaking configuration options"
+        echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
+        if [ $BUILD -eq 1 ]; then
+            echo "   The log file has been written to $(pwd)/lamachine-$LM_NAME.log (include it with any bug report)"
+        fi
+    fi
+
 elif [ "$FLAVOUR" = "remote" ]; then
     echo "$HOSTNAME ansible_connection=ssh ansible_user=$USERNAME" > $SOURCEDIR/hosts.ini
     git checkout -b $LM_NAME
