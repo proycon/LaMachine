@@ -90,5 +90,12 @@ buildmatrix = [
         "version": 'stable',
         "minimal": True,
         "install": "tscan"
+    },
+    {
+        "name": 'fy_nl_ASR',
+        "flavour": 'docker',
+        "version": 'stable',
+        "minimal": True,
+        "install": "fy_nl_ASR"
     }
 ]
