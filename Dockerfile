@@ -5,10 +5,11 @@ ARG DATA_PATH=/data
 ARG LM_NAME=docker
 ARG HOSTNAME=lamachine-docker
 ARG ANSIBLE_OPTIONS="-vv"
+ARG LM_VERSION=unknown
 EXPOSE 80
 USER root
 MAINTAINER Maarten van Gompel <proycon@anaproy.nl>
-LABEL Description="A unified distribution of NLP software. Developed by the Centre of Language and Speech Technology (Radboud University Nijmegen) and partners"
+LABEL description="A unified distribution of NLP software. Developed by the Centre of Language and Speech Technology (Radboud University Nijmegen) and partners" value="$LM_VERSION"
 VOLUME $DATA_PATH
 RUN apt-get update
 RUN apt-get install -m -y python python-pip sudo apt-utils locales

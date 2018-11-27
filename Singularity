@@ -2,6 +2,13 @@ bootstrap: debootstrap
 MirrorURL: http://httpredir.debian.org/debian
 OSVersion: stable
 
+%files
+    host_vars/$HOSTNAME.yml host_vars/localhost.yml
+
+%labels
+    Maintainer Maarten van Gompel
+    Version $LM_VERSION
+
 %post
     apt-get update
     apt-get install -m -y python python-pip sudo apt-utils locales
@@ -18,4 +25,5 @@ OSVersion: stable
     chown -R lamachine /usr/src/LaMachine
     sudo -u lamachine ansible-playbook $ANSIBLE_OPTIONS /usr/src/LaMachine/install.yml -c local
 
-
+%runscript
+    /bin/bash -l

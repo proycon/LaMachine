@@ -19,8 +19,9 @@ boldgreen=${bold}$(tput setaf 2) #  green
 boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
+export LM_VERSION="v2.4.6" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "${bold}=====================================================================${normal}"
-echo "           ,              ${bold}LaMachine v2.4.6${normal} - NLP Software distribution" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
+echo "           ,              ${bold}LaMachine $LM_VERSION${normal} - NLP Software distribution"
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í         Language Machines research group"
 echo "            /| |\         Centre of Language and Speech Technology"
@@ -1376,7 +1377,7 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
         echo "Building docker image.."
         sed -i.bak "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install.yml || fatalerror "Unable to run sed"
         #echo "$HOSTNAME ansible_connection=local" > $SOURCEDIR/hosts.ini #not needed
-        docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME --build-arg HOSTNAME=$HOSTNAME . 2>&1 | tee lamachine-$LM_NAME.log
+        docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME --build-arg LM_VERSION=$LM_VERSION --build-arg HOSTNAME=$HOSTNAME . 2>&1 | tee lamachine-$LM_NAME.log
         rc=${PIPESTATUS[0]}
     else
         echo "Pulling pre-built docker image.."
@@ -1408,6 +1409,7 @@ elif [[ "$FLAVOUR" == "singularity" ]]; then
         cp $SOURCEDIR/Singularity $SOURCEDIR/Singularity.def
         sed -i.bak "s/\$HOSTNAME/$HOSTNAME/g" $SOURCEDIR/Singularity.def || fatalerror "Unable to run sed"
         sed -i.bak "s/\$ANSIBLE_OPTIONS/$ANSIBLE_OPTIONS/g" $SOURCEDIR/Singularity.def || fatalerror "Unable to run sed"
+        sed -i.bak "s/\$LM_VERSION/$LM_VERSION/g" $SOURCEDIR/Singularity.def || fatalerror "Unable to run sed"
         #echo "$HOSTNAME ansible_connection=local" > $SOURCEDIR/hosts.ini #not needed
         singularity build --bind $SOURCEDIR,/lamachine:$BASEDIR,/data $LM_NAME.sif $SOURCEDIR/Singularity.def 2>&1 | tee lamachine-$LM_NAME.log
         rc=${PIPESTATUS[0]}
