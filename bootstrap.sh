@@ -675,6 +675,9 @@ if [ "$FLAVOUR" == "singularity" ]; then
     if ! which singularity; then
         NEED+=("singularity")
     fi
+    if ! which debootstrap; then
+        NEED+=("debootstrap")
+    fi
 fi
 
 
@@ -776,6 +779,38 @@ for package in ${NEED[@]}; do
         echo "Singularity was not found on your system yet!"
         echo "Please install singularity, start the daemon, and press ENTER to continue (or CTRL-C) to abort."
         read
+    elif [ "$package" = "debootstrap" ]; then
+        if [ "$OS" = "debian" ]; then
+            cmd="sudo apt-get $NONINTERACTIVEFLAGS install debootstrap"
+        elif [ "$OS" = "redhat" ]; then
+            cmd="sudo yum $NONINTERACTIVEFLAGS install debootstrap"
+        elif [ "$OS" = "arch" ]; then
+            cmd="sudo pacman $NONINTERACTIVEFLAGS -Sy debootstrap"
+        elif [ "$OS" = "mac" ]; then
+            cmd="brew install debootstrap" #not sure if this works
+        else
+            cmd=""
+        fi
+        echo "Debootstrap is required for LaMachine with Singularity but not installed yet. ${bold}Install now?${normal}"
+        if [ ! -z "$cmd" ]; then
+            while true; do
+                echo -n "${bold}Run:${normal} $cmd ? [yn] "
+                if [ "$INTERACTIVE" -eq 1 ]; then
+                    read yn
+                else
+                    yn="y"
+                fi
+                case $yn in
+                    [Yy]* ) $cmd || fatalerror "Debootstrap installation failed!"; break;;
+                    [Nn]* ) echo "Please install debootstrap manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
+                    * ) echo "Please answer yes or no.";;
+                esac
+            done
+        else
+            echo "No automated installation possible on your OS."
+            if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
+            echo "Please install git manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
+        fi
     elif [ "$package" = "brew" ]; then
         echo "Homebrew (https://brew.sh) is required on Mac OS X but was not found yet"
         while true; do
@@ -1404,14 +1439,14 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
     fi
 elif [[ "$FLAVOUR" == "singularity" ]]; then
     if [ $BUILD -eq 1 ]; then
-        echo "Building singularity image.."
+        echo "Building singularity image (requires sudo).."
         sed -i.bak "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install.yml || fatalerror "Unable to run sed"
         cp $SOURCEDIR/Singularity $SOURCEDIR/Singularity.def
         sed -i.bak "s/\$HOSTNAME/$HOSTNAME/g" $SOURCEDIR/Singularity.def || fatalerror "Unable to run sed"
         sed -i.bak "s/\$ANSIBLE_OPTIONS/$ANSIBLE_OPTIONS/g" $SOURCEDIR/Singularity.def || fatalerror "Unable to run sed"
         sed -i.bak "s/\$LM_VERSION/$LM_VERSION/g" $SOURCEDIR/Singularity.def || fatalerror "Unable to run sed"
         #echo "$HOSTNAME ansible_connection=local" > $SOURCEDIR/hosts.ini #not needed
-        singularity build --bind $SOURCEDIR,/lamachine:$BASEDIR,/data $LM_NAME.sif $SOURCEDIR/Singularity.def 2>&1 | tee lamachine-$LM_NAME.log
+        sudo singularity build $LM_NAME.sif $SOURCEDIR/Singularity.def 2>&1 | tee lamachine-$LM_NAME.log
         rc=${PIPESTATUS[0]}
     else
         echo "Pulling pre-built singularity image.."
