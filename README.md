@@ -76,7 +76,7 @@ To download and use it:
 
 * Ensure you have  [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org) installed on your system. Windows users also have to make sure that Hyper-V is *disabled* in *Control Panel → Programs → Turn Windows features on or off → Hyper-V*
 * Open a terminal or command prompt
-* Navigate to a folder of your choice (this will the the base folder, files inside will be shared with the VM)
+* Navigate to a folder of your choice (this will be the base folder, files inside will be shared with the VM)
 * Run ``vagrant init proycon/lamachine`` from the terminal, this creates a file named ``Vagrantfile``
 * Open ``Vagrantfile`` in a text editor and change the memory and CPU options to suit your system (the more resources
   the better!).
@@ -199,7 +199,7 @@ In addition to a flavour, users can opt for one of three versions of LaMachine:
    installed straight from the latest git version.
  * **custom** - Installs explicitly defined versions for all software (for e.g. scientific reproducibility).
 
-Read more about the technical details in the [the contributor documentation](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md).
+Read more about the technical details in [the contributor documentation](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md).
 
 ## Usage
 
