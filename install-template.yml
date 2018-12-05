@@ -79,6 +79,9 @@
                                             # 7GB - Debian/Ubuntu only for now
      # - oersetter                        ## Frisian<->Dutch Machine Translation system
                                             # 2GB? - Debian/Ubuntu only for now
+     # - glem                             ## Lemmatiser for ancient greek
+                                            # ('Unraveling the Language of Perspective' project)
+                                            # Radboud University Nijmegen
 
 
 # NOTE: ensure that all enabled roles are lined up with the same amount of spaces!

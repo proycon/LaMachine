@@ -1,0 +1,3 @@
+---
+dependencies:
+  - { role: languagemachines-python-bindings } #needed for python-frog
