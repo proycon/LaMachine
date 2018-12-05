@@ -115,6 +115,8 @@ the installation procedure.
     * [TICCLTools](https://github.com/LanguageMachines/ticcltools) - Tools that together constitute the bulk of TICCL: Text Induced Corpus-Cleanup.
     * [PICCL](https://github.com/LanguageMachines/PICCL) - PICCL: A set of workflows for corpus building through OCR, post-correction (using TICCL) and Natural Language Processing.
     * [Labirinto](https://github.com/proycon/labirinto) - A web-based portal listing all available tools in LaMachine, an ideal starting point for LaMachine
+    * [Oersetter](https://github.com/proycon/oersetter-webservice) - A Frisian<->Dutch Machine Translation system in
+        collaboration with the Fryske Akademy
 * by the University of Groningen
     * [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) - a dependency parser and tagger for Dutch
 * by the Vrije Universiteit Amsterdam
@@ -140,6 +142,8 @@ the installation procedure.
     * [Hunspell](http://hunspell.github.io) - A spell checker
     * [Tesseract](https://github.com/tesseract-ocr/tesseract) - Open Source Optical Character Recognition (OCR)
     * [Tensorflow](https://tensorflow.org) - Open-source machine learning framework
+    * [Kaldi](http://kaldi-asr.org) - Speech Recognition Framework (ASR)
+    * [Moses](http://www.statmt.org/moses) - Statistical Machine Translation system
 
 Note that some software may not be available on certain platforms/distributions (most notably Mac OS X).
 
