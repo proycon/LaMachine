@@ -9,6 +9,7 @@ boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
 export LC_ALL=en_US.UTF_8
+export ANSIBLE_FORCE_COLOR=true
 echo "${bold}=====================================================================${normal}"
 echo "           ,              ${bold}LaMachine v{{lamachine_version}}${normal} - ${boldblue}UPDATER${normal}"
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
