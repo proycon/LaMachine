@@ -533,6 +533,11 @@
       environment: "{{lm_env}}"
       when: locality == "global"
 
+    - name: "Testing global pip3"
+      shell: pip3 list
+      environment: "{{lm_env}}"
+      when: locality == "global"
+
     - name: Recreate LaMachine activation script (2nd time) #needed because the PYTHONPATH might not have been set earlier yet
       template:
         src: lamachine-activate.sh
