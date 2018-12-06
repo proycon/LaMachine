@@ -26,13 +26,17 @@
         dest: "{{lm_prefix}}/var/tmpmetadata.json"
         force: yes
 
-    - name: "{% if 'pip' in package and package.pip %}{{package.pip}} - {% endif %} Registering metadata"
+    - name: "{% if 'pip' in package and package.pip %}{{package.pip}} - {% elif 'metadata' in package and 'identifier' in package.metadata %}{{ metadata.package.identifier }}{% elif 'identifier' in metadata %}{{ metadata.identifier }}{% elif 'identifier' in metadata_defaults %}{{ metadata_defaults.identifier }}{% endif %} Registering metadata"
       shell: |
         #!/bin/bash
         # what we do here is build a chain of metadata, each one updating over the last, effectively merging all the fields
         {% if 'pip' in package and package.pip %}
         pip3 show -v {{package.pip}} | {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}{% if url is defined and url %}json,{% endif %}json,pip {% if update %}{{update}}{% endif %} {% if url is defined and url %}{{lm_prefix}}/var/codemeta.tmp.json{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json -
-        exit ${PIPESTATUS[1]}
+        if [ ${PIPESTATUS[0]} -ne 0 ]; then
+          exit ${PIPESTATUS[0]}
+        else
+          exit ${PIPESTATUS[1]}
+        fi
         {% else %}
         {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}{% if url is defined and url %}json,{% endif %}json {% if update %}{{update}}{% endif %} {% if url is defined and url %}{{lm_prefix}}/var/codemeta.tmp.json{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json
         exit $?
