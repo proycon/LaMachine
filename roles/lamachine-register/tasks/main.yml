@@ -30,13 +30,10 @@
       shell: |
         #!/bin/bash
         # what we do here is build a chain of metadata, each one updating over the last, effectively merging all the fields
+        set -o pipefail
         {% if 'pip' in package and package.pip %}
         pip3 show -v {{package.pip}} | {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}{% if url is defined and url %}json,{% endif %}json,pip {% if update %}{{update}}{% endif %} {% if url is defined and url %}{{lm_prefix}}/var/codemeta.tmp.json{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json -
-        if [ ${PIPESTATUS[0]} -ne 0 ]; then
-          exit ${PIPESTATUS[0]}
-        else
-          exit ${PIPESTATUS[1]}
-        fi
+        exit $?
         {% else %}
         {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}{% if url is defined and url %}json,{% endif %}json {% if update %}{{update}}{% endif %} {% if url is defined and url %}{{lm_prefix}}/var/codemeta.tmp.json{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json
         exit $?
