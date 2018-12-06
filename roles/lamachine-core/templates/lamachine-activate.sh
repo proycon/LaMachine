@@ -66,7 +66,7 @@ if [ ! -z "$MANPATH" ]; then
 else
     export MANPATH=$LM_PREFIX/man
 fi
-if [[ "$LAMACHINE_QUIET" != "1" ]]; then
+if [[ "$LM_QUIET" != "1" ]] && [[ "$LAMACHINE_QUIET" != "1" ]]; then
   cat $LM_PREFIX/etc/motd
 fi
 if [[ "$LM_LOCALITY" == "local" ]] && [[ "$LM_LOCALENV_TYPE" == "virtualenv" ]]; then
