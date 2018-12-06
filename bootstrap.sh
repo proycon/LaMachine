@@ -12,6 +12,7 @@
 export LC_ALL=en_US.UTF-8
 export LANGUAGE=en_US.UTF-8
 export LANG=en_US.UTF-8
+export ANSIBLE_FORCE_COLOR=true
 
 bold=$(tput bold)
 boldred=${bold}$(tput setaf 1) #  red
