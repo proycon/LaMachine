@@ -40,7 +40,7 @@
         echo "    PYTHON=$(which python3)">&2
         echo "    PIP=$(which pip3)">&2
         {% if 'pip' in package and package.pip %}
-        pip3 show -v {{package.pip}} | {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}{% if url is defined and url %}json,{% endif %}json,pip {% if update %}{{update}}{% endif %} {% if url is defined and url %}{{lm_prefix}}/var/codemeta.tmp.json{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json -
+        python3 -m pip show -v {{package.pip}} | {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}{% if url is defined and url %}json,{% endif %}json,pip {% if update %}{{update}}{% endif %} {% if url is defined and url %}{{lm_prefix}}/var/codemeta.tmp.json{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json -
         exit $?
         {% else %}
         {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}{% if url is defined and url %}json,{% endif %}json {% if update %}{{update}}{% endif %} {% if url is defined and url %}{{lm_prefix}}/var/codemeta.tmp.json{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json
