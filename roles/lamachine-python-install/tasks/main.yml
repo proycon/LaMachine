@@ -82,6 +82,28 @@
           environment: "{{lm_env}}"
           #when: "'would lead only to a partial uninstall' in pipinstallstable.stderr"
 
+    - block:
+        - name: "{% if 'pip' in package %}{{package.pip}}{% else %}{{package.github_repo}}{% endif %} -  Verifying installation"
+          shell: |
+              #!/bin/bash
+              {% if 'pip' in package %}
+               {% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %} list | grep -i -e pip -e "{{package.pip}}"
+
+              {% else %}
+               {% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %} list | grep -i -e pip -e "{{package.github_repo}}"
+              {% endif %}
+          environment: "{{lm_env}}"
+      rescue:
+        - name: "Pip failure, dumping full contents of $LM_PREFIX for inspection:"
+          shell: |
+              #!/bin/bash
+              echo "PIP:"
+              ls -l "{{pip.stdout}}"
+              echo "which pip3:"
+              which pip3
+              echo "LM_PREFIX DUMP:"
+              ls -lR "{{lm_prefix}}"
+          environment: "{{lm_env}}"
 
     - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Checking whether codemeta.json is provided"
       stat:
@@ -89,6 +111,7 @@
       register: have_codemeta
       changed_when: False
       when: "'github_repo' in package"
+
 
 
     - name: "{% if 'pip' in package %}{{package.pip}}{% else %}{{package.github_repo}}{% endif %} -  Register software metadata"
@@ -102,14 +125,4 @@
              codeRepository: "{% if 'github_repo' in package %}https://github.com/{{package.github_user}}/{{package.github_repo}}{% endif %}"
              producer: "{% if 'github_user' in package %}{% if package.github_user in github_clst_users %}{{metadata_producer_clst}}{% else %}{{metadata_producer_unknown}}{% endif %}{% else %}{{metadata_producer_unknown}}{% endif %}"
       when: do_registration is defined and do_registration|bool
-
-    - name: "{% if 'pip' in package %}{{package.pip}}{% else %}{{package.github_repo}}{% endif %} -  Verifying installation"
-      shell: |
-          #!/bin/bash
-          {% if 'pip' in package %}
-           {% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %} list | grep -e pip -e "{{package.pip}}"
-
-          {% else %}
-           {% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %} list | grep -i -e pip -e "{{package.github_repo}}"
-          {% endif %}
 
