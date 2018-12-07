@@ -534,7 +534,10 @@
       when: locality == "global"
 
     - name: "Testing global pip3"
-      shell: pip3 list
+      shell: |
+        #!/bin/bash
+        python3 -c "import pip; print(pip.__path__[0])"
+        pip3 list
       environment: "{{lm_env}}"
       when: locality == "global"
 
