@@ -94,15 +94,16 @@
               {% endif %}
           environment: "{{lm_env}}"
       rescue:
-        - name: "Pip failure, dumping full contents of $LM_PREFIX for inspection:"
+        - name: "Pip failure, debug"
           shell: |
               #!/bin/bash
-              echo "PIP:"
+              echo "PYTHONPATH: $PYTHONPATH"
+              echo "PATH: $PATH"
+              echo "ls -l {{pip.stdout}}"
               ls -l "{{pip.stdout}}"
-              echo "which pip3:"
+              echo "which pip3"
               which pip3
-              echo "LM_PREFIX DUMP:"
-              ls -lR "{{lm_prefix}}"
+              python3 -c "import pip; print(pip.__path__[0])"
           environment: "{{lm_env}}"
 
     - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Checking whether codemeta.json is provided"
