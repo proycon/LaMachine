@@ -18,12 +18,12 @@
                                               #you always need this or nothing works; already includes Python 3
       - python-core                      ## Core 3rd party scientific python packages ###
                                               #(provides: numpy, scipy, pandas, matplotlib, scikit-learn, nltk, and more)
-     #- java-core                        ## Java 8, Maven ##
-     #- r-core                           ## R with core R packages ##
-     #- nodejs-core                      ## Node.js with NPM ##
-     #- extra-utils                      ## Extra command-line utilities useful for data science
+      - java-core                        ## Java 8, Maven ##
+      - r-core                           ## R with core R packages ##
+      - nodejs-core                      ## Node.js with NPM ##
+      - extra-utils                      ## Extra command-line utilities useful for data science
                                               #(provides: jq, ack, graphviz, gnuplot, glances, csvkit, xmlstarlet and a lot more)
-     #- languagemachines-basic           ## Generic & Dutch NLP tools written in C++ ##
+      - languagemachines-basic           ## Generic & Dutch NLP tools written in C++ ##
                                               #by the Language Machines Research group,
                                               #Centre for Language and Speech Technology, Radboud University Nijmegen
                                               #(provides: timbl, frog, ucto, folia, mbt, wopr, Colibri Core)
@@ -31,17 +31,17 @@
                                               #by the Language Machines Research group,
                                               #Centre for Language and Speech Technology, Radboud University Nijmegen
                                              #(this includes pynlpl, pynlpl.formats.folia, CLAM, foliadocserve, FLAT, babelente)
-     #- languagemachines-python-bindings ## Provides Python bindings to C++ software ##
+      - languagemachines-python-bindings ## Provides Python bindings to C++ software ##
                                              #(provides python-ucto, python-frog, python-timbl, colibricore)
-     #- cltl-vu-python                   ## Python software by the Computational Lexicology & Terminology Lab, VU Amsterdam
+      - cltl-vu-python                   ## Python software by the Computational Lexicology & Terminology Lab, VU Amsterdam
                                              #(provides KafNafParserPy)
-     #- labirinto                        ## Labirinto provides the LaMachine Portal website, providing access to all installed webservices ##
+      - labirinto                        ## Labirinto provides the LaMachine Portal website, providing access to all installed webservices ##
                                               #by the Language Machines Research group,
                                               #Centre for Language and Speech Technology, Radboud University Nijmegen
       - jupyter                          ## Jupyter Lab Environment, provides a powerful scripting IDE and terminal from the web-browser
                                               #CAUTION: Allows arbitrary code execution over network!!! (password protected)
                                               #Once installed, change the default password by running: lamachine-passwd lab
-     #- python-course                    ## Python Course for the Humanities by Folgert Karsdorp et al. ##
+      - python-course                    ## Python Course for the Humanities by Folgert Karsdorp et al. ##
                                               # http://www.karsdorp.io/python-course/
                                               #(requires jupyter)
      # - nextflow                         ## Nextflow: Data-driven computational pipelines ##
