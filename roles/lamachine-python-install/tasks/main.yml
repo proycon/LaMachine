@@ -110,9 +110,9 @@
               echo "pip3 contents:"
               cat $(which pip3)
               echo "ls python-current:"
-              ls -l /usr/local/lib/python-current
+              ls -ld /usr/local/lib/python-current/*
               echo "ls python-current site packages:"
-              ls -l /usr/local/lib/python-current/site-packages
+              ls -ld /usr/local/lib/python-current/site-packages/*
           environment: "{{lm_env}}"
         - fail:
             msg: "pip failure"
