@@ -524,7 +524,7 @@
     - name: Upgrade pip #we need at least pip10, this is not always the case in distro-supplied packages
       become: "{{lm_become}}"
       become_user: root
-      shell: pip3 install --upgrade pip
+      shell: pip3 install --upgrade pip {% if locality == 'global' %}--prefix "{{ lm_prefix }}"{% endif %}
       environment: "{{lm_env}}"
 
     - name: "Finding global pip3"
