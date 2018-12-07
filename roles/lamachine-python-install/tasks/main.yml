@@ -103,8 +103,17 @@
               ls -l "{{pip.stdout}}"
               echo "which pip3"
               which pip3
+              echo "which python3"
+              which pip3
+              echo "pip.__path__"
               python3 -c "import pip; print(pip.__path__[0])"
+              echo "pip3 contents:"
+              cat $(which pip3)
+              echo "ls python-current site packages:"
+              ls -l /usr/local/lib/python-current/site-packages
           environment: "{{lm_env}}"
+        - fail:
+            msg: "pip failure"
 
     - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Checking whether codemeta.json is provided"
       stat:
