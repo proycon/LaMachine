@@ -77,7 +77,7 @@
           pip:
                name: "{{package.pip}}"
                state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package and package.state %}{{package.state}}{% else %}latest{% endif %}"
-               executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}python3 -m pip{% endif %}"
+               executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
                extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %} --ignore-installed" #only last option is different
           environment: "{{lm_env}}"
           #when: "'would lead only to a partial uninstall' in pipinstallstable.stderr"
