@@ -103,5 +103,13 @@
              producer: "{% if 'github_user' in package %}{% if package.github_user in github_clst_users %}{{metadata_producer_clst}}{% else %}{{metadata_producer_unknown}}{% endif %}{% else %}{{metadata_producer_unknown}}{% endif %}"
       when: do_registration is defined and do_registration|bool
 
+    - name: "{% if 'pip' in package %}{{package.pip}}{% else %}{{package.github_repo}}{% endif %} -  Verifying installation"
+      shell: |
+          #!/bin/bash
+          {% if 'pip' in package %}
+           {% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %} list | grep -e pip -e "{{package.pip}}"
 
+          {% else %}
+           {% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %} list | grep -i -e pip -e "{{package.github_repo}}"
+          {% endif %}
 

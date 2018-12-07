@@ -2,6 +2,7 @@
       - name: "Running {{command}}"
         shell: |
             #!/bin/bash
+            export LM_QUIET=1
             if [ -e {{homedir}}/bin/lamachine-{{ conf_name }}-activate ]; then
                 source {{homedir}}/bin/lamachine-{{ conf_name }}-activate
             else
