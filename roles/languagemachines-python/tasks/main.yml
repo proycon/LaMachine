@@ -1,4 +1,8 @@
 ---
+    - name: "Extra global pip3 test"
+      shell: pip3 list
+      environment: "{{lm_env}}"
+      when: locality == "global"
 
     - name: Installing Python packages
       include_role:

@@ -76,7 +76,7 @@ To download and use it:
 
 * Ensure you have  [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org) installed on your system. Windows users also have to make sure that Hyper-V is *disabled* in *Control Panel → Programs → Turn Windows features on or off → Hyper-V*
 * Open a terminal or command prompt
-* Navigate to a folder of your choice (this will the the base folder, files inside will be shared with the VM)
+* Navigate to a folder of your choice (this will be the base folder, files inside will be shared with the VM)
 * Run ``vagrant init proycon/lamachine`` from the terminal, this creates a file named ``Vagrantfile``
 * Open ``Vagrantfile`` in a text editor and change the memory and CPU options to suit your system (the more resources
   the better!).
@@ -115,7 +115,9 @@ the installation procedure (or any subsequent update).
     * [TICCLTools](https://github.com/LanguageMachines/ticcltools) - Tools that together constitute the bulk of TICCL: Text Induced Corpus-Cleanup.
     * [PICCL](https://github.com/LanguageMachines/PICCL) - PICCL: A set of workflows for corpus building through OCR, post-correction (using TICCL) and Natural Language Processing.
     * [Labirinto](https://github.com/proycon/labirinto) - A web-based portal listing all available tools in LaMachine, an ideal starting point for LaMachine
-* by the University of Groningen (RUG)
+    * [Oersetter](https://github.com/proycon/oersetter-webservice) - A Frisian<->Dutch Machine Translation system in
+        collaboration with the Fryske Akademy
+* by the University of Groningen
     * [Alpino](http://www.let.rug.nl/vannoord/alp/Alpino/) - a dependency parser and tagger for Dutch
 * by the Vrije Universiteit Amsterdam (VU)
     * [KafNafParserPy](https://github.com/cltl/KafNafParserPy) - A python module to parse NAF files
@@ -141,6 +143,8 @@ the installation procedure (or any subsequent update).
     * [Hunspell](https://hunspell.github.io) - A spell checker
     * [Tesseract](https://github.com/tesseract-ocr/tesseract) - Open Source Optical Character Recognition (OCR)
     * [Tensorflow](https://tensorflow.org) - Open-source machine learning framework
+    * [Kaldi](http://kaldi-asr.org) - Speech Recognition Framework (ASR)
+    * [Moses](http://www.statmt.org/moses) - Statistical Machine Translation system
 
 Note that some software may not be available on certain platforms/distributions (most notably macOS).
 
@@ -200,7 +204,7 @@ In addition to a flavour, users can opt for one of three versions of LaMachine:
    installed straight from the latest git version.
  * **custom** - Installs explicitly defined versions for all software (for e.g. scientific reproducibility).
 
-Read more about the technical details in the [the contributor documentation](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md).
+Read more about the technical details in [the contributor documentation](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md).
 
 ## Usage
 
@@ -273,7 +277,7 @@ press ENTER and leave it empty, do not run the entire script with escalated priv
 
 ### Webservices and web applications
 
-LaMachine comes with several webservices and web applications out of the box
+LaMachine comes with several webservices and web applications out of the box.
 Most are RESTful webservices served using [CLAM](https://proycon.github.io/clam), which also offer a generic
 web-interface for human end-users. The webserver provides a generic portal to all available services, powered by
 [Labirinto](https://github.com/proycon/labirinto), as shown in the screenshot below:
@@ -285,7 +289,7 @@ installation. You can then connect your browser (on the host system) to http://l
 you changed the default value). On virtual machines, the webserver will be automatically started at boot. For
 docker you can do: ``docker run -p 8080:80 -h hostname -t proycon/lamachine:latest lamachine-start-webserver -f ``
 
-**Warning: There is no currently or poor authentication enabled on the webservices, so do not
+**Warning: There is currently no or poor authentication enabled on the webservices, so do not
 expose them to the outside world!**
 
 ### Jupyter Lab
@@ -330,7 +334,7 @@ During build and upgrade, LaMachine downloads software from a wide variety of ex
 
 For a secure experience using LaMachine, take all of the following into account:
 
-* Our recommended bootstrap procedures downloads a script and immediately executes it. This is offered
+* Our recommended bootstrap procedure downloads a script and immediately executes it. This is offered
   as a convenience but carries some inherent risks and is generally not a secure practice. It implies a trust relation
   between you and us, as well as the hoster (github). Prudent users are encouraged to download the script,
   inspect it, and only then execute it. We may provide PGP-signed releases in the future.
@@ -364,7 +368,7 @@ the *custom* version. LaMachine will then install the exact versions specified.
 You can edit this ``customversions.yml`` file if you have good reason to opt for very specific versions of certain
 packages. Instead of an appropriate version number, you can also use the strings. Do be be aware that choosing version
 numbers that do not exist or combining versions of different packages that are not compatible will surely break things.
-If things fails, most software providers, us included, will not deliver support on older software versions.
+If things fail, most software providers, us included, will not deliver support on older software versions.
 
 The purpose of this custom versioning feature of LaMachine is to aid scientific reproducibility, with it you can build
 an environment consisting of older software, corresponding to the versions at the time you ran your experiments. In such

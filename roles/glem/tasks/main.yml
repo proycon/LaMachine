@@ -1,0 +1,9 @@
+---
+
+    - name: Installing Python package for GLEM
+      include_role:
+        name: lamachine-python-install
+      vars:
+        package:
+            github_user: "GreekPerspective"
+            github_repo: "glem"

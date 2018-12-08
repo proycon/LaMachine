@@ -445,11 +445,16 @@
           chdir: "{{source_path}}"
       when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
 
-    - name: Obtaining Python version
-      shell: python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'
-      register: python_version
-      environment: "{{lm_env}}"
-      changed_when: False
+    - block:
+        - name: Obtaining Python version
+          shell: python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'
+          register: python_version
+          environment: "{{lm_env}}"
+          changed_when: False
+      rescue:
+        - fail:
+            msg: "The Python inside LaMachine's Virtual Environment is not functioning. This may be caused by a major upgrade of the system python and removal of the older one. We can not recover automatically at this point so we recommend to create a new LaMachine environment from scratch by following the instructions on https://proycon.github.io/LaMachine. You will most likely want to delete the current environment ({{local_prefix}}) first, assuming you stored no valuable data inside. If you really want to ignore this message and attempt to continue upgrading anyway, add the parameter nopythoncheck=1 when invoking lamachine-update."
+          when: locality == "local" and (nopythoncheck is not defined or nopythoncheck == 0)
 
     - name: Linking to current python library path (global)
       become: "{{lm_become}}"
@@ -524,12 +529,20 @@
     - name: Upgrade pip #we need at least pip10, this is not always the case in distro-supplied packages
       become: "{{lm_become}}"
       become_user: root
-      shell: pip3 install --upgrade pip
+      shell: pip3 install --upgrade pip {% if locality == 'global' %}--prefix "{{ lm_prefix }}"{% endif %}
       environment: "{{lm_env}}"
 
     - name: "Finding global pip3"
       shell: hash -r pip3 && which pip3
       register: pip
+      environment: "{{lm_env}}"
+      when: locality == "global"
+
+    - name: "Testing global pip3"
+      shell: |
+        #!/bin/bash
+        python3 -c "import pip; print(pip.__path__[0])"
+        pip3 list
       environment: "{{lm_env}}"
       when: locality == "global"
 
