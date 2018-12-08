@@ -27,6 +27,6 @@ RUN chown -R $UNIX_USER $LAMACHINE_PATH
 USER $UNIX_USER
 RUN ansible-playbook $ANSIBLE_OPTIONS $LAMACHINE_PATH/install.yml -c local
 RUN cd /home/$UNIX_USER
-RUN ln -s $DATA_PATH data
-RUN ln -s $LAMACHINE_PATH lamachine
+RUN ln -sf $DATA_PATH data
+RUN ln -sf $LAMACHINE_PATH lamachine
 CMD /bin/bash -l
