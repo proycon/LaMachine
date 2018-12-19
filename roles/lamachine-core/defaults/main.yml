@@ -1,5 +1,5 @@
 ---
-lamachine_version: "2.4.7" #also change in bootstrap.sh and codemeta.json
+lamachine_version: "2.4.8" #also change in bootstrap.sh and codemeta.json
 conf_name: "default"
 version: "stable" #stable, development or custom
 controller: internal
