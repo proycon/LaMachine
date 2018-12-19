@@ -70,6 +70,10 @@ if [[ {{root|int}} -eq 1 ]] && [[ $INTERACTIVE -eq 1 ]]; then
  OPTS="--ask-become-pass"
 fi
 D=$(date +%Y%m%d_%H%M%S)
+if [ ! -z "$PYTHONPATH" ]; then
+    OLDPYTHONPATH="$PYTHONPATH"
+    export PYTHONPATH=""
+fi
 if [ -e "hosts.{{conf_name}}" ]; then
     #LaMachine v2.0.0
     ansible-playbook -i "hosts.{{conf_name}}" "install-{{conf_name}}.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
@@ -90,5 +94,8 @@ else
         echo " - Retry the update, possibly tweaking configuration and installation options (lamachine-update --edit)"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
         echo "   The log file has been written to $(pwd)/lamachine-{{conf_name}}-$D.log (include it with any bug report)"
+fi
+if [ ! -z "$OLDPYTHONPATH" ]; then
+    export PYTHONPATH="$OLDPYTHONPATH"
 fi
 exit $rc
