@@ -1,0 +1,4 @@
+port: 8811
+urlprefix: "glem"
+root: "{{lm_prefix}}/var/www-data/glem.clam/"
+bindir: "{{lm_prefix}}/bin/"
