@@ -128,14 +128,40 @@ These are implemented using Ansible\footnote{\url{https://www.ansible.com}}.  Th
 classical notion of Linux distributions, which generally provide their own repositories with (often binary) software
 packages. LaMachine builds on this already established infrastructure by taking these repositories as a given and only
 needs to know which repositories to use.  Similarly, there are different programming-language-specific ecosystems
-providing their own repositories, such as the Python Package Index for Python, CRAN for R, CPAN for Perl, Maven Central
-for Java.  LaMachine again relies on those to pull and install software from and never forks, archives, or modifies the
-software in any way. In doing so, we compel participating software projects to adhere to well-established distribution
-standards and ensure the software is more sustainable towards the future \cite{softwarequality}. Moreover, we ensure
-that LaMachine never becomes a prerequisite for the software but merely a courtesy or convenience.
+providing their own repositories, such as the Python Package Index\footnote{\url{https://pypi.org}} for Python, CRAN\footnote{\url{https://cran.r-project.org/}} for R, CPAN\footnote{\url{https://www.cpan.org}} for Perl, Maven Central\footnote{\url{https://search.maven.org}} for Java.  As said, LaMachine relies on those to pull and install software from and never forks, archives, or modifies the software in any way. In doing so, we compel participating software projects to adhere to well-established distribution standards and ensure the software is more sustainable towards the future \cite{softwarequality}. Moreover, we ensure that LaMachine never becomes a prerequisite for the software but merely a courtesy or convenience.
 
 LaMachine provides ample flexibility that allows it to be deployable in different contexts. First of all there is
-flexibility with regard to the target platform, where we support several major GNU/Linux distributions (Debian, Ubuntu,
+flexibility regarding the installation form, which we call \emph{flavours}:
+
+\begin{itemize}
+    \item Local installation - This installs the bulk of LaMachine in a separate local virtual environment (a seperate
+        directory) that has to be explicitly activated to be used. This also allows for multiple different installations
+        of LaMachine on the same host system (e.g. for different users or with different software configurations).
+        This local installation still actively relies on various global dependencies that are available through the
+        package manager of your distribution.
+    \item Global installation - This flavour is used for a host that is fully dedicated to LaMachine. Everything will be
+        installed globally so there is only one installation possible, multiple users will all make use of the same
+        installation.
+    \item Docker container - Installs LaMachine in a container. Containerisation seperates the entire run-time
+        environment
+\end{itemize}
+
+
+
+flexibility with regard to the target platform, where we support several major GNU/Linux distributions:
+
+\begin{enumerate}
+    \item Debian
+    \item Ubuntu
+    \item Arch Linux
+    \item CentOS and RedHat Enterprise Linux
+    \item Fedora
+\end{enumerate}
+
+In addition, we have limited support for macOS and the homebrew package manager\footnote{Alternatives such as macports are not
+supported}.
+
+(Debian, Ubuntu,
 CentOS, RedHat Enterprise Linux, Fedora, Arch Linux), as well as macOS (although with more limitations). Second, there is
 flexibility with regard to the form, where we support \emph{containerisation} through
 Docker\footnote{\url{https://www.docker.com}}, \emph{virtualisation} through Vagrant
