@@ -954,10 +954,9 @@ for package in ${NEED[@]}; do
     elif [ "$package" = "virtualenv" ]; then
         if [ "$OS" = "debian" ]; then
             cmd="sudo apt-get $NONINTERACTIVEFLAGS install python-virtualenv"
-            if [ "$DISTRIB_RELEASE" != "14.04" ]; then #except on old ubuntu
+            if [[ "$DISTRIB_RELEASE" != "14.04" ]]; then #except on old ubuntu
                 cmd="$cmd virtualenv"
             fi
-
         elif [ "$OS" = "redhat" ]; then
             cmd="sudo yum  $NONINTERACTIVEFLAGS install python-virtualenv"
         elif [ "$OS" = "arch" ]; then
