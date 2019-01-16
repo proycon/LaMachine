@@ -1,6 +1,5 @@
 \documentclass[a4paper,11pt]{article}
-\usepackage{etendu-cis}
-%\usepackage{CLARIN2018}
+\usepackage{CLARIN2018}
 % - - - - - - - IMPORTANT - - - - - - - -
 % The next three lines allow XeLaTeX, graphics import and hyperlinks, set font and language
 %\usepackage{xltxtra,polyglossia,graphicx,hyperref}
@@ -237,7 +236,7 @@ architecture.
 \end{figure}
 
 Once LaMachine is installed, in any of its flavours, you can update it from inside by running
-\textttt{lamachine-update}. This updates all of the software managed by LaMachine.
+\texttt{lamachine-update}. This updates all of the software managed by LaMachine.
 
 \subsection{Metadata}
 
@@ -262,8 +261,8 @@ Language and Speech Technology, Radboud University Nijmegen. The majority of thi
 CLARIAH. Some software by other CLARIN-NL/CLARIAH partners is also included.
 
 \begin{itemize}
- \item by the Language Machines Research Group and the Centre of Language and Speech Technology, Radboud University Nijmegen
-\footnote{Links: \url{https://languagemachines.github.io/timbl}, \url{https://languagemachines.github.io/mbt},
+ \item by the Language Machines Research Group and the Centre of Language and Speech Technology, Radboud University
+     Nijmegen\footnote{Links: \url{https://languagemachines.github.io/timbl}, \url{https://languagemachines.github.io/mbt},
     \url{https://languagemachines.github.io/ucto}, \url{https://languagemachines.github.io/frog},
     \url{http://ilk.uvt.nl/wopr}, \url{https://proycon.github.io/folia}, \url{https://proycon.github.io/clam},
 \url{https://github.com/proycon/flat}, \url{https://proycon.anaproy.nl/pynlpl},
@@ -311,7 +310,7 @@ CLARIAH. Some software by other CLARIN-NL/CLARIAH partners is also included.
  \end{itemize}
  \item by Meertens Instituut
  \begin{itemize}
-     \item \textbf{Python Course for the Humanities}\footnote{http://www.karsdorp.io/python-course/} - Interactive
+     \item \textbf{Python Course for the Humanities}\footnote{\url{http://www.karsdorp.io/python-course/}} - Interactive
          tutorial and introduction into programming with Python for the humanities
  \end{itemize}
 \end{itemize}
@@ -352,11 +351,35 @@ exhaustive: \footnote{\url{https://jupyterlab.readthedocs.io/en/stable/}, \url{h
 
 \section{Web Interface}
 
-Leveraging this metadata, LaMachine comes with a webserver that offers a portal website with
-access and overview of all installed tools, including web services and web applications. It also comes with a
+LaMachine comes with a webserver that offers a portal website which provides an overview of all installed software in
+LaMachine, and acts as a point of access for web services andweb applications. This portal, as shown in
+Figure~\ref{fig:portal}, leverages the metadata
+registry compiled in each LaMachine installation. In situations where web interfaces are not needed or desired, the
+user has the ability to opt-out.
+
+\begin{figure}[htb] \begin{center}
+\includegraphics[width=135.0mm]{screenshot_portal.jpg}
+\end{center}
+\caption{\footnotesize{A screenshot of the LaMachine portal, powered by Labirinto:
+\url{https://github.com/proycon/labirinto}}}
+\label{fig:portal}
+\end{figure}
+
+
+LaMachine also comes with  a
 Jupyter Lab\footnote{\url{https://jupyter.org/}} environment which provides a web-based Integrated Development
 Environment (IDE) for scripting in Python and R, web-based terminal access, and so-called \emph{notebooks} which mix
-text, code and data output and have gained great popularity in data science community nowadays.
+text, code and data output and have gained great popularity in data science community nowadays. This is shown in
+Figure~\ref{fig:lab}.
+
+
+\begin{figure}[htb] \begin{center}
+\includegraphics[width=135.0mm]{screenshot_lab.jpg}
+\end{center}
+\caption{\footnotesize{A screenshot of the Jupyter Lab Environment}}
+\label{fig:lab}
+\end{figure}
+
 
 \section{Case study}\label{sec-case}
 
