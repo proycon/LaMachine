@@ -67,6 +67,13 @@
           dest: "{{ lm_prefix }}/src/nvm/alias/default"
           content: "stable"
 
+      - name: Ensuring npm is up to date
+        include_role:
+          name: lamachine-run
+        vars:
+          command: npm i -g npm@latest
+          chdir: "{{ source_path }}/labirinto"
+
 
 
 
