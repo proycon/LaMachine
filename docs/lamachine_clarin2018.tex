@@ -64,7 +64,8 @@ development practices and reuse of established infrastructure in the scientific 
 community. We illustrate the usage of LaMachine in an exploratory text mining project at the Dutch Health Inspectorate where LaMachine was applied to create a research environment for automatic text analysis for health care quality monitoring.
 \end{abstract}
 
-\section{Introduction} \label{intro}
+\section{Introduction}
+\label{sec:intro}
 
 Software is a key deliverable and a vital component for research in projects such as those under the CLARIN umbrella. It
 is software that provides researchers the instruments to yield for their research; It is CLARIN's core mission to make
@@ -347,7 +348,7 @@ exhaustive: \footnote{\url{https://jupyterlab.readthedocs.io/en/stable/}, \url{h
 
 \section{Interfaces and Audiences}
 
-We already addressed the need for different interfaces for different audiences in Section~\ref{intro}. The challenge we
+We already addressed the need for different interfaces for different audiences in Section~\ref{sec:intro}. The challenge we
 face, and for which LaMachine offers a solution, is one of software maintainability and distribution. How do we maintain
 and distribute software that is often highly complex and consists of multiple interconnected components, considering
 that this software is used differently by different audiences? A key aspect here is the reusability and accessibility of individual
@@ -446,15 +447,14 @@ technical limitation but simply a matter of different objectives, one could easi
 install Anaconda in it.}.
 
 At the start of the development cycle for LaMachine v2, we investigated whether Anaconda and its ecosystem would provide
-a sufficient foundation for us to build upon. We decided this was not the case for a number of reasons: Anaconda
+a sufficient foundation for us to build upon. We concluded this was not the case for a number of reasons: Anaconda
 introduces more overhead than we desired for our purposes and conflicted with certain technology choices we made. We
 wanted our native flavours (local environment and global environment) to be as close to the underlying distribution as possible and to reuse existing
 technologies and packages from the distribution (or from homebrew for macOS), such as compilers (e.g. gcc) and
 interpreters (e.g. python).  Anaconda, on the other hand, choses to provide its own packages and builds on those. It
-does so using its own package manager and package repositories. This would require repackaging certain software for the
-anaconda ecosystem, especially handling of non-Python software was not trivial.  Whereas LaMachine consists of a series
-of Ansible scripts for the installation and configuration of software, Anaconda has its own package manager (conda)
-that draw from its own package repositories (conda-forge).
+does so using its own package manager (conda) and package repositories (conda-forge). This would require repackaging certain software for the
+anaconda ecosystem, especially handling of non-Python software was not trivial, as Anaconda was originally conveived as a
+Python distribution.
 
 For the distribution and deployment of complex software setups such as NLP pipelines, containers are a common solution
 nowadays. The Docker flavour of LaMachine provides something similar, but rather than providing a single static Docker recipe
@@ -466,7 +466,10 @@ beyond the scope of LaMachine itself, which aims to provide a singular environme
 LaMachine instance shares the same userspace and duplication is strongly minimised.
 
 
-\section{Case study}\label{sec-case}
+\section{Case studies}
+\label{sec:case}
+
+\subsection{Text Mining for Health Inspection}
 
 We participated in a small Dutch national project titled \emph{``Text mining for Inspection: an exploratory study on
 automatic analysis of health care complaints''} \footnote{\url{https://bit.ly/2N2AICS}} %links to https://www.zonmw.nl/nl/onderzoek-resultaten/kwaliteit-van-zorg/program/project-detail/effectief-toezicht/tekstmining-in-het-toezicht-een-exploratieve-studie-naar-de-automatische-verwerking-van-klachten-in/}.
@@ -496,11 +499,18 @@ content of the complaint and the scikit-learn Python package for classification,
 
 %het doel van deze studie is om automatische tekstanalysetechnieken (tekstmining) toe te passen op de klachten die bij het Landelijk Meldpunt Zorg binnenkomen. Zo hopen we eventuele trends en patronen te vinden die meer inzicht geven in de aard en de relevantie van de klachten. De verwachting is om zo potentiële risicogevallen te ontdekken die op basis van de behandeling van individuele klachten nog niet waren gesignaleerd.
 
+\subsection{Workshop: Cataloguing of Textual Cultural Heritage Objects}
+
+%TODO
+
 \section{Conclusion \& Future work}
 
-The recent release of LaMachine v2, which constituted a full rewrite, has opened up LaMachine to outside
-contribution. Contributor documentation has been written, and at this stage, we greatly welcome external participants
-to join in. Use cases as the example in section \ref{sec-case} contribute to thorough testing and running of LaMachine in less ideal circumstances such as nested VM constructions and offline usage.
+LaMachine provides a flexible solution for the installation of a variety of NLP software, resulting in a kind
+of virtual laboratory that, through various interfaces, can be employed by a variety of people, from developers and data
+scientists to the wider research community that CLARIN explicitly addresses.
+
+Use cases as the examples in section \ref{sec:case} contribute to thorough testing and running of LaMachine in less ideal
+circumstances such as nested VM constructions and offline usage.
 
 Aside from the incorporation of new relevant software, the main objectives for the future are to provide
 greater \emph{interoperability} between the included tools through better \emph{high-level interfaces} for the
@@ -515,6 +525,9 @@ accommodating the researcher and connectivity of data and services, and transcen
 Resource Switchboard~\cite{switchboard}. An important part of our future focus will therefore be on interoperability
 with the higher-level tools emerging from the VRE efforts, but also with other parts of the CLARIN infrastructure;
 single-sign on authentication being a notable example here.
+
+LaMachine v2 is open to  outside contribution. Contributor documentation has been written, and at this stage, we greatly
+welcome external participants to join in.
 
 \section*{Acknowledgement}
 
