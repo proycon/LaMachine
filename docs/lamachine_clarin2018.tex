@@ -10,6 +10,7 @@
 \usepackage{times}
 \usepackage{hyperref}
 \usepackage{graphicx}
+\usepackage{placeins}
 %\usepackage{latexsym}
 \usepackage[english]{babel}
 
@@ -162,22 +163,11 @@ completely virtualised, containers still share the kernel with the host OS, and 
 local \& global, actually compile against the machine's distribution itself and thus offers the least amount of
 overhead.
 
-The two native options, local and global installation, support a variety of major GNU/Linux distributions:
-
-\begin{itemize}
-    \item Debian
-    \item Ubuntu
-    \item Arch Linux
-    \item CentOS
-    \item Fedora
-\end{itemize}
-
-Distributions that are derivates of these \emph{may} also work, such as RedHat Enterprise Linux (CentOS), Linux Mint (Ubuntu),
-and Manjaro (Arch Linux).
-
-In addition, we have limited support for macOS (the local installation flavour), powered in part by the homebrew package
+The two native options, local and global installation, support a variety of major GNU/Linux distributions: Debian,
+Ubuntu, Arch Linux, CentOS, Fedora and, to a more limited degree, we also support macOS (the local installation flavour), powered in part by the homebrew package
 manager\footnote{Alternatives such as macports are not supported}. Support for macOS is limited because not all participating
-software supports it.
+software supports it. Linux Distributions that are derivates of these \emph{may} also work, such as RedHat Enterprise Linux (CentOS), Linux Mint (Ubuntu),
+and Manjaro (Arch Linux).
 
 For the containerisation and virtualisation solutions, the default distribution we supply is Debian\footnote{The latest
 stable release}. It is, however, still possible to build your own container or virtual machine based on any of the other supported
@@ -214,20 +204,18 @@ the collective of installation scripts LaMachine provides, and which marks LaMac
 Installation of LaMachine begins with a single bootstrap command\footnote{See \url{https://proycon.github.io/LaMachine}}
 executed on the command line.  It can interactively query the users for their software preferences \emph{(stored as the
 host configuration)}, e.g. the flavour of LaMachine, as well as the set of software to install, \emph{the installation
-manifest}. This set is never static but can be customized by the user. The bootstrap procedure detects and installs the
+manifest}. This set is never static but can be customized by the user. The bootstrap procedure, shown in
+Figure~\ref{fig:bootstrap}, detects and installs the
 necessary prerequisites automatically and eventually invokes Ansible to perform the bulk of the work, unless a
 pre-published container or VM is selected.  Figure~\ref{fig:arch} provides a schematic view of the LaMachine
 architecture.
 
-%After a successful build, the user may interact with LaMachine either through the command line, which offers a standard
-%shell and enables access to all lower-level tools and programming languages; or through his or her webbrowser, which
-%when enabled offers a simple portal page towards all installed web-capable tools. Amongst these services is also a
-%Jupyter Notebook environment\footnote{\url{https://jupyter.org/}}, which offers a more graphical scripting environment
-%for e.g. Python and R that has gained great popularity in the scientific community.
-%
-%The current version of LaMachine comes with some simple data sharing facilities only: we provide a
-%single shared dataspace between host and VM/container (where applicable), or allow simple upload. Extensive data
-%search and management functions are deliberately beyond the scope of LaMachine, and left to more high-level tooling.
+\begin{figure}[htb] \begin{center}
+\includegraphics[width=110.0mm]{screenshot_bootstrap.jpg}
+\end{center}
+\caption{\footnotesize{A screenshot of the bootstrap procedure}}
+\label{fig:bootstrap}
+\end{figure}
 
 \begin{figure}[htb] \begin{center}
 \includegraphics[width=135.0mm]{architecture.png}
@@ -247,6 +235,8 @@ i.e. the repositories where tool providers deposit their software, to a common y
 \footnote{\url{https://codemeta.github.io/}, described in JSON-LD} \cite{codemeta,codemetar} where possible, or
 encouraging software developers to provide their codemeta metadata inside their source code repositories and using that
 directly. This in turn enables other tools to do proper service discovery and provenance logging.
+
+\FloatBarrier
 
 \section{Software}
 
