@@ -239,26 +239,30 @@ Once LaMachine is installed, in any of its flavours, you can update it from insi
 \texttt{lamachine-update}. This updates all of the software managed by LaMachine.
 
 \subsection{Metadata}
+\label{sec:metadata}
 
-LaMachine aims to harmonise the metadata of all installed software, by converting metadata from upstream
-repositories, i.e. the repositories where tool providers deposit their software, to a common standard called CodeMeta
+LaMachine aims to harmonise the metadata of all installed software, by converting metadata from upstream repositories,
+i.e. the repositories where tool providers deposit their software, to a common yet simple standard called CodeMeta
 \footnote{\url{https://codemeta.github.io/}, described in JSON-LD} \cite{codemeta,codemetar} where possible, or
-encouraging software developers to provide their codemeta metadata inside their source code repositories and using
-that directly. This in turn enables other tools to do proper service discovery and provenance logging.
+encouraging software developers to provide their codemeta metadata inside their source code repositories and using that
+directly. This in turn enables other tools to do proper service discovery and provenance logging.
 
 \section{Software}
 
-LaMachine exists since May 2015 and has been used extensively ever since by numerous users, in 2018 version 2 was
+LaMachine exists since May 2015 and has been used extensively ever since by numerous users, in early 2018 version 2 was
 released which was a significant rewrite, powered by Ansible.
 
 In LaMachine, software is grouped into various ``packages'', each package\footnote{For those familiar with
 Ansible, a package in LaMachine is an Ansible role} groups one or multiple programs that have some kind of relation. The
-installation manifest lists all packages that will be installed, at the user's discretion.
+installation manifest lists all packages that will be installed, at the user's discretion. After the initial
+installation, the user can always add more packages using \texttt{lamachine-add}.
 
 LaMachine was initially conceived as the primary means of distribution of the software stack developed at the Language
 Machines Research Group and the Centre of
 Language and Speech Technology, Radboud University Nijmegen. The majority of this sofware was either fully or partially developed under the auspices of CLARIN-NL or successor
-CLARIAH. Some software by other CLARIN-NL/CLARIAH partners is also included.
+CLARIAH. Some software by other CLARIN-NL/CLARIAH partners is also included. This project is not limited to one research
+group and is explicitly open to participation by other software providers, especially those
+also in CLARIAH.
 
 \begin{itemize}
  \item by the Language Machines Research Group and the Centre of Language and Speech Technology, Radboud University
@@ -341,21 +345,44 @@ exhaustive: \footnote{\url{https://jupyterlab.readthedocs.io/en/stable/}, \url{h
     \item \textbf{Moses} - Statistical Machine Translation system
 \end{itemize}
 
+\section{Interfaces and Audiences}
 
+We already addressed the need for different interfaces for different audiences in Section~\ref{intro}. The challenge we
+face, and for which LaMachine offers a solution, is one of software maintainability and distribution. How do we maintain
+and distribute software that is often highly complex and consists of multiple interconnected components, considering
+that this software is used differently by different audiences? A key aspect here is the reusability and accessibility of individual
+software components. The philosophy we subscribe to encourages the development and distribution of software in a layered or modular fashion,
+allowing each building block to serve as the foundation for another more high-level interface, without sacrificing the usability of the
+foundation as such. This is in line with the UNIX philosophy of developing tools that do \emph{"one thing only, and do
+it well"} and is contrasted with monolithic software solutions that are limiting because they either provide only high-level interfaces but do not
+expose their inner components to build upon, or they are as a swiss-army knife full of needless but inseparable
+components.
 
-%However, this
-%project is not limited to one research group and is open to participation by other software providers, especially those
-%also in CLARIAH and the upcoming CLARIAH PLUS project. We already include some relevant software by other CLARIAH
-%partners.
+\subsection{Low-level Interfaces}
 
+In any of its flavours, LaMachine offers low-level shell access, i.e. a command-line interface accessed through a
+terminal. In flavours that are separated from the host system over the network, this is accomplished over \texttt{ssh}.
+At that point, as shown in Figure~\ref{fig:venv}, the user has the liberty to do whatever she wants and can invoke any
+of the tools that offer a text interface, including text editors such as vim, emacs or nano, version control systems
+such as git and interpreters such as Python or R (or compilers for that matter). The latter in turn allow users to use
+one of the many specialised programming libraries included in LaMachine to build their own tools. All this makes
+LaMachine ideally suited as a development environment.
 
-\section{Web Interface}
+\begin{figure}[htb] \begin{center}
+\includegraphics[width=135.0mm]{screenshot_venv_activate.jpg}
+\end{center}
+\caption{\footnotesize{Activation of a local LaMachine environment on the command-line}}
+\label{fig:venv}
+\end{figure}
 
-LaMachine comes with a webserver that offers a portal website which provides an overview of all installed software in
-LaMachine, and acts as a point of access for web services andweb applications. This portal, as shown in
-Figure~\ref{fig:portal}, leverages the metadata
-registry compiled in each LaMachine installation. In situations where web interfaces are not needed or desired, the
-user has the ability to opt-out.
+\subsection{High-level Interfaces: Web-based access}
+
+LaMachine comes with a webserver\footnote{In situations where web interfaces are not needed or desired, the
+user has the ability to opt-out of this}. This webserver serves various web-capable tools that are incorporated in LaMachine. One
+of these tools is a portal website that provides an overview of all installed software in
+LaMachine, and acts as a point of access for web services and web applications. This portal, as shown in
+Figure~\ref{fig:portal}, leverages the metadata registry compiled in each LaMachine installation (see
+section~\ref{sec:metadata}).
 
 \begin{figure}[htb] \begin{center}
 \includegraphics[width=135.0mm]{screenshot_portal.jpg}
@@ -365,13 +392,13 @@ user has the ability to opt-out.
 \label{fig:portal}
 \end{figure}
 
-
 LaMachine also comes with a
-Jupyter Lab\footnote{\url{https://jupyter.org/}} environment which provides a web-based Integrated Development
+Jupyter Lab\footnote{\url{https://jupyter.org/}} installation which provides a web-based Integrated Development
 Environment (IDE) for scripting in Python and R, web-based terminal access, and so-called \emph{notebooks} which mix
 text, code and data output and have gained great popularity in data science community. This is shown in
-Figure~\ref{fig:lab}.
-
+Figure~\ref{fig:lab}. This type of virtual laboratory provides a powerful interface that can form an alternative to
+regular shell access and may have a larger appeal for those parts of the audience that do not feel completely
+comfortable in the terminal.
 
 \begin{figure}[htb] \begin{center}
 \includegraphics[width=135.0mm]{screenshot_lab.jpg}
@@ -379,6 +406,64 @@ Figure~\ref{fig:lab}.
 \caption{\footnotesize{A screenshot of the Jupyter Lab Environment}}
 \label{fig:lab}
 \end{figure}
+
+LaMachine provides various CLAM-based webservices. CLAM is a long-time CLARIN project that allows developers to turn
+their command-line NLP tool into a RESTful webservice with relatively little effort \cite{CLAMPAPER}, and which in
+addition also provides a generic web-interface for human end-users. The portal website in LaMachine links to these. This
+again address an audience that does not require a high degree of technical expertise, but is suitable for a wider
+audience of researchers, including those in the Humanities.
+
+\section{Comparisons and alternatives}
+\label{sec:comparisons}
+
+How does LaMachine compare to alternatives? To answer this question we must first look at what may be considered
+alternatives to LaMachine. At this point, it is important to emphasise once more that LaMachine is offered as convenience.
+LaMachine always seeks to use installation channels that the user can also access directly. For instance, is the user
+only interested in a single Python package that LaMachine offers? Then she can just as well install it directly using
+\texttt{pip install}. Is the user only interested in a single package that underlying Linux distribution (or macOS' homebrew)
+already provides? Then, by all means, she should go for that.
+
+LaMachine starts to fill a need when the user is interested in complex software, such as complex NLP pipelines with
+multiple components, the individual installation (sometimes involving compilation from source) and configuration of
+which would be not be trivial. Moreover, LaMachine shines when the user wants higher-level interfaces on top of that,
+something she can use right out of the box. It also fulfills a role in case the user simply does not know what she wants
+or needs yet, and needs an environment where she can explore a variety of pre-installed tools and experiment.
+
+Comparisons could be drawn between LaMachine as a kind of Linux distribution and other Linux distributions. But that
+would not be appropriate as we characterise LaMachine more as a meta-distribution which simply builds on the foundation
+of several existing major Linux distributions. As a meta-distribution that runs in a variety of flavours and on a verity
+of platforms, it has a great deal of flexibility that normal distributions don't have. At the same time, the scope of
+LaMachine is more narrowly defined than that of a generic Linux distribution, including even specialised Linux
+distributions that focus on scientific computing, such as Fedora
+Scientific\footnote{\url{https://labs.fedoraproject.org/en/scientific/}}.
+
+The best comparison can be drawn with Anaconda\footnote{\url{https://www.anaconda.com/}}, which we could also qualify as
+a meta-distribution under our definition, and which enjoys great popularity in the data science community. Anaconda has
+a focus on Python and R. It is much wider in scope than LaMachine, which has a strong NLP and CLARIN/CLARIAH focus. When
+it comes to Python, there is considerable overlap in the modules that LaMachine and Anaconda offer. Unlike LaMachine,
+Anaconda does not focus on providing different flavours such as a VM or a Docker Container\footnote{This is not a
+technical limitation but simply a matter of different objectives, one could easily create a VM or Docker Container and
+install Anaconda in it.}.
+
+At the start of the development cycle for LaMachine v2, we investigated whether Anaconda and its ecosystem would provide
+a sufficient foundation for us to build upon. We decided this was not the case for a number of reasons: Anaconda
+introduces more overhead than we desired for our purposes and conflicted with certain technology choices we made. We
+wanted our native flavours (local environment and global environment) to be as close to the underlying distribution as possible and to reuse existing
+technologies and packages from the distribution (or from homebrew for macOS), such as compilers (e.g. gcc) and
+interpreters (e.g. python).  Anaconda, on the other hand, choses to provide its own packages and builds on those. It
+does so using its own package manager and package repositories. This would require repackaging certain software for the
+anaconda ecosystem, especially handling of non-Python software was not trivial.  Whereas LaMachine consists of a series
+of Ansible scripts for the installation and configuration of software, Anaconda has its own package manager (conda)
+that draw from its own package repositories (conda-forge).
+
+For the distribution and deployment of complex software setups such as NLP pipelines, containers are a common solution
+nowadays. The Docker flavour of LaMachine provides something similar, but rather than providing a single static Docker recipe
+that builds a single kind of container, LaMachine offers a high degree of flexibility for the construction of different
+containers, i.e. containing different software of having different configurations, based on the user's needs. It is
+quite feasible to use instantiate a variety of LaMachine containers and use a container orchestration system such
+Kubernetes or Docker Swarm for automated deployment, scaling and management thereof. Such orchestration, however, is
+beyond the scope of LaMachine itself, which aims to provide a singular environment, i.e. everything installed in a
+LaMachine instance shares the same userspace and duplication is strongly minimised.
 
 
 \section{Case study}\label{sec-case}
