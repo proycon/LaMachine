@@ -93,7 +93,7 @@ interfaces, web-user interfaces, webservices.} which, as seen above, typically a
 attempt to accommodate both technical\footnote{Data scientists, DevOps, system administrators, developers.} and
 less-technical audiences\footnote{The wider researcher community, particularly the Humanities; also educational
 settings.}, there is a natural bias towards the former as lower-level interfaces are often a prerequisite to build
-higher-level interfaces on. Depending on the \emph{flavour} of LaMachine chosen, it makes a good virtual research
+higher-level interfaces on. Depending on the \emph{flavour} (more on this later) of LaMachine chosen, it makes a good virtual research
 environment for a data scientist, whether on a personal computer or on a computing cluster, a good development
 environment for a developer or a good deployment method for production servers in for example CLARIN centres.  We
 demonstrate how LaMachine can create a fully functioning and standalone research environment for text mining  and NLP
@@ -110,10 +110,10 @@ LaMachine is an open-source NLP software distribution. This implies the followin
         software.
     \item The software included in LaMachine must under a recognised (i.e. OSI-approved) open-source license.
     \item The source
-        code must be hosted in a public version controlled repository\footnote{e.g. Github, Gitlab, Bitbucket, provided
+        code must be hosted in a public version controlled repository. \footnote{e.g. Github, Gitlab, Bitbucket, provided
         the respository is public}
-    \item There must be build process to compile the source, if applicable, and install the program
-    \item There must be some kind of release protocol (with semantic versioning) using the proper
+    \item There must be a build process to compile the source, if applicable, and install the program or library.
+    \item There must be some kind of release protocol (adhering to semantic versioning) that publishes software using the proper
 technology-specific channels.
     \item All software that is incorporated in LaMachine must bear at least some relevance to the field of Natural Language Processing.
     \item LaMachine lives in an open-source ecosystem and therefore builds on Unix-like platforms; this primarily
@@ -148,9 +148,11 @@ flexibility regarding the installation form, which we call \emph{flavours}:
         installation.
     \item \textbf{Docker container} - Installs LaMachine in a container. Containerisation separates the entire run-time
         environment from the host system, only the Linux kernel is shared. It is a lighter option than full
-        virtualisation.
+        virtualisation. \footnote{Note that Docker on other platforms such as Windows and macOS does do use full
+        virtualisation.}
     \item \textbf{Singularity container} - Another form of containerisation with more focus on security\footnote{reduced
-        privilege escalation}, making it more suitable than Docker for deployment on computing clusters.
+        privilege escalation}, making it more suitable than Docker for deployment on computing clusters. This flavour is
+        still under development.
     \item \textbf{Virtual Machine} - Installs LaMachine as a virtual machine, i.e. through full virtualisation. This allows
         deployment of LaMachine on hosts which would otherwise not support it, such as Windows. Virtualisation for
         LaMachine is achieved through Vagrant and VirtualBox\footnote{\url{https://vagrant.org}, \url{https://www.virtualbox.org}}.
@@ -165,9 +167,9 @@ overhead.
 
 The two native options, local and global installation, support a variety of major GNU/Linux distributions: Debian,
 Ubuntu, Arch Linux, CentOS, Fedora and, to a more limited degree, we also support macOS (the local installation flavour), powered in part by the homebrew package
-manager\footnote{Alternatives such as macports are not supported}. Support for macOS is limited because not all participating
-software supports it. Linux Distributions that are derivates of these \emph{may} also work, such as RedHat Enterprise Linux (CentOS), Linux Mint (Ubuntu),
-and Manjaro (Arch Linux).
+manager\footnote{\url{https://brew.sh}; alternatives such as macports are not supported}. Support for macOS is limited because not all participating
+software supports it. Certain Linux Distributions that are derivatives of these \emph{may} also work, such as RedHat
+Enterprise Linux (CentOS) and Linux Mint (Ubuntu).
 
 For the containerisation and virtualisation solutions, the default distribution we supply is Debian\footnote{The latest
 stable release}. It is, however, still possible to build your own container or virtual machine based on any of the other supported
@@ -194,7 +196,7 @@ LaMachine offers three distinct \emph{versions}, regardless of the flavour:
         provided by the underlying distribution are not a part of this scheme.
 \end{enumerate}
 
-The nomenclature is admittedly a bit confusing, but the notion of version discussed in the section refers to the
+The nomenclature is admittedly a bit confusing, but the notion of version discussed in this section refers to the
 versions of the various software packages inside LaMachine. It should not be
 confused with the actual \emph{version release number} of Lamachine as a whole, which is the version number assigned to
 the collective of installation scripts LaMachine provides, and which marks LaMachine releases.
@@ -202,9 +204,9 @@ the collective of installation scripts LaMachine provides, and which marks LaMac
 \subsection{Bootstrapping}
 
 Installation of LaMachine begins with a single bootstrap command\footnote{See \url{https://proycon.github.io/LaMachine}}
-executed on the command line.  It can interactively query the users for their software preferences \emph{(stored as the
+executed on the command line.  It can interactively query the user for her software preferences \emph{(stored as the
 host configuration)}, e.g. the flavour of LaMachine, as well as the set of software to install, \emph{the installation
-manifest}. This set is never static but can be customized by the user. The bootstrap procedure, shown in
+manifest}. This set is never static but can be customised by the user. The bootstrap procedure, a screenshot of which is shown in
 Figure~\ref{fig:bootstrap}, detects and installs the
 necessary prerequisites automatically and eventually invokes Ansible to perform the bulk of the work, unless a
 pre-published container or VM is selected.  Figure~\ref{fig:arch} provides a schematic view of the LaMachine
@@ -224,13 +226,13 @@ architecture.
 \label{fig:arch}
 \end{figure}
 
-Once LaMachine is installed, in any of its flavours, you can update it from inside by running
+Once LaMachine is installed, in any of its flavours, it can be updated from inside by running
 \texttt{lamachine-update}. This updates all of the software managed by LaMachine.
 
 \subsection{Metadata}
 \label{sec:metadata}
 
-LaMachine aims to harmonise the metadata of all installed software, by converting metadata from upstream repositories,
+LaMachine aims to harmonise the metadata of all installed software. This is accomplished by converting metadata from upstream repositories,
 i.e. the repositories where tool providers deposit their software, to a common yet simple standard called CodeMeta
 \footnote{\url{https://codemeta.github.io/}, described in JSON-LD} \cite{codemeta,codemetar} where possible, or
 encouraging software developers to provide their codemeta metadata inside their source code repositories and using that
@@ -255,6 +257,8 @@ CLARIAH. Some software by other CLARIN-NL/CLARIAH partners is also included. Thi
 group and is explicitly open to participation by other software providers, especially those
 also in CLARIAH.
 
+We list a selection of the most important software included in LaMachine, grouped by research institute:
+
 \begin{itemize}
  \item by the Language Machines Research Group and the Centre of Language and Speech Technology, Radboud University
      Nijmegen\footnote{Links: \url{https://languagemachines.github.io/timbl}, \url{https://languagemachines.github.io/mbt},
@@ -264,7 +268,7 @@ also in CLARIAH.
 \url{https://proycon.github.io/colibri-core/},
 \url{https://github.com/proycon/gecco},
 \url{https://github.com/proycon/valkuil-gecco},
-\url{https://github.com/LanguageMachines/PICCL}, \url{https://githu.com/LanguageMachines/ticcltools},
+\url{https://github.com/LanguageMachines/PICCL}, \url{https://github.com/LanguageMachines/ticcltools},
 \url{https://github.com/proycon/labirinto},
 \url{https://github.com/proycon/oersetter-webservice}
 }
@@ -276,7 +280,7 @@ also in CLARIAH.
          developed for Dutch. It can do Part-of-Speech tagging, lemmatisation, named entity recogniton, shallow parsing,
          dependency parsing and morphological analysis. Also included in LaMachine;
          \textbf{Toad}, Trainer Of All Data, training tools for Frog.
-     \item \textbf{Wopr}- Memory-based Word Predictor.
+     \item \textbf{Wopr} - Memory-based Word Predictor.
      \item \textbf{CLAM} - Quickly build RESTful webservices, powers many webservices offered by LaMachine.
      \item \textbf{FoLiA} - Format for Linguistic Annotation, with tools and libraries in/for Python and $C++$.
      \item \textbf{FLAT} - FoLiA Linguistic Annotation Tool: a web-based linguistic annotation tool.
@@ -312,7 +316,7 @@ also in CLARIAH.
 
 In addition to the above listed specific software, LaMachine also incorporates a large number of renowned tools by external international parties, offering
 most notably a mature Python environment with renowned scientific modules. The following list is not
-exhaustive: \footnote{\url{https://jupyterlab.readthedocs.io/en/stable/}, \url{https://pytorch.org}, \url{http://www.nltk.org},
+exhaustive: \footnote{Links: \url{https://jupyterlab.readthedocs.io/en/stable/}, \url{https://pytorch.org}, \url{http://www.nltk.org},
     \url{https://spacy.io},  \url{http://www.nextflow.io}, \url{https://stanfordnlp.github.io/CoreNLP/},  \url{https://github.com/tesseract-ocr/tesseract}, \url{https://tensorflow.org},
 \url{http://kaldi-asr.org}, \url{http://www.statmt.org/moses}}
 
@@ -324,11 +328,11 @@ exhaustive: \footnote{\url{https://jupyterlab.readthedocs.io/en/stable/}, \url{h
         \item \textbf{NLTK} - Natural Language Toolkit for Python
         \item \textbf{Spacy} - Industrial-Strength NLP in Python
     \end{itemize}
-    \item R
-    \item Java
+    \item \textbf{R}
+    \item \textbf{Java}
     \begin{itemize}
-        \item NextFlow - A system and language for writing parallel and scalable pipelines in a portable manner.
-        \item Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/) - Various types of linguistic enrichment
+        \item \textbf{NextFlow} - A system and language for writing parallel and scalable pipelines in a portable manner.
+        \item \textbf{Stanford CoreNLP} - Various types of linguistic enrichment
     \end{itemize}
     \item \textbf{Tesseract} - Open Source Optical Character Recognition (OCR)
     \item \textbf{Tensorflow} - Open-source machine learning framework
@@ -352,8 +356,8 @@ components.
 \subsection{Low-level Interfaces}
 
 In any of its flavours, LaMachine offers low-level shell access, i.e. a command-line interface accessed through a
-terminal. In flavours that are separated from the host system over the network, this is accomplished over \texttt{ssh}.
-At that point, as shown in Figure~\ref{fig:venv}, the user has the liberty to do whatever she wants and can invoke any
+terminal. In flavours that are separated from the host system by a network, this is accomplished over \texttt{ssh}.
+After accessing the LaMachine environment through a terminal, as shown in Figure~\ref{fig:venv}, the user has the liberty to do whatever she wants and can invoke any
 of the tools that offer a text interface, including text editors such as vim, emacs or nano, version control systems
 such as git and interpreters such as Python or R (or compilers for that matter). The latter in turn allow users to use
 one of the many specialised programming libraries included in LaMachine to build their own tools. All this makes
@@ -369,9 +373,9 @@ LaMachine ideally suited as a development environment.
 \subsection{High-level Interfaces: Web-based access}
 
 LaMachine comes with a webserver\footnote{In situations where web interfaces are not needed or desired, the
-user has the ability to opt-out of this}. This webserver serves various web-capable tools that are incorporated in LaMachine. One
-of these tools is a portal website that provides an overview of all installed software in
-LaMachine, and acts as a point of access for web services and web applications. This portal, as shown in
+user has the ability to opt-out of this.}. This webserver serves various web-capable tools that are incorporated in LaMachine. One
+of these tools is a portal website that provides an overview of all installed software, and acts as a point of access to
+all its web services and web applications. This portal, as shown in
 Figure~\ref{fig:portal}, leverages the metadata registry compiled in each LaMachine installation (see
 section~\ref{sec:metadata}).
 
@@ -386,8 +390,8 @@ section~\ref{sec:metadata}).
 LaMachine also comes with a
 Jupyter Lab\footnote{\url{https://jupyter.org/}} installation which provides a web-based Integrated Development
 Environment (IDE) for scripting in Python and R, web-based terminal access, and so-called \emph{notebooks} which mix
-text, code and data output and have gained great popularity in data science community. This is shown in
-Figure~\ref{fig:lab}. This type of virtual laboratory provides a powerful interface that can form an alternative to
+text, code and data output and have gained great popularity in the data science community. This is shown in
+Figure~\ref{fig:lab}. This type of virtual laboratory provides a powerful interface that provides an alternative to
 regular shell access and may have a larger appeal for those parts of the audience that do not feel completely
 comfortable in the terminal.
 
@@ -401,7 +405,7 @@ comfortable in the terminal.
 LaMachine provides various CLAM-based webservices. CLAM is a long-time CLARIN project that allows developers to turn
 their command-line NLP tool into a RESTful webservice with relatively little effort \cite{CLAMPAPER}, and which in
 addition also provides a generic web-interface for human end-users. The portal website in LaMachine links to these. This
-again address an audience that does not require a high degree of technical expertise, but is suitable for a wider
+again addresses an audience that does not require a high degree of technical expertise, but is suitable for a wider
 audience of researchers, including those in the Humanities.
 
 \section{Comparisons and alternatives}
@@ -422,8 +426,8 @@ or needs yet, and needs an environment where she can explore a variety of pre-in
 
 Comparisons could be drawn between LaMachine as a kind of Linux distribution and other Linux distributions. But that
 would not be appropriate as we characterise LaMachine more as a meta-distribution which simply builds on the foundation
-of several existing major Linux distributions. As a meta-distribution that runs in a variety of flavours and on a verity
-of platforms, it has a great deal of flexibility that normal distributions don't have. At the same time, the scope of
+of several existing major Linux distributions. As a meta-distribution that runs in a variety of flavours and on a
+variety of platforms, it offers a great deal of flexibility that normal distributions do not have. At the same time, the scope of
 LaMachine is more narrowly defined than that of a generic Linux distribution, including even specialised Linux
 distributions that focus on scientific computing, such as Fedora
 Scientific\footnote{\url{https://labs.fedoraproject.org/en/scientific/}}.
@@ -440,11 +444,10 @@ At the start of the development cycle for LaMachine v2, we investigated whether 
 a sufficient foundation for us to build upon. We concluded this was not the case for a number of reasons: Anaconda
 introduces more overhead than we desired for our purposes and conflicted with certain technology choices we made. We
 wanted our native flavours (local environment and global environment) to be as close to the underlying distribution as possible and to reuse existing
-technologies and packages from the distribution (or from homebrew for macOS), such as compilers (e.g. gcc) and
-interpreters (e.g. python).  Anaconda, on the other hand, choses to provide its own packages and builds on those. It
+technologies and packages, such as compilers (e.g. gcc) and
+interpreters (e.g. python), from the distribution (or from homebrew for macOS).  Anaconda, on the other hand, choses to provide its own packages and builds on those. It
 does so using its own package manager (conda) and package repositories (conda-forge). This would require repackaging certain software for the
-anaconda ecosystem, especially handling of non-Python software was not trivial, as Anaconda was originally conveived as a
-Python distribution.
+anaconda ecosystem.
 
 For the distribution and deployment of complex software setups such as NLP pipelines, containers are a common solution
 nowadays. The Docker flavour of LaMachine provides something similar, but rather than providing a single static Docker recipe
