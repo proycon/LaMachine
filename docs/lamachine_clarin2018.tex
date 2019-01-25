@@ -11,10 +11,12 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{placeins}
+\usepackage{enumitem}
 %\usepackage{latexsym}
 \usepackage[english]{babel}
 
 %\setlength\titlebox{5cm}
+\setlist{noitemsep}
 
 % You can expand the titlebox if you need extra space
 % to show all the authors. Please do not make the titlebox
@@ -69,7 +71,7 @@ community. We illustrate the usage of LaMachine in an exploratory text mining pr
 \label{sec:intro}
 
 Software is a key deliverable and a vital component for research in projects such as those under the CLARIN umbrella. It
-is software that provides researchers the instruments to yield for their research; It is CLARIN's core mission to make
+is software that provides researchers the instruments to yield for their research. It is CLARIN's core mission to make
 digital language resources, including software, available to the wider research community.
 
 We see that NLP software often takes on complex forms such as processing pipelines invoking various individual
@@ -81,15 +83,14 @@ Software is a broad but well-ingrained notion in society nowadays, referring to 
 manifest in various forms, whether it is an app on a phone, a graphical desktop application, a command line tool, or a
 web-based application. These different \emph{interfaces} generally address different \emph{audiences}; the data
 scientist will feel at home at the command line and in scripting environments and uses these fairly low-level
-interfaces, whereas researchers in the humanities demand higher-level interfaces. There is often a power trade-off
+interfaces, whereas researchers in the humanities demand higher-level graphical interfaces. There is often a power trade-off
 between lower and higher-level interfaces, with the former providing maximum flexibility at the cost of a steeper
 learning curve, technical ability, and a do-it-yourself mentality. Higher level interfaces, on the other
 hand, expose certain functionality of the software in an easy and accessible way, but in doing so often can not expose
 the full power of the software. The cost trade-off is also apparant in the construction of the interfaces, where
 high-level interfaces are typically far more costly to build.
 
-LaMachine incorporates software providing different types of interfaces\footnote{Command line interfaces, programming
-interfaces, web-user interfaces, webservices.} which, as seen above, typically address different audiences. Whilst we
+LaMachine incorporates software providing different types of interfaces which, as seen above, typically address different audiences. Whilst we
 attempt to accommodate both technical\footnote{Data scientists, DevOps, system administrators, developers.} and
 less-technical audiences\footnote{The wider researcher community, particularly the Humanities; also educational
 settings.}, there is a natural bias towards the former as lower-level interfaces are often a prerequisite to build
@@ -109,28 +110,36 @@ LaMachine is an open-source NLP software distribution. This implies the followin
         or appropriate the participating software in any way, nor does it provide a hosting place or repository for
         software.
     \item The software included in LaMachine must under a recognised (i.e. OSI-approved) open-source license.
+        Proprietary (closed-source) software is explicitly excluded.
     \item The source
         code must be hosted in a public version controlled repository. \footnote{e.g. Github, Gitlab, Bitbucket, provided
         the respository is public}
     \item There must be a build process to compile the source, if applicable, and install the program or library.
     \item There must be some kind of release protocol (adhering to semantic versioning) that publishes software using the proper
-technology-specific channels.
+technology-specific channels. We will elaborate on this later.
     \item All software that is incorporated in LaMachine must bear at least some relevance to the field of Natural Language Processing.
     \item LaMachine lives in an open-source ecosystem and therefore builds on Unix-like platforms; this primarily
         means Linux, as well as BSD and, with some restrictions, macOS. This by definition excludes certain software for different platforms, such as
         mobile platforms (Android/iOS/etc), native Windows/mac desktop applications, or certain interface types in
         general such as classical desktop GUI applications or mobile `apps', all of which fall beyond our scope.
         Cygwin\footnote{A unix environment on Windows} is not tested or
-        supported.  However, virtualisation technology enables deployment on a wider range of platforms, including Windows.
+        supported either.  However, virtualisation technology enables deployment on a wider range of platforms, including Windows.
 \end{enumerate}
 
-LaMachine is a \emph{meta distribution} as it can be installed in various contexts. At its core, LaMachine consists of a
+We classify LaMachine as a \emph{meta distribution} as it can be installed in various contexts. The heart of LaMachine consists of a
 set of machine-parsable instructions on how to obtain, build (e.g. compile from source), install and configure software.
-These are implemented using Ansible\footnote{\url{https://www.ansible.com}}.  This is notably different from the more
+These are implemented using Ansible\footnote{\url{https://www.ansible.com}; a popular open-source software provisioning,
+configuration and deployment tool by Red Hat}.  This is notably different from the more
 classical notion of Linux distributions, which generally provide their own repositories with (often binary) software
-packages. LaMachine builds on this already established infrastructure by taking these repositories as a given and only
-needs to know which repositories to use.  Similarly, there are different programming-language-specific ecosystems
-providing their own repositories, such as the Python Package Index\footnote{\url{https://pypi.org}} for Python, CRAN\footnote{\url{https://cran.r-project.org/}} for R, CPAN\footnote{\url{https://www.cpan.org}} for Perl, Maven Central\footnote{\url{https://search.maven.org}} for Java.  As said, LaMachine relies on those to pull and install software from and never forks, archives, or modifies the software in any way. In doing so, we compel participating software projects to adhere to well-established distribution standards and ensure the software is more sustainable towards the future \cite{softwarequality}. Moreover, we ensure that LaMachine never becomes a prerequisite for the software but merely a courtesy or convenience.
+packages. LaMachine builds on this already established infrastructure by taking these repositories as a foundation where
+possible. Similarly, as implied in point five above, there are different programming-language-specific ecosystems
+providing their own repositories, such as the Python Package Index\footnote{\url{https://pypi.org}} for Python,
+CRAN\footnote{\url{https://cran.r-project.org/}} for R, CPAN\footnote{\url{https://www.cpan.org}} for Perl, Maven
+Central\footnote{\url{https://search.maven.org}} for Java.  LaMachine relies on those to pull and install software from
+and never forks, archives, or modifies the software in any way. In doing so, we compel participating software projects
+to adhere to well-established distribution standards and ensure the software is more sustainable towards the future
+\cite{softwarequality}. Moreover, we ensure that LaMachine never becomes a prerequisite for the software but merely a
+courtesy or convenience, and attempt to limit any amount of duplication in packaging and distribution efforts.
 
 \subsection{Flavours}
 
@@ -139,36 +148,36 @@ flexibility regarding the installation form, which we call \emph{flavours}:
 
 \begin{enumerate}
     \item \textbf{Local installation} - This installs the bulk of LaMachine in a separate local virtual environment (a seperate
-        directory) that has to be explicitly activated to be used. This also allows for multiple different installations
+        directory\footnote{Python users should know we just use \texttt{virtualenv} for this, with some
+        additions of our own}) that has to be explicitly activated to be used. This also allows for multiple different installations
         of LaMachine on the same host system (e.g. for different users or with different software configurations).
         This local installation still actively relies on various global dependencies that are available through the
         package manager of your distribution.
     \item \textbf{Global installation} - This flavour is used for a host that is fully dedicated to LaMachine. Everything will be
         installed globally so there is only one installation possible, multiple users will all make use of the same
-        installation.
+        installation. Unlike the local installation, we do not make use of a Python Virtual Environment in this flavour.
     \item \textbf{Docker container} - Installs LaMachine in a container. Containerisation separates the entire run-time
         environment from the host system, only the Linux kernel is shared. It is a lighter option than full
         virtualisation. \footnote{Note that Docker on other platforms such as Windows and macOS does do use full
         virtualisation.}
     \item \textbf{Singularity container} - Another form of containerisation with more focus on security\footnote{reduced
-        privilege escalation}, making it more suitable than Docker for deployment on computing clusters. This flavour is
-        still under development.
+        privilege escalation}, making it more suitable than Docker for deployment on computing clusters. This flavour is still under development.
     \item \textbf{Virtual Machine} - Installs LaMachine as a virtual machine, i.e. through full virtualisation. This allows
         deployment of LaMachine on hosts which would otherwise not support it, such as Windows. Virtualisation for
         LaMachine is achieved through Vagrant and VirtualBox\footnote{\url{https://vagrant.org}, \url{https://www.virtualbox.org}}.
     \item \textbf{Remote provisioning} - Installs LaMachine on a remote dedicated server. This option is most suited for
-        hosting centres.
+        hosting centres and directly uses Ansible's remote provisioning abilities.
 \end{enumerate}
 
 The different flavours all offer a different degree of separation from the host OS, where Virtual Machines are
 completely virtualised, containers still share the kernel with the host OS, and the two native installation flavours,
-local \& global, actually compile against the machine's distribution itself and thus offers the least amount of
+local and global, actually compile against the machine's distribution itself and thus offer the least amount of
 overhead.
 
-The two native options, local and global installation, support a variety of major GNU/Linux distributions: Debian,
-Ubuntu, Arch Linux, CentOS, Fedora and, to a more limited degree, we also support macOS (the local installation flavour), powered in part by the homebrew package
+The two native options support a variety of major GNU/Linux distributions: Debian, Ubuntu, Arch Linux, CentOS, Fedora
+and, to a more limited degree, we also support macOS, powered in part by the homebrew package
 manager\footnote{\url{https://brew.sh}; alternatives such as macports are not supported}. Support for macOS is limited because not all participating
-software supports it. Certain Linux Distributions that are derivatives of these \emph{may} also work, such as RedHat
+software supports it. Certain Linux Distributions that are derivatives of the aforementioned distributions \emph{may} also work, such as RedHat
 Enterprise Linux (CentOS) and Linux Mint (Ubuntu).
 
 For the containerisation and virtualisation solutions, the default distribution we supply is Debian\footnote{The latest
@@ -187,7 +196,8 @@ LaMachine offers three distinct \emph{versions}, regardless of the flavour:
 \begin{enumerate}
     \item \textbf{stable} - This is the default and recommended for most situations. It installs the latest stable
         versions of all included software.
-    \item \textbf{development} - This installs the latest development versions of the included software. In practise, this usually means that software is pulled directly from the version controlled repository and compiled and installed from source. Due to the experimental nature, the development version of
+    \item \textbf{development} - This installs the latest development versions of the included software. In practise,
+        this usually means that software is pulled directly from the version-controlled repository is and compiled and installed from source. Due to the experimental nature, the development version of
         LaMachine may at times break and not install successfully.
     \item \textbf{custom} - This installs custom versions of all included software, i.e. the user explicitly
         specifies which versions to install for each software package.  Such a version list can for instance be exported
@@ -203,7 +213,7 @@ the collective of installation scripts LaMachine provides, and which marks LaMac
 
 \subsection{Bootstrapping}
 
-Installation of LaMachine begins with a single bootstrap command\footnote{See \url{https://proycon.github.io/LaMachine}}
+Installation of LaMachine begins with a single \emph{bootstrap} command\footnote{See \url{https://proycon.github.io/LaMachine}}
 executed on the command line.  It can interactively query the user for her software preferences \emph{(stored as the
 host configuration)}, e.g. the flavour of LaMachine, as well as the set of software to install, \emph{the installation
 manifest}. This set is never static but can be customised by the user. The bootstrap procedure, a screenshot of which is shown in
@@ -236,31 +246,43 @@ LaMachine aims to harmonise the metadata of all installed software. This is acco
 i.e. the repositories where tool providers deposit their software, to a common yet simple standard called CodeMeta
 \footnote{\url{https://codemeta.github.io/}, described in JSON-LD} \cite{codemeta,codemetar} where possible, or
 encouraging software developers to provide their codemeta metadata inside their source code repositories and using that
-directly. This in turn enables other tools to do proper service discovery and provenance logging.
+directly. CodeMeta is a linked data initiative that provides a mapping from/to various commonly used software metadata
+standards\footnote{such as DOAP, Github API, Debian packages, Python distutils, R packages, Ruby gems, Maven metadata, DataCite, WikiData}.
+All this metadata in LaMachine in turn enables other tools to do proper service discovery and provenance logging.
+
+The software metadata discussed here is of a generic and practical nature, it most importantly contains information regarding the version, source,
+licensing, and authors of the software. The underlying principle is to obtain sofware metadata from as close to the
+source as possible. This can be contrasted with other metadata efforts, also within CLARIN, to establish a more
+centralised metadata store\footnote{such as CLARIN's CMDI Component Registry;
+\url{https://www.clarin.eu/content/component-metadata}} with more specialised and
+research-oriented metadata. There is merit to both approaches as they serve distinct functions. But in order to best
+serve everybody's different metadata needs, these bottom-up and top-down processes need to come to some kind of
+synthesis, e.g. by having component registries do automatic harvesting of CodeMeta (or other) metadata, similar to what LaMachine
+does.
 
 \FloatBarrier
 
 \section{Software}
 
-LaMachine exists since May 2015 and has been used extensively ever since by numerous users, in early 2018 version 2 was
-released which was a significant rewrite, powered by Ansible.
+LaMachine exists since May 2015 and has been used extensively ever since by numerous users. In early 2018 version 2 was
+released which was a significant redesign, powered by Ansible.
 
 In LaMachine, software is grouped into various ``packages'', each package\footnote{For those familiar with
 Ansible, a package in LaMachine is an Ansible role} groups one or multiple programs that have some kind of relation. The
 installation manifest lists all packages that will be installed, at the user's discretion. After the initial
-installation, the user can always add more packages using \texttt{lamachine-add}.
+installation, the user can always add more packages using \texttt{lamachine-add} or editing the installation manifest directly.
 
 LaMachine was initially conceived as the primary means of distribution of the software stack developed at the Language
 Machines Research Group and the Centre of
 Language and Speech Technology, Radboud University Nijmegen. The majority of this sofware was either fully or partially developed under the auspices of CLARIN-NL or successor
-CLARIAH. Some software by other CLARIN-NL/CLARIAH partners is also included. This project is not limited to one research
+CLARIAH. Some software by other CLARIN-NL/CLARIAH partners is also included. LaMachine is not limited to one research
 group and is explicitly open to participation by other software providers, especially those
 also in CLARIAH.
 
 We list a selection of the most important software included in LaMachine, grouped by research institute:
 
 \begin{itemize}
- \item by the Language Machines Research Group and the Centre of Language and Speech Technology, Radboud University
+ \item by the Language Machines Research Group and the Centre of Language and Speech Technology, Radboud University,
      Nijmegen\footnote{Links: \url{https://languagemachines.github.io/timbl}, \url{https://languagemachines.github.io/mbt},
     \url{https://languagemachines.github.io/ucto}, \url{https://languagemachines.github.io/frog},
     \url{http://ilk.uvt.nl/wopr}, \url{https://proycon.github.io/folia}, \url{https://proycon.github.io/clam},
@@ -273,49 +295,49 @@ We list a selection of the most important software included in LaMachine, groupe
 \url{https://github.com/proycon/oersetter-webservice}
 }
  \begin{itemize}
-     \item \textbf{Timbl} - A memory-based machine learning
-         toolkit, and \textbf{Mbt}, a memory-based tagger based on timbl.
-     \item \textbf{Ucto} - A tokeniser
-     \item \textbf{Frog} - Frog is an integration of various memory-based natural language processing (NLP) modules
+     \item \textbf{Timbl} -- A memory-based machine learning
+         toolkit, and \textbf{Mbt}, a memory-based tagger based on timbl. Python bindings included as well.
+     \item \textbf{Ucto} -- A multilingual rule-based tokeniser. Python binding included as well.
+     \item \textbf{Frog} -- An integration of various memory-based natural language processing (NLP) modules
          developed for Dutch. It can do Part-of-Speech tagging, lemmatisation, named entity recogniton, shallow parsing,
          dependency parsing and morphological analysis. Also included in LaMachine;
-         \textbf{Toad}, Trainer Of All Data, training tools for Frog.
-     \item \textbf{Wopr} - Memory-based Word Predictor.
-     \item \textbf{CLAM} - Quickly build RESTful webservices, powers many webservices offered by LaMachine.
-     \item \textbf{FoLiA} - Format for Linguistic Annotation, with tools and libraries in/for Python and $C++$.
-     \item \textbf{FLAT} - FoLiA Linguistic Annotation Tool: a web-based linguistic annotation tool.
-     \item \textbf{PyNLPl} - Python Natural Language Processing Library.
+         Python bindings for Frog and \textbf{Toad}, Trainer Of All Data, training tools for Frog.
+     \item \textbf{Wopr} -- Memory-based Word Predictor.
+     \item \textbf{CLAM} -- Quickly build RESTful webservices, powers many webservices offered by LaMachine.
+     \item \textbf{FoLiA} -- Format for Linguistic Annotation \cite{FOLIAPAPER}, with tools and libraries in/for Python and $C++$.
+     \item \textbf{FLAT} -- FoLiA Linguistic Annotation Tool: a web-based linguistic annotation tool.
+     \item \textbf{PyNLPl} -- Python Natural Language Processing Library.
      \item \textbf{Colibri Core} -- Colibri core is an NLP tool as well as a C++ and Python library for working with
          basic linguistic constructions such as n-grams and skipgrams (i.e patterns with one or more gaps, either of
-         fixed or dynamic size) in a quick and memory-efficient way. -
-     \item \textbf{Gecco} - Generic Environment for Context-Aware Correction of Orthography - and \textbf{Valkuil.net},
-         an instantiation thereof for Dutch.
-     \item \textbf{PICCL} - PICCL: A set of workflows for corpus building through OCR, post-correction (through \textbf{TICCL}) and Natural Language Processing.
-     \item \textbf{Labirinto}- A web-based portal listing all
+         fixed or dynamic size) in a quick and memory-efficient way.
+     \item \textbf{Gecco} -- Generic Environment for Context-Aware Correction of Orthography, an NLP pipeline for
+         spelling correction,  and \textbf{Valkuil.net}, an instantiation thereof for Dutch.
+     \item \textbf{PICCL} -- A set of workflows (NLP pipeline) for corpus building through OCR, post-correction (through \textbf{TICCL}) and Natural Language Processing.
+     \item \textbf{Labirinto} -- A web-based portal listing all
          available tools in LaMachine, an ideal starting point for LaMachine.
-     \item \textbf{Oersetter} - A Frisian-Dutch Machine Translation system in collaboration with the Fryske Akademy.
+     \item \textbf{Oersetter} -- A Frisian-Dutch Machine Translation system in collaboration with the Fryske Akademy.
  \end{itemize}
  \item by the University of Groningen
  \begin{itemize}
-     \item \textbf{Alpino}\footnote{\url{http://www.let.rug.nl/vannoord/alp/Alpino/}} - a dependency parser and tagger for Dutch
+     \item \textbf{Alpino}\footnote{\url{http://www.let.rug.nl/vannoord/alp/Alpino/}} - A dependency parser and tagger for Dutch.
  \end{itemize}
  \item by the Vrije Universiteit Amsterdam
  \begin{itemize}
-     \item \textbf{KafNafParserPy}\footnote{\url{https://github.com/cltl/KafNafParserPy}} - A python module to parse NAF files
+     \item \textbf{KafNafParserPy}\footnote{\url{https://github.com/cltl/KafNafParserPy}} - A python module to parse NAF files.
  \end{itemize}
  \item by Utrecht University
  \begin{itemize}
      \item  \textbf{T-scan}\footnote{\url{https://github.com/proycon/tscan}} - T-scan is a Dutch text analytics tool for readability prediction (initially developed at TiCC, Tilburg University, and in collaboration with Radboud University, Nijmegen)
  \end{itemize}
- \item by Meertens Instituut
+ \item by the Meertens Instituut
  \begin{itemize}
      \item \textbf{Python Course for the Humanities}\footnote{\url{http://www.karsdorp.io/python-course/}} - Interactive
-         tutorial and introduction into programming with Python for the humanities
+         tutorial and introduction into programming with Python for the humanities.
  \end{itemize}
 \end{itemize}
 
 In addition to the above listed specific software, LaMachine also incorporates a large number of renowned tools by external international parties, offering
-most notably a mature Python environment with renowned scientific modules. The following list is not
+most notably a mature Python environment with scientific modules. The following list gives an impression and is not
 exhaustive: \footnote{Links: \url{https://jupyterlab.readthedocs.io/en/stable/}, \url{https://pytorch.org}, \url{http://www.nltk.org},
     \url{https://spacy.io},  \url{http://www.nextflow.io}, \url{https://stanfordnlp.github.io/CoreNLP/},  \url{https://github.com/tesseract-ocr/tesseract}, \url{https://tensorflow.org},
 \url{http://kaldi-asr.org}, \url{http://www.statmt.org/moses}}
@@ -343,8 +365,8 @@ exhaustive: \footnote{Links: \url{https://jupyterlab.readthedocs.io/en/stable/},
 \section{Interfaces and Audiences}
 
 We already addressed the need for different interfaces for different audiences in Section~\ref{sec:intro}. The challenge we
-face, and for which LaMachine offers a solution, is one of software maintainability and distribution. How do we maintain
-and distribute software that is often highly complex and consists of multiple interconnected components, considering
+face, and for which LaMachine offers a solution, is one of software maintainability, distribution and deployment. How do
+we maintain, distribute, and deploy software that is often highly complex and consists of multiple interconnected components, considering
 that this software is used differently by different audiences? A key aspect here is the reusability and accessibility of individual
 software components. The philosophy we subscribe to encourages the development and distribution of software in a layered or modular fashion,
 allowing each building block to serve as the foundation for another more high-level interface, without sacrificing the usability of the
