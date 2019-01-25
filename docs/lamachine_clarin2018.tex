@@ -381,8 +381,8 @@ In any of its flavours, LaMachine offers low-level shell access, i.e. a command-
 terminal. In flavours that are separated from the host system by a network, this is accomplished over \texttt{ssh}.
 After accessing the LaMachine environment through a terminal, as shown in Figure~\ref{fig:venv}, the user has the liberty to do whatever she wants and can invoke any
 of the tools that offer a text interface, including text editors such as vim, emacs or nano, version control systems
-such as git and interpreters such as Python or R (or compilers for that matter). The latter in turn allow users to use
-one of the many specialised programming libraries included in LaMachine to build their own tools. All this makes
+such as git and interpreters such as Python or R (or compilers for that matter). This allow users to use
+one of the many specialised programming libraries included in LaMachine to build their own tools and . All this makes
 LaMachine ideally suited as a development environment.
 
 \begin{figure}[htb] \begin{center}
@@ -437,7 +437,8 @@ How does LaMachine compare to alternatives? To answer this question we must firs
 alternatives to LaMachine. At this point, it is important to emphasise once more that LaMachine is offered as convenience.
 LaMachine always seeks to use installation channels that the user can also access directly. For instance, is the user
 only interested in a single Python package that LaMachine offers? Then she can just as well install it directly using
-\texttt{pip install}. Is the user only interested in a single package that underlying Linux distribution (or macOS' homebrew)
+\texttt{pip install}. Is the user only interested in a single package that  the underlying Linux distribution (or
+macOS's homebrew)
 already provides? Then, by all means, she should go for that.
 
 LaMachine starts to fill a need when the user is interested in complex software, such as complex NLP pipelines with
@@ -454,13 +455,13 @@ LaMachine is more narrowly defined than that of a generic Linux distribution, in
 distributions that focus on scientific computing, such as Fedora
 Scientific\footnote{\url{https://labs.fedoraproject.org/en/scientific/}}.
 
-The best comparison can be drawn with Anaconda\footnote{\url{https://www.anaconda.com/}}, which we could also qualify as
+The best comparison can perhaps be drawn with Anaconda\footnote{\url{https://www.anaconda.com/}}, which we could also qualify as
 a meta-distribution under our definition, and which enjoys great popularity in the data science community. Anaconda has
 a focus on Python and R. It is much wider in scope than LaMachine, which has a strong NLP and CLARIN/CLARIAH focus. When
-it comes to Python, there is considerable overlap in the modules that LaMachine and Anaconda offer. Unlike LaMachine,
+it comes to Python, which Anaconda is initially geared at, there is considerable overlap in the modules that LaMachine and Anaconda offer. Unlike LaMachine,
 Anaconda does not focus on providing different flavours such as a VM or a Docker Container\footnote{This is not a
 technical limitation but simply a matter of different objectives, one could easily create a VM or Docker Container and
-install Anaconda in it.}.
+install Anaconda in it.}, nor separate stable and development versions of the included software.
 
 At the start of the development cycle for LaMachine v2, we investigated whether Anaconda and its ecosystem would provide
 a sufficient foundation for us to build upon. We concluded this was not the case for a number of reasons: Anaconda
@@ -475,7 +476,7 @@ For the distribution and deployment of complex software setups such as NLP pipel
 nowadays. The Docker flavour of LaMachine provides something similar, but rather than providing a single static Docker recipe
 that builds a single kind of container, LaMachine offers a high degree of flexibility for the construction of different
 containers, i.e. containing different software of having different configurations, based on the user's needs. It is
-quite feasible to use instantiate a variety of LaMachine containers and use a container orchestration system such
+quite feasible to instantiate a variety of LaMachine containers and use a container orchestration system such
 Kubernetes or Docker Swarm for automated deployment, scaling and management thereof. Such orchestration, however, is
 beyond the scope of LaMachine itself, which aims to provide a singular environment, i.e. everything installed in a
 LaMachine instance shares the same userspace and duplication is strongly minimised.
@@ -516,7 +517,19 @@ content of the complaint and the scikit-learn Python package for classification,
 
 \subsection{Workshop: Cataloguing of Textual Cultural Heritage Objects}
 
-%TODO
+(TODO) %TODO: some intro
+
+For this workshop, computing power was purchased at SURFsara, a collaborative organization for ICT in Dutch education
+and research. Subsequently, we had the ability to create Virtual Machines on their hosting platform. For this workshop
+we had twelve participants and decided to create a single multi-core and hih memory VM to share amongst the
+participants.
+
+As recommended by SURFsara, we opted for one of their default Linux images based on Ubuntu 18.04, and we bootstrapped
+the local installation flavor of LaMachine inside that VM.
+
+
+(TODO) %TODO: some intro
+
 
 \section{Conclusion \& Future work}
 
