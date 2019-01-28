@@ -490,6 +490,13 @@ Kubernetes or Docker Swarm for automated deployment, scaling and management ther
 beyond the scope of LaMachine itself, which aims to provide a singular environment, i.e. everything installed in a
 LaMachine instance shares the same userspace and duplication is strongly minimised.
 
+The flexibility LaMachine offers, with various flavours and versions, makes it more accessible and deployable in
+multiple contexts, but this does come at a cost. Maintaining LaMachine itself is a non-trivial task that requires
+constant maintenance and testing\footnote{We run automated tested on a continuous integration platform to this end};
+software exists in an ever moving ecosystem. Any of the distributions we target, or software that participates, \emph{might}
+at any time introduce a change that requires us to adapt LaMachine accordingly. Similarly, underlying Linux
+distribution releases that are currently up-to-date and supported, will eventually be deprecated and replaced by newer releases, a development
+LaMachine is obliged to follow by design.
 
 \section{Case studies}\label{sec:case}
 
@@ -546,13 +553,19 @@ flavours, and regardless of the flavour, the resulting installations are always 
 environment flavour had the added bonus of not being in anyone's way in case any of the twelve workshop participants did
 not want to use LaMachine, considering it needs to be explicitly activated prior to usage.
 
-LaMachine offered a convenient platform for a range of different explorations and experiments in the area of NLP and text mining.
-However, for some situations LaMachine was not a good fit for the tasks at hand: For team members who did not have
-experience with a non-Windows environment, LaMachine was not a suitable or useful tool. And also for members who wanted
-to use a graphical user interface for their text editors as we did not manage to get the x-forwarding working (note that
-this also depends on the overall VM). After a few attempts the team gave up on resolving this issue due to time pressure
-but it also demonstrated that fine-tuning the configuration of LaMachine on certain aspects is beyond the reach of a data scientist without system administration skills.
- %iris it moet nog wat beter geformuleerd worden maar je snaprt wat ik bedoel
+LaMachine offered a convenient platform for a range of different explorations and experiments in the area of NLP and
+text mining.  However, for some situations LaMachine, or rather Linux in general, was not a good fit for the audience of
+the workshop: For team members who did not have experience with a non-Windows environment, LaMachine was not a suitable
+or useful tool. The limit of LaMachine was also reached for members who wanted to use desktop text editors with a
+graphical user interface as this is not offered by LaMachine and we did not manage to get X-forwarding working in the
+Ubuntu Linux VM. After a few attempts the team gave up on resolving this issue due to time pressure. This, also
+demonstrates that fine-tuning the configuration of LaMachine on certain aspects is beyond the reach of a data scientist
+without system administration skills. But this certainly also applies also to the installation as a whole in the
+SURFsara context, which involved things like the partitioning, formatting and mounting of (virtual) drives and setting
+up user accounts on the shared VM, all of which require some system administration skills.
+ %verwerkt <-- <iris> it moet nog wat beter geformuleerd worden maar je snaprt wat ik bedoel
+%@iris: hebben jullie verder geen gebruik proberen te maken van de Jupyter Lab omgeving? Dat biedt in ieder geval iets
+%grafisch wat via web te benaderen is?
 
 \section{Conclusion \& Future work}
 
