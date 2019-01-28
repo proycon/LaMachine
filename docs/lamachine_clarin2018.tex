@@ -64,14 +64,13 @@ We introduce LaMachine, a unified Natural Language Processing (NLP) open-source 
 installation and deployment of a large amount of software projects that have been developed in the scope of the
 CLARIN-NL project and its current successor CLARIAH. Special attention is paid to encouragement of good software
 development practices and reuse of established infrastructure in the scientific and open-source software development
-community. We illustrate the usage of LaMachine in an exploratory text mining project at the Dutch Health Inspectorate where LaMachine was applied to create a research environment for automatic text analysis for health care quality monitoring.
+community. We explain what Lamachine is, how it cn used and the technical details. We also compare Lamachine to alternative software distributions and discuss its advantages and limitations. We illustrate how LaMachine can be used in two case studies, one in an exploratory text mining project at the Dutch Health Inspectorate where LaMachine was applied to create a research environment for automatic text analysis for health care quality monitoring, and a second case where Lamachine was used to create a workspace for a one-week, intense collaboration by a diverse research team. 
 \end{abstract}
 
 \section{Introduction}
 \label{sec:intro}
 
-Software is a key deliverable and a vital component for research in projects such as those under the CLARIN umbrella. It
-is software that provides researchers the instruments to yield for their research. It is CLARIN's core mission to make
+Software is a key deliverable and a vital component for research in projects such as those under the CLARIN umbrella. Software provides researchers the instruments to yield for their research. It is CLARIN's core mission to make
 digital language resources, including software, available to the wider research community.
 
 We see that NLP software often takes on complex forms such as processing pipelines invoking various individual
@@ -96,9 +95,9 @@ less-technical audiences\footnote{The wider researcher community, particularly t
 settings.}, there is a natural bias towards the former as lower-level interfaces are often a prerequisite to build
 higher-level interfaces on. Depending on the \emph{flavour} (more on this later) of LaMachine chosen, it makes a good virtual research
 environment for a data scientist, whether on a personal computer or on a computing cluster, a good development
-environment for a developer or a good deployment method for production servers in for example CLARIN centres.  We
-demonstrate how LaMachine can create a fully functioning and standalone research environment for text mining  and NLP
-for Dutch texts in a use case project at the Healthcare Inspectorate.
+environment for a developer or a good deployment method for production servers in for example CLARIN centres. 
+
+ This paper provides a detailed description of Lamachine, its purpose and functionality and the technical details. We discuss the advantages and limitations of Lamachine to alternative software distributions in Section \ref{sec:comparison}. We demonstrate how LaMachine can create a fully functioning and standalone research environment for text mining  and NLP for Dutch texts in two use cases in Section \ref{sec:case}.
 
 
 \section{Architecture}
@@ -430,7 +429,7 @@ addition also provides a generic web-interface for human end-users. The portal w
 again addresses an audience that does not require a high degree of technical expertise, but is suitable for a wider
 audience of researchers, including those in the Humanities.
 
-\section{Comparisons and alternatives}
+\section{Comparison to alternative distributions}
 \label{sec:comparisons}
 
 How does LaMachine compare to alternatives? To answer this question we must first look at what may be considered
@@ -482,10 +481,10 @@ beyond the scope of LaMachine itself, which aims to provide a singular environme
 LaMachine instance shares the same userspace and duplication is strongly minimised.
 
 
-\section{Case studies}
+\section{Case studies}\label{sec:case}
 
 \subsection{Text Mining for Health Inspection}
-\label{sec:case}
+
 
 We participated in a small Dutch national project titled \emph{``Text mining for Inspection: an exploratory study on
 automatic analysis of health care complaints''} \footnote{\url{https://bit.ly/2N2AICS}} %links to https://www.zonmw.nl/nl/onderzoek-resultaten/kwaliteit-van-zorg/program/project-detail/effectief-toezicht/tekstmining-in-het-toezicht-een-exploratieve-studie-naar-de-automatische-verwerking-van-klachten-in/}.
