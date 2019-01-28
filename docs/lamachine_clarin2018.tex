@@ -483,9 +483,9 @@ LaMachine instance shares the same userspace and duplication is strongly minimis
 
 
 \section{Case studies}
-\label{sec:case}
 
 \subsection{Text Mining for Health Inspection}
+\label{sec:case}
 
 We participated in a small Dutch national project titled \emph{``Text mining for Inspection: an exploratory study on
 automatic analysis of health care complaints''} \footnote{\url{https://bit.ly/2N2AICS}} %links to https://www.zonmw.nl/nl/onderzoek-resultaten/kwaliteit-van-zorg/program/project-detail/effectief-toezicht/tekstmining-in-het-toezicht-een-exploratieve-studie-naar-de-automatische-verwerking-van-klachten-in/}.
@@ -516,17 +516,22 @@ content of the complaint and the scikit-learn Python package for classification,
 %het doel van deze studie is om automatische tekstanalysetechnieken (tekstmining) toe te passen op de klachten die bij het Landelijk Meldpunt Zorg binnenkomen. Zo hopen we eventuele trends en patronen te vinden die meer inzicht geven in de aard en de relevantie van de klachten. De verwachting is om zo potentiële risicogevallen te ontdekken die op basis van de behandeling van individuele klachten nog niet waren gesignaleerd.
 
 \subsection{Workshop: Cataloguing of Textual Cultural Heritage Objects}
+\label{sec:case2}
 
 (TODO) %TODO: some intro
 
 For this workshop, computing power was purchased at SURFsara, a collaborative organization for ICT in Dutch education
 and research. Subsequently, we had the ability to create Virtual Machines on their hosting platform. For this workshop
-we had twelve participants and decided to create a single multi-core and hih memory VM to share amongst the
+we had twelve participants and decided to create a single multi-core and high memory VM to share amongst the
 participants.
 
-As recommended by SURFsara, we opted for one of their default Linux images based on Ubuntu 18.04, and we bootstrapped
-the local installation flavor of LaMachine inside that VM.
-
+As recommended by SURFsara, we opted for one of their default Linux images as a basis for the VM, based on Ubuntu 18.04,
+instead of providing a LaMachine VM image directly like we did in \section{sec:case}. This was recommended because their image
+was already preconfigured to integrate nicely with their cloud environment. Inside this VM we simply bootstrapped the local
+installation flavour of LaMachine.  Here we benefit from the flexibility LaMachine offers because of its various
+flavours, and regardless of the flavour, the resulting installations are always functionally equivalent. The local
+environment flavour had the added bonus of not being in anyone's way in case any of the twelve workshop participants did
+not want to use LaMachine, considering it needs to be explicitly activated prior to usage.
 
 (TODO) %TODO: some intro
 
