@@ -64,7 +64,7 @@ We introduce LaMachine, a unified Natural Language Processing (NLP) open-source 
 installation and deployment of a large amount of software projects that have been developed in the scope of the
 CLARIN-NL project and its current successor CLARIAH. Special attention is paid to encouragement of good software
 development practices and reuse of established infrastructure in the scientific and open-source software development
-community. We explain what Lamachine is, how it cn used and the technical details. We also compare Lamachine to alternative software distributions and discuss its advantages and limitations. We illustrate how LaMachine can be used in two case studies, one in an exploratory text mining project at the Dutch Health Inspectorate where LaMachine was applied to create a research environment for automatic text analysis for health care quality monitoring, and a second case where Lamachine was used to create a workspace for a one-week, intense collaboration by a diverse research team. 
+community. We explain what Lamachine is, how it can be used and the technical details. We also compare Lamachine to alternative software distributions and discuss its advantages and limitations. We illustrate how LaMachine can be used in two case studies, one in an exploratory text mining project at the Dutch Health Inspectorate where LaMachine was applied to create a research environment for automatic text analysis for health care quality monitoring, and a second case where Lamachine was used to create a workspace for a one-week, intense collaboration by a diverse research team.
 \end{abstract}
 
 \section{Introduction}
@@ -95,35 +95,36 @@ less-technical audiences\footnote{The wider researcher community, particularly t
 settings.}, there is a natural bias towards the former as lower-level interfaces are often a prerequisite to build
 higher-level interfaces on. Depending on the \emph{flavour} (more on this later) of LaMachine chosen, it makes a good virtual research
 environment for a data scientist, whether on a personal computer or on a computing cluster, a good development
-environment for a developer or a good deployment method for production servers in for example CLARIN centres. 
+environment for a developer or a good deployment method for production servers in for example CLARIN centres.
 
- This paper provides a detailed description of Lamachine, its purpose and functionality and the technical details. We discuss the advantages and limitations of Lamachine to alternative software distributions in Section \ref{sec:comparison}. We demonstrate how LaMachine can create a fully functioning and standalone research environment for text mining  and NLP for Dutch texts in two use cases in Section \ref{sec:case}.
+ This paper provides a detailed description of Lamachine, its purpose and functionality and the technical details. We
+ discuss the advantages and limitations of LaMachine compared to alternative software distributions in Section \ref{sec:comparison}. We demonstrate how LaMachine can create a fully functioning and standalone research environment for text mining  and NLP for Dutch texts in two use cases in Section \ref{sec:case}.
 
-\section{What is Lamachine} 
+ \section{What is Lamachine?}
 
 LaMachine is an open-source NLP software distribution.  LaMachine facilitates the installation, distribution and configuration of software. It does not fork, modify or appropriate the participating software in any way, nor does it provide a hosting place or repository for software.
 We classify LaMachine as a \emph{meta distribution} as it can be installed in various contexts. The heart of LaMachine consists of a
 set of machine-parsable instructions on how to obtain, build (e.g. compile from source), install and configure software.
 %iris:  eerst algemene uitleg over lamachine- dit is veel te gedetaileerd op dit punt-
 %These are implemented using Ansible\footnote{\url{https://www.ansible.com}; a popular open-source software provisioning,
-%configuration and deployment tool by Red Hat}.  
+%configuration and deployment tool by Red Hat}.
 This is notably different from the more
 classical notion of Linux distributions, which generally provide their own repositories with (often binary) software
 packages. LaMachine builds on this already established infrastructure by taking these repositories as a foundation where
 possible. Similarly, as implied in point five above, there are different programming-language-specific ecosystems
 providing their own repositories, such as the Python Package Index\footnote{\url{https://pypi.org}} for Python,
 CRAN\footnote{\url{https://cran.r-project.org/}} for R, CPAN\footnote{\url{https://www.cpan.org}} for Perl, Maven
-Central\footnote{\url{https://search.maven.org}} for Java.  LaMachine relies on those to pull and install software from
-and never forks, archives, or modifies the software in any way. In doing so, we compel participating software projects
+Central\footnote{\url{https://search.maven.org}} for Java.  LaMachine relies on those to obtain and install software. In doing so, we compel participating software projects
 to adhere to well-established distribution standards and ensure the software is more sustainable towards the future
 \cite{softwarequality}. Moreover, we ensure that LaMachine never becomes a prerequisite for the software but merely a
 courtesy or convenience, and attempt to limit any amount of duplication in packaging and distribution efforts.
 
 LaMachine lives in an open-source ecosystem and therefore builds on Unix-like platforms; this primarily means Linux, as well as BSD and, with some restrictions, macOS. This by definition excludes certain software for different platforms, such as mobile platforms (Android/iOS/etc), native Windows/mac desktop applications, or certain interface types in general such as classical desktop GUI applications or mobile `apps', all of which fall beyond our scope. Cygwin\footnote{A unix environment on Windows} is not tested or
  supported either.  However, virtualisation technology enables deployment on a wider range of platforms, including Windows.
- 
- 
-The software included in LaMachine has to live up (iris:ik zoek synoniem hier voor live up) to the following prerequisites:
+
+
+The software included in LaMachine has to adhere to the following prerequisites:
+
 \begin{enumerate}
 
     \item The software must have a recognised (i.e. OSI-approved) open-source license.
@@ -135,7 +136,8 @@ The software included in LaMachine has to live up (iris:ik zoek synoniem hier vo
     \item There must be some kind of release protocol (adhering to semantic versioning) that publishes software using the proper
 technology-specific channels. We will elaborate on this later.
     \item All software that is incorporated in LaMachine must bear at least some relevance to the field of Natural Language Processing.
-    \item {\bf maarten help even met formuleren hier, ik bedoel dat zoiets als Pattern dus helaas niet mee kan doen omdat het niet meer onderhouden wordt }only maintained/uptodate date software that can compile using the current version of compilers and dependencies/libraries
+    \item Participating software must be actively maintained (i.e. not outdated or abandoned) and not place any demands on outdated
+        dependencies. %verwerkt <-- maarten help even met formuleren hier, ik bedoel dat zoiets als Pattern dus helaas niet mee kan doen omdat het niet meer onderhouden wordt }only maintained/uptodate date software that can compile using the current version of compilers and dependencies/libraries
 \end{enumerate}
 
 
@@ -243,7 +245,7 @@ exhaustive: \footnote{Links: \url{https://jupyterlab.readthedocs.io/en/stable/},
 
 \section{Architecture}
 
-In this section we present the technical design choices that were made.
+In this section we present the technical design choices that were made and lay out the architecture of LaMachine.
 %iris: Maarten je zou hier ook expliciet de motivatie voor de keuzen kunnen toevoegen
 
 \subsection{Flavours}
@@ -252,25 +254,25 @@ LaMachine provides ample flexibility that allows it to be deployable in differen
 flexibility regarding the installation form, which we call \emph{flavours}:
 
 \begin{enumerate}
-    \item \textbf{Local installation} - This installs the bulk of LaMachine in a separate local virtual environment (a seperate
+    \item \textbf{Local installation} -- This installs the bulk of LaMachine in a separate local virtual environment (a seperate
         directory\footnote{Python users should know we just use \texttt{virtualenv} for this, with some
         additions of our own}) that has to be explicitly activated to be used. This also allows for multiple different installations
         of LaMachine on the same host system (e.g. for different users or with different software configurations).
         This local installation still actively relies on various global dependencies that are available through the
         package manager of your distribution.
-    \item \textbf{Global installation} - This flavour is used for a host that is fully dedicated to LaMachine. Everything will be
+    \item \textbf{Global installation} -- This flavour is used for a host that is fully dedicated to LaMachine. Everything will be
         installed globally so there is only one installation possible, multiple users will all make use of the same
         installation. Unlike the local installation, we do not make use of a Python Virtual Environment in this flavour.
-    \item \textbf{Docker container} - Installs LaMachine in a container. Containerisation separates the entire run-time
+    \item \textbf{Docker container} -- Installs LaMachine in a container. Containerisation separates the entire run-time
         environment from the host system, only the Linux kernel is shared. It is a lighter option than full
         virtualisation. \footnote{Note that Docker on other platforms such as Windows and macOS does do use full
         virtualisation.}
-    \item \textbf{Singularity container} - Another form of containerisation with more focus on security\footnote{reduced
+    \item \textbf{Singularity container} -- Another form of containerisation with more focus on security\footnote{reduced
         privilege escalation}, making it more suitable than Docker for deployment on computing clusters. This flavour is still under development.
-    \item \textbf{Virtual Machine} - Installs LaMachine as a virtual machine, i.e. through full virtualisation. This allows
+    \item \textbf{Virtual Machine} --- Installs LaMachine as a virtual machine, i.e. through full virtualisation. This allows
         deployment of LaMachine on hosts which would otherwise not support it, such as Windows. Virtualisation for
         LaMachine is achieved through Vagrant and VirtualBox\footnote{\url{https://vagrant.org}, \url{https://www.virtualbox.org}}.
-    \item \textbf{Remote provisioning} - Installs LaMachine on a remote dedicated server. This option is most suited for
+    \item \textbf{Remote provisioning} -- Installs LaMachine on a remote dedicated server. This option is most suited for
         hosting centres and directly uses Ansible's remote provisioning abilities.
 \end{enumerate}
 
@@ -525,7 +527,11 @@ content of the complaint and the scikit-learn Python package for classification,
 \subsection{Workshop: Cataloguing of Textual Cultural Heritage Objects}
 \label{sec:case2}
 
-The ICT-Research Platform Netherlands and NWO organize a yearly one-week workshop `ICT with Industry' \footnote{https://ict-research.nl/ict-with-industry/ictwi2019/} to stimulate collaboration between industry and academia. The industrical partner provides a problem and a team of researchers from different backgrounds and universities collaborate to come up with solutions. We partipated in the 2019 edition on the case study by the Dutch Royal Library who 
+The ICT-Research Platform Netherlands and NWO organise a yearly one-week workshop `ICT with Industry'
+\footnote{https://ict-research.nl/ict-with-industry/ictwi2019/} to stimulate collaboration between industry and
+academia. The industrial partner provides a problem and a team of researchers from different backgrounds and
+universities collaborate to come up with solutions. We participated in the 2019 edition on the case study by the Dutch
+Royal Library who %@Iris: zin niet afgemaakt?
 
 For this workshop, computing power was purchased at SURFsara, a collaborative organization for ICT in Dutch education
 and research. Subsequently, we had the ability to create Virtual Machines on their hosting platform. For this workshop
@@ -540,8 +546,12 @@ flavours, and regardless of the flavour, the resulting installations are always 
 environment flavour had the added bonus of not being in anyone's way in case any of the twelve workshop participants did
 not want to use LaMachine, considering it needs to be explicitly activated prior to usage.
 
-Lamachine offered a convenient platform for a range of different explorations and experiments in the area of NLP and text mining. 
-However, for some situations Lamachine was not a good fit for the tasks at hand: For team members who did not have experience with a non-Windows environment, Lamachine was not a suitable or useful tool. And also for members who wanted to use a graphical user interface for their text editors as we did not manage to get the x-forwarding working (note that this also depends on the overall VM). After a few attempts the team gave up on resolving this issue die to time pressure but it also demonstrated that finetuning the configuration of Lamachine on certain aspects is beyond the reach of a data scientist without system administration skills.
+LaMachine offered a convenient platform for a range of different explorations and experiments in the area of NLP and text mining.
+However, for some situations LaMachine was not a good fit for the tasks at hand: For team members who did not have
+experience with a non-Windows environment, LaMachine was not a suitable or useful tool. And also for members who wanted
+to use a graphical user interface for their text editors as we did not manage to get the x-forwarding working (note that
+this also depends on the overall VM). After a few attempts the team gave up on resolving this issue due to time pressure
+but it also demonstrated that fine-tuning the configuration of LaMachine on certain aspects is beyond the reach of a data scientist without system administration skills.
  %iris it moet nog wat beter geformuleerd worden maar je snaprt wat ik bedoel
 
 \section{Conclusion \& Future work}
