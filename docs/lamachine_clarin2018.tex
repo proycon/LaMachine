@@ -265,10 +265,9 @@ flexibility regarding the installation form, which we call \emph{flavours}:
         installation. Unlike the local installation, we do not make use of a Python Virtual Environment in this flavour.
     \item \textbf{Docker container} -- Installs LaMachine in a container. Containerisation separates the entire run-time
         environment from the host system, only the Linux kernel is shared. It is a lighter option than full
-        virtualisation. \footnote{Note that Docker on other platforms such as Windows and macOS does do use full
-        virtualisation.}
-    \item \textbf{Singularity container} -- Another form of containerisation with more focus on security\footnote{reduced
-        privilege escalation}, making it more suitable than Docker for deployment on computing clusters. This flavour is still under development.
+        virtualisation\footnote{Note that Docker on other platforms such as Windows and macOS does do use full
+        virtualisation.}.  Support for two other forms of containerisation, i.e. Singularity\footnote{\url{https://www.sylabs.io/singularity/}} and
+            LXC/LXD\footnote{\url{https://linuxcontainers.org}}, are currently under development.
     \item \textbf{Virtual Machine} --- Installs LaMachine as a virtual machine, i.e. through full virtualisation. This allows
         deployment of LaMachine on hosts which would otherwise not support it, such as Windows. Virtualisation for
         LaMachine is achieved through Vagrant and VirtualBox\footnote{\url{https://vagrant.org}, \url{https://www.virtualbox.org}}.
@@ -439,8 +438,7 @@ addition also provides a generic web-interface for human end-users. The portal w
 again addresses an audience that does not require a high degree of technical expertise, but is suitable for a wider
 audience of researchers, including those in the Humanities.
 
-\section{Comparison to alternative distributions}
-\label{sec:comparisons}
+\section{Comparison to alternative distributions}\label{sec:comparison}
 
 How does LaMachine compare to alternatives? To answer this question we must first look at what may be considered
 alternatives to LaMachine. At this point, it is important to emphasise once more that LaMachine is offered as convenience.
