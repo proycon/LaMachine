@@ -450,12 +450,12 @@ already provides? Then, by all means, she should go for that.
 
 LaMachine starts to fill a need when the user is interested in complex software, such as complex NLP pipelines with
 multiple components, the individual installation (sometimes involving compilation from source) and configuration of
-which would be not be trivial. Moreover, LaMachine shines when the user wants higher-level interfaces on top of that,
+which would not be trivial. Moreover, LaMachine shines when the user wants higher-level interfaces on top of that,
 something she can use right out of the box. It also fulfills a role in case the user simply does not know what she wants
 or needs yet, and needs an environment where she can explore a variety of pre-installed tools and experiment.
 
-Comparisons could be drawn between LaMachine as a kind of Linux distribution and other Linux distributions. But that
-would not be appropriate as we characterise LaMachine more as a meta-distribution which simply builds on the foundation
+Comparisons could be drawn between LaMachine as a kind of Linux distribution and other Linux distributions. That,
+however, would not be appropriate as we characterise LaMachine more as a meta-distribution which simply builds on the foundation
 of several existing major Linux distributions. As a meta-distribution that runs in a variety of flavours and on a
 variety of platforms, it offers a great deal of flexibility that normal distributions do not have. At the same time, the scope of
 LaMachine is more narrowly defined than that of a generic Linux distribution, including even specialised Linux
@@ -465,9 +465,9 @@ Scientific\footnote{\url{https://labs.fedoraproject.org/en/scientific/}}.
 The best comparison can perhaps be drawn with Anaconda\footnote{\url{https://www.anaconda.com/}}, which we could also qualify as
 a meta-distribution under our definition, and which enjoys great popularity in the data science community. Anaconda has
 a focus on Python and R. It is much wider in scope than LaMachine, which has a strong NLP and CLARIN/CLARIAH focus. When
-it comes to Python, which Anaconda is initially geared at, there is considerable overlap in the modules that LaMachine and Anaconda offer. Unlike LaMachine,
+it comes to Python, which Anaconda was initially aimed at, there is considerable overlap in the modules that LaMachine and Anaconda offer. Unlike LaMachine,
 Anaconda does not focus on providing different flavours such as a VM or a Docker Container\footnote{This is not a
-technical limitation but simply a matter of different objectives, one could easily create a VM or Docker Container and
+technical limitation but simply a matter of different objectives, one could easily create a VM or a container and
 install Anaconda in it.}, nor separate stable and development versions of the included software.
 
 At the start of the development cycle for LaMachine v2, we investigated whether Anaconda and its ecosystem would provide
@@ -482,7 +482,7 @@ anaconda ecosystem.
 For the distribution and deployment of complex software setups such as NLP pipelines, containers are a common solution
 nowadays. The Docker flavour of LaMachine provides something similar, but rather than providing a single static Docker recipe
 that builds a single kind of container, LaMachine offers a high degree of flexibility for the construction of different
-containers, i.e. containing different software of having different configurations, based on the user's needs. It is
+containers, i.e. containing different software or having different configurations, based on the user's needs. It is
 quite feasible to instantiate a variety of LaMachine containers and use a container orchestration system such
 Kubernetes or Docker Swarm for automated deployment, scaling and management thereof. Such orchestration, however, is
 beyond the scope of LaMachine itself, which aims to provide a singular environment, i.e. everything installed in a
@@ -592,7 +592,7 @@ single-sign on authentication being a notable example here.
 LaMachine v2 is open to  outside contribution. Contributor documentation has been written, and at this stage, we greatly
 welcome external participants to join in.
 
-\section*{Acknowledgement}
+\section*{Acknowledgements}
 
 This research was funded by NWO CLARIN-NL, CLARIAH and the ZonMw project {\it Tekstmining in het toezicht: een exploratieve studie naar de automatische verwerking van klachten ingediend bij het Landelijk Meldpunt Zorg}, project number 516004614. We thank the Dutch Health Inspectorate, IQhealthcare, and Tim Voets for their valuable contributions and help in the ZonMw project, and NWO, the ICT Research Platform Nederland, the Lorentz Centre, the Royal Library and all our team members for making the ICT with Industry workshop a success.
 
