@@ -1507,7 +1507,9 @@ elif [[ "$FLAVOUR" == "lxc" ]]; then
         if [ $INTERACTIVE -eq 0 ]; then
             OPTS="$OPTS --noninteractive"
         fi
-        lxc exec $LM_NAME -- "bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global $OPTS" || fatalerror "Unable to bootstrap"
+        CMD="lxc exec $LM_NAME -- \"bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global $OPTS\""
+        echo $CMD
+        $CMD || fatalerror "Unable to bootstrap"
         if [ $rc -eq 0 ]; then
             echo "======================================================================================"
             echo "${boldgreen}All done, you LXD container has been built!${normal}"
