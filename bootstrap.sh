@@ -38,10 +38,10 @@ usage () {
     echo "       (uses Vagrant and VirtualBox)"
     echo "  docker = in a Docker container"
     echo "       (uses Docker and Ansible)"
-    echo "  singularity = in a Singularity container"
-    echo "       (uses Singularity and Ansible)"
     echo "  lxc = in an LXC container"
     echo "       (uses LXD, LXC and Ansible)"
+    echo "  singularity = in a Singularity container (EXPERIMENTAL!)"
+    echo "       (uses Singularity and Ansible)"
     echo "  local = in a local user environment"
     echo "       installs as much as possible in a separate directory"
     echo "       for a particular user, can exists alongside existing"
@@ -412,11 +412,11 @@ if [ -z "$FLAVOUR" ]; then
         echo "       modifies an existing remote system! Usually requires root."
         echo "       (uses ansible)"
         if [ $WINDOWS -eq 0 ]; then
-        echo "  6) in a Singularity container"
-        echo "       (uses Singularity and Ansible)"
-        echo "  7) in an LXC container"
+        echo "  6) in an LXC/LXD container"
         echo "       Provides a more persistent and VM-like container experience than Docker"
         echo "       (uses LXD, LXC and Ansible)"
+        echo "  7) in a Singularity container (EXPERIMENTAL!)"
+        echo "       (uses Singularity and Ansible)"
         fi
         echo -n "${bold}Your choice?${normal} [12345] "
         read choice
@@ -426,8 +426,8 @@ if [ -z "$FLAVOUR" ]; then
             [3]* ) FLAVOUR="docker";  break;;
             [4]* ) FLAVOUR="global";  break;;
             [5]* ) FLAVOUR="remote"; break;;
-            [6]* ) FLAVOUR="singularity"; break;;
-            [7]* ) FLAVOUR="lxc"; break;;
+            [6]* ) FLAVOUR="lxc"; break;;
+            [7]* ) FLAVOUR="singularity"; break;;
             * ) echo "Please answer with the corresponding number of your preference..";;
         esac
     done
@@ -1054,9 +1054,9 @@ if [ -z "$LM_NAME" ]; then
     exit 2
 fi
 
-if [ $BUILD -eq 1 ]; then
+if [ $BUILD -eq 1 ] && [[ "$FLAVOUR" != "lxc" ]]; then
     DETECTEDHOSTNAME=$(hostname --fqdn)
-    if [ -z "$DETECTEDHOSTNAME" ] || [ "$FLAVOUR" = "vagrant" ] || [ "$FLAVOUR" = "docker" ] || [ "$FLAVOUR" = "singularity" ] || [ "$FLAVOUR" = "lxc" ]; then
+    if [ -z "$DETECTEDHOSTNAME" ] || [ "$FLAVOUR" = "vagrant" ] || [ "$FLAVOUR" = "docker" ] || [ "$FLAVOUR" = "singularity" ]; then
         DETECTEDHOSTNAME="$LM_NAME"
     fi
 
@@ -1092,7 +1092,7 @@ STAGEDMANIFEST="$BASEDIR/install-$LM_NAME.yml"
 
 HOMEDIR=$(echo ~)
 
-if [ $BUILD -eq 1 ]; then
+if [ $BUILD -eq 1 ] && [[ "$FLAVOUR" != "lxc" ]]; then
  if [ ! -e "$STAGEDCONFIG" ]; then
     echo "---
 ###########################################################################
@@ -1287,6 +1287,8 @@ else
     fi
 fi
 
+if [[ "$FLAVOUR" != "lxc" ]]; then
+
 if [ -z "$SOURCEDIR" ]; then
     echo "Cloning LaMachine git repo ($GITREPO $BRANCH)..."
     if [ ! -d LaMachine ]; then
@@ -1345,6 +1347,8 @@ if [ $BUILD -eq 1 ]; then
         cp customversions.yml $SOURCEDIR/customversions.yml
     fi
 fi
+
+fi #!= lxc
 
 HOMEDIR=$(echo ~)
 if [[ "$FLAVOUR" == "vagrant" ]] || [[ "$FLAVOUR" == "docker" ]] || [[ "$FLAVOUR" == "singularity" ]] || [[ "$FLAVOUR" == "lxc" ]]; then
@@ -1488,9 +1492,23 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
     fi
 elif [[ "$FLAVOUR" == "lxc" ]]; then
     if [ $BUILD -eq 1 ]; then
-        echo "Building LXC container.."
-        #TODO
-    fi
+        echo "Building LXC container (unprivileged!)"
+        lxc launch ubuntu:18.04 $LM_NAME || fatalerror "Unable to create new container. Ensure LXD is installed, the current user is in the lxd group, and the container $LM_NAME does not already exist"
+        echo "Launching LaMachine bootstrap inside the new container"
+        lxc exec $LM_NAME -- "bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global" || fatalerror "Unable to bootstrap"
+        if [ $rc -eq 0 ]; then
+            echo "======================================================================================"
+            echo "${boldgreen}All done, you LXD container has been built!${normal}"
+            echo "- to enter your container, run lamachine-$LM_NAME-activate or 'lxc exec $LM_NAME -- bash'"
+        fi
+        echo -e "#!/bin/bash\nlxc start $LM_NAME; lxc exec $LM_NAME -- bash" > $HOMEDIR/bin/lamachine-$LM_NAME-activate
+        echo -e "#!/bin/bash\nlxc stop $LM_NAME; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-stop
+        echo -e "#!/bin/bash\nlxc start $LM_NAME; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-start
+        echo -e "#!/bin/bash\nlxc exec $LM_NAME -- bash" > $HOMEDIR/bin/lamachine-$LM_NAME-connect
+        echo -e "#!/bin/bash\nlxc exec $LM_NAME -- lamachine-update" > $HOMEDIR/bin/lamachine-$LM_NAME-update
+        echo -e "#!/bin/bash\nlxc delete $LM_NAME; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-destroy
+        chmod a+x $HOMEDIR/bin/lamachine-$LM_NAME-*
+        ln -sf $HOMEDIR/bin/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
 elif [[ "$FLAVOUR" == "singularity" ]]; then
     if [ $BUILD -eq 1 ]; then
         echo "Building singularity image (requires sudo).."
