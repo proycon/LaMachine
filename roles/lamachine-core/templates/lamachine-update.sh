@@ -102,7 +102,7 @@ else
         rc=${PIPESTATUS[0]}
     else
         echo "---" > "install.tmp.yml"
-        grep "hosts:"  >> "install.tmp.yml"
+        grep "hosts:" install.yml >> "install.tmp.yml"
         echo "  roles: [ $ONLY ]"  >> "install.tmp.yml"
         ansible-playbook -i "hosts.ini" "install.tmp.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
         rc=${PIPESTATUS[0]}
