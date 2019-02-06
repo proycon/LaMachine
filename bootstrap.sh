@@ -20,7 +20,7 @@ boldgreen=${bold}$(tput setaf 2) #  green
 boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
-export LM_VERSION="v2.4.9" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
+export LM_VERSION="v2.4.10" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "${bold}=====================================================================${normal}"
 echo "           ,              ${bold}LaMachine $LM_VERSION${normal} - NLP Software distribution"
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
@@ -38,7 +38,9 @@ usage () {
     echo "       (uses Vagrant and VirtualBox)"
     echo "  docker = in a Docker container"
     echo "       (uses Docker and Ansible)"
-    echo "  singularity = in a Singularity container"
+    echo "  lxc = in an LXC container"
+    echo "       (uses LXD, LXC and Ansible)"
+    echo "  singularity = in a Singularity container (EXPERIMENTAL!)"
     echo "       (uses Singularity and Ansible)"
     echo "  local = in a local user environment"
     echo "       installs as much as possible in a separate directory"
@@ -410,7 +412,10 @@ if [ -z "$FLAVOUR" ]; then
         echo "       modifies an existing remote system! Usually requires root."
         echo "       (uses ansible)"
         if [ $WINDOWS -eq 0 ]; then
-        echo "  6) in a Singularity container"
+        echo "  6) in an LXC/LXD container"
+        echo "       Provides a more persistent and VM-like container experience than Docker"
+        echo "       (uses LXD, LXC and Ansible)"
+        echo "  7) in a Singularity container (EXPERIMENTAL!)"
         echo "       (uses Singularity and Ansible)"
         fi
         echo -n "${bold}Your choice?${normal} [12345] "
@@ -421,7 +426,8 @@ if [ -z "$FLAVOUR" ]; then
             [3]* ) FLAVOUR="docker";  break;;
             [4]* ) FLAVOUR="global";  break;;
             [5]* ) FLAVOUR="remote"; break;;
-            [6]* ) FLAVOUR="singularity"; break;;
+            [6]* ) FLAVOUR="lxc"; break;;
+            [7]* ) FLAVOUR="singularity"; break;;
             * ) echo "Please answer with the corresponding number of your preference..";;
         esac
     done
@@ -597,8 +603,8 @@ else
     if ! which git; then
         NEED+=("git")
     fi
-    if [ "$FLAVOUR" = "docker" ] || [ "$FLAVOUR" = "singularity" ]; then
-        NEED_VIRTUALENV=0 #Do we need a virtualenv with ansible for the controller? Never for docker, all ansible magic happens inside the docker container
+    if [ "$FLAVOUR" = "docker" ] || [ "$FLAVOUR" = "singularity" ] || [ "$FLAVOUR" = "lxc" ]; then
+        NEED_VIRTUALENV=0 #Do we need a virtualenv with ansible for the controller? Never for containers, all ansible magic happens inside the container
     else
         NEED_VIRTUALENV=1 #Do we need a virtualenv with ansible for the controller? (this is a default we will attempt to falsify)
         if which ansible-playbook; then
@@ -669,6 +675,12 @@ if [ "$FLAVOUR" == "docker" ]; then
         if ! which docker.io; then
             NEED+=("docker")
         fi
+    fi
+fi
+if [ "$FLAVOUR" == "lxc" ]; then
+    echo "Looking for LXD..."
+    if ! which lxc; then #not a typo
+        NEED+=("lxd")
     fi
 fi
 if [ "$FLAVOUR" == "singularity" ]; then
@@ -780,6 +792,42 @@ for package in ${NEED[@]}; do
         echo "Singularity was not found on your system yet!"
         echo "Please install singularity, start the daemon, and press ENTER to continue (or CTRL-C) to abort."
         read
+    elif [ "$package" = "lxd" ]; then
+        cmd=""
+        if [ "$OS" = "debian" ]; then
+            if [ "$DISTRIB_ID" = "ubuntu" ] || [ "$DISTRIB_ID" = "linuxmint" ]; then
+                cmd="sudo apt-get $NONINTERACTIVEFLAGS install lxd"
+            else
+                echo "LXD is not packaged for debian yet, please follow the instructions on https://stgraber.org/2017/01/18/lxd-on-debian/ to install it through snapd"
+            fi
+        elif [ "$OS" = "redhat" ]; then
+                echo "LXD is not packaged for CentOS/RHEL yet, please follow the instructions on https://discuss.linuxcontainers.org/t/lxd-on-centos-7/1250 to install it through snapd"
+        elif [ "$OS" = "arch" ]; then
+                echo "LXD is not packaged for Arch Linux but it is in the Arch User Repository (AUR), please install the lxd AUR package and install the lxc package through pacman."
+            cmd=""
+        else
+            cmd=""
+        fi
+        if [ ! -z "$cmd" ]; then
+            echo "LXD is required for LaMachine with LXC but not installed yet. ${bold}Install now?${normal}"
+            while true; do
+                echo -n "${bold}Run:${normal} $cmd ? [yn] "
+                if [ "$INTERACTIVE" -eq 1 ]; then
+                    read yn
+                else
+                    yn="y"
+                fi
+                case $yn in
+                    [Yy]* ) $cmd || fatalerror "LXC installation failed!"; break;;
+                    [Nn]* ) echo "Please install LXC manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
+                    * ) echo "Please answer yes or no.";;
+                esac
+            done
+        else
+            echo "No automated installation possible on your OS."
+            if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
+            echo "Please install LXD manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
+        fi
     elif [ "$package" = "debootstrap" ]; then
         if [ "$OS" = "debian" ]; then
             cmd="sudo apt-get $NONINTERACTIVEFLAGS install debootstrap"
@@ -810,7 +858,7 @@ for package in ${NEED[@]}; do
         else
             echo "No automated installation possible on your OS."
             if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
-            echo "Please install git manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
+            echo "Please install debootstrap manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
         fi
     elif [ "$package" = "brew" ]; then
         echo "Homebrew (https://brew.sh) is required on Mac OS X but was not found yet"
@@ -1006,9 +1054,9 @@ if [ -z "$LM_NAME" ]; then
     exit 2
 fi
 
-if [ $BUILD -eq 1 ]; then
+if [ $BUILD -eq 1 ] && [[ "$FLAVOUR" != "lxc" ]]; then
     DETECTEDHOSTNAME=$(hostname --fqdn)
-    if [ -z "$DETECTEDHOSTNAME" ] || [ "$FLAVOUR" = "vagrant" ] || [ "$FLAVOUR" = "docker" ]; then
+    if [ -z "$DETECTEDHOSTNAME" ] || [ "$FLAVOUR" = "vagrant" ] || [ "$FLAVOUR" = "docker" ] || [ "$FLAVOUR" = "singularity" ]; then
         DETECTEDHOSTNAME="$LM_NAME"
     fi
 
@@ -1044,7 +1092,7 @@ STAGEDMANIFEST="$BASEDIR/install-$LM_NAME.yml"
 
 HOMEDIR=$(echo ~)
 
-if [ $BUILD -eq 1 ]; then
+if [ $BUILD -eq 1 ] && [[ "$FLAVOUR" != "lxc" ]]; then
  if [ ! -e "$STAGEDCONFIG" ]; then
     echo "---
 ###########################################################################
@@ -1096,9 +1144,9 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
-    elif [[ $FLAVOUR == "singularity" ]]; then
+    elif [[ $FLAVOUR == "singularity" ]] || [[ $FLAVOUR == "lxc" ]]; then
         GROUP="lamachine"
-        echo "unix_user: \"lamachine\" #do not change this for singularity!" >> $STAGEDCONFIG #TODO: not sure about this yet for singularity
+        echo "unix_user: \"lamachine\" #do not change this!" >> $STAGEDCONFIG #TODO: not sure about this yet for singularity
         echo "unix_group: \"lamachine\" #must be same as unix_user, changing this is not supported yet" >> $STAGEDCONFIG
         echo "homedir: \"/home/lamachine\"" >> $STAGEDCONFIG
         echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared (do not change this for singularity!" >> $STAGEDCONFIG
@@ -1137,7 +1185,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
             echo "source_path: \"$BASEDIR/$LM_NAME/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
         fi
     fi
-    if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "singularity" ]] || [[ $FLAVOUR == "remote" ]]; then
+    if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "singularity" ]] || [[ $FLAVOUR == "lxc" ]] && [[ $FLAVOUR == "remote" ]]; then
         echo "root: true #Do you have root on the target system?" >> $STAGEDCONFIG
     elif [ $SUDO -eq 1 ]; then
         echo "root: true #Do you have root on the target system?" >> $STAGEDCONFIG
@@ -1239,6 +1287,8 @@ else
     fi
 fi
 
+if [[ "$FLAVOUR" != "lxc" ]]; then
+
 if [ -z "$SOURCEDIR" ]; then
     echo "Cloning LaMachine git repo ($GITREPO $BRANCH)..."
     if [ ! -d LaMachine ]; then
@@ -1298,8 +1348,10 @@ if [ $BUILD -eq 1 ]; then
     fi
 fi
 
+fi #!= lxc
+
 HOMEDIR=$(echo ~)
-if [[ "$FLAVOUR" == "vagrant" ]] || [[ "$FLAVOUR" == "docker" ]] || [[ "$FLAVOUR" == "singularity" ]]; then
+if [[ "$FLAVOUR" == "vagrant" ]] || [[ "$FLAVOUR" == "docker" ]] || [[ "$FLAVOUR" == "singularity" ]] || [[ "$FLAVOUR" == "lxc" ]]; then
     if [[ ! -e $HOMEDIR/bin ]]; then
         echo "Creating $HOMEDIR/bin on host machine..."
         mkdir -p $HOMEDIR/bin
@@ -1438,6 +1490,45 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
             echo "   The log file has been written to $(pwd)/lamachine-$LM_NAME.log (include it with any bug report)"
         fi
     fi
+elif [[ "$FLAVOUR" == "lxc" ]]; then
+        echo "Building LXC container (unprivileged!)"
+        lxc launch ubuntu:18.04 $LM_NAME || fatalerror "Unable to create new container. Ensure LXD is installed, the current user is in the lxd group, and the container $LM_NAME does not already exist"
+        echo "${boldblue}Launching LaMachine bootstrap inside the new container${normal}"
+        echo "${boldblue}------------------------------------------------------${normal}"
+        echo "${boldred}Important note: anything below this point will be executed in the container rather than on the host system!${normal}"
+        echo "${boldred}                The sudo password can be left empty and will work${normal}"
+        sleep 5
+        OPTS=""
+        if [ ! -z "$INSTALL" ]; then
+            OPTS="$OPTS --install \"$INSTALL\""
+        fi
+        if [[ "$VERSION" != "undefined" ]]; then
+            OPTS="$OPTS --version $VERSION"
+        fi
+        if [[ "$HOSTNAME" != "" ]]; then
+            OPTS="$OPTS --hostname $HOSTNAME"
+        fi
+        if [ $INTERACTIVE -eq 0 ]; then
+            OPTS="$OPTS --noninteractive"
+        fi
+        CMD="lxc exec $LM_NAME -- apt $NONINTERACTIVEFLAGS install python"
+        $CMD || fatalerror "Failure when preparing to bootstrap (command was $CMD)"
+        echo -e "#!/bin/bash\nlxc start $LM_NAME; lxc exec $LM_NAME -- su ubuntu -l" > $HOMEDIR/bin/lamachine-$LM_NAME-activate
+        echo -e "#!/bin/bash\nlxc stop $LM_NAME; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-stop
+        echo -e "#!/bin/bash\nlxc start $LM_NAME; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-start
+        echo -e "#!/bin/bash\nlxc exec $LM_NAME -- bash" > $HOMEDIR/bin/lamachine-$LM_NAME-connect
+        echo -e "#!/bin/bash\nlxc exec $LM_NAME -- lamachine-update" > $HOMEDIR/bin/lamachine-$LM_NAME-update
+        echo -e "#!/bin/bash\nlxc delete $LM_NAME; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-destroy
+        chmod a+x $HOMEDIR/bin/lamachine-$LM_NAME-*
+        ln -sf $HOMEDIR/bin/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
+        CMD="lxc exec $LM_NAME -- su ubuntu -l -c \"bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global $OPTS\""
+        echo $CMD
+        $CMD || fatalerror "Unable to bootstrap (command was $CMD)"
+        if [ $rc -eq 0 ]; then
+            echo "======================================================================================"
+            echo "${boldgreen}All done, you LXD container has been built!${normal}"
+            echo "- to enter your container, run lamachine-$LM_NAME-activate"
+        fi
 elif [[ "$FLAVOUR" == "singularity" ]]; then
     if [ $BUILD -eq 1 ]; then
         echo "Building singularity image (requires sudo).."

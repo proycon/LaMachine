@@ -1,0 +1,61 @@
+---
+
+    - name: Installing Go (Homebrew)
+      homebrew:
+        name: go
+        state: present
+      when: ansible_distribution|lower == 'macosx'
+
+    - name: Installing Go (Arch)
+      become: "{{ lm_become }}"
+      become_user: root
+      pacman:
+        name: go
+        state: installed
+      when: ansible_distribution|lower == 'archlinux' and root
+
+      #other distributions are likely out of date so we grab binaries straight from the Go page itself
+    - when: ansible_distribution|lower != 'macosx' and (ansible_distribution|lower != 'archlinux' or not root)
+      block:
+        - name: Checking for Go
+          stat:
+             path: "{{ lm_prefix }}/opt/go{{go_version}}.linux-amd64.tar.gz"
+          register: go
+
+        - when: not go.stat.exists
+          block:
+            - name: Download and install Go
+              shell: |
+                rm -Rf "{{ lm_prefix }}/opt/go*"
+                wget https://dl.google.com/go/go{{go_version}}.linux-amd64.tar.gz
+                tar -xvzf go{{go_version}}.linux-amd64.tar.gz
+              args:
+                chdir: "{{lm_prefix}}/opt"
+
+
+    - name: Creating default GOPATH
+      file:
+          path: "{{source_path}}/go"
+          mode: u+rwx,g+rwsx,a+rx
+          state: directory
+
+    - name: "Adding activation script for Go"
+      copy:
+        dest: "{{lm_prefix}}/bin/activate.d/go.sh"
+        content: |
+          if [ -d "{{lm_prefix}}/opt/go" ]; then
+            export GOROOT={{lm_prefix}}/opt/go
+            export PATH={{lm_prefix}}/opt/go/bin:$PATH
+          fi
+          if [ -z "$GOPATH" ]; then
+            export GOPATH={{source_path}}/go
+          fi
+        mode: u+rwx,a+rx
+
+
+
+
+
+
+
+
