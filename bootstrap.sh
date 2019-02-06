@@ -1493,7 +1493,11 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
 elif [[ "$FLAVOUR" == "lxc" ]]; then
         echo "Building LXC container (unprivileged!)"
         lxc launch ubuntu:18.04 $LM_NAME || fatalerror "Unable to create new container. Ensure LXD is installed, the current user is in the lxd group, and the container $LM_NAME does not already exist"
-        echo "Launching LaMachine bootstrap inside the new container"
+        echo "${boldblue}Launching LaMachine bootstrap inside the new container${normal}"
+        echo "${boldblue}------------------------------------------------------${normal}"
+        echo "${boldred}Important note: anything below this point will be executed in the container rather than on the host system!${normal}"
+        echo "${boldred}                The sudo password can be left empty and will work${normal}"
+        sleep 5
         OPTS=""
         if [ ! -z "$INSTALL" ]; then
             OPTS="$OPTS --install \"$INSTALL\""
@@ -1509,14 +1513,6 @@ elif [[ "$FLAVOUR" == "lxc" ]]; then
         fi
         CMD="lxc exec $LM_NAME -- apt $NONINTERACTIVEFLAGS install python"
         $CMD || fatalerror "Failure when preparing to bootstrap (command was $CMD)"
-        CMD="lxc exec $LM_NAME -- su ubuntu -l -c \"bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global $OPTS\""
-        echo $CMD
-        $CMD || fatalerror "Unable to bootstrap (command was $CMD)"
-        if [ $rc -eq 0 ]; then
-            echo "======================================================================================"
-            echo "${boldgreen}All done, you LXD container has been built!${normal}"
-            echo "- to enter your container, run lamachine-$LM_NAME-activate"
-        fi
         echo -e "#!/bin/bash\nlxc start $LM_NAME; lxc exec $LM_NAME -- su ubuntu -l" > $HOMEDIR/bin/lamachine-$LM_NAME-activate
         echo -e "#!/bin/bash\nlxc stop $LM_NAME; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-stop
         echo -e "#!/bin/bash\nlxc start $LM_NAME; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-start
@@ -1525,6 +1521,14 @@ elif [[ "$FLAVOUR" == "lxc" ]]; then
         echo -e "#!/bin/bash\nlxc delete $LM_NAME; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-destroy
         chmod a+x $HOMEDIR/bin/lamachine-$LM_NAME-*
         ln -sf $HOMEDIR/bin/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
+        CMD="lxc exec $LM_NAME -- su ubuntu -l -c \"bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global $OPTS\""
+        echo $CMD
+        $CMD || fatalerror "Unable to bootstrap (command was $CMD)"
+        if [ $rc -eq 0 ]; then
+            echo "======================================================================================"
+            echo "${boldgreen}All done, you LXD container has been built!${normal}"
+            echo "- to enter your container, run lamachine-$LM_NAME-activate"
+        fi
 elif [[ "$FLAVOUR" == "singularity" ]]; then
     if [ $BUILD -eq 1 ]; then
         echo "Building singularity image (requires sudo).."
