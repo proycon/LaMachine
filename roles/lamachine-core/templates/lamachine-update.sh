@@ -37,6 +37,19 @@ else
 fi
 FIRST=1
 INTERACTIVE=1
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+    echo "lamachine-update updates your LaMachine installation"
+    echo "OPTIONS:"
+    echo "--edit            Opens a text editor to edit the configuration and installation manifest prior to update."
+    echo "--editonly        Opens a text editor to edit the configuration and installation manifest, does not update."
+    echo "--noninteractive  Do not query to user to input at any point."
+    echo "--only [package]  Update only the specified package (or comma seperated list of multiple) "
+    echo "                  Note that this still automatically updates any dependencies."
+    echo "VARIABLES:"
+    echo "force=1        Force recompilation of all sources"
+    echo "force=2        Delete all sources prior to update"
+    exit 0
+fi
 if [ "$1" = "--edit" ] || [ "$1" = "--editonly" ]; then
     if [ -z "$EDITOR" ]; then
       export EDITOR=nano
@@ -61,6 +74,10 @@ if [ "$1" = "--edit" ] || [ "$1" = "--editonly" ]; then
     FIRST=2
 elif [ "$1" = "--noninteractive" ]; then
     INTERACTIVE=0
+    FIRST=2
+elif [ "$1" = "--only" ]; then
+    ONLY="$2"
+    FIRST=3
 fi
 if [ "$1" = "--editonly" ]; then
     exit 0
@@ -80,8 +97,16 @@ if [ -e "hosts.{{conf_name}}" ]; then
     rc=${PIPESTATUS[0]}
 else
     #LaMachine v2.1.0+
-    ansible-playbook -i "hosts.ini" "install.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
-    rc=${PIPESTATUS[0]}
+    if [ -z "$ONLY" ]; then
+        ansible-playbook -i "hosts.ini" "install.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
+        rc=${PIPESTATUS[0]}
+    else
+        echo "---" > "install.tmp.yml"
+        grep "hosts:" install.yml >> "install.tmp.yml"
+        echo "  roles: [ $ONLY ]"  >> "install.tmp.yml"
+        ansible-playbook -i "hosts.ini" "install.tmp.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
+        rc=${PIPESTATUS[0]}
+    fi
 fi
 echo "======================================================================================"
 if [ $rc -eq 0 ]; then
@@ -90,7 +115,8 @@ if [ $rc -eq 0 ]; then
 else
         echo "${boldred}The LaMachine update failed!${normal} You have several options:"
         echo " - Retry a forced update (lamachine-update force=1), this forces recompilation even if software seems up to date"
-        echo "   and may be necessary in certain circumstances."
+        echo "   and may be necessary in certain circumstances. You can also try the even stronger option force=2, which deletes"
+        echo "   all sources prior to update."
         echo " - Retry the update, possibly tweaking configuration and installation options (lamachine-update --edit)"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
         echo "   The log file has been written to $(pwd)/lamachine-{{conf_name}}-$D.log (include it with any bug report)"
