@@ -603,7 +603,7 @@ else
     if ! which git; then
         NEED+=("git")
     fi
-    if [ "$FLAVOUR" = "docker" ] || [ "$FLAVOUR" = "singularity" ] || "$FLAVOUR" = "lxc" ]]; then
+    if [ "$FLAVOUR" = "docker" ] || [ "$FLAVOUR" = "singularity" ] || [ "$FLAVOUR" = "lxc" ]; then
         NEED_VIRTUALENV=0 #Do we need a virtualenv with ansible for the controller? Never for containers, all ansible magic happens inside the container
     else
         NEED_VIRTUALENV=1 #Do we need a virtualenv with ansible for the controller? (this is a default we will attempt to falsify)
