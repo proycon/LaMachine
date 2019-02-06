@@ -45,6 +45,7 @@
         content: |
           if [ -d "{{lm_prefix}}/opt/go" ]; then
             export GOROOT={{lm_prefix}}/opt/go
+            export PATH={{lm_prefix}}/opt/go/bin:$PATH
           fi
           if [ -z "$GOPATH" ]; then
             export GOPATH={{source_path}}/go
