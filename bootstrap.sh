@@ -1491,7 +1491,6 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
         fi
     fi
 elif [[ "$FLAVOUR" == "lxc" ]]; then
-    if [ $BUILD -eq 1 ]; then
         echo "Building LXC container (unprivileged!)"
         lxc launch ubuntu:18.04 $LM_NAME || fatalerror "Unable to create new container. Ensure LXD is installed, the current user is in the lxd group, and the container $LM_NAME does not already exist"
         echo "Launching LaMachine bootstrap inside the new container"
