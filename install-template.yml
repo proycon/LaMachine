@@ -44,6 +44,7 @@
       - python-course                    ## Python Course for the Humanities by Folgert Karsdorp et al. ##
                                               # http://www.karsdorp.io/python-course/
                                               #(requires jupyter)
+     # - go-core                          ## Go compiler and standard library
      # - nextflow                         ## Nextflow: Data-driven computational pipelines ##
      # - piccl                            ## PICCL: Workflows for Post-OCR correction and normalisation and pseudo-modernisation of historical text. ##
                                              # [2.2GB! - not supported on Mac OS X]
