@@ -1507,15 +1507,17 @@ elif [[ "$FLAVOUR" == "lxc" ]]; then
         if [ $INTERACTIVE -eq 0 ]; then
             OPTS="$OPTS --noninteractive"
         fi
-        CMD="lxc exec $LM_NAME -- \"bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global $OPTS\""
+        CMD="lxc exec $LM_NAME -- apt $NONINTERACTIVEFLAGS install python"
+        $CMD || fatalerror "Failure when preparing to bootstrap (command was $CMD)"
+        CMD="lxc exec $LM_NAME -- su ubuntu -l -c \"bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global $OPTS\""
         echo $CMD
         $CMD || fatalerror "Unable to bootstrap (command was $CMD)"
         if [ $rc -eq 0 ]; then
             echo "======================================================================================"
             echo "${boldgreen}All done, you LXD container has been built!${normal}"
-            echo "- to enter your container, run lamachine-$LM_NAME-activate or 'lxc exec $LM_NAME -- bash'"
+            echo "- to enter your container, run lamachine-$LM_NAME-activate"
         fi
-        echo -e "#!/bin/bash\nlxc start $LM_NAME; lxc exec $LM_NAME -- bash" > $HOMEDIR/bin/lamachine-$LM_NAME-activate
+        echo -e "#!/bin/bash\nlxc start $LM_NAME; lxc exec $LM_NAME -- su ubuntu -l" > $HOMEDIR/bin/lamachine-$LM_NAME-activate
         echo -e "#!/bin/bash\nlxc stop $LM_NAME; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-stop
         echo -e "#!/bin/bash\nlxc start $LM_NAME; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-start
         echo -e "#!/bin/bash\nlxc exec $LM_NAME -- bash" > $HOMEDIR/bin/lamachine-$LM_NAME-connect
