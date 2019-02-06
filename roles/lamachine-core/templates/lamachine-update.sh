@@ -37,6 +37,17 @@ else
 fi
 FIRST=1
 INTERACTIVE=1
+if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+    echo "lamachine-update updates your LaMachine installation"
+    echo "OPTIONS:"
+    echo "--edit            Opens a text editor to edit the configuration and installation manifest prior to update."
+    echo "--editonly        Opens a text editor to edit the configuration and installation manifest, does not update."
+    echo "--noninteractive  Do not query to user to input at any point."
+    echo "VARIABLES:"
+    echo "force=1        Force recompilation of all sources"
+    echo "force=2        Delete all sources prior to update"
+    exit 0
+fi
 if [ "$1" = "--edit" ] || [ "$1" = "--editonly" ]; then
     if [ -z "$EDITOR" ]; then
       export EDITOR=nano
@@ -90,7 +101,8 @@ if [ $rc -eq 0 ]; then
 else
         echo "${boldred}The LaMachine update failed!${normal} You have several options:"
         echo " - Retry a forced update (lamachine-update force=1), this forces recompilation even if software seems up to date"
-        echo "   and may be necessary in certain circumstances."
+        echo "   and may be necessary in certain circumstances. You can also try the even stronger option force=2, which deletes"
+        echo "   all sources prior to update."
         echo " - Retry the update, possibly tweaking configuration and installation options (lamachine-update --edit)"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
         echo "   The log file has been written to $(pwd)/lamachine-{{conf_name}}-$D.log (include it with any bug report)"
