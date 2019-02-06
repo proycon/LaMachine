@@ -1495,7 +1495,20 @@ elif [[ "$FLAVOUR" == "lxc" ]]; then
         echo "Building LXC container (unprivileged!)"
         lxc launch ubuntu:18.04 $LM_NAME || fatalerror "Unable to create new container. Ensure LXD is installed, the current user is in the lxd group, and the container $LM_NAME does not already exist"
         echo "Launching LaMachine bootstrap inside the new container"
-        lxc exec $LM_NAME -- "bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global" || fatalerror "Unable to bootstrap"
+        OPTS=""
+        if [ ! -z "$INSTALL" ]; then
+            OPTS="$OPTS --install \"$INSTALL\""
+        fi
+        if [[ "$VERSION" != "undefined" ]]; then
+            OPTS="$OPTS --version $VERSION"
+        fi
+        if [[ "$HOSTNAME" != "" ]]; then
+            OPTS="$OPTS --hostname $HOSTNAME"
+        fi
+        if [ $INTERACTIVE -eq 0 ]; then
+            OPTS="$OPTS --noninteractive"
+        fi
+        lxc exec $LM_NAME -- "bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global $OPTS" || fatalerror "Unable to bootstrap"
         if [ $rc -eq 0 ]; then
             echo "======================================================================================"
             echo "${boldgreen}All done, you LXD container has been built!${normal}"
