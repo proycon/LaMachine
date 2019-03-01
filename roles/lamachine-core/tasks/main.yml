@@ -503,7 +503,7 @@
           export CPPFLAGS="-I/usr/local/opt/openssl/include"
           export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
           pip install ansible
-      environment: {{lm_env}}
+      environment: "{{lm_env}}"
       when: python_version.stdout >= "3.5" and locality == "local" and localenv_type == "virtualenv" and ansible_distribution|lower == 'macosx'
 
     - name: Installing ansible locally (virtualenv, old version)
