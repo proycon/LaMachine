@@ -12,6 +12,9 @@
             rm -Rf "openfst-{{openfst_version}}" > /dev/null 2>/dev/null
             wget http://www.openfst.org/twiki/pub/FST/FstDownload/openfst-{{openfst_version}}.tar.gz
             r=$?
+            if [ $r -eq 0 ];
+              tar -xvzf openfst-{{openfst_version}}.tar.gz
+            fi
           fi
           exit $r
       args:
