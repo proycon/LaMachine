@@ -498,7 +498,6 @@
     - name: Installing ansible locally (virtualenv macOS)
       shell: |
           #!/bin/bash
-          source {{lm_prefix}}/bin/activate
           export LDFLAGS="-L/usr/local/opt/openssl/lib"
           export CPPFLAGS="-I/usr/local/opt/openssl/include"
           export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
