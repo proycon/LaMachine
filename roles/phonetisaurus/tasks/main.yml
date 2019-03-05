@@ -1,0 +1,50 @@
+---
+    - name: "Download openfst"
+      shell: |
+          #!/bin/bash
+          {% if (force is defined) %}
+          FORCE=1
+          {% else %}
+          FORCE=0
+          {% endif %}
+          r=0
+          if [ $force -eq 1 ] || [ ! -d openfst-{{openfst_version}} ]; then
+            rm -Rf "openfst-{{openfst_version}}" > /dev/null 2>/dev/null
+            wget http://www.openfst.org/twiki/pub/FST/FstDownload/openfst-{{openfst_version}}.tar.gz
+            r=$?
+            if [ $r -eq 0 ]; then
+              tar -xvzf openfst-{{openfst_version}}.tar.gz
+            fi
+          fi
+          exit $r
+      args:
+        chdir: "{{ source_path }}"
+      register: install_openfst
+
+    - name: "Compiling and installing openfst"
+      import_role:
+        name: lamachine-cpp-automake
+      vars:
+        pkg_source_dir: "{{ source_path }}/openfst-{{openfst_version}}"
+        pkg_name: "openfst"
+        package:
+          configure_opts: "--enable-static --enable-shared --enable-far --enable-ngram-fsts"
+
+    - name: "Obtaining, compiling, and installing phonetisaurus"
+      import_role:
+        name: lamachine-git-autoconf
+      vars:
+        package:
+          user: AdolfVonKleist
+          repo: Phonetisaurus
+          configure_opts: "--with-openfst-libs={{lm_prefix}}/lib --with-openfst-includes={{lm_prefix}}/include"
+
+    - name: "Repair shebang in phonetisaurus python scrips (uses old python1.7 outside of LaMachine)"
+      lineinfile:
+        dest: "{{item}}"
+        regexp: '^#!/usr/bin/env python$'
+        line: '#!/usr/bin/env python2.7'
+      with_items:
+        - "{{lm_prefix}}/bin/phonetisaurus-apply"
+        - "{{lm_prefix}}/bin/phonetisaurus-train"
+

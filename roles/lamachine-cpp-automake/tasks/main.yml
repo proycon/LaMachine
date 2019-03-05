@@ -48,9 +48,13 @@
       shell: |
         if [ -f Makefile ]; then
           make clean
-          make distclean
+          if [ -f bootstrap.sh ] || [ -f bootstrap ]; then
+            make distclean
+          fi
         elif [ -f configure ]; then
-          rm configure
+          if [ -f bootstrap.sh ] || [ -f bootstrap ]; then
+            rm configure
+          fi
         fi
       args:
         chdir: "{{ pkg_source_dir }}"

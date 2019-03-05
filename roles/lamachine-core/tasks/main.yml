@@ -487,12 +487,23 @@
       when: global_python_version.stdout != "" and global_python_version.stdout > python_version.stdout and locality == "local" and localenv_type == "virtualenv" and (nopythoncheck is not defined or nopythoncheck == 0)
 
 
-    - name: Installing ansible locally (virtualenv)
+
+    - name: Installing ansible locally (virtualenv linux)
       pip:
           name: "ansible"
           state: latest
           virtualenv: "{{ local_prefix }}"
-      when: python_version.stdout >= "3.5" and locality == "local" and localenv_type == "virtualenv"
+      when: python_version.stdout >= "3.5" and locality == "local" and localenv_type == "virtualenv" and ansible_distribution|lower != 'macosx'
+
+    - name: Installing ansible locally (virtualenv macOS)
+      shell: |
+          #!/bin/bash
+          export LDFLAGS="-L/usr/local/opt/openssl/lib"
+          export CPPFLAGS="-I/usr/local/opt/openssl/include"
+          export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
+          pip install ansible
+      environment: "{{lm_env}}"
+      when: python_version.stdout >= "3.5" and locality == "local" and localenv_type == "virtualenv" and ansible_distribution|lower == 'macosx'
 
     - name: Installing ansible locally (virtualenv, old version)
       pip:
@@ -545,6 +556,8 @@
         python3 -c "import pip; print(pip.__path__[0])"
         pip3 list
       environment: "{{lm_env}}"
+      args:
+        executable: /bin/bash
       when: locality == "global"
 
     - name: Recreate LaMachine activation script (2nd time) #needed because the PYTHONPATH might not have been set earlier yet

@@ -1,0 +1,72 @@
+---
+
+    - name: Output warning
+      debug:
+        msg: "g2pservice requires access to a private gitlab server and will fail if you do not have access (based on ssh keypairs)"
+
+    - name: Installing g2pservice python package
+      include_role:
+        name: lamachine-python-install
+      vars:
+        package:
+          name: "g2pservice"
+          git_url: "git@gitlab.science.ru.nl:clst-asr/g2p-service.git"
+
+    - name: Register webservice
+      include_role:
+          name: lamachine-register
+      vars:
+        update: "g2pservice"
+        allow_failure: yes #in case the app is not installed
+        metadata: #add entrypoint metadata to registry
+            identifier: "g2pservice"
+            entryPoints:
+              - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/g2pservice", interfaceType: "WUI" }
+              - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/g2pservice", interfaceType: "REST", specification: "{{lm_base_url}}/g2pservice/info" }
+
+    - name: "Install uwsgi configurations"
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: "uwsgi/{{item}}.ini"
+        dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{item}}.ini"
+        force: yes
+        backup: yes
+        owner: "{{web_user}}" #permissions need to match the runner
+        group: "{{web_group}}"
+        mode: u+rw,a+r
+      when: '"all" in services or item in services'
+      with_items:
+        - g2pservice
+
+    - name: "Install clam configuration"
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: "clam/{{item}}.config.yml"
+        dest: "{{lm_prefix}}/etc/{{item}}.config.yml"
+        force: yes
+        backup: yes
+        owner: "{{unix_user}}"
+        group: "{{unix_group}}"
+        mode: u+rw,a+r
+      when: '"all" in services or item in services'
+      with_items:
+        - g2pservice
+
+    - name: Link Python package installation in opt/
+      become: "{{lm_become}}"
+      become_user: root
+      shell: |
+        export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
+        if [ ! -e "$DIR" ]; then
+            echo "Unable to find dir"
+            exit 2
+        fi
+        if [ -e "{{lm_prefix}}/opt/{{item}}" ]; then
+          rm "{{lm_prefix}}/opt/{{item}}"
+        fi
+        ln -sf $DIR {{lm_prefix}}/opt/{{item}}
+      with_items:
+        - g2pservice
+      environment: "{{lm_env}}"

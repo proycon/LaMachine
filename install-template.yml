@@ -65,7 +65,7 @@
                                              #(>250MB)
      # - spacy                            ## spaCy is a library for advanced Natural Language Processing in Python and Cython ##
                                              #(>500MB)
-     # - pytorch                          ## Deep-learning library for Python
+     # - pytorch                          ## Deep-learning library for Python; also adds extras like FLAIR
      # - kaldi                            ## Kaldi Automatic Speech Recognition Toolkit
                                              #(>7GB !!!! - Not supported on Mac OS X)
      # - corenlp                          ## Stanford CoreNLP (including all models)
@@ -83,6 +83,11 @@
      # - glem                             ## Lemmatiser for ancient greek
                                             # ('Unraveling the Language of Perspective' project)
                                             # Radboud University Nijmegen
+     # - phonetisaurus                    ## Grapheme to Phoneme conversion
+                                             #(not supported on Mac OS X)
+     # - g2pservice                       ## Grapheme to Phoneme conversion webservice
+                                             #(Authorization is required for this
+                                             #contact l.tenbosch@let.ru.nl to request access)
 
 
 # NOTE: ensure that all enabled roles are lined up with the same amount of spaces!
