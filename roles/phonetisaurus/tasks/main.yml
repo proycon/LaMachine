@@ -43,7 +43,7 @@
       lineinfile:
         dest: "{{item}}"
         regexp: '^#!/usr/bin/env python$'
-        line: '^#!/usr/bin/env python2.7$'
+        line: '#!/usr/bin/env python2.7'
       with_items:
         - "{{lm_prefix}}/bin/phonetisaurus-apply"
         - "{{lm_prefix}}/bin/phonetisaurus-train"
