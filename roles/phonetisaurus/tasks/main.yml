@@ -24,7 +24,7 @@
       vars:
         pkg_source_dir: "{{ source_path }}/openfst-{{openfst_version}}"
         pkg_name: "openfst"
-        configure_opts: ./configure --enable-static --enable-shared --enable-far --enable-ngram-fsts
+        configure_opts: --enable-static --enable-shared --enable-far --enable-ngram-fsts
 
     - name: "Obtaining, compiling, and installing phonetisaurus"
       import_role:
