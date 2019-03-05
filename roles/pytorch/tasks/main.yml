@@ -5,6 +5,7 @@
       with_items:
           - { pip: torch }
           - { pip: torchvision }
+          - { pip: flair }
       loop_control:
            loop_var: package
 
