@@ -135,6 +135,8 @@ the installation procedure.
       * [Pandas](http://pandas.pydata.org/) - Python Data Analysis Library
       * [NLTK](http://www.nltk.org) - Natural Language Toolkit for Python
       * [PyTorch](https://pytorch.org) - Deep-learning library for Python
+      * [FLAIR](https://github.com/zalandoresearch/flair) - Framework for state-of-the-art sequence modelling through
+          word embeddings
     * [R](https://r-project.org)
     * [Java](http://openjdk.java.net/)
       * [NextFlow](http://www.nextflow.io) - A system and language for writing parallel and scalable pipelines in a portable manner.
