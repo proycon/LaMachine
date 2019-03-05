@@ -9,7 +9,7 @@
         name: lamachine-python-install
         package:
           name: "g2pservice"
-          git_url: "git@gitlab.science.ru.nl:clst-asr/g2p-service.git",
+          git_url: "git@gitlab.science.ru.nl:clst-asr/g2p-service.git"
 
     - name: Register webservice
       include_role:
