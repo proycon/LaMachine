@@ -65,6 +65,21 @@
             chdir: "{{ source_path }}/{% if 'github_repo' in package %}{{package.github_repo}}{% else %}{{package.name}}{% endif %}{% if 'setupdir' in package %}/{{ package.setupdir }}{% endif %}"
           environment: "{{lm_env}}"
 
+    - name: "{{package.name}} - Installing python package (development/custom) from other git source"
+      become: "{{lm_become}}"
+      become_user: root
+      shell: |
+        #!/bin/bash
+        {% if 'setup' in package and package.setup %}
+        python3 {% if 'setup' in package and package.setup %}{{package.setup}}{% else %}setup.py{% endif %} install {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %}
+        {% else %}
+        {% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %} install --upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %} .
+        {% endif %}
+      args:
+        executable: /bin/bash
+        chdir: "{{ source_path }}/{{package.name}}{% if 'setupdir' in package %}/{{ package.setupdir }}{% endif %}"
+      environment: "{{lm_env}}"
+      when: '"name" in package and package.name != "" and "git_url" in package and package.git_url != "" and (version == "development" or ("pip" not in package or package.pip == ""))' #always use this when there is no pip version
 
     - block:
        - name: "{% if 'pip' in package %}{{package.pip}}{% else %}(NOT APPLICABLE){% endif %} - Installing custom version from the Python Package Index"
