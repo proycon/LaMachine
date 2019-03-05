@@ -21,6 +21,18 @@
           environment: "{{lm_env}}"
           when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and ("ignore_git" not in package or not package.ignore_git)'
 
+    - name: "{% if 'name' in package %}{{package.name}}{% else %}(NOT APPLICABLE){% endif %} - Installing from other git source (development/custom)"
+      block:
+        - name: "{{package.name}} - Git clone/pull {% if 'git_branch' in package %}{{ package.git_branch }}{% endif %}" #we always do this, even if we're not using the source for installation (we still need to check for codemeta.json)
+          git:
+            repo: "{{package.git_url}}"
+            dest: "{{ source_path }}/{{ package.name }}"
+            version: "{% if 'version' in package and package.version %}{{ version }}{% elif version == 'custom' and 'pip' in package and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'development' and customversion[package.pip.lower()] != 'stable' %}{{ customversion[package.pip.lower()]|version_v }}{% elif version == 'custom' and 'pip' not in package and package.github_repo.lower() in customversion and customversion[package.github_repo.lower()] != 'development' and customversion[package.github_repo.lower()] != 'stable' %}{{ customversion[package.github_repo.lower()]|version_v }}{% elif 'git_branch' in package and package.git_branch %}{{ package.git_branch }}{% else %}master{% endif %}"
+            recursive: yes
+            update: yes
+          environment: "{{lm_env}}"
+          when: '"name" in package and package.name != "" and "git_url" in package and package.git_url != "" and ("ignore_git" not in package or not package.ignore_git)'
+
     - block:
         - name: "{{package.github_repo}} - Installing python package (development/custom)"
           become: "{{lm_become}}"
@@ -38,7 +50,7 @@
           environment: "{{lm_env}}"
           when: '"github_user" in package and package.github_user != "" and "github_repo" in package and package.github_repo != "" and (version == "development" or ("pip" not in package or package.pip == ""))' #always use this when there is no pip version
       rescue:
-        - name: "{{package.github_repo}} - Installing python package (development/custom) (fallback with --ignore-installed)"
+        - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}{{package.name}}{% endif %} - Installing python package (development/custom) (fallback with --ignore-installed)"
           become: "{{lm_become}}"
           become_user: root
           shell: |
@@ -50,7 +62,7 @@
             {% endif %}
           args:
             executable: /bin/bash
-            chdir: "{{ source_path }}/{{package.github_repo}}{% if 'setupdir' in package %}/{{ package.setupdir }}{% endif %}"
+            chdir: "{{ source_path }}/{% if 'github_repo' in package %}{{package.github_repo}}{% else %}{{package.name}}{% endif %}{% if 'setupdir' in package %}/{{ package.setupdir }}{% endif %}"
           environment: "{{lm_env}}"
 
 
@@ -106,14 +118,15 @@
           #when: "'would lead only to a partial uninstall' in pipinstallstable.stderr"
 
     - block:
-        - name: "{% if 'pip' in package %}{{package.pip}}{% else %}{{package.github_repo}}{% endif %} -  Verifying installation"
+        - name: "{% if 'pip' in package %}{{package.pip}}{% elif 'github_repo' in package %}{{package.github_repo}}{% else %}{{package.name}}{% endif %} -  Verifying installation"
           shell: |
               #!/bin/bash
               {% if 'pip' in package %}
                {% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %} list | grep -i -e pip -e "{{package.pip}}"
-
-              {% else %}
+              {% elif 'github_repo' in package %}
                {% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %} list | grep -i -e pip -e "{{package.github_repo}}"
+              {% elif 'name' in package %}
+               {% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %} list | grep -i -e pip -e "{{package.name}}"
               {% endif %}
           environment: "{{lm_env}}"
       rescue:
@@ -142,22 +155,33 @@
 
     - name: "{% if 'github_repo' in package %}{{package.github_repo}}{% else %}(NOT APPLICABLE){% endif %} - Checking whether codemeta.json is provided"
       stat:
-        path: "{{ source_path }}/{{package.github_repo}}/codemeta.json"
+        path: "{{ source_path }}/{% if 'github_repo' in package %}{{package.github_repo}}{% else %}{{package.name}}{% endif %}/codemeta.json"
       register: have_codemeta
       changed_when: False
-      when: "'github_repo' in package"
+      when: "'github_repo' in package or 'name' in package"
 
 
-
-    - name: "{% if 'pip' in package %}{{package.pip}}{% else %}{{package.github_repo}}{% endif %} -  Register software metadata"
+    - name: "{% if 'pip' in package %}{{package.pip}}{% else %}{{package.github_repo}}{% endif %} -  Register software metadata (github)"
       include_role:
           name: lamachine-register
       vars:
-          codemeta: "{% if 'github_repo' in package and have_codemeta.stat.exists %}{{ source_path }}/{{package.github_repo}}/codemeta.json{% endif %}"
+          codemeta: "{% if have_codemeta.stat.exists %}{{ source_path }}/{{package.github_repo}}/codemeta.json{% endif %}"
           metadata_defaults:
              identifier: "{% if 'pip' in package %}{{package.pip|lower}}{% else %}{{ package.github_repo|lower }}{% endif %}"
              name: "{% if 'pip' in package %}{{package.pip}}{% else %}{{ package.github_repo }}{% endif %}"
              codeRepository: "{% if 'github_repo' in package %}https://github.com/{{package.github_user}}/{{package.github_repo}}{% endif %}"
              producer: "{% if 'github_user' in package %}{% if package.github_user in github_clst_users %}{{metadata_producer_clst}}{% else %}{{metadata_producer_unknown}}{% endif %}{% else %}{{metadata_producer_unknown}}{% endif %}"
-      when: do_registration is defined and do_registration|bool
+      when: do_registration is defined and do_registration|bool and 'github_repo' in package
+
+    - name: "{% if 'pip' in package %}{{package.pip}}{% else %}{{package.name}}{% endif %} -  Register software metadata (other git)"
+      include_role:
+          name: lamachine-register
+      vars:
+          codemeta: "{% if have_codemeta.stat.exists %}{{ source_path }}/{{package.name}}/codemeta.json{% endif %}"
+          metadata_defaults:
+             identifier: "{% if 'pip' in package %}{{package.pip|lower}}{% else %}{{ package.name|lower }}{% endif %}"
+             name: "{% if 'pip' in package %}{{package.pip}}{% else %}{{ package.name }}{% endif %}"
+             codeRepository: "{{package.git_url}}"
+      when: do_registration is defined and do_registration|bool and 'name' in package and 'git_url' in package
+
 

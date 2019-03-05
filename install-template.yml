@@ -86,7 +86,8 @@
      # - phonetisaurus                    ## Grapheme to Phoneme conversion
                                              #(not supported on Mac OS X)
      # - g2pservice                       ## Grapheme to Phoneme conversion webservice
-                                             #(not supported on Mac OS X)
+                                             #(Authorization is required for this
+                                             #contact l.tenbosch@let.ru.nl to request access)
 
 
 # NOTE: ensure that all enabled roles are lined up with the same amount of spaces!
