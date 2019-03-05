@@ -4,11 +4,12 @@
       debug:
         msg: "g2pservice requires access to a private gitlab server and will fail if you do not have access (based on ssh keypairs)"
 
-    - name: Installing Python packages
+    - name: Installing g2pservice python package
       include_role:
         name: lamachine-python-install
-      with_items:
-        - {  git_url: "git@gitlab.science.ru.nl:clst-asr/g2p-service.git", name: "g2pservice" }
+        package:
+          name: "g2pservice"
+          git_url: "git@gitlab.science.ru.nl:clst-asr/g2p-service.git",
 
     - name: Register webservice
       include_role:
