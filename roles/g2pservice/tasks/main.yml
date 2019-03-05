@@ -7,6 +7,7 @@
     - name: Installing g2pservice python package
       include_role:
         name: lamachine-python-install
+      vars:
         package:
           name: "g2pservice"
           git_url: "git@gitlab.science.ru.nl:clst-asr/g2p-service.git"
