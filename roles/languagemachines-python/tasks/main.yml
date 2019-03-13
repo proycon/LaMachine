@@ -11,7 +11,7 @@
           - { github_user: "proycon", github_repo: "pynlpl", pip: "pynlpl" }
           - { github_user: "proycon", github_repo: "clam", pip: "clam" }
           - { github_user: "proycon", github_repo: "foliapy", pip: "folia" }
-          - { github_user: "proycon", github_repo: "folia", pip: "folia-tools" }
+          - { github_user: "proycon", github_repo: "foliatools", pip: "folia-tools" }
           - { github_user: "proycon", github_repo: "foliadocserve", pip: "foliadocserve" }
           - { github_user: "proycon", github_repo: "babelpy", pip: "babelpy" }
           - { github_user: "proycon", github_repo: "babelente", pip: "babelente" }
@@ -25,7 +25,8 @@
           command: "python3 -c 'import {{ item }}'"
       with_items:
           - pynlpl
-          - pynlpl.formats.folia
+          - pynlpl.formats.folia #legacy!
+          - folia.main
       register: test
       changed_when: test.rc != 0
 

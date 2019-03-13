@@ -159,6 +159,16 @@
       command: ldconfig
       when: root and locality == "global" and ansible_distribution|lower != 'macosx'
 
+    - name: Downloading FoLiA sources (schemas, specification, set definitions, examples)
+      include_role:
+        name: lamachine-git
+      vars:
+        do_registration: true
+      with_items:
+        - { user: "proycon", repo: "folia" }
+      loop_control:
+        loop_var: package
+
     - name: Testing whether tools start
       include_role:
           name: lamachine-run
