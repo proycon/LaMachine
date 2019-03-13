@@ -10,6 +10,7 @@
       with_items:
           - { github_user: "proycon", github_repo: "pynlpl", pip: "pynlpl" }
           - { github_user: "proycon", github_repo: "clam", pip: "clam" }
+          - { github_user: "proycon", github_repo: "foliapy", pip: "folia" }
           - { github_user: "proycon", github_repo: "folia", pip: "folia-tools" }
           - { github_user: "proycon", github_repo: "foliadocserve", pip: "foliadocserve" }
           - { github_user: "proycon", github_repo: "babelpy", pip: "babelpy" }
