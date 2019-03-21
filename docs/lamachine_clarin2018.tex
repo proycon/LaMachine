@@ -87,7 +87,7 @@ interfaces, whereas researchers in the humanities demand higher-level graphical 
 between lower and higher-level interfaces, with the former providing maximum flexibility at the cost of a steeper
 learning curve, technical ability, and a do-it-yourself mentality. Higher level interfaces, on the other
 hand, expose certain functionality of the software in an easy and accessible way, but in doing so often can not expose
-the full power of the software. The cost trade-off is also apparant in the construction of the interfaces, where
+the full power of the software. The cost trade-off is also apparent in the construction of the interfaces, where
 high-level interfaces are typically far more costly to build.
 
 LaMachine incorporates software providing different types of interfaces which, as seen above, typically address different audiences. Whilst we
@@ -116,7 +116,7 @@ possible. Similarly, as implied in point five above, there are different program
 providing their own repositories, such as the Python Package Index\footnote{\url{https://pypi.org}} for Python,
 CRAN\footnote{\url{https://cran.r-project.org/}} for R, CPAN\footnote{\url{https://www.cpan.org}} for Perl, Maven
 Central\footnote{\url{https://search.maven.org}} for Java.  LaMachine relies on those to obtain and install software. In doing so, we compel participating software projects
-to adhere to well-established distribution standards and ensure the software is more sustainable towards the future
+to adhere to well-established distribution standards and ensure the software is more sustainable
 \cite{softwarequality}. Moreover, we ensure that LaMachine never becomes a prerequisite for the software but merely a
 courtesy or convenience, and attempt to limit any amount of duplication in packaging and distribution efforts.
 
@@ -139,7 +139,7 @@ The software included in LaMachine has to adhere to the following prerequisites:
         Proprietary (closed-source) software is explicitly excluded.
     \item The source
         code must be hosted in a public version controlled repository.\footnote{e.g. Github, Gitlab, Bitbucket, provided
-        the respository is public}
+        the repository is public.}
     \item There must be a build process to compile the source, if applicable, and install the program or library.
     \item There must be some kind of release protocol (adhering to semantic versioning) that publishes software using the proper
 technology-specific channels. We will elaborate on this later.
@@ -206,7 +206,9 @@ We list a selection of the most important software included in LaMachine, groupe
  \end{itemize}
  \item by the Vrije Universiteit Amsterdam
  \begin{itemize}
-     \item \textbf{KafNafParserPy}\footnote{\url{https://github.com/cltl/KafNafParserPy}} - A python module to parse NAF files.
+     \item \textbf{KafNafParserPy}\footnote{\url{https://github.com/cltl/KafNafParserPy}} - A python module to parse NAF
+         files, another format for linguistic annotation.
+     \item \textbf{NafFoLiApy}\footnote{\url{https://github.com/cltl/NafFoLiApy}} - Converters between FoLiA and NAF.
  \end{itemize}
  \item by Utrecht University
  \begin{itemize}
@@ -363,7 +365,7 @@ All this metadata in LaMachine in turn enables other tools to do proper service 
 The software metadata discussed here is of a generic and practical nature, it most importantly contains information regarding the version, source,
 licensing, and authors of the software. The underlying principle is to obtain sofware metadata from as close to the
 source as possible. This can be contrasted with other metadata efforts, also within CLARIN, to establish a more
-centralised metadata store\footnote{such as CLARIN's CMDI Component Registry;
+centralised metadata store\footnote{Such as CLARIN's CMDI Component Registry;
 \url{https://www.clarin.eu/content/component-metadata}} with more specialised and
 research-oriented metadata. There is merit to both approaches as they serve distinct functions. But in order to best
 serve everybody's different metadata needs, these bottom-up and top-down processes need to come to some kind of
