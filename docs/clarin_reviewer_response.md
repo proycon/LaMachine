@@ -53,7 +53,8 @@ natively. I added a small footnote to hopefully clarify this.
 > Is LaMachine catalogued in the VLO, with a PID to the metadata?
 
 No, nobody has ever requested this desire yet. I'll look into it. It may be a bit difficult as LaMachine is such a
-meta-distribution that it is hard to pin down for any single scenario.
+meta-distribution that it is hard to pin down for any single scenario, but it would be interesting for the services
+inside a LaMachine installation.  I opened issue https://github.com/proycon/LaMachine/issues/138 to this end.
 
 > Does LaMachine aim at compatibility with the CLARIN Language Resource Switchboard? The paper states that LaMachine "transcends" the
 > ambitions of the Switchboard, but more relevant is the question whether the two are compatible and can be integrated.
