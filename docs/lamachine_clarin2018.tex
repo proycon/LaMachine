@@ -123,6 +123,13 @@ courtesy or convenience, and attempt to limit any amount of duplication in packa
 LaMachine lives in an open-source ecosystem and therefore builds on Unix-like platforms; this primarily means Linux, as well as BSD and, with some restrictions, macOS. This by definition excludes certain software for different platforms, such as mobile platforms (Android/iOS/etc), native Windows/mac desktop applications, or certain interface types in general such as classical desktop GUI applications or mobile `apps', all of which fall beyond our scope. Cygwin\footnote{A unix environment on Windows} is not tested or
  supported either. However, virtualisation technology enables deployment on a wider range of platforms, including Windows.
 
+LaMachine exists since since May 2015 and has been installed extensively ever since by numerous users. In early 2018 version 2 was
+released which was a significant redesign, powered by Ansible\footnote{\url{https://www.ansible.com}}. We ourselves use
+LaMachine as a means by to make our full software stack available to end-users, whether those be individual researchers, research
+groups, or hosting providers like CLARIN centres. LaMachine has in fact been adopted in all of those areas. Quantifying its
+actual use is not trivial despite having some tracking solutions in place, but can roughly be put at around one or two
+installations or upgrades \emph{every day}. We also see a regular influx of questions on our issue tracker, indicating
+community interest.
 
 The software included in LaMachine has to adhere to the following prerequisites:
 
@@ -141,11 +148,7 @@ technology-specific channels. We will elaborate on this later.
         dependencies. %verwerkt <-- maarten help even met formuleren hier, ik bedoel dat zoiets als Pattern dus helaas niet mee kan doen omdat het niet meer onderhouden wordt }only maintained/uptodate date software that can compile using the current version of compilers and dependencies/libraries
 \end{enumerate}
 
-
 \section{ Included Software}
-
-LaMachine exists since May 2015 and has been used extensively ever since by numerous users. In early 2018 version 2 was
-released which was a significant redesign, powered by Ansible\footnote{\url{https://www.ansible.com}}.
 
 In LaMachine, software is grouped into various ``packages'', each package\footnote{For those familiar with
 Ansible, a package in LaMachine is an Ansible role} groups one or multiple programs that have some kind of relation. The
