@@ -4,6 +4,7 @@
           name: lamachine-python-install
       with_items:
           - { pip: spacy }
+          - { pip: spacy2folia }
       loop_control:
            loop_var: package
 
