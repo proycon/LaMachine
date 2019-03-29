@@ -16,7 +16,10 @@
 \usepackage[english]{babel}
 
 %\setlength\titlebox{5cm}
+\setlist{nosep}
 \setlist{noitemsep}
+\setlength{\belowcaptionskip}{-10pt}
+\setlength{\abovecaptionskip}{0pt}
 
 % You can expand the titlebox if you need extra space
 % to show all the authors. Please do not make the titlebox
@@ -165,7 +168,7 @@ We list a selection of the most important software included in LaMachine, groupe
 
 \begin{itemize}
  \item by the Language Machines Research Group and the Centre of Language and Speech Technology, Radboud University,
-     Nijmegen\footnote{Links: \url{https://languagemachines.github.io/timbl}, \url{https://languagemachines.github.io/mbt},
+     Nijmegen:\footnote{Links: \url{https://languagemachines.github.io/timbl}, \url{https://languagemachines.github.io/mbt},
     \url{https://languagemachines.github.io/ucto}, \url{https://languagemachines.github.io/frog},
     \url{http://ilk.uvt.nl/wopr}, \url{https://proycon.github.io/folia}, \url{https://proycon.github.io/clam},
 \url{https://github.com/proycon/flat}, \url{https://proycon.anaproy.nl/pynlpl},
@@ -199,25 +202,15 @@ We list a selection of the most important software included in LaMachine, groupe
          available tools in LaMachine, an ideal starting point for LaMachine.
      \item \textbf{Oersetter} -- A Frisian-Dutch Machine Translation system in collaboration with the Fryske Akademy.
  \end{itemize}
- \item by the University of Groningen
- \begin{itemize}
-     \item \textbf{Alpino}\footnote{\url{http://www.let.rug.nl/vannoord/alp/Alpino/}} - A dependency parser and tagger for Dutch.
- \end{itemize}
- \item by the Vrije Universiteit Amsterdam
- \begin{itemize}
-     \item \textbf{KafNafParserPy}\footnote{\url{https://github.com/cltl/KafNafParserPy}} - A python module to parse NAF
-         files, another format for linguistic annotation.
-     \item \textbf{NafFoLiApy}\footnote{\url{https://github.com/cltl/NafFoLiApy}} - Converters between FoLiA and NAF.
- \end{itemize}
- \item by Utrecht University
- \begin{itemize}
-     \item  \textbf{T-scan}\footnote{\url{https://github.com/proycon/tscan}} - T-scan is a Dutch text analytics tool for readability prediction (initially developed at TiCC, Tilburg University, and in collaboration with Radboud University, Nijmegen)
- \end{itemize}
- \item by the Meertens Instituut
- \begin{itemize}
-     \item \textbf{Python Course for the Humanities}\footnote{\url{http://www.karsdorp.io/python-course/}} - Interactive
+ \item by the University of Groningen: \textbf{Alpino}\footnote{\url{http://www.let.rug.nl/vannoord/alp/Alpino/}} -- A dependency parser and tagger for Dutch.
+ \item by the Vrije Universiteit Amsterdam:
+     \textbf{KafNafParserPy}\footnote{\url{https://github.com/cltl/KafNafParserPy}} -- a python module to parse NAF
+         files, another format for linguistic annotation; and
+         \textbf{NafFoLiApy}\footnote{\url{https://github.com/cltl/NafFoLiApy}} -- converters between FoLiA and NAF.
+ \item by Utrecht University: \textbf{T-scan}\footnote{\url{https://github.com/proycon/tscan}} -- a Dutch text analytics tool for readability prediction (initially developed at TiCC, Tilburg University, and in collaboration with Radboud University, Nijmegen)
+ \item by the Meertens Instituut: \textbf{Python Course for the
+     Humanities}\footnote{\url{http://www.karsdorp.io/python-course/}} -- interactive
          tutorial and introduction into programming with Python for the humanities.
- \end{itemize}
 \end{itemize}
 
 In addition to the above listed specific software, LaMachine also incorporates a large number of renowned tools by external international parties, offering
@@ -234,8 +227,7 @@ exhaustive: \footnote{Links: \url{https://jupyterlab.readthedocs.io/en/stable/},
         \item \textbf{NLTK} - Natural Language Toolkit for Python
         \item \textbf{Spacy} - Industrial-Strength NLP in Python
     \end{itemize}
-    \item \textbf{R}
-    \item \textbf{Java}
+    \item \textbf{R}, \textbf{Perl}, \textbf{Java}:
     \begin{itemize}
         \item \textbf{NextFlow} - A system and language for writing parallel and scalable pipelines in a portable manner.
         \item \textbf{Stanford CoreNLP} - Various types of linguistic enrichment
@@ -334,7 +326,7 @@ pre-published container or VM is selected.  Figure~\ref{fig:arch} provides a sch
 architecture.
 
 \begin{figure}[htb] \begin{center}
-\includegraphics[width=110.0mm]{screenshot_bootstrap.jpg}
+\includegraphics[width=120.0mm]{screenshot_bootstrap.jpg}
 \end{center}
 \caption{\footnotesize{A screenshot of the bootstrap procedure}}
 \label{fig:bootstrap}
@@ -399,7 +391,7 @@ one of the many specialised programming libraries included in LaMachine to build
 LaMachine ideally suited as a development environment.
 
 \begin{figure}[htb] \begin{center}
-\includegraphics[width=135.0mm]{screenshot_venv_activate.jpg}
+\includegraphics[width=120.0mm]{screenshot_venv_activate.jpg}
 \end{center}
 \caption{\footnotesize{Activation of a local LaMachine environment on the command-line}}
 \label{fig:venv}
@@ -415,7 +407,7 @@ Figure~\ref{fig:portal}, leverages the metadata registry compiled in each LaMach
 section~\ref{sec:metadata}).
 
 \begin{figure}[htb] \begin{center}
-\includegraphics[width=135.0mm]{screenshot_portal.jpg}
+\includegraphics[width=150.0mm]{screenshot_portal.jpg}
 \end{center}
 \caption{\footnotesize{A screenshot of the LaMachine portal, powered by Labirinto:
 \url{https://github.com/proycon/labirinto}}}
@@ -431,7 +423,7 @@ regular shell access and may have a larger appeal for those parts of the audienc
 comfortable in the terminal.
 
 \begin{figure}[htb] \begin{center}
-\includegraphics[width=135.0mm]{screenshot_lab.jpg}
+\includegraphics[width=150.0mm]{screenshot_lab.jpg}
 \end{center}
 \caption{\footnotesize{A screenshot of the Jupyter Lab Environment}}
 \label{fig:lab}
@@ -470,8 +462,7 @@ software, on their own machines and unencumbered by high-level interfaces if the
 There are also CLARIN initiatives that provide not just a switchboard, but a more elaborate high-level virtual research
 environment (VRE) with graphical interfaces to accommodate the researcher and allow execution and visualisation of
 various NLP pipeline. The Dutch CLARIAH WP3 project\footnote{\url{https://github.com/meertensinstituut/clariah-wp3-vre}}
-is such an initiative. LaMachine is currently developed in
-close collaboration with the Dutch CLARIAH WP3 VRE project, in which we act as a technology supplier.
+is such an initiative and LaMachine is currently developed in close collaboration with this project, in a role of technology supplier.
 
 Comparisons could be drawn between LaMachine as a kind of Linux distribution and other Linux distributions. That too,
 however, would not be appropriate as we characterise LaMachine more as a meta-distribution which simply builds on the foundation
@@ -518,8 +509,8 @@ LaMachine is obliged to follow by design.
 
 \section{Case studies}\label{sec:case}
 
-LaMachine is most often used by a researcher or data scientist who installs LaMachine on his own computer (locally, in a
-local environment or as a Docker container or VM). Here we discuss two case studies where LaMachine was used under
+LaMachine is most often used by a researcher or data scientist who installs LaMachine on his own computer (in a
+local environment, Docker container or VM). Here we discuss two case studies where LaMachine was used under
 circumstances that go beyond this most common usage of LaMachine: using LaMachine on a secure server without internet
 connection, and using LaMachine to provide a work environment for a group of researchers. These case studies illustrate
 the advantages and limitations of LaMachine in practice.
@@ -598,8 +589,9 @@ LaMachine was convenient and speeded up writing code as the most common scientif
 LaMachine provides a flexible solution for the installation of a variety of NLP software, resulting in a kind
 of virtual laboratory that, through various interfaces, can be employed by a variety of people, from developers and data scientists to the wider research community that CLARIN explicitly addresses.
 
-Most users of LaMachine are installing the software distribution in their own machine, either locally, via Docker or VM. However, we described to use cases in section \ref{sec:case} where we explore the possibilities under more constrained and demanding circumstances.
-Such case studies contribute to thorough testing and running of LaMachine in less ideal circumstances such as nested VM constructions and offline usage.
+Most users of LaMachine are installing the software distribution in their own machine, either locally, via Docker or VM.
+However, we described two case studies in section~\ref{sec:case} where we explore the possibilities under more
+constrained, complex, and demanding circumstances, which contributes to thorough testing and running of LaMachine.
 
 Aside from the incorporation of new relevant software, the main objectives for the future are to provide
 greater \emph{interoperability} between the included tools through better \emph{high-level interfaces} for the
@@ -608,12 +600,9 @@ proposed interfaces, including the current portal application in LaMachine, are 
 software projects, which may be deployed by/in/for LaMachine, but also in other contexts. LaMachine remains `just'
 a software distribution at heart.
 
-Development of LaMachine presently takes place in collaboration with the CLARIAH WP3 Virtual Research Environment (VRE)
-project\footnote{\url{https://github.com/meertensinstituut/clariah-wp3-vre}}. The VRE project has higher ambitions in
-accommodating the researcher and connectivity of data and services, and transcends also those of the CLARIN Language
-Resource Switchboard~\cite{switchboard}. An important part of our future focus will therefore be on interoperability
-with the higher-level tools emerging from the VRE efforts, but also with other parts of the CLARIN infrastructure;
-single-sign on authentication being a notable example here.
+An important part of our future focus will be on interoperability with the higher-level tools emerging from
+the CLARIAH WP3 VRE effort, but also with other parts of the CLARIN infrastructure; single-sign on authentication being
+a notable example here.
 
 LaMachine v2 is open to  outside contribution. Contributor documentation has been written, and at this stage, we greatly
 welcome external participants to join in.
