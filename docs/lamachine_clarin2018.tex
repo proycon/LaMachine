@@ -74,13 +74,13 @@ community. We explain what LaMachine is, how it can be used and the technical de
 \label{sec:intro}
 
 Software is a key deliverable and a vital component for research in projects such as those under the CLARIN umbrella.
-Software can be seen as an invaluable instrument that enable researchers to perform their studies. It is CLARIN's core mission to make
+Software can be seen as an invaluable instrument that enables researchers to perform their studies. It is CLARIN's core mission to make
 digital language resources, including software, available to the wider research community.
 
 We see that NLP software often takes on complex forms such as processing pipelines invoking various individual
 components, which in turn rely on various dependencies. Add dedicated web-interfaces on top of that and you obtain a
 suite of interconnected software that is often non-trivial to install, configure, and deploy. This is where LaMachine
-comes in.
+comes in; as a \emph{distribution of software}.
 
 Software is a broad but well-ingrained notion in society nowadays, referring to any form of computer program. This can
 manifest in various forms, whether it is an app on a phone, a graphical desktop application, a command line tool, or a
@@ -93,13 +93,13 @@ hand, expose certain functionality of the software in an easy and accessible way
 the full power of the software. The cost trade-off is also apparent in the construction of the interfaces, where
 high-level interfaces are typically far more costly to build.
 
-LaMachine incorporates software providing different types of interfaces which, as seen above, typically address different audiences. Whilst we
+LaMachine distributes software providing different types of interfaces which, as seen above, typically address different audiences. Whilst we
 attempt to accommodate both technical\footnote{Data scientists, DevOps, system administrators, developers.} and
 less-technical audiences\footnote{The wider researcher community, particularly the Humanities; also educational
-settings.}, there is a natural bias towards the former as lower-level interfaces are often a prerequisite to build
+settings.}. There is a natural bias towards the former as lower-level interfaces are often a prerequisite to build
 higher-level interfaces on. Depending on the \emph{flavour} (more on this later) of LaMachine chosen, it makes a good virtual research
 environment for a data scientist, whether on a personal computer or on a computing cluster, a good development
-environment for a developer or a good deployment method for production servers in for example CLARIN centres.
+environment for a developer or a good deployment method to deliver to production servers such as CLARIN centres.
 
 This paper provides a detailed description of LaMachine, its purpose and functionality and the technical details. We
 discuss the advantages and limitations of LaMachine compared to alternative software distributions in Section \ref{sec:comparison}. We demonstrate how LaMachine can create a fully functioning and standalone research environment for text mining  and NLP for Dutch texts in two use cases in Section \ref{sec:case}.
@@ -127,8 +127,8 @@ LaMachine lives in an open-source ecosystem and therefore builds on Unix-like pl
  supported either. However, virtualisation technology enables deployment on a wider range of platforms, including Windows.
 
 LaMachine exists since May 2015 and has been installed extensively ever since by numerous users. Quantifying its actual
-use is not trivial despite having some tracking solutions in place, but our statistics show that LaMachine was installed at least over a thousand times, on
-machines in over 25 different countries since its inception\footnote{https://applejack.science.ru.nl/lamastats/lamachinestats.html}. In early 2018 version 2 was released which was a significant redesign, powered
+use is not trivial despite having some tracking solutions in place; our statistics show that LaMachine was installed at least over a thousand times, on
+machines in over 25 different countries, since its inception\footnote{https://applejack.science.ru.nl/lamastats/lamachinestats.html}. In early 2018 version 2 was released which was a significant redesign, powered
 by Ansible\footnote{\url{https://www.ansible.com}}. We ourselves use LaMachine as a means by to make our full software
 stack available to end-users, whether those be individual researchers, research groups, or hosting providers like CLARIN
 centres. LaMachine has in fact been adopted in all of those areas. We also see a regular influx of questions on our issue tracker, indicating community interest.
@@ -155,7 +155,7 @@ technology-specific channels. We will elaborate on this later.
 In LaMachine, software is grouped into various ``packages'', each package\footnote{For those familiar with
 Ansible, a package in LaMachine is an Ansible role} groups one or multiple programs that have some kind of relation. The
 installation manifest lists all packages that will be installed, at the user's discretion. After the initial
-installation, the user can always add more packages using \texttt{lamachine-add} or editing the installation manifest directly.
+installation, the user can always add more packages using \texttt{lamachine-add} or by editing the installation manifest directly.
 
 LaMachine was initially conceived as the primary means of distribution of the software stack developed at the Language
 Machines Research Group and the Centre of
@@ -387,7 +387,7 @@ terminal. In flavours that are separated from the host system by a network, this
 After accessing the LaMachine environment through a terminal, as shown in Figure~\ref{fig:venv}, the user has the liberty to do whatever she wants and can invoke any
 of the tools that offer a text interface, including text editors such as vim, emacs or nano, version control systems
 such as git and interpreters such as Python or R (or compilers for that matter). This allow users to use
-one of the many specialised programming libraries included in LaMachine to build their own tools and . All this makes
+one of the many specialised programming libraries included in LaMachine to build their own tools. All this makes
 LaMachine ideally suited as a development environment.
 
 \begin{figure}[htb] \begin{center}
@@ -431,7 +431,7 @@ comfortable in the terminal.
 \label{fig:lab}
 \end{figure}
 
-LaMachine provides various CLAM-based webservices. CLAM is a long-time CLARIN project that allows developers to turn
+LaMachine includes various CLAM-based webservices. CLAM is a long-time CLARIN project that allows developers to turn
 their command-line NLP tool into a RESTful webservice with relatively little effort \cite{CLAMPAPER}, and which in
 addition also provides a generic web-interface for human end-users. The portal website in LaMachine links to these. This
 again addresses an audience that does not require a high degree of technical expertise, but is suitable for a wider
@@ -454,17 +454,19 @@ something she can use right out of the box. It also fulfills a role in case the 
 or needs yet, and needs an environment where she can explore a variety of pre-installed tools and experiment.
 
 Within the scope of CLARIN, one might be inclined to draw comparisons with the CLARIN Language Resource Switchboard
-\cite{zinn2016clarin}, which also offers access to NLP tools through a web interface where users can upload their texts
-for NLP processing, providing easy access and automated tool discovery.  This, however, is notably different from what
-LaMachine is. The CLARIN switchboard is not a software distribution, it links to externally hosted applications; and
-LaMachine does currently not provide any switchboard functionality, but merely offers a portal interface. Moreover,
-LaMachine is used by data scientists and reseachers who do have programming experience and want to work with complex NLP
-software, on their own machines and unencumbered by high-level interfaces if they so desire.
+\cite{zinn2016clarin}, which offers access to NLP tools through a web interface where users can upload their texts for
+NLP processing, providing easy access and automated tool discovery. This, however, is notably different from what
+LaMachine is. LaMachine is a software distribution; the CLARIN switchboard is not. Vice versa, LaMachine does not
+currently provide any switchboard functionality, it merely offers a portal interface. The switchboard allows access to
+tools hosted elsewhere, LaMachine installs and configures tools and only provides access to those it installed. Unlike
+the switchboard, the audience for LaMachine is in the first place the data scientist and researcher who has
+programming experience and wants to work with complex NLP software, on her own machine and unencumbered by high-level
+interfaces if she so desires.
 
-There are also CLARIN initiatives that provide not just a switchboard, but a more elaborate high-level virtual research
+There are also other CLARIN initiatives that provide not just a switchboard, but aim at an eve more ambitious high-level virtual research
 environment (VRE) with graphical interfaces to accommodate the researcher and allow execution and visualisation of
 various NLP pipeline. The Dutch CLARIAH WP3 project\footnote{\url{https://github.com/meertensinstituut/clariah-wp3-vre}}
-is such an initiative and LaMachine is currently developed in close collaboration with this project, in a role of technology supplier.
+is such an initiative: LaMachine is currently developed in close collaboration with this project, in a role of technology supplier.
 
 Comparisons could be drawn between LaMachine as a kind of Linux distribution and other Linux distributions. That too,
 however, would not be appropriate as we characterise LaMachine more as a meta-distribution which simply builds on the foundation

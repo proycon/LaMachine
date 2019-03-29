@@ -33,6 +33,8 @@ would not be very meaningful to the uninformed reader.
 > The justification for such a system is well argued for but how such facility relates to other functions that CLARIN centres are
 > supposed to serve is not entirely clear.
 
+(see also the comments to reviewer 4 below, who I think has the same question)
+
 ## REVIEW 4
 
 This reviewer poses some very good and interesting questions about the relation between LaMachine and the larger CLARIN infrastructure.
