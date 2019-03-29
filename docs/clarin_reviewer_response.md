@@ -33,13 +33,17 @@ would not be very meaningful to the uninformed reader.
 > The justification for such a system is well argued for but how such facility relates to other functions that CLARIN centres are
 > supposed to serve is not entirely clear.
 
-(see also the comments to reviewer 4 below, who I think has the same question)
+(see also the comments to reviewer 4 below, who I think has a similar question)
 
 ## REVIEW 4
 
-This reviewer poses some very good and interesting questions about the relation between LaMachine and the larger CLARIN infrastructure.
-It's hard to sufficiently address this in the paper in the limited space available, as we focus mostly on providing an
-clear description on what LaMachine is and contains.
+This reviewer poses some very good and interesting questions about the relation between LaMachine and the larger CLARIN
+infrastructure.  It's hard to sufficiently address this in the paper in the limited space available, as we focus mostly
+on providing an clear description on what LaMachine is (a distribution) and contains. We have now tried to emphasise
+more the fact that LaMachine is a distribution, and how that relates to e.g. the CLARIN switchboard, as some of the
+questions indicate we have not communicated this clearly enough.
+
+I'd like to address each of the questions here:
 
 > Is LaMachine actively distributed and maintained at a CLARIN centre or by CLARIN ERIC centrally?
 
@@ -73,17 +77,17 @@ natively. I added a small footnote to hopefully clarify this.
 
 No, nobody has ever requested this desire yet. I'll look into it. It may be a bit difficult as LaMachine is such a
 meta-distribution that it is hard to pin down for any single scenario, but it would be interesting for the services
-inside a LaMachine installation.  I opened issue https://github.com/proycon/LaMachine/issues/138 to this end. It's not
+inside **a** LaMachine installation (our own public one perhaps).  I opened issue https://github.com/proycon/LaMachine/issues/138 to this end. It's not
 in the paper as it does not offer sufficient space for such a discussion.
 
 > Does LaMachine aim at compatibility with the CLARIN Language Resource Switchboard? The paper states that LaMachine "transcends" the
 > ambitions of the Switchboard, but more relevant is the question whether the two are compatible and can be integrated.
 
-The "transcends" remark in our paper applies to the VRE project rather than to LaMachine, I clarified it to prevent
+The "transcends" remark in our paper applies to the VRE project rather than to LaMachine, I now clarified it to prevent
 confusion. LaMachine is not directly comparable with the switchboard as it offers no switchboard functionality. Now, the
 switchboard itself could possibly be included in the LaMachine distribution. I briefly considered this but decided to
 include a simpler portal instead as the switchboard did not meet all our demands and other initiatives were started to
-compete with it (CLARIAH WP3 VRE). Tighter compatibility between the switchboard and services offered by a LaMachine
+compete with it (CLARIAH WP3 VRE). Tighter compatibility between the switchboard and services offered by **a** LaMachine
 installation would be possible, but this is more a question for the switchboard developers than for us.
 
 In fact, the current switchboard already points to various webservices that are hosted in our LaMachine installation at
@@ -93,7 +97,7 @@ Radboud University, though this involved manual duplication of metadata rather t
 > believe to be a CLARIN standard. Why not CMDI?
 
 LaMachine itself is a distribution so it doesn't process any data as such; that would be a question for particular tools
-or frameworks and would not be something we as a distribution would enforce either.
+or frameworks within it, and would not be something we as a distribution would enforce.
 
 As to CodeMeta for software metadata, we tried to clarify our choice for that in the section titled 'Metadata'. We do hope we can come
 to a synthesis with CMDI software descriptions and there are actually some ongoing discussions to that end.
