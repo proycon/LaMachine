@@ -124,7 +124,7 @@ LaMachine lives in an open-source ecosystem and therefore builds on Unix-like pl
  supported either. However, virtualisation technology enables deployment on a wider range of platforms, including Windows.
 
 LaMachine exists since May 2015 and has been installed extensively ever since by numerous users. Quantifying its actual
-use is not trivial despite having sme tracking solutions in place, but our statistics show that LaMachine was installed at least over a thousand times, on
+use is not trivial despite having some tracking solutions in place, but our statistics show that LaMachine was installed at least over a thousand times, on
 machines in over 25 different countries since its inception\footnote{https://applejack.science.ru.nl/lamastats/lamachinestats.html}. In early 2018 version 2 was released which was a significant redesign, powered
 by Ansible\footnote{\url{https://www.ansible.com}}. We ourselves use LaMachine as a means by to make our full software
 stack available to end-users, whether those be individual researchers, research groups, or hosting providers like CLARIN
@@ -459,6 +459,8 @@ which would not be trivial. Moreover, LaMachine shines when the user wants highe
 something she can use right out of the box. It also fulfills a role in case the user simply does not know what she wants
 or needs yet, and needs an environment where she can explore a variety of pre-installed tools and experiment.
 
+The CLARIN Switchboard \cite{zinn2016clarin} also offers access to NLP tools at a different level as it provides a webinterface where users can upload their texts for NLP processing, proving very easy acces. Lamachine is most often used by data scientists and reseachers who do have programming experience and want to work with complex NLP software.
+
 Comparisons could be drawn between LaMachine as a kind of Linux distribution and other Linux distributions. That,
 however, would not be appropriate as we characterise LaMachine more as a meta-distribution which simply builds on the foundation
 of several existing major Linux distributions. As a meta-distribution that runs in a variety of flavours and on a
@@ -501,12 +503,14 @@ at any time introduce a change that requires us to adapt LaMachine accordingly. 
 distribution releases that are currently up-to-date and supported, will eventually be deprecated and replaced by newer releases, a development
 LaMachine is obliged to follow by design.
 
+Virtual Research Environments (VRE) such as the Dutch CLARIAH WP3 VRE project\footnote{\url{https://github.com/meertensinstituut/clariah-wp3-vre}} and the Spanish VRE project \cite{gonzalez2017evi} aim to develop more high level tool environments with graphical interfaces to accomodate the reseacher. Lamachine is currently developed in close collaboration with the Dutch CLARIAH WP3 VRE project.
+
 \section{Case studies}\label{sec:case}
 
 LaMachine is most often used by a researcher or data scientist who installs LaMachine on his own computer (locally, in a
 local environment or as a Docker container or VM). Here we discuss two case studies where LaMachine was used under
 circumstances that go beyond this most common usage of LaMachine: using LaMachine on a secure server without internet
-connection, and using LaMachine to provide a work environment for a group of researchers.
+connection, and using LaMachine to provide a work environment for a group of researchers. These case studies illustrate the advantages and limitations of Lamachine in practice.
 
 \subsection{Text Mining for Health Inspection}
 
@@ -525,7 +529,7 @@ stored in an environment without internet access. We needed to bring the softwar
 
 We used a virtual machine (VM) image of LaMachine and we ran this 64-bits Linux-based VM inside another
 VM with Windows Server 2012, provided to us by the health inspectorate for this project, in which we did have administrative
-rights but no internet access. In terms of hardware we ran on a machine with 8 cores and  32GB internal memory available.
+rights but no internet access. In terms of hardware we ran on a machine with 8 cores and  32GB internal memory available. Note that as we had no internet access available on the working server, we prepared a custom-made VM image of Lamachine that included an additional editor and some extra Python libraries.
 %using VirtualBox and Vagrnt on the Windows VM
 LaMachine provided a fully functional research environment and we ran all our experiments within LaMachine. We interacted with LaMachine both through the command line, which offers a standard
 shell and enables access to all lower-level tools and programming languages; and through the (offline) webbrowser to use
@@ -562,7 +566,7 @@ not want to use LaMachine, considering it needs to be explicitly activated prior
 
 LaMachine offered a convenient platform for a range of different explorations and experiments in the area of NLP and
 text mining. However, for some situations LaMachine, or rather Linux in general, was not a good fit for the audience of
-the workshop: For team members who did not have experience with a non-Windows environment, LaMachine was not a suitable
+the workshop: for team members who did not have experience with a non-Windows environment, LaMachine was not a suitable
 or useful tool. The limit of LaMachine was also reached for members who wanted to use desktop text editors with a
 graphical user interface as this is not offered by LaMachine. Moreover, we did not manage to get X-forwarding working in the
 Ubuntu Linux VM and after a few attempts the team gave up on resolving this issue due to time pressure. This, also
@@ -582,8 +586,8 @@ LaMachine was convenient and speeded up writing code as the most common scientif
 LaMachine provides a flexible solution for the installation of a variety of NLP software, resulting in a kind
 of virtual laboratory that, through various interfaces, can be employed by a variety of people, from developers and data scientists to the wider research community that CLARIN explicitly addresses.
 
-Use cases as the examples in section \ref{sec:case} contribute to thorough testing and running of LaMachine in less ideal
-circumstances such as nested VM constructions and offline usage.
+Most users of Lamachine are installing the software distribution in their own machine, either locally, via Docker or VM. However, we described to use cases in section \ref{sec:case} where we explore the possibilities under more constrained and demanding circumstances.
+Such case studies contribute to thorough testing and running of LaMachine in less ideal circumstances such as nested VM constructions and offline usage.
 
 Aside from the incorporation of new relevant software, the main objectives for the future are to provide
 greater \emph{interoperability} between the included tools through better \emph{high-level interfaces} for the
