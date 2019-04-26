@@ -1,7 +1,7 @@
 ---
     - name: Failing if authorization is not properly configured
       fail:
-        msg: "You did not set fame_user and fame_password in your configuration. This is required for eng_ASR to work! If you do not have the credentials yet, contact h.vandenheuvel@let.ru.nl to request access."
+        msg: "You did not set eng_ASR_user and eng_ASR_password in your configuration. This is required for eng_ASR to work! If you do not have the credentials yet, contact h.vandenheuvel@let.ru.nl to request access."
       when: eng_ASR_user == "undefined" or eng_ASR_password == "undefined"
 
     - name: Install CLAM #so we don't need to rely on languagemachines-basic nor python-core
@@ -50,7 +50,7 @@
 
     - name: Removing old resources (if present)
       file:
-          path: "{{lm_prefix}}/opt/fame_resources"
+          path: "{{lm_prefix}}/opt/eng_ASR_resources"
           state: absent
       ignore_errors: yes #in case it isn't there in the first place
 
@@ -58,7 +58,7 @@
       become: "{{lm_become}}"
       become_user: root
       file:
-          path: "{{lm_prefix}}/opt/fame_resources"
+          path: "{{lm_prefix}}/opt/eng_ASR_resources"
           state: directory
           owner: "{{unix_user}}"
           group: "{{unix_group}}"
@@ -67,8 +67,8 @@
     - name: Downloading resources
       get_url:
         url: https://applejack.science.ru.nl/downloads/eng_ASR/resources.tar.gz
-        url_username: "{{eng_ASR_user}}"
-        url_password: "{{eng_ASR_password}}"
+        #url_username: "{{eng_ASR_user}}"
+        #url_password: "{{eng_ASR_password}}"
         dest: "{{lm_prefix}}/opt/eng_ASR_resources/resources.tar.gz"
         tmp_dest: "{{lm_prefix}}/opt/eng_ASR_resources"
 
@@ -76,14 +76,14 @@
     - name: Finalising resource installation
       shell: |
           #!/bin/bash
-          tar xzf fame_resources.tar.gz
-          rm -rf fame_resources.tar.gz
+          tar xzf eng_ASR_resources.tar.gz
+          rm -rf eng_ASR_resources.tar.gz
           mv resources/* .
           chown -R {{unix_user}}:{{unix_group}} .
           find . -type d | xargs chmod u+rw,g+rw,a+rx
           find . -type f | xargs chmod u+rw,g+rw,a+r
       args:
-          chdir: "{{lm_prefix}}/opt/fame_resources"
+          chdir: "{{lm_prefix}}/opt/eng_ASR_resources"
 
     - name: "Install webserver configuration for eng_ASR"
       become: "{{lm_become}}"
