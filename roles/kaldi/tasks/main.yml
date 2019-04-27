@@ -31,9 +31,9 @@
     shell: |
       git clone https://aur.archlinux.org/atlas-lapack.git
       cd atlas-lapack
-      makepkg
       echo "WARNING: Compiling ATLAS with --cripple-atlas-performance to proceed in the face of CPU throttling! Degrades performance and makes timings non-sensical!!!" >&2
       sed -i 's/--with-netlib-lapack-tarfile/--cripple-atlas-performance --with-netlib-lapack-tarfile/' PKGBUILD
+      makepkg
     args:
       chdir: "{{source_path}}"
     when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro')
