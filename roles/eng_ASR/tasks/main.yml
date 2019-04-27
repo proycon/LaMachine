@@ -67,8 +67,8 @@
     - name: Downloading resources
       get_url:
         url: https://applejack.science.ru.nl/downloads/eng_ASR/resources.tar.gz
-        #url_username: "{{eng_ASR_user}}"
-        #url_password: "{{eng_ASR_password}}"
+        url_username: "{{eng_ASR_user}}"
+        url_password: "{{eng_ASR_password}}"
         dest: "{{lm_prefix}}/opt/eng_ASR_resources/resources.tar.gz"
         tmp_dest: "{{lm_prefix}}/opt/eng_ASR_resources"
 
