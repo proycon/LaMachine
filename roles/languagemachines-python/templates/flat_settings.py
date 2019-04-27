@@ -195,10 +195,10 @@ CONFIGURATIONS = {
     'editformdirect': True, #boolean
 
     #Enable editing as correction
-    'editformcorrection': True, #boolean
+    'editformcorrection': False, #boolean
 
     #Enable editing as alternative
-    'editformalternative': True, #boolean
+    'editformalternative': False, #boolean
 
     #Enable editing as new, this allows for adding multiple or overlapping annotations of the same type
     'editformnew': True, #boolean
@@ -243,6 +243,24 @@ CONFIGURATIONS = {
     #'metadataconstraints': {'language': ['fr','en','es'], 'status':['completed','inprogress']},
 
     #'searches': [{'query': 'SELECT entity WHERE annotatortype = "manual" FOR w RETURN target', 'label': "Highlight manually annotated entities"}]
+    'converters': [
+        { 'id': 'conllu2folia',
+          'module': 'foliatools.conllu2folia',
+          'function': 'flat_convert',
+          'name': "CONLL-U",
+          'parameter_help': 'Metadata. Set <em>"direction": "rtl"</em> for right-to left languages (JSON syntax without the envelopping curly braces)', #human readable help for parameters
+          'parameter_default': '', #default parameter, JSON syntax without the envelopping {}
+          'inputextensions': ['conllu','conll'],
+        },
+        { 'id': 'rst2folia',
+          'module': 'foliatools.rst2folia',
+          'function': 'flat_convert',
+          'name': "ReStructuredText",
+          'parameter_help': '', #human readable help for parameters
+          'parameter_default': '', #default parameter, JSON syntax without the envelopping {}
+          'inputextensions': ['rst'],
+        },
+    ]
 },
 }
 
@@ -329,12 +347,16 @@ STATIC_URL = BASE_PREFIX + '/static/'
 STYLE_ROOT = BASE_DIR + '/flat/style/'
 STYLE_URL =  BASE_PREFIX + '/style/'
 
+SCRIPT_ROOT = BASE_DIR + '/flat/script/'
+SCRIPT_URL = BASE_PREFIX + '/script/'
+
 # Additional locations of static files
 STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     BASE_DIR + '/flat/style/',
+    BASE_DIR + '/flat/script/',
 )
 
 
