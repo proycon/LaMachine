@@ -27,26 +27,28 @@
         loop_var: package
     when: root
 
-  - name: "Obtaining and compiling atlas-lapack from AUR (this takes a LONG time!)"
-    shell: |
-      git clone https://aur.archlinux.org/atlas-lapack.git
-      cd atlas-lapack
-      echo "WARNING: Compiling ATLAS with --cripple-atlas-performance to proceed in the face of CPU throttling! Degrades performance and makes timings non-sensical!!!" >&2
-      sed -i 's/--with-netlib-lapack-tarfile/--cripple-atlas-performance --with-netlib-lapack-tarfile/' PKGBUILD
-      makepkg -f
-    args:
-      chdir: "{{source_path}}"
-    when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro')
+  - when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro') and root
+    block:
+    - name: "Obtaining and compiling atlas-lapack from AUR (this takes a LONG time!)"
+      shell: |
+        git clone https://aur.archlinux.org/atlas-lapack.git
+        cd atlas-lapack
+        echo "WARNING: Compiling ATLAS with --cripple-atlas-performance to proceed in the face of CPU throttling! Degrades performance and makes timings non-sensical!!!" >&2
+        sed -i 's/--with-netlib-lapack-tarfile/--cripple-atlas-performance --with-netlib-lapack-tarfile/' PKGBUILD
+        makepkg -f
+      args:
+        chdir: "{{source_path}}"
+      ignore_errors: yes
 
-  - name: "Installing atlas-lapack from AUR"
-    become: yes
-    become_user: root
-    shell: |
-      #!/bin/bash
-      yes | pacman -U --noconfirm atlas*xz
-    args:
-      chdir: "{{source_path}}/atlas-lapack"
-    when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro') and root
+    - name: "Installing atlas-lapack from AUR"
+      become: yes
+      become_user: root
+      shell: |
+        #!/bin/bash
+        yes | pacman -U --noconfirm atlas*xz
+      args:
+        chdir: "{{source_path}}/atlas-lapack"
+      ignore_errors: yes
 
   - when: recompile_kaldi is not defined or recompile_kaldi #default
     block:
