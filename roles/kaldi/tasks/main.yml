@@ -33,7 +33,7 @@
       cd atlas-lapack
       echo "WARNING: Compiling ATLAS with --cripple-atlas-performance to proceed in the face of CPU throttling! Degrades performance and makes timings non-sensical!!!" >&2
       sed -i 's/--with-netlib-lapack-tarfile/--cripple-atlas-performance --with-netlib-lapack-tarfile/' PKGBUILD
-      makepkg
+      makepkg -f
     args:
       chdir: "{{source_path}}"
     when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro')
