@@ -105,6 +105,11 @@
               chdir: "{{lm_prefix}}/etc"
           environment: "{{lm_env}}"
 
+        - name: Ensure FLAT user database is writable
+          file:
+            path: "{{lm_prefix}}/var/www-data/flat.db"
+            mode: u+rw,g+rw,a+r
+
         - name: Register FLAT
           include_role:
               name: lamachine-register
