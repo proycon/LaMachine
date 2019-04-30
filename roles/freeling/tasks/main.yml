@@ -18,7 +18,7 @@
 
       - when: (ansible_distribution|lower == "ubuntu" and ansible_distribution_version|string < "18.04") or ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
         block:
-          - name: Installing newer cmake (distribution version is too old)
+          - name: Compiling and installing newer cmake (distribution version is too old) (this take a long time)
             include_role:
               name: lamachine-git-autoconf
             vars:
