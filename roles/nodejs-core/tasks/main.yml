@@ -72,7 +72,8 @@
           name: lamachine-run
         vars:
           command: npm i -g npm@latest
-          chdir: "{{ source_path }}/labirinto"
+          chdir: "{{ source_path }}"
+        ignore_errors: yes
 
 
 
