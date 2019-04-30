@@ -27,7 +27,7 @@
       - name: Compile and install Freeling
         shell: |
           #!/bin/bash
-          if [[ "{{force|default(1)}}" == "1" ]]; then
+          if [[ "{{force|default(0)}}" == "1" ]]; then
             #remove old build dir
             rm -rf build 2> dev/null
           fi
