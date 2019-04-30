@@ -70,6 +70,8 @@
                                              #(>7GB !!!! - Not supported on Mac OS X)
      # - corenlp                          ## Stanford CoreNLP (including all models)
                                              #(>2GB)
+     # - freeling                         ## FreeLing, a multilingual open source language analysis tool suite
+                                            # by TALP Research Center, Universitat Politècnica de Catalunya
      # - fy_nl_ASR                        ## Frisian-Dutch Speech Recognition system with webservice
                                              #(>9GB !!!! - Not supported on Mac OS X)
                                              #Relies on kaldi, another 7GB!!
