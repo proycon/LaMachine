@@ -33,7 +33,7 @@
           fi
           mkdir build
           cd build
-          cmake -DCMAKE_INSTALL_PREFIX=$lm_prefix -DPYTHON3_API=ON ..
+          cmake -DCMAKE_INSTALL_PREFIX="{{lm_prefix}}" -DPYTHON3_API=ON ..
           make install
         args:
           chdir: "{{source_path}}/FreeLing"
