@@ -19,5 +19,5 @@
         #!/bin/bash
         yes | pacman -U --noconfirm openblas-lapack*xz
       args:
-        chdir: "{{source_path}}"
+        chdir: "{{source_path}}/openblas-lapack"
       ignore_errors: yes
