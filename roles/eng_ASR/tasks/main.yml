@@ -76,8 +76,8 @@
     - name: Finalising resource installation
       shell: |
           #!/bin/bash
-          tar xzf eng_ASR_resources.tar.gz
-          rm -rf eng_ASR_resources.tar.gz
+          tar xzf resources.tar.gz
+          rm -rf resources.tar.gz
           mv resources/* .
           chown -R {{unix_user}}:{{unix_group}} .
           find . -type d | xargs chmod u+rw,g+rw,a+rx
