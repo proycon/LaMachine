@@ -1,0 +1,23 @@
+    - name: Check if openblas-lapack is installed
+      shell: pacman -Qi openblas-lapack
+      register: openblas
+      failed_when: openblas.rc == 127
+
+    - name: "Obtaining and compiling openblas-lapack from AUR (this takes a LONG time!)"
+      shell: |
+        git clone https://aur.archlinux.org/openblas-lapack.git
+        cd openblas-lapack
+        makepkg -f
+      args:
+        chdir: "{{source_path}}"
+      when: openblas.rc == 0 or force >= 1
+
+    - name: "Installing openblas-lapack from AUR"
+      become: yes
+      become_user: root
+      shell: |
+        #!/bin/bash
+        yes | pacman -U --noconfirm openblas-lapack*xz
+      args:
+        chdir: "{{source_path}}/openblas-lapack"
+      ignore_errors: yes
