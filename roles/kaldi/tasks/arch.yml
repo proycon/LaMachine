@@ -10,7 +10,7 @@
         makepkg -f
       args:
         chdir: "{{source_path}}"
-      when: openblas.rc == 0 or force >= 1
+      when: openblas.rc != 0 or (force is defined and force >= 1)
 
     - name: "Installing openblas-lapack from AUR"
       become: yes
@@ -19,5 +19,5 @@
         #!/bin/bash
         yes | pacman -U --noconfirm openblas-lapack*xz
       args:
-        chdir: "{{source_path}}/openblas-lapack"
+        chdir: "{{source_path}}"
       ignore_errors: yes
