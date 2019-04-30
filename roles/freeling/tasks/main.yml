@@ -11,10 +11,20 @@
         include_role:
           name: lamachine-package-install
         with_items:
-          - { debian: cmake, redhat: cmake, arch: cmake } #need for python library
+          - { debian: cmake, redhat: cmake, arch: cmake }
           - { debian: swig, redhat: swig, arch: swig } #need for python library
         loop_control:
             loop_var: package
+
+      - when: (ansible_distribution|lower == "ubuntu" and ansible_distribution_version|string < "18.04") or ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+        block:
+          - name: Installing newer cmake (distribution version is too old)
+            include_role:
+              name: lamachine-git-autoconf
+            vars:
+              package:
+                repo: CMake
+                user: Kitware
 
       - name: Obtain FreeLing
         include_role:
@@ -37,3 +47,4 @@
           make install
         args:
           chdir: "{{source_path}}/FreeLing"
+          executable: /bin/bash
