@@ -1,0 +1,32 @@
+---
+
+    - name: Installing global dependencies for FreeLing
+      include_role:
+        name: lamachine-package-install
+      with_items:
+        - { debian: cmake, redhat: cmake, arch: cmake } #need for python library
+        - { debian: swig, redhat: swig, arch: swig } #need for python library
+      loop_control:
+          loop_var: package
+
+    - name: Obtain FreeLing
+      include_role:
+        name: lamachine-git
+      vars:
+        package:
+          user: TALP-UPC
+          repo: FreeLing
+
+    - name: Compile and install Freeling
+      shell: |
+        #!/bin/bash
+        if [[ "{{force}}" == "1" ]]; then
+          #remove old build dir
+          rm -rf build 2> dev/null
+        fi
+        mkdir build
+        cd build
+        cmake -DCMAKE_INSTALL_PREFIX=$lm_prefix -DPYTHON3_API=ON ..
+        make install
+      args:
+        chdir: "{{source_path}}/FreeLing"
