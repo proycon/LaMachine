@@ -5,7 +5,13 @@
       with_items:
           - { pip: torch }
           - { pip: torchvision }
-          - { pip: flair }
       loop_control:
            loop_var: package
 
+    - name: "Installing Flair (Python >=3.6 only)"
+      include_role:
+          name: lamachine-python-install
+      vars:
+        package:
+          pip: flair
+      when: python_version.stdout >= "3.6"
