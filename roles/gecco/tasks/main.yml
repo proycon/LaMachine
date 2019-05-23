@@ -80,8 +80,6 @@
           name: lamachine-run
       vars:
           command: "gecco --helpmodules"
-      register: test
-      changed_when: test.rc != 0
 
     - name: Updating metadata for Gecco
       include_role:
