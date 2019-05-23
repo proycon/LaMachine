@@ -17,8 +17,6 @@
       with_items:
           - KafNafParserPy
           - "naffoliapy.folia2naf"
-      register: test
-      changed_when: test.rc != 0
 
 
     - name: Adding affiliation metadata
