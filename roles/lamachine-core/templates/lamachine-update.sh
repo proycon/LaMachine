@@ -118,6 +118,7 @@ else
         echo "   and may be necessary in certain circumstances. You can also try the even stronger option force=2, which deletes"
         echo "   all sources prior to update."
         echo " - Retry the update, possibly tweaking configuration and installation options (lamachine-update --edit)"
+        echo " - If you got the error 'fragment_class is None', this was due to an ansible upgrade! Simply rerun the update!"
         echo " - File a bug report on https://github.com/proycon/LaMachine/issues/"
         echo "   The log file has been written to $(pwd)/lamachine-{{conf_name}}-$D.log (include it with any bug report)"
 fi
