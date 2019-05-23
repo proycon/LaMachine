@@ -44,8 +44,6 @@
           - timbl
           - frog
           - colibricore
-      register: test
-      changed_when: test.rc != 0
 
     - name: Updating metadata for CLARIAH software
       include_role:
