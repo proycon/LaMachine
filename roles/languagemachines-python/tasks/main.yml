@@ -27,8 +27,6 @@
           - pynlpl
           - pynlpl.formats.folia #legacy!
           - folia.main
-      register: test
-      changed_when: test.rc != 0
 
     - name: Updating metadata for CLARIAH software
       include_role:
@@ -66,8 +64,6 @@
           - folia2txt
           - foliaquery
           - babelente
-      register: test
-      changed_when: test.rc != 0
 
     - when: webserver
       block:
