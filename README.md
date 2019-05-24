@@ -244,6 +244,28 @@ these in any exposed environments!
 If you enabled a webserver in your LaMachine build, you can connect your web browser to http://127.0.0.1:8080 after having started the
 VM.
 
+#### Port Mapping to the Virtual Machine
+
+If you want to connect to a particular special-purpose server (not a
+webservice) inside the VM from your host system, then you often need to forward
+a port from your host system into the LaMachine VM, as for all intents and
+purposes, they should be considered two separated systems. This applies for
+instance when you want to use the server mode offered by software such as Frog
+or Alpino (again, this is completely different and independent from the
+**web**services that LaMachine also offers).
+
+From LaMachine 2.6.2 onward, the
+port 9999 is forwarded by default for the VM, meaning that if you connect to
+port 9999 on your local machine (IP 127.0.0.1), it will be forwarded to port
+9999 in the LaMachine VM.
+
+If you want to open any additional ports, you need to
+do so in Virtualbox for your LaMachine VM. Consult [this
+guide](https://www.simplified.guide/virtualbox/port-forwarding) for easy and
+illustrated instructions on how to set this up in the VirtualBox interface, or
+alternatively consult the relevant chapter in the [Virtualbox
+Manual](https://www.virtualbox.org/manual/ch06.html#natforward) itself.
+
 ### Docker Container
 
 In this example we assume your LaMachine image has the tag **latest**, which corresponds to the latest stable LaMachine release
