@@ -101,8 +101,9 @@
          pip:
               name: "{{package.pip}}"
               state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package and package.state %}{{package.state}}{% else %}present{% endif %}"
-              executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
+              executable: "{% if locality == 'local' %}{{omit}}{% else %}{{pip.stdout}}{% endif %}"
               version: "{% if 'version' in package and package.version %}{{package.version}}{% elif version == 'custom' and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'stable' and customversion[package.pip.lower()] != 'development' %}{{customversion[package.pip.lower()]|version_n}}{% endif %}"
+              virtualenv: "{% if locality == 'local' %}{{ local_prefix }}{% else %}{{ omit }}{% endif %}"
               extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %} --ignore-installed" #only last option is different
          environment: "{{lm_env}}"
          #when: "'would lead only to a partial uninstall' in pipinstallstable.stderr"
@@ -115,7 +116,8 @@
           pip:
                name: "{{package.pip}}"
                state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package and package.state %}{{package.state}}{% else %}latest{% endif %}"
-               executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
+               executable: "{% if locality == 'local' %}{{omit}}{% else %}{{pip.stdout}}{% endif %}"
+               virtualenv: "{% if locality == 'local' %}{{ local_prefix }}{% else %}{{ omit }}{% endif %}"
                extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %}"
           environment: "{{lm_env}}"
           register: pipinstallstable
@@ -127,7 +129,8 @@
           pip:
                name: "{{package.pip}}"
                state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package and package.state %}{{package.state}}{% else %}latest{% endif %}"
-               executable: "{% if locality == 'local' %}{{ local_prefix }}/bin/pip{% else %}{{pip.stdout}}{% endif %}"
+               executable: "{% if locality == 'local' %}{{omit}}{% else %}{{pip.stdout}}{% endif %}"
+               virtualenv: "{% if locality == 'local' %}{{ local_prefix }}{% else %}{{ omit }}{% endif %}"
                extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %} --ignore-installed" #only last option is different
           environment: "{{lm_env}}"
           #when: "'would lead only to a partial uninstall' in pipinstallstable.stderr"
