@@ -82,7 +82,7 @@
         pip:
           name: "uwsgi"
           state: latest
-          executable: /usr/bin/pip3
+          executable: "{{pip.stdout}}"
         when: (ansible_distribution|lower == "redhat" or ansible_distribution|lower == "centos" or ansible_distribution|lower == "fedora" or ansible_distribution|lower == "rhel")
 
 
