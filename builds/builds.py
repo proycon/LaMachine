@@ -39,6 +39,12 @@ buildmatrix = [
         "version": 'stable',
         "vagrantbox": "ubuntu/bionic64"
     },
+    {
+        "name": 'development-centos7',
+        "flavour": 'vagrant',
+        "version": 'development',
+        "vagrantbox": "centos/7"
+    },
     #{
     #    "name": 'stable-fedora27',
     #    "flavour": 'vagrant',
