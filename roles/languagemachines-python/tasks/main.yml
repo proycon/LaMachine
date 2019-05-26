@@ -65,7 +65,7 @@
           - foliaquery
           - babelente
 
-    - when: webserver
+    - when: webserver|bool
       block:
         - name: Installing FLAT
           include_role:
