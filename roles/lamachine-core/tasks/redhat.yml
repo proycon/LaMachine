@@ -84,6 +84,8 @@
     - when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
       block:
         - name: "Download and extract SQLite (system version is too old)"
+          become: true
+          become_user: root
           shell: |
               #!/bin/bash
               rm -rf sqllite-autoconf-328000*
@@ -93,7 +95,9 @@
           args:
             chdir: "{{ source_path }}"
 
-        - name: "Compiling and intalling SQLite"
+        - name: "Compiling and installing SQLite"
+          become: true
+          become_user: root
           import_role:
             name: lamachine-cpp-automake
           vars:
