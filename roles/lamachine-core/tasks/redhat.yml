@@ -81,6 +81,25 @@
       when: ansible_distribution|lower != "centos" and ansible_distribution|lower != "rhel" #aka fedora mainly
 
 
+    - when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+      block:
+        - name: "Download and extract SQLite (system version is too old)"
+          shell: |
+              #!/bin/bash
+              rm -rf sqllite-autoconf-328000*
+              wget  https://sqlite.org/2019/sqlite-autoconf-3280000.tar.gz
+              tar -xvzf sqlite-autoconf-3280000.tar.gz
+              exit $?
+          args:
+            chdir: "{{ source_path }}"
+
+        - name: "Compiling and intalling SQLite"
+          import_role:
+            name: lamachine-cpp-automake
+          vars:
+            pkg_source_dir: "{{ source_path }}/sqlite-autoconf-3280000"
+            pkg_name: "{{package.repo}}"
+          when: autoconf_git_updated.stdout|int == 1
 
 
       #############################################################
