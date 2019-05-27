@@ -102,7 +102,7 @@
             name: lamachine-cpp-automake
           vars:
             pkg_source_dir: "{{ source_path }}/sqlite-autoconf-3280000"
-            pkg_name: "{{package.repo}}"
+            pkg_name: "sqlite"
           when: autoconf_git_updated.stdout|int == 1
 
 
