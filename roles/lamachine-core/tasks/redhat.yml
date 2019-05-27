@@ -103,6 +103,8 @@
           vars:
             pkg_source_dir: "{{ source_path }}/sqlite-autoconf-3280000"
             pkg_name: "sqlite"
+            package: {}
+
 
 
       #############################################################
