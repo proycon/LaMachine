@@ -73,6 +73,12 @@ echo "Note:     Jupyter Lab logs can be found in {{lm_prefix}}/var/log/jupyterla
 cd -
 {% endif %}
 
+
+if [ -d {{lm_prefix}}/opt/spotlight ]; then
+    echo "Note: The DBPedia Spotlight service is installed but never started automatically, if you want to use it you will need to start it manually using 'spotlight \$langcode' where \$langcode corresponds to the language you want to serve."
+fi
+
+
 if [ "$1" = "-f" ]; then
     #run in foreground/keep running (nginx error log)
     tail -F "{{lm_prefix}}/var/log/nginx/error.log"

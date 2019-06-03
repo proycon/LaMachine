@@ -1,0 +1,47 @@
+---
+    - name: Create spotlight directory in opt/
+      file:
+        path: "{{lm_prefix}}/opt/spotlight"
+        state: directory
+
+    - name: Download and install spotlight
+      shell:
+        if [ ! -f dbpedia-spotlight.jar ]; then
+          wget http://downloads.dbpedia-spotlight.org/spotlight/dbpedia-spotlight-1.0.0.jar -O dbpedia-spotlight.jar
+        fi
+      args:
+        chdir: "{{lm_prefix}}/opt/spotlight"
+
+    - name: "Download and install spotlight data for language {{item}}"
+      shell:
+        if [ ! -d {{item}} ]; then
+          wget http://downloads.dbpedia-spotlight.org/2016-16/{{item}}/model/{{item}}.tar.gz -O {{item}}.tar.gz
+          tar xvf {{item}}.tar.gz
+          rm {{item}}.tar.gz
+        fi
+      args:
+        chdir: "{{lm_prefix}}/opt/spotlight"
+	  with_items: "{{spotlight_languages}}"
+
+    - name: "Install spotlight start script"
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: "spotlight.sh"
+        dest: "{{lm_prefix}}/bin/spotlight"
+        force: yes
+        mode: a+rx
+        owner: "{{unix_user}}"
+
+
+    - name: "Install webserver configuration for spotlight"
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: "nginx/spotlight.conf"
+        dest: "{{lm_prefix}}/etc/nginx/conf.d/spotlight.conf"
+        force: yes
+        backup: yes
+        owner: "{{unix_user}}"
+      when: webservertype == "nginx"
+
