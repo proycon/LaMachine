@@ -137,6 +137,7 @@ the installation procedure.
       * [PyTorch](https://pytorch.org) - Deep-learning library for Python
       * [FLAIR](https://github.com/zalandoresearch/flair) - Framework for state-of-the-art sequence modelling through
           word embeddings
+    * [fastText](https://fasttext.cc/) - Library for efficient text classification and representation learning (has a Python binding)
     * [R](https://r-project.org)
     * [Java](http://openjdk.java.net/)
       * [NextFlow](http://www.nextflow.io) - A system and language for writing parallel and scalable pipelines in a portable manner.
