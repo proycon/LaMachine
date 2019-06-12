@@ -21,7 +21,7 @@
         fi
       args:
         chdir: "{{lm_prefix}}/opt/spotlight"
-	  with_items: "{{spotlight_languages}}"
+      with_items: "{{spotlight_languages}}"
 
     - name: "Install spotlight start script"
       become: "{{lm_become}}"
