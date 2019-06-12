@@ -5,7 +5,7 @@
         state: directory
 
     - name: Download and install spotlight
-      shell:
+      shell: |
         if [ ! -f dbpedia-spotlight.jar ]; then
           wget http://downloads.dbpedia-spotlight.org/spotlight/dbpedia-spotlight-1.0.0.jar -O dbpedia-spotlight.jar
         fi
@@ -13,7 +13,7 @@
         chdir: "{{lm_prefix}}/opt/spotlight"
 
     - name: "Download and install spotlight data for language {{item}}"
-      shell:
+      shell: |
         if [ ! -d {{item}} ]; then
           wget http://downloads.dbpedia-spotlight.org/2016-16/{{item}}/model/{{item}}.tar.gz -O {{item}}.tar.gz
           tar xvf {{item}}.tar.gz
