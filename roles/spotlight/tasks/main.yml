@@ -7,7 +7,8 @@
     - name: Download and install spotlight
       shell: |
         if [ ! -f dbpedia-spotlight.jar ]; then
-          wget http://downloads.dbpedia-spotlight.org/spotlight/dbpedia-spotlight-1.0.0.jar -O dbpedia-spotlight.jar
+          wget https://sourceforge.net/projects/dbpedia-spotlight/files/spotlight/dbpedia-spotlight-1.0.0.jar/download -O dbpedia-spotlight.jar
+          #wget http://downloads.dbpedia-spotlight.org/spotlight/dbpedia-spotlight-1.0.0.jar -O dbpedia-spotlight.jar
         fi
       args:
         chdir: "{{lm_prefix}}/opt/spotlight"
