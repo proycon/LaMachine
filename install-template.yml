@@ -97,6 +97,7 @@
                                               #(Models may take up several GB!, set the spotlight_languages variable
                                               #to customise installed languages, we only ship a subset by default)
                                               #(Needs to be started manually using 'spotlight' and a language code parameter)
+     # - fasttext                         ## Library for efficient text classification and representation learning
 
 
 # NOTE: ensure that all enabled roles are lined up with the same amount of spaces!
