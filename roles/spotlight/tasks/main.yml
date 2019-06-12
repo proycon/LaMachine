@@ -46,7 +46,7 @@
       when: webservertype == "nginx"
 
     - name: Installing wikiente
-      kinclude_role:
+      include_role:
         name: lamachine-python-install
       with_items:
           - { github_user: "proycon", github_repo: "wikiente", pip: "wikiente" }
