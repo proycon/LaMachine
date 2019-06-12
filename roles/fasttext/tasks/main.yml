@@ -15,6 +15,6 @@
 
     - name: "Symlink fasttext binary"
       file:
-        src: "{{source_path}}/src/fastText/fasttext"
+        src: "{{source_path}}/fastText/fasttext"
         dest: "{{lm_prefix}}/bin/fasttext"
         state: link
