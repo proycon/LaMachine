@@ -1,0 +1,20 @@
+---
+    - name: Installing fastText for Python
+      include_role:
+        name: lamachine-python-install
+      with_items:
+          - { github_user: "facebookresearch", github_repo: "fastText" }
+      loop_control:
+           loop_var: package
+
+    - name: Compiling command-line tool
+      shell: make
+      args:
+        chdir: "{{lm_prefix}}/src/fastText"
+      environment: "{{lm_env}}"
+
+    - name: "Symlink fasttext binary"
+      file:
+        src: "{{source_path}}/src/fastText/fasttext"
+        dest: "{{lm_prefix}}/bin/fasttext"
+        state: link
