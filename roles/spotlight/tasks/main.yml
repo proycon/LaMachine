@@ -45,3 +45,10 @@
         owner: "{{unix_user}}"
       when: webservertype == "nginx"
 
+    - name: Installing wikiente
+      kinclude_role:
+        name: lamachine-python-install
+      with_items:
+          - { github_user: "proycon", github_repo: "wikiente", pip: "wikiente" }
+      loop_control:
+           loop_var: package
