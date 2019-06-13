@@ -470,7 +470,7 @@ if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
         while true; do
             read choice
             case $choice in
-                [0-9]* ) DISKSIZE=$choice;;
+                [0-9]* ) DISKSIZE=$choice; break;;
                 * ) echo "Please answer with the corresponding size in GB (use 0 if you don't need an extra disk)";;
             esac
         done
