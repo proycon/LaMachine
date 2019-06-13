@@ -16,7 +16,7 @@
     - name: "Download and install spotlight data for language {{item}}"
       shell: |
         if [ ! -d {{item}} ]; then
-          wget http://downloads.dbpedia-spotlight.org/2016-16/{{item}}/model/{{item}}.tar.gz -O {{item}}.tar.gz
+          wget https://sourceforge.net/projects/dbpedia-spotlight/files/2016-10/{{item}}/model/{{item}}.tar.gz -O {{item}}.tar.gz
           tar xvf {{item}}.tar.gz
           rm {{item}}.tar.gz
         fi
