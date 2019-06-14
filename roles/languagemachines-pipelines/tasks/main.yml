@@ -22,7 +22,7 @@
 
     - name: Make nextflow scripts available in environment
       shell: |
-        cp -sf {{lm_prefix}}/opt/{{item.repo}}/*.nf .
+        ln -sf {{lm_prefix}}/opt/{{item.repo}}/*.nf .
       args:
         chdir: "{{lm_prefix}}/bin"
       with_items:
