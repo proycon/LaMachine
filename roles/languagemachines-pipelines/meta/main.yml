@@ -5,4 +5,3 @@ dependencies:
   - { role: languagemachines-basic }
   - { role: languagemachines-python }
   - { role: nextflow }
-  - { role: languagemachines-pipelines }
