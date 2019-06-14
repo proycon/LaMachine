@@ -1,0 +1,31 @@
+---
+
+    - name: Installing NLP pipelines
+      include_role:
+        name: lamachine-git
+      vars:
+        do_registration: true
+      with_items:
+        - { user: "proycon", repo: "aNtiLoPe" }
+        - { user: "proycon", repo: "nederlab-pipeline" }
+      loop_control:
+        loop_var: package
+
+    - name: "Symlink NLP pipelines in {{lm_prefix}}/opt"
+      file:
+        src: "{{source_path}}/{{item.repo}}"
+        dest: "{{lm_prefix}}/opt/{{item.repo}}"
+        state: link
+      with_items:
+        - { user: "proycon", repo: "aNtiLoPe" }
+        - { user: "proycon", repo: "nederlab-pipeline" }
+
+    - name: Make nextflow scripts available in environment
+      shell: |
+        cp -sf {{lm_prefix}}/opt/{{item.repo}}/*.nf .
+      args:
+        chdir: "{{lm_prefix}}/bin"
+      with_items:
+        - { user: "proycon", repo: "aNtiLoPe" }
+        - { user: "proycon", repo: "nederlab-pipeline" }
+
