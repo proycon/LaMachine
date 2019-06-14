@@ -17,8 +17,6 @@
     - when: not spacydata.stat.exists or force is defined
       block:
         - name: "Installing Spacy data locally (Listen carefully, I shall do this only once!)"
-          become: "{{lm_become}}"
-          become_user: root
           include_role:
               name: lamachine-run
           vars:
