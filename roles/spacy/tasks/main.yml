@@ -16,7 +16,7 @@
 
     - when: not spacydata.stat.exists or force is defined
       block:
-        - name: "Installing Spacy data  (Listen carefully, I shall do this only once!)"
+        - name: "Installing Spacy data locally (Listen carefully, I shall do this only once!)"
           become: "{{lm_become}}"
           become_user: root
           include_role:
@@ -32,6 +32,23 @@
               - it
               - nl
               - xx
+          when: locality != "global"
+
+        - name: "Installing Spacy data globally  (Listen carefully, I shall do this only once!)"
+          become: "{{lm_become}}"
+          become_user: root
+          shell:
+              command: "python3 -m spacy download {{ item }}"
+          with_items:
+              - en
+              - de
+              - es
+              - pt
+              - fr
+              - it
+              - nl
+              - xx
+          when: locality == "global"
 
         - name: "Marking spacy data as installed"
           copy:
