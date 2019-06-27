@@ -1487,6 +1487,7 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
         echo "======================================================================================"
         echo "${boldgreen}All done, a local LaMachine environment has been built!${normal}"
         echo "- ${bold}to activate your environment, run: source lamachine-$LM_NAME-activate${normal}   (or: ~/bin/lamachine-$LM_NAME-activate)"
+        echo "  ${bold}you will need to do this each time you open a new terminal / start a new shell${normal}"
     else
         echo "======================================================================================"
         echo "${boldred}Building a local LaMachine environment has failed unfortunately.${normal} You have several options:"
@@ -1640,6 +1641,7 @@ else
     echo "No bootstrap for $FLAVOUR implemented yet at this stage, sorry!!">&2
     rc=1
 fi
+export PATH=~/bin:$PATH
 if [ "$CONTROLLER" = "internal" ] && [ $rc -eq 0 ]; then  #only clean up if everything went well
     cd ../..
     rm -rf "lamachine-controller/$LM_NAME" 2>/dev/null
