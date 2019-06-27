@@ -87,7 +87,14 @@ cd -
 if [ -d {{lm_prefix}}/opt/spotlight ]; then
     echo "Note: The DBPedia Spotlight service is installed but never started automatically, if you want to use it you will need to start it manually using 'spotlight \$langcode' where \$langcode corresponds to the language you want to serve."
 fi
+if [ -d {{lm_prefix}}/opt/tscan ]; then
+    echo "Note: T-Scan is installed and the webservice should be running now. However, its requires various background servers which are not started automatically by LaMachine, if you want to use T-scan you will need to start them manually. Consult the T-scan documentation at https://github.com/proycon/tscan/blob/master/README.md#usage "
+fi
+echo "Note: It is not recommended to expose this server directly to the public internet due to there not being proper authentication on all services (unless you explicitly provided it)."
 
+echo ""
+
+echo "If no errors were reported above, the webserver should now be started and accessible on port {{http_port}}. If you have LaMachine running in a Virtual Machine or container, you can use the mapped port ({{mapped_http_port}}) directly from your host system."
 
 if [ "$1" = "-f" ]; then
     #run in foreground/keep running (nginx error log)
