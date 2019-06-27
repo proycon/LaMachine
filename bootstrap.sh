@@ -17,6 +17,8 @@ export ANSIBLE_FORCE_COLOR=true
 bold=$(tput bold)
 boldred=${bold}$(tput setaf 1) #  red
 boldgreen=${bold}$(tput setaf 2) #  green
+green=${normal}$(tput setaf 2) #  green
+yellow=${normal}$(tput setaf 3) #  yellow
 boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
@@ -1336,11 +1338,28 @@ if [ $BUILD -eq 1 ]; then
     fi
 
     if [ $INTERACTIVE -eq 1 ] && [ -z "$INSTALL" ]; then
-        echo "${bold}Opening installation file $STAGEDMANIFEST in editor for selection of packages to install...${normal}"
-        sleep 3
-        if ! "$EDITOR" "$STAGEDMANIFEST"; then
-            exit 2
-        fi
+        while true; do
+            echo "${bold}The following packages are marked to be installed in the installation manifest:${green}"
+            grep --color=never -e '^\s*-.*##'
+            echo "${normal}"
+            echo "${bold}The following additional packages are available but NOT marked for installation yet:${yellow}"
+            grep --color=never -e '^\s*# -.*##'
+            echo "${normal}"
+            echo "Note that you can at any later stage also add packages using lamachine-add"
+            echo
+            echo "${bold}Do you want to adapt the list of to-be-installed packages by opening the installation manifest in a text editor? [yn]${normal}"
+            read choice
+            case $choice in
+                [n]* ) break;;
+                [y]* )
+                    if ! "$EDITOR" "$STAGEDMANIFEST"; then
+                        echo "ERROR: aborted by editor..." >&2
+                        exit 2
+                    fi
+                    break;;
+                * ) echo "Please answer with y or n..";;
+            esac
+        done
     fi
 
     #copy staged install to final location
@@ -1380,10 +1399,10 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
             case $choice in
                 [n]* ) break;;
                 [y]* ) BUILD=0;  break;;
-                * ) echo "Please answer with the y or n..";;
+                * ) echo "Please answer with y or n..";;
             esac
             if ! "$EDITOR" "$SOURCEDIR/Vagrantfile"; then
-                echo "aborted by editor..." >&2
+                echo "ERROR: aborted by editor..." >&2
                 exit 2
             fi
         fi
