@@ -19,6 +19,7 @@ boldred=${bold}$(tput setaf 1) #  red
 boldgreen=${bold}$(tput setaf 2) #  green
 green=${normal}$(tput setaf 2) #  green
 yellow=${normal}$(tput setaf 3) #  yellow
+blue=${normal}$(tput setaf 4) #  yellow
 boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
@@ -1254,12 +1255,25 @@ fi
     fi
 
     if [ $INTERACTIVE -eq 1 ]; then
-        echo "${bold}Opening configuration file $STAGEDCONFIG in editor for final configuration...${normal}"
-        sleep 3
-        if ! "$EDITOR" "$STAGEDCONFIG"; then
-            echo "aborted by editor..." >&2
-            exit 2
-        fi
+      while true; do
+        echo "${bold}Your LaMachine configuration is now as follows:${yellow}"
+        cat $STAGEDCONFIG
+        echo "${normal}"
+        echo "${bold}Do you want to make any changes to the above configuration? This will open a text editor for you to make changes. [yn]${normal}"
+        read choice
+        case $choice in
+            [n]* ) break;;
+            [y]* )
+                echo "(opening configuration $STAGEDCONFIG in editor $EDITOR)"
+                if ! "$EDITOR" "$STAGEDCONFIG"; then
+                    echo "ERROR: aborted by editor..." >&2
+                    exit 2
+                fi
+                break;;
+            * ) echo "Please answer with y or n..";;
+        esac
+        sleep 2
+      done
     fi
 
  fi
@@ -1352,6 +1366,7 @@ if [ $BUILD -eq 1 ]; then
             case $choice in
                 [n]* ) break;;
                 [y]* )
+                    echo "(opening installation manifest $STAGEDMANIFEST in editor $EDITOR)"
                     if ! "$EDITOR" "$STAGEDMANIFEST"; then
                         echo "ERROR: aborted by editor..." >&2
                         exit 2
@@ -1359,6 +1374,7 @@ if [ $BUILD -eq 1 ]; then
                     break;;
                 * ) echo "Please answer with y or n..";;
             esac
+            sleep 2
         done
     fi
 
