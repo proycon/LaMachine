@@ -1463,8 +1463,14 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     fi
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ "$SUDO" -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
+        echo "${bold}The installation will now begin and will ask you for a BECOME password, here you need to fill in your sudo password as this is needed to install certain global packages from your distribution, it will only be used for limited parts of the installation. The installation process may take quite some time and produce a lot of output (most of which you can safely ignore). Press ENTER to continue and feel free to get yourself a tea or coffee while you wait!${normal}"
+        read
         ASKSUDO="--ask-become-pass"
     else
+        if [ $INTERACTIVE -eq 1 ]; then
+            echo "${bold}The  installation will now begin. The installation process may take quite some time and produce a lot of output (most of which you can safely ignore). Press ENTER to continue and feel free to get yourself a tea or coffee while you wait!${normal}"
+            read
+        fi
         ASKSUDO=""
     fi
     cmd="ansible-playbook $ASKSUDO -i $SOURCEDIR/hosts.ini $SOURCEDIR/install.yml $ANSIBLE_OPTIONS"
