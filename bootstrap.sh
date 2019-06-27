@@ -119,22 +119,12 @@ if [ ! -z "$CONDA_PREFIX" ]; then
     fatalerror "Inception error: Do not run the LaMachine bootstrap when you are inside an Anaconda environment (run 'source deactivate' first)"
 fi
 
-if which python3; then
-    echo "Checking sanity of your Python 3 installation (if any)..."
-    python3 -c "import sys; print(sys.version)" | grep -i anaconda
-    if [ $? -eq 0 ]; then
-        fatalerror "Conflict error: The default Python 3 on this system is managed by Anaconda, this is incompatible with LaMachine. Ensure the Python found in your \$PATH corresponds to a regular version as supplied with your OS, editing the order of your \$PATH in ~/.bashrc or ~/.bash_profile should be sufficient to solve this without completely uninstalling anaconda. See also https://stackoverflow.com/a/37377981/3311445"
-    fi
-    DEFAULTPYTHON=3
-    PIP=pip3
-elif which python; then
+if which python; then
     echo "Checking sanity of your Python installation..."
     python -c "from __future__ import print_function; import sys; print(sys.version)" | grep -i anaconda
     if [ $? -eq 0 ]; then
         fatalerror "Conflict error: The default Python on this system is managed by Anaconda, this is incompatible with LaMachine. Ensure the Python found in your \$PATH corresponds to a regular version as supplied with your OS, editing the order of your \$PATH in ~/.bashrc or ~/.bash_profile should be sufficient to solve this without completely uninstalling anaconda. See also https://stackoverflow.com/a/37377981/3311445"
     fi
-    DEFAULTPYTHON=2 #in case of Arch: will be overriden later
-    PIP=pip
 else
     fatalerror "No Python found! However, python should be available by default on all supported platforms; please install it yourself through your package manager (and ensure it is in your \$PATH)"
 fi
@@ -214,21 +204,9 @@ DOCKERREPO="proycon/lamachine"
 CONTROLLER="internal"
 BUILD=1
 
-if [ "$OS" = "arch" ]; then
-    #arch always links 'python' and 'pip' to python3 by defaul
-    DEFAULTPYTHON=3
-    PIP=pip
-elif [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
-    #These distributions always lag quite a bit behind, support only python 2.7 for bootstrapping for now
-    DEFAULTPYTHON=2
-    PIP=pip
-fi
-
-
 echo "Detected OS: $OS"
 echo "Detected distribution ID: $DISTRIB_ID"
 echo "Detected distribution release: $DISTRIB_RELEASE"
-echo "Detected usable Python 2 or 3? $DEFAULTPYTHON"
 echo
 
 
@@ -405,7 +383,7 @@ done
 
 if [ $INTERACTIVE -eq 1 ]; then
     echo
-    echo "Welcome to the LaMachine Installation Bootstrap, we will ask some questions how"
+    echo "Welcome to the LaMachine Installation tool, we will ask some questions how"
     echo "you want your LaMachine to be installed and guide you towards the installation"
     echo "of any software that is needed to complete this installation."
     echo
@@ -433,14 +411,13 @@ if [ -z "$FLAVOUR" ]; then
         echo "       dedicates the entire machine to LaMachine and"
         echo "       modifies the existing system and may"
         echo "       interact with existing packages. Usually requires root."
-        echo "       (option 1 is generally preferred!)"
         echo "  5) On a remote server"
         echo "       modifies an existing remote system! Usually requires root."
         echo "       (uses ansible)"
         if [ $WINDOWS -eq 0 ]; then
         echo "  6) in an LXC/LXD container"
         echo "       Provides a more persistent and VM-like container experience than Docker"
-        echo "       (uses LXD >3, LXC >3 and Ansible)"
+        echo "       (uses LXD, LXC and Ansible)"
         echo "  7) in a Singularity container (EXPERIMENTAL!)"
         echo "       (uses Singularity and Ansible)"
         fi
@@ -473,12 +450,10 @@ if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
         echo "       Offers most flexibility and ensures you are on the latest versions."
         echo "       Allows you to choose even for development versions or custom versions."
         echo "       Allows you to choose what software to include from scratch."
-        echo "       Allows you to opt for extra virtual diskspace (needed for certain large optional software)"
         echo "       Best integration with your custom data."
         echo "  2) Download a prebuilt one"
-        echo "       Comes with a fixed selection of software, allows you to update with extra software later,"
-        echo "       but has limited diskspace for software!"
-        echo "       Faster & easier to install but less flexible"
+        echo "       Comes with a fixed selection of software, allows you to update with extra software later."
+        echo "       Fast & easy but less flexible"
         echo -n "${bold}Your choice?${normal} [12] "
         read choice
         case $choice in
@@ -649,17 +624,11 @@ else
             fi
         fi
         if [ $NEED_VIRTUALENV -eq 1 ]; then
-            if [ $DEFAULYPYTHON -eq 3 ]; then
-                if ! which pip3; then
-                    NEED+=("pip3")
+            if ! which pip; then
+                if [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
+                    NEED+=("epel") #python-pip is in  EPEL
                 fi
-            else
-                if ! which pip; then
-                    if [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
-                        NEED+=("epel") #python-pip is in  EPEL
-                    fi
-                    NEED+=("pip")
-                fi
+                NEED+=("pip")
             fi
             if ! which virtualenv; then
                 NEED+=("virtualenv")
@@ -1012,7 +981,7 @@ for package in ${NEED[@]}; do
         elif [ "$OS" = "redhat" ]; then
             cmd="sudo yum  $NONINTERACTIVEFLAGS install python-pip"
         elif [ "$OS" = "arch" ]; then
-            cmd="sudo pacman  $NONINTERACTIVEFLAGS -Sy python-pip" #this is actually python 3 pip
+            cmd="sudo pacman  $NONINTERACTIVEFLAGS -Sy python-pip"
         elif [ "$OS" = "mac" ]; then
             cmd="sudo easy_install pip"
         fi
@@ -1036,56 +1005,18 @@ for package in ${NEED[@]}; do
             if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
             echo "Please install pip manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
         fi
-    elif [ "$package" = "pip3" ]; then
-        if [ "$OS" = "debian" ]; then
-            cmd="sudo apt-get  $NONINTERACTIVEFLAGS install python3-pip"
-        elif [ "$OS" = "redhat" ]; then
-            cmd="sudo yum  $NONINTERACTIVEFLAGS install python3-pip"
-        elif [ "$OS" = "arch" ]; then
-            cmd="sudo pacman  $NONINTERACTIVEFLAGS -Sy python-pip"
-        elif [ "$OS" = "mac" ]; then
-            fatalerror "Python 3 was already installed on this mac but pip3 is missing! Something is wrong with the Python 3 installation, please either remove it manually so only the Python (2.7) preinstalled by Apple is present or fix the python 3 installation. (Be aware that Anaconda is NOT supported)"
-        fi
-        echo "Pip is required for LaMachine but not installed yet. ${bold}Install now?${normal}"
-        if [ ! -z "$cmd" ]; then
-            while true; do
-                echo -n "${bold}Run:${normal} $cmd ? [yn] "
-                if [ "$INTERACTIVE" -eq 1 ]; then
-                    read yn
-                else
-                    yn="y"
-                fi
-                case $yn in
-                    [Yy]* ) $cmd || fatalerror "Pip installation failed"; break;;
-                    [Nn]* ) echo "Please install pip manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
-                    * ) echo "Please answer yes or no.";;
-                esac
-            done
-        else
-            echo "No automated installation possible on your OS."
-            if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
-            echo "Please install pip manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
-        fi
     elif [ "$package" = "virtualenv" ]; then
         if [ "$OS" = "debian" ]; then
-            if [ $DEFAULTPYTHON -eq 3 ]; then
-                cmd="sudo apt-get $NONINTERACTIVEFLAGS install python3-virtualenv"
-            else
-                cmd="sudo apt-get $NONINTERACTIVEFLAGS install python-virtualenv"
-            fi
+            cmd="sudo apt-get $NONINTERACTIVEFLAGS install python-virtualenv"
             if [[ "$DISTRIB_RELEASE" != "14.04" ]]; then #except on old ubuntu
                 cmd="$cmd virtualenv"
             fi
         elif [ "$OS" = "redhat" ]; then
-            if [ $DEFAULTPYTHON -eq 3 ]; then
-                cmd="sudo yum  $NONINTERACTIVEFLAGS install python3-virtualenv"
-            else
-                cmd="sudo yum  $NONINTERACTIVEFLAGS install python-virtualenv"
-            fi
+            cmd="sudo yum  $NONINTERACTIVEFLAGS install python-virtualenv"
         elif [ "$OS" = "arch" ]; then
             cmd="sudo pacman  $NONINTERACTIVEFLAGS -Sy python-virtualenv"
         elif [ "$OS" = "mac" ]; then
-            cmd="sudo $PIP install virtualenv"
+            cmd="sudo pip install virtualenv"
         else
             cmd=""
         fi
@@ -1317,8 +1248,10 @@ fi
         echo "web_user: \"www-data\" #The user for the webserver, change this on first install if needed!!!" >> $STAGEDCONFIG
         echo "web_group: \"www-data\" #The group for the webserver, change this on first install if needed!!!" >> $STAGEDCONFIG
     fi
-    if [[ $FLAVOUR == "local" ]] || [[ $FLAVOUR == "global" ]]; then
-        echo "ansible_python_interpreter: \"/usr/bin/python$DEFAULTPYTHON\" #Python interpreter for Vagrant to use with Ansible" >> $STAGEDCONFIG
+    if [ $OS = "arch" ]; then
+        if [[ $FLAVOUR == "local" ]] || [[ $FLAVOUR == "global" ]]; then
+            echo "ansible_python_interpreter: \"/bin/python2\" #Python interpreter for Vagrant to use with Ansible" >> $STAGEDCONFIG
+        fi
     fi
 
     if [ $INTERACTIVE -eq 1 ]; then
@@ -1357,8 +1290,8 @@ if [ ! -d lamachine-controller/$LM_NAME ]; then
         virtualenv lamachine-controller/$LM_NAME || fatalerror "Unable to create LaMachine control environment"
         cd lamachine-controller/$LM_NAME
         source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
-        $PIP install -U setuptools
-        $PIP install ansible || fatalerror "Unable to install Ansible"
+        pip install -U setuptools
+        pip install ansible || fatalerror "Unable to install Ansible"
         #pip install docker==2.7.0 docker-compose ansible-container[docker]
     else
         echo " (simple)"
