@@ -119,16 +119,6 @@ if [ ! -z "$CONDA_PREFIX" ]; then
     fatalerror "Inception error: Do not run the LaMachine bootstrap when you are inside an Anaconda environment (run 'source deactivate' first)"
 fi
 
-if which python; then
-    echo "Checking sanity of your Python installation..."
-    python -c "from __future__ import print_function; import sys; print(sys.version)" | grep -i anaconda
-    if [ $? -eq 0 ]; then
-        fatalerror "Conflict error: The default Python on this system is managed by Anaconda, this is incompatible with LaMachine. Ensure the Python found in your \$PATH corresponds to a regular version as supplied with your OS, editing the order of your \$PATH in ~/.bashrc or ~/.bash_profile should be sufficient to solve this without completely uninstalling anaconda. See also https://stackoverflow.com/a/37377981/3311445"
-    fi
-else
-    fatalerror "No Python found! However, python should be available by default on all supported platforms; please install it yourself through your package manager (and ensure it is in your \$PATH)"
-fi
-echo ""
 
 ####################################################
 #               Platform Detection
@@ -203,6 +193,19 @@ VAGRANTBOX="debian/contrib-stretch64" #base distribution for VM
 DOCKERREPO="proycon/lamachine"
 CONTROLLER="internal"
 BUILD=1
+
+if which python; then
+    echo "Checking sanity of your Python installation..."
+    python -c "from __future__ import print_function; import sys; print(sys.version)" | grep -i anaconda
+    if [ $? -eq 0 ]; then
+        fatalerror "Conflict error: The default Python on this system is managed by Anaconda, this is incompatible with LaMachine. Ensure the Python found in your \$PATH corresponds to a regular version as supplied with your OS, editing the order of your \$PATH in ~/.bashrc or ~/.bash_profile should be sufficient to solve this without completely uninstalling anaconda. See also https://stackoverflow.com/a/37377981/3311445"
+    fi
+else
+    if [ "$OS" != "debian" ]; then #newest ubuntu/debian doesn't always install python2.7 but apt will handle the dependency later
+        fatalerror "No Python found! However, python should be available by default on all supported platforms; please install it yourself through your package manager (and ensure it is in your \$PATH)"
+    fi
+fi
+echo ""
 
 echo "Detected OS: $OS"
 echo "Detected distribution ID: $DISTRIB_ID"
@@ -1354,10 +1357,10 @@ if [ $BUILD -eq 1 ]; then
     if [ $INTERACTIVE -eq 1 ] && [ -z "$INSTALL" ]; then
         while true; do
             echo "${bold}The following packages are marked to be installed in the installation manifest:${green}"
-            grep --color=never -e '^\s*-.*##'
+            grep --color=never -e '^\s*-.*##' $STAGEDMANIFEST
             echo "${normal}"
             echo "${bold}The following additional packages are available but NOT marked for installation yet:${yellow}"
-            grep --color=never -e '^\s*# -.*##'
+            grep --color=never -e '^\s*# -.*##' $STAGEDMANIFEST
             echo "${normal}"
             echo "Note that you can at any later stage also add packages using lamachine-add"
             echo
