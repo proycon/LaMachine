@@ -17,10 +17,13 @@ export ANSIBLE_FORCE_COLOR=true
 bold=$(tput bold)
 boldred=${bold}$(tput setaf 1) #  red
 boldgreen=${bold}$(tput setaf 2) #  green
+green=${normal}$(tput setaf 2) #  green
+yellow=${normal}$(tput setaf 3) #  yellow
+blue=${normal}$(tput setaf 4) #  blue
 boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
-export LM_VERSION="v2.8.0" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
+export LM_VERSION="v2.9.0" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "${bold}=====================================================================${normal}"
 echo "           ,              ${bold}LaMachine $LM_VERSION${normal} - NLP Software distribution"
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
@@ -116,16 +119,6 @@ if [ ! -z "$CONDA_PREFIX" ]; then
     fatalerror "Inception error: Do not run the LaMachine bootstrap when you are inside an Anaconda environment (run 'source deactivate' first)"
 fi
 
-if which python; then
-    echo "Checking sanity of your Python installation..."
-    python -c "from __future__ import print_function; import sys; print(sys.version)" | grep -i anaconda
-    if [ $? -eq 0 ]; then
-        fatalerror "Conflict error: The default Python on this system is managed by Anaconda, this is incompatible with LaMachine. Ensure the Python found in your \$PATH corresponds to a regular version as supplied with your OS, editing the order of your \$PATH in ~/.bashrc or ~/.bash_profile should be sufficient to solve this without completely uninstalling anaconda. See also https://stackoverflow.com/a/37377981/3311445"
-    fi
-else
-    fatalerror "No Python found! However, python should be available by default on all supported platforms; please install it yourself through your package manager (and ensure it is in your \$PATH)"
-fi
-echo ""
 
 ####################################################
 #               Platform Detection
@@ -160,6 +153,8 @@ if [ "$OS" = "unknown" ]; then
         OS="debian"
     elif [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "fedora" ] || [ "$DISTRIB_ID" = "rhel" ]; then
         OS="redhat"
+    elif [ "$DISTRIB_ID" = "manjaro" ]; then
+        OS="arch"
     fi
 fi
 if grep -q Microsoft /proc/version 2> /dev/null; then
@@ -201,10 +196,24 @@ DOCKERREPO="proycon/lamachine"
 CONTROLLER="internal"
 BUILD=1
 
+if which python; then
+    echo "Checking sanity of your Python installation..."
+    python -c "from __future__ import print_function; import sys; print(sys.version)" | grep -i anaconda
+    if [ $? -eq 0 ]; then
+        fatalerror "Conflict error: The default Python on this system is managed by Anaconda, this is incompatible with LaMachine. Ensure the Python found in your \$PATH corresponds to a regular version as supplied with your OS, editing the order of your \$PATH in ~/.bashrc or ~/.bash_profile should be sufficient to solve this without completely uninstalling anaconda. See also https://stackoverflow.com/a/37377981/3311445"
+    fi
+else
+    if [ "$OS" != "debian" ]; then #newest ubuntu/debian doesn't always install python2.7 but apt will handle the dependency later
+        fatalerror "No Python found! However, python should be available by default on all supported platforms; please install it yourself through your package manager (and ensure it is in your \$PATH)"
+    fi
+fi
+echo ""
+
 echo "Detected OS: $OS"
 echo "Detected distribution ID: $DISTRIB_ID"
 echo "Detected distribution release: $DISTRIB_RELEASE"
 echo
+
 
 
 #Test if we come from LaMachine v1 VM/Docker
@@ -224,6 +233,50 @@ if [[ "$USERNAME" == "root" ]]; then
 fi
 
 
+OUTDATED=0
+if [ "$OS" != "mac" ]; then
+    if [ "$DISTRIB_ID" = "ubuntu" ]; then
+        if [ "${DISTRIB_RELEASE%\.*}" -lt 16 ]; then
+            echo "WARNING: Your Ubuntu distribution is out of date and not supported, we recommend an upgrade to the latest LTS release!"
+            OUTDATED=1
+        fi
+    elif [ "$DISTRIB_ID" = "debian" ]; then
+        if [ "${DISTRIB_RELEASE%\.*}" -lt 9 ]; then
+            echo "WARNING: Your Debian distribution is out of date and not supported, we recommend an upgrade to the latest stable release!"
+            OUTDATED=1
+        fi
+    elif [ "$DISTRIB_ID" = "linuxmint" ]; then
+        if [ "${DISTRIB_RELEASE%\.*}" -lt 18 ]; then # https://www.linuxmint.com/download_all.php
+            echo "WARNING: Your Linux Mint distribution is out of date and not supported, we recommend an upgrade to the latest LTS release!"
+            OUTDATED=1
+        fi
+    elif [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
+        if [ "${DISTRIB_RELEASE%\.*}" -lt 7 ]; then
+            echo "WARNING: Your CentOS/RHEL distribution is out of date and not supported, we recommend an upgrade to the latest release!"
+            OUTDATED=1
+        fi
+    elif [ "$DISTRIB_ID" = "fedora" ]; then
+        if [ "${DISTRIB_RELEASE%\.*}" -lt 29 ]; then # https://en.wikipedia.org/wiki/Fedora_version_history
+            echo "WARNING: Your Fedora Linux distribution is out of date and not supported, we recommend an upgrade to the latest release!"
+            OUTDATED=1
+        fi
+    elif [ "$DISTRIB_ID" = "arch" ] || [ "$DISTRIB_ID" = "manjaro" ]; then
+        echo "Rolling release, okay"
+    else
+        echo "WARNING: Your Linux distribution was not properly recognized and may be unsupported!"
+        OUTDATED=1
+    fi
+    if [ $OUTDATED -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
+        echo "Running an older or unsupported Linux distribution usually prevents you from doing a successful local or global installation."
+        echo "You *might*, however, still be able to do a proper VM or Docker installation."
+        echo -n "${bold}Try to continue anyway?${normal} [yn] "
+        read yn
+        case $yn in
+            [Yy]* ) break;;
+            * ) exit 1; break;;
+        esac
+    fi
+fi
 
 while [[ $# -gt 0 ]]; do
     key="$1"
@@ -1252,12 +1305,25 @@ fi
     fi
 
     if [ $INTERACTIVE -eq 1 ]; then
-        echo "${bold}Opening configuration file $STAGEDCONFIG in editor for final configuration...${normal}"
-        sleep 3
-        if ! "$EDITOR" "$STAGEDCONFIG"; then
-            echo "aborted by editor..." >&2
-            exit 2
-        fi
+      while true; do
+        echo "${bold}Your LaMachine configuration is now as follows:${normal}${yellow}"
+        cat $STAGEDCONFIG
+        echo "${normal}"
+        echo "${bold}Do you want to make any changes to the above configuration? This will open a text editor for you to make changes. [yn]${normal}"
+        read choice
+        case $choice in
+            [n]* ) break;;
+            [y]* )
+                echo "(opening configuration $STAGEDCONFIG in editor $EDITOR)"
+                if ! "$EDITOR" "$STAGEDCONFIG"; then
+                    echo "ERROR: aborted by editor..." >&2
+                    exit 2
+                fi
+                break;;
+            * ) echo "Please answer with y or n..";;
+        esac
+        sleep 2
+      done
     fi
 
  fi
@@ -1336,11 +1402,30 @@ if [ $BUILD -eq 1 ]; then
     fi
 
     if [ $INTERACTIVE -eq 1 ] && [ -z "$INSTALL" ]; then
-        echo "${bold}Opening installation file $STAGEDMANIFEST in editor for selection of packages to install...${normal}"
-        sleep 3
-        if ! "$EDITOR" "$STAGEDMANIFEST"; then
-            exit 2
-        fi
+        while true; do
+            echo "${bold}The following packages are marked to be installed in the installation manifest:${normal}${green}"
+            grep --color=never -e '^\s*-.*##' $STAGEDMANIFEST
+            echo "${normal}"
+            echo "${bold}The following additional packages are available but NOT marked for installation yet:${normal}${yellow}"
+            grep --color=never -e '^\s*# -.*##' $STAGEDMANIFEST
+            echo "${normal}"
+            echo "Note that you can at any later stage also add packages using lamachine-add"
+            echo
+            echo "${bold}Do you want to adapt the list of to-be-installed packages by opening the installation manifest in a text editor? [yn]${normal}"
+            read choice
+            case $choice in
+                [n]* ) break;;
+                [y]* )
+                    echo "(opening installation manifest $STAGEDMANIFEST in editor $EDITOR)"
+                    if ! "$EDITOR" "$STAGEDMANIFEST"; then
+                        echo "ERROR: aborted by editor..." >&2
+                        exit 2
+                    fi
+                    break;;
+                * ) echo "Please answer with y or n..";;
+            esac
+            sleep 2
+        done
     fi
 
     #copy staged install to final location
@@ -1380,10 +1465,10 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
             case $choice in
                 [n]* ) break;;
                 [y]* ) BUILD=0;  break;;
-                * ) echo "Please answer with the y or n..";;
+                * ) echo "Please answer with y or n..";;
             esac
             if ! "$EDITOR" "$SOURCEDIR/Vagrantfile"; then
-                echo "aborted by editor..." >&2
+                echo "ERROR: aborted by editor..." >&2
                 exit 2
             fi
         fi
@@ -1428,8 +1513,14 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     fi
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ "$SUDO" -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
+        echo "${bold}The installation will now begin and will ask you for a BECOME password, here you need to fill in your sudo password as this is needed to install certain global packages from your distribution, it will only be used for limited parts of the installation. The installation process may take quite some time and produce a lot of output (most of which you can safely ignore). Press ENTER to continue and feel free to get yourself a tea or coffee while you wait!${normal}"
+        read
         ASKSUDO="--ask-become-pass"
     else
+        if [ $INTERACTIVE -eq 1 ]; then
+            echo "${bold}The  installation will now begin. The installation process may take quite some time and produce a lot of output (most of which you can safely ignore). Press ENTER to continue and feel free to get yourself a tea or coffee while you wait!${normal}"
+            read
+        fi
         ASKSUDO=""
     fi
     cmd="ansible-playbook $ASKSUDO -i $SOURCEDIR/hosts.ini $SOURCEDIR/install.yml $ANSIBLE_OPTIONS"
@@ -1443,6 +1534,7 @@ elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
         echo "======================================================================================"
         echo "${boldgreen}All done, a local LaMachine environment has been built!${normal}"
         echo "- ${bold}to activate your environment, run: source lamachine-$LM_NAME-activate${normal}   (or: ~/bin/lamachine-$LM_NAME-activate)"
+        echo "  ${bold}you will need to do this each time you open a new terminal / start a new shell${normal}"
     else
         echo "======================================================================================"
         echo "${boldred}Building a local LaMachine environment has failed unfortunately.${normal} You have several options:"
@@ -1596,6 +1688,7 @@ else
     echo "No bootstrap for $FLAVOUR implemented yet at this stage, sorry!!">&2
     rc=1
 fi
+export PATH=~/bin:$PATH
 if [ "$CONTROLLER" = "internal" ] && [ $rc -eq 0 ]; then  #only clean up if everything went well
     cd ../..
     rm -rf "lamachine-controller/$LM_NAME" 2>/dev/null

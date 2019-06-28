@@ -3,9 +3,10 @@
 import sys
 import argparse
 from collections import OrderedDict
-from codemeta.codemeta import resolve
 import json
 import yaml
+import csv
+from codemeta.codemeta import resolve
 
 
 if yaml is not None:
@@ -30,11 +31,55 @@ def yaml_simplify(d):
     else:
         return d
 
+def flatten(x):
+    if isinstance(x, str):
+        return x.strip()
+    if isinstance(x, (list, tuple)):
+        l = [ flatten(y) for y in x if y ]
+        if all("\n" in y for y in l):
+            return "".join(l)
+        else:
+            return "; ".join(l)
+    if isinstance(x, dict):
+        if 'givenName' in x and 'familyName' in x: #names
+            return x['givenName'] + " " + x['familyName']
+        elif 'parentOrganization' in x: #organization
+            return x.get('name','') + ", " + flatten(x['parentOrganization'])
+        elif 'urlTemplate' in x: #entryPoints
+            return x.get('name','') + " [" + x.get('interfaceType','?') + "; " + x.get('urlTemplate','').replace('file://','') + "]: " + x.get('description','') + "\n"
+        elif 'name' in x:
+            return x['name'].strip()
+        else:
+            return ""
+
+
+
+
+
+CSVCOLUMNS = ('identifier',
+              'name',
+              'author',
+              'producer',
+              'version',
+              'description',
+              'url',
+              'codeRepository',
+              'programmingLanguage',
+              'issueTracker',
+              'contIntegration',
+              'license',
+              'dateCreated',
+              'entryPoints',
+              'keywords',
+              'funder',
+              'developmentStatus')
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="LaMachine list")
     #parser.add_argument('--yaml', help="Read metadata from standard input (YAML format)", action='store_true',required=False)
     parser.add_argument('-r', "--registry", type=str,help="Short output", action='store',required=False, default="{{lm_prefix}}/var/lamachine-registry.json")
+    parser.add_argument("--csv", type=str, help="Output to CSV file", action='store',required=False, default="")
     parser.add_argument('-s', "--short", help="Short output", action='store_true',required=False)
     parser.add_argument('-v', "--versions", help="Outputs a customversions.yml file which you can use to bootstrap another LaMachine with the exact same versions", action='store_true',required=False)
     parser.add_argument("--json", help="Short output", action='store_true',required=False)
@@ -56,6 +101,10 @@ if __name__ == "__main__":
 
     if args.versions:
         print("customversion:")
+    if args.csv:
+        csvfile = open(args.csv, 'w', newline='')
+        csvwriter = csv.DictWriter(csvfile, fieldnames=CSVCOLUMNS,quoting=csv.QUOTE_ALL)
+        csvwriter.writerow( { k:k for k in CSVCOLUMNS } )
     for data in sorted(registry['@graph'], key=lambda x: x['identifier'].lower()):
         if not softwarelist or data['identifier'].lower() in softwarelist:
             if args.versions:
@@ -64,6 +113,8 @@ if __name__ == "__main__":
                     print("  " + data['identifier'].lower() + ': "' + data['version'] + '"')
                 else:
                     print("WARNING: No version information for " + data['identifier'],file=sys.stderr)
+            elif args.csv:
+                csvwriter.writerow( { key: flatten(data.get(key,"")) for key in CSVCOLUMNS } )
             elif args.short:
                 print('{0: <20}'.format(data['identifier'].lower()) + "\t" + '{0: <30}'.format(data.get('name','unknown')) + "\t" + data.get('version','unknown')+ "\t" + data.get('description',''))
             elif args.json:
