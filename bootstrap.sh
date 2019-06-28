@@ -19,7 +19,7 @@ boldred=${bold}$(tput setaf 1) #  red
 boldgreen=${bold}$(tput setaf 2) #  green
 green=${normal}$(tput setaf 2) #  green
 yellow=${normal}$(tput setaf 3) #  yellow
-blue=${normal}$(tput setaf 4) #  yellow
+blue=${normal}$(tput setaf 4) #  blue
 boldblue=${bold}$(tput setaf 4) #  blue
 normal=$(tput sgr0)
 
@@ -267,15 +267,14 @@ if [ "$OS" != "mac" ]; then
         OUTDATED=1
     fi
     if [ $OUTDATED -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
-        while true; do
-            echo -n "${bold}Try to continue anyway?${normal} [yn] "
-            read yn
-            case $yn in
-                [Yy]* ) break;;
-                [Nn]* ) exit 1; break;;
-                * ) echo "Please answer yes or no.";;
-            esac
-        done
+        echo "Running an older or unsupported Linux distribution usually prevents you from doing a successful local or global installation."
+        echo "You *might*, however, still be able to do a proper VM or Docker installation."
+        echo -n "${bold}Try to continue anyway?${normal} [yn] "
+        read yn
+        case $yn in
+            [Yy]* ) break;;
+            * ) exit 1; break;;
+        esac
     fi
 fi
 
@@ -1307,7 +1306,7 @@ fi
 
     if [ $INTERACTIVE -eq 1 ]; then
       while true; do
-        echo "${bold}Your LaMachine configuration is now as follows:${yellow}"
+        echo "${bold}Your LaMachine configuration is now as follows:${normal}${yellow}"
         cat $STAGEDCONFIG
         echo "${normal}"
         echo "${bold}Do you want to make any changes to the above configuration? This will open a text editor for you to make changes. [yn]${normal}"
@@ -1404,10 +1403,10 @@ if [ $BUILD -eq 1 ]; then
 
     if [ $INTERACTIVE -eq 1 ] && [ -z "$INSTALL" ]; then
         while true; do
-            echo "${bold}The following packages are marked to be installed in the installation manifest:${green}"
+            echo "${bold}The following packages are marked to be installed in the installation manifest:${normal}${green}"
             grep --color=never -e '^\s*-.*##' $STAGEDMANIFEST
             echo "${normal}"
-            echo "${bold}The following additional packages are available but NOT marked for installation yet:${yellow}"
+            echo "${bold}The following additional packages are available but NOT marked for installation yet:${normal}${yellow}"
             grep --color=never -e '^\s*# -.*##' $STAGEDMANIFEST
             echo "${normal}"
             echo "Note that you can at any later stage also add packages using lamachine-add"
