@@ -153,6 +153,8 @@ if [ "$OS" = "unknown" ]; then
         OS="debian"
     elif [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "fedora" ] || [ "$DISTRIB_ID" = "rhel" ]; then
         OS="redhat"
+    elif [ "$DISTRIB_ID" = "manjaro" ]; then
+        OS="arch"
     fi
 fi
 if grep -q Microsoft /proc/version 2> /dev/null; then
@@ -213,6 +215,7 @@ echo "Detected distribution release: $DISTRIB_RELEASE"
 echo
 
 
+
 #Test if we come from LaMachine v1 VM/Docker
 if [ "$OS" = "arch" ] && [ -e /usr/src/LaMachine ]; then
     echo "${boldred}Automated upgrade from LaMachine v1 not possible${normal}"
@@ -230,6 +233,51 @@ if [[ "$USERNAME" == "root" ]]; then
 fi
 
 
+OUTDATED=0
+if [ "$OS" != "mac" ]; then
+    if [ "$DISTRIB_ID" = "ubuntu" ]; then
+        if [ "${DISTRIB_RELEASE%\.*}" -lt 16 ]; then
+            echo "WARNING: Your Ubuntu distribution is out of date and not supported, we recommend an upgrade to the latest LTS release!"
+            OUTDATED=1
+        fi
+    elif [ "$DISTRIB_ID" = "debian" ]; then
+        if [ "${DISTRIB_RELEASE%\.*}" -lt 9 ]; then
+            echo "WARNING: Your Debian distribution is out of date and not supported, we recommend an upgrade to the latest stable release!"
+            OUTDATED=1
+        fi
+    elif [ "$DISTRIB_ID" = "linuxmint" ]; then
+        if [ "${DISTRIB_RELEASE%\.*}" -lt 18 ]; then # https://www.linuxmint.com/download_all.php
+            echo "WARNING: Your Linux Mint distribution is out of date and not supported, we recommend an upgrade to the latest LTS release!"
+            OUTDATED=1
+        fi
+    elif [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
+        if [ "${DISTRIB_RELEASE%\.*}" -lt 7 ]; then
+            echo "WARNING: Your CentOS/RHEL distribution is out of date and not supported, we recommend an upgrade to the latest release!"
+            OUTDATED=1
+        fi
+    elif [ "$DISTRIB_ID" = "fedora" ]; then
+        if [ "${DISTRIB_RELEASE%\.*}" -lt 29 ]; then # https://en.wikipedia.org/wiki/Fedora_version_history
+            echo "WARNING: Your Fedora Linux distribution is out of date and not supported, we recommend an upgrade to the latest release!"
+            OUTDATED=1
+        fi
+    elif [ "$DISTRIB_ID" = "arch" ] || [ "$DISTRIB_ID" = "manjaro" ]; then
+        #rolling release, should be okay
+    else
+        echo "WARNING: Your Linux distribution was not properly recognized and may be unsupported!"
+        OUTDATED=1
+    fi
+    if [ $OUTDATED -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
+        while true; do
+            echo -n "${bold}Try to continue anyway?${normal} [yn] "
+            read yn
+            case $yn in
+                [Yy]* ) break;;
+                [Nn]* ) exit 1; break;;
+                * ) echo "Please answer yes or no.";;
+            esac
+        done
+    fi
+fi
 
 while [[ $# -gt 0 ]]; do
     key="$1"
