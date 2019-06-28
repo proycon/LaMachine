@@ -261,7 +261,7 @@ if [ "$OS" != "mac" ]; then
             OUTDATED=1
         fi
     elif [ "$DISTRIB_ID" = "arch" ] || [ "$DISTRIB_ID" = "manjaro" ]; then
-        #rolling release, should be okay
+        echo "Rolling release, okay"
     else
         echo "WARNING: Your Linux distribution was not properly recognized and may be unsupported!"
         OUTDATED=1
