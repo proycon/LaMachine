@@ -433,39 +433,12 @@ LaMachine shines as it combines a lot of software, includes complex set-ups, and
 A LaMachine installation quickly reaches 6GB, and even more if you enable software that is not enabled by default.
 LaMachine is a research environment that can be used in a wide variety of ways which we can't predict in advance, so we
 by default include a lot of popular software for maximum flexibility. When building your LaMachine, you can disable
-software groups you don't want and save space.
+software groups you don't want and save space, or opt for extra dikspace (see the next question).
 
 You can also limit the size somewhat by setting ``minimal: true`` in your LaMachine configuration, but this may mean that
 certains tools don't fully work.
 
 Disk space is also, by far, the cheapest resource, in contrast to memory or CPU.
-
-If you use docker, be aware that you may need to increase the size limit if you build a custom LaMachine container and
-run into size issues!
-
-#### Q: Can I run LaMachine in a 32-bit environment?
-
-No
-
-#### Q: Can I run LaMachine with Python 2.7 instead of 3?
-
-No
-
-#### Q: Can I run LaMachine on an old Linux distribution?
-
-No, your Linux distribution needs to be up to date and supported.
-
-#### Q: Can I include my own software in LaMachine?
-
-Yes! [See the contribution guidelines](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md)
-
-#### Q: Docker gives an error: "flag provided but not defined: --build-arg"
-
-Your Docker is too old, upgrade to at least 1.9
-
-#### Q: lamachine-update gives an error: error 'fragment_class is None' ([Issue #144](https://github.com/proycon/LaMachine/issues/144))
-
-This error may appear when LaMachine updates from ansible 2.7 to 2.8, if this occurs, simply rerun the update.
 
 #### Q: I get an error "no space left on device" in the VM or Docker flavour of LaMachine ([Issue #152](https://github.com/proycon/LaMachine/issues/152))
 
@@ -489,6 +462,22 @@ data, but this requires a fair amount of Linux administration expertise on their
     * Move ``/usr/local`` (which is where most of LaMachine is installed) to the new disk
     * Symlink the old ``/usr/local`` to the new path on the new disk
 
+#### Q: Can I run LaMachine in a 32-bit environment?
+
+No
+
+#### Q: Can I run LaMachine with Python 2.7 instead of 3?
+
+No
+
+#### Q: Can I run LaMachine on an old Linux distribution?
+
+No, your Linux distribution needs to be up to date and supported.
+
+#### Q: Can I include my own software in LaMachine?
+
+Yes! [See the contribution guidelines](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md)
+
 #### Q: Can I run a graphical desktop environment in the LaMachine Virtual Machine? (X.org)
 
 Though LaMachine does not provide this out-of-the-box, you can easily install a fully fledged desktop environment as
@@ -497,6 +486,15 @@ follows (do make sure you opted for extra diskspace during the bootstrap):
 ``apt-get install task-gnome-desktop`` (See https://wiki.debian.org/DesktopEnvironment)
 
 To access the graphical desktop you will want to start LaMachine from the VirtualBox interface.
+
+#### Q: Docker gives an error: "flag provided but not defined: --build-arg"
+
+Your Docker is too old, upgrade to at least 1.9
+
+#### Q: lamachine-update gives an error: error 'fragment_class is None' ([Issue #144](https://github.com/proycon/LaMachine/issues/144))
+
+This error may appear when LaMachine updates from ansible 2.7 to 2.8, if this occurs, simply rerun the update.
+
 
 #### Q: I have another problem, can I report it?
 
