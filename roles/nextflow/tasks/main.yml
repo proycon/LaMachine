@@ -13,6 +13,7 @@
       shell: curl -fsSL https://get.nextflow.io | bash
       args:
         chdir: "{{lm_prefix}}/bin" #this is where the nextflow binary will be written
+        warn: false
       environment:
         NXF_HOME: "{{lm_prefix}}/opt/nextflow"
 
