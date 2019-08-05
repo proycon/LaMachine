@@ -13,7 +13,7 @@ export ANSIBLE_FORCE_COLOR=true
 echo "${bold}=====================================================================${normal}"
 echo "           ,              ${bold}LaMachine v{{lamachine_version}}${normal} - ${boldblue}UPDATER${normal}"
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
-echo "           (----í         Language Machines research group"
+echo "           (----/         Language Machines research group"
 echo "            /| |\         Centre of Language and Speech Technology"
 echo "           / / /|	        Radboud University Nijmegen "
 echo "${bold}=====================================================================${normal}"
