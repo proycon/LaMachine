@@ -195,6 +195,7 @@
                 - "var/www-data/tmp"
                 - "etc/nginx"
                 - "etc/nginx/conf.d"
+            ignore_errors: yes
 
           - when: ansible_distribution|lower != "macosx" and (nginx.rc != 0 or (force is defined and force))
             block:
