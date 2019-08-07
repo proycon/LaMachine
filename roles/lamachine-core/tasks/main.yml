@@ -8,6 +8,7 @@
           - conf_name
           - ansible_distribution
           - ansible_distribution_version
+          - ansible_version
           - hostname
           - version
           - lamachine_path
