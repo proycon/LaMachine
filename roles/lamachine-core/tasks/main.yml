@@ -620,6 +620,20 @@
         force: no
         mode: u+rwx,a+rx
 
+    - name: Determine available groups
+      getent:
+        database: group
+
+    - name: "Adding user to vboxsf group for shared folder access (if it exists)"
+      become: "{{lm_become}}"
+      become_user: root
+      user:
+        name: "{{unix_user}}"
+        groups: "vboxsf"
+        append: yes
+      when: "'vboxsf' in getent_group"
+
+
 
 
 
