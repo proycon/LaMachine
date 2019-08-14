@@ -623,6 +623,7 @@
     - name: Determine available groups
       getent:
         database: group
+      when: "ansible_distribution|lower != 'macosx'"
 
     - name: "Adding user to vboxsf group for shared folder access (if it exists)"
       become: "{{lm_become}}"
@@ -631,7 +632,7 @@
         name: "{{unix_user}}"
         groups: "vboxsf"
         append: yes
-      when: "'vboxsf' in getent_group"
+      when: "ansible_distribution|lower != 'macosx' and 'vboxsf' in getent_group"
 
 
 
