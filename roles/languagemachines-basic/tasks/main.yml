@@ -161,6 +161,7 @@
         package:
             user: proycon
             repo: colibri-utils
+      when: ansible_distribution|lower != 'macosx'
 
     - name: Running ldconfig
       become: yes
