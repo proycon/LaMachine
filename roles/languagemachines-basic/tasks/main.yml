@@ -154,6 +154,14 @@
             user: proycon
             repo: colibri-core
 
+    - name: Installing Colibri Utils from github
+      include_role:
+        name: lamachine-git-autoconf
+      vars:
+        package:
+            user: proycon
+            repo: colibri-utils
+
     - name: Running ldconfig
       become: yes
       command: ldconfig
@@ -183,3 +191,4 @@
           - folialint
           - colibri-classencode
           - colibri-patternmodeller
+          - colibri-lang
