@@ -44,8 +44,8 @@
           content: |
             #!/bin/bash
             export NVM_DIR={{lm_prefix}}/src/nvm
-            source $NVM_DIR/nvm.sh
-            nvm use stable
+            source $NVM_DIR/nvm.sh || true
+            nvm use stable || true
           mode: u+rwx,a+rx
 
       - name: Installing NodeJS through NVM
