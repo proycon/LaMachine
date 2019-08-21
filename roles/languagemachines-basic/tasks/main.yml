@@ -154,14 +154,15 @@
             user: proycon
             repo: colibri-core
 
-    - name: Installing Colibri Utils from github
-      include_role:
-        name: lamachine-git-autoconf
-      vars:
-        package:
-            user: proycon
-            repo: colibri-utils
-      when: ansible_distribution|lower != "macosx"
+    - when: ansible_distribution|lower != "macosx"
+      block:
+        - name: Installing Colibri Utils from github
+          include_role:
+            name: lamachine-git-autoconf
+          vars:
+            package:
+                user: proycon
+                repo: colibri-utils
 
     - name: Running ldconfig
       become: yes
