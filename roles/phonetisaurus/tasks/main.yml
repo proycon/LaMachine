@@ -39,12 +39,13 @@
           repo: Phonetisaurus
           configure_opts: "--with-openfst-libs={{lm_prefix}}/lib --with-openfst-includes={{lm_prefix}}/include"
 
-    - name: "Repair shebang in phonetisaurus python scrips (uses old python1.7 outside of LaMachine)"
+    - name: "Repair shebang in phonetisaurus python scripts (uses old python2.7 outside of LaMachine)"
       lineinfile:
         dest: "{{item}}"
-        regexp: '^#!/usr/bin/env python$'
+        regexp: '#!/usr/bin/env python'
         line: '#!/usr/bin/env python2.7'
+        state: present
+        backup: no
       with_items:
         - "{{lm_prefix}}/bin/phonetisaurus-apply"
         - "{{lm_prefix}}/bin/phonetisaurus-train"
-
