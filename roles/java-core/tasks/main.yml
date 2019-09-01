@@ -1,28 +1,28 @@
 ---
-  - name: Installing Java 8 (Linux)
+  - name: Installing Java (Linux)
     include_role:
       name: lamachine-package-install
     with_items:
-      - { debian: openjdk-8-jdk, redhat: java-1.8.0-openjdk, arch: jre8-openjdk }
+      - { debian: default-jdk, redhat: java-11-openjdk, arch: jdk-openjdk }
       - { debian: maven, redhat: maven, arch: maven } #not sure if this works on CentOS
     loop_control:
        loop_var: package
     when: root and (ansible_distribution|lower != "macosx")
 
-  - name: Installing Java 8 (Mac OS X)
+  - name: Installing Java (Mac OS X)
     homebrew_cask:
       name: java
       state: present
     when: ansible_distribution|lower == "macosx"
 
-  - name: Ensure correct java version is selected (Debian/Ubuntu)
-    become: "{{lm_become}}"
-    become_user: root
-    alternatives:
-      name: java
-      path: /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
-    when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
-    ignore_errors: yes
+  #- name: Ensure correct java version is selected (Debian/Ubuntu)
+    #become: "{{lm_become}}"
+    #become_user: root
+    #alternatives:
+      #  name: java
+      #  path: /usr/lib/jvm/java-11-openjdk-amd64/jre/bin/java
+      #when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
+    #ignore_errors: yes
 
   - name: Create java classpath
     become: "{{lm_become}}"
