@@ -67,16 +67,16 @@ CSVCOLUMNS = ('identifier',
               'version',
               'description',
               'url',
-              'coderepository',
-              'programminglanguage',
-              'issuetracker',
-              'contintegration',
+              'codeRepository',
+              'programmingLanguage',
+              'issueTracker',
+              'contIntegration',
               'license',
-              'datecreated',
-              'entrypoints',
+              'dateCreated',
+              'entryPoints',
               'keywords',
               'funder',
-              'developmentstatus')
+              'developmentStatus')
 
 LABELS = {
     'identifier': 'Identifier',
@@ -86,31 +86,31 @@ LABELS = {
     'version': 'Version',
     'description':'Description',
     'url':'Website',
-    'coderepository':'Code Repository',
-    'programminglanguage': 'Programming Language(s)',
-    'issuetracker': 'Issue Tracker',
-    'contintegration': 'Continuous Integration Tests',
+    'codeRepository':'Code Repository',
+    'programmingLanguage': 'Programming Language(s)',
+    'issueTracker': 'Issue Tracker',
+    'contIntegration': 'Continuous Integration Tests',
     'license': 'Licence',
-    'datecreated':'Date created',
-    'entrypoints':'Entry points',
+    'dateCreated':'Date created',
+    'entryPoints':'Entry points',
     'keywords':'Keywords',
     'funder':'Funder(s)',
-    'developmentstatus':'Development Status'
+    'developmentStatus':'Development Status'
 }
 
 MARKDOWNFIELDS = ('author',
               'producer',
               'url',
-              'coderepository',
-              'programminglanguage',
+              'codeRepository',
+              'programmingLanguage',
               'issuetracker',
-              'contintegration',
+              'contIntegration',
               'license',
-              'datecreated',
+              'dateCreated',
               'keywords',
               'funder',
-              'developmentstatus',
-              'entrypoints')
+              'developmentStatus',
+              'entryPoints')
 
 if __name__ == "__main__":
 
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     #parser.add_argument('--yaml', help="Read metadata from standard input (YAML format)", action='store_true',required=False)
     parser.add_argument('-r', "--registry", type=str,help="Short output", action='store',required=False, default=LM_PREFIX + "/var/lamachine-registry.json")
     parser.add_argument("--csv", type=str, help="Output to CSV file", action='store',required=False, default="")
-    parser.add_argument("--md", help="Output to Markdown", action='store',required=False, default="")
+    parser.add_argument("--md", help="Output to Markdown", action='store_true')
     parser.add_argument('-s', "--short", help="Short output", action='store_true',required=False)
     parser.add_argument('-v', "--versions", help="Outputs a customversions.yml file which you can use to bootstrap another LaMachine with the exact same versions", action='store_true',required=False)
     parser.add_argument("--json", help="Short output", action='store_true',required=False)
