@@ -37,11 +37,11 @@ def yaml_simplify(d):
     else:
         return d
 
-def flatten(x, multilineprefix="", tt=""):
+def flatten(x, multilineprefix="", bold="", tt=""):
     if isinstance(x, str):
         return x.strip()
     if isinstance(x, (list, tuple)):
-        l = [ flatten(y) for y in x if y ]
+        l = [ flatten(y,multilineprefix,bold, tt) for y in x if y ]
         if all("\n" in y for y in l):
             return multilineprefix.join(l)
         else:
@@ -52,11 +52,25 @@ def flatten(x, multilineprefix="", tt=""):
         elif 'parentOrganization' in x: #organization
             return x.get('name','') + ", " + flatten(x['parentOrganization'])
         elif 'urlTemplate' in x: #entryPoints
-            return x.get('name','') + " [" + x.get('interfaceType','?') + "; " + tt + x.get('urlTemplate','').replace('file:///','') + tt +  "]: " + x.get('description','') + "\n"
+            name = x.get('name','')
+            if name: name = bold + name + bold + ', '
+            desc = x.get('description','')
+            if desc:  desc = ": " + desc
+            return name + INTERFACETYPE.get(x.get('interfaceType','?'),'?') + "; " + tt + x.get('urlTemplate','').replace('file:///','') + tt +  desc + "\n"
         elif 'name' in x:
             return x['name'].strip()
         else:
             return ""
+
+
+INTERFACETYPE = {
+    'CLI': "Command-line tool",
+    'GUI': "Graphical User Interface",
+    'WUI': "Web-based User Interface",
+    'WS': "Webservice",
+    'REST': "RESTful webservice",
+    '?': "interface unknown",
+}
 
 
 
@@ -159,7 +173,8 @@ if __name__ == "__main__":
                 if not args.short:
                     for field in MARKDOWNFIELDS:
                         if field in data:
-                            print("   * *" + LABELS[field] + "*: " + flatten(data[field], multilineprefix="      * ",tt="``"))
+                            nl = "\n       - " if field == "entryPoints" else ""
+                            print("   * *" + LABELS[field] + "*: " + nl +  flatten(data[field], multilineprefix="      - ",bold="**", tt="``"))
             elif args.short:
                 print('{0: <20}'.format(data['identifier'].lower()) + "\t" + '{0: <30}'.format(data.get('name','unknown')) + "\t" + data.get('version','unknown')+ "\t" + data.get('description',''))
             elif args.json:
