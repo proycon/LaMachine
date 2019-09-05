@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import os
 import argparse
 from collections import OrderedDict
 import json
@@ -8,6 +9,11 @@ import yaml
 import csv
 from codemeta.codemeta import resolve
 
+try:
+    LM_PREFIX = os.environ['LM_PREFIX']
+except KeyError:
+    print("You are not in LaMachine!",file=sys.stderr)
+    sys.exit(2)
 
 if yaml is not None:
     def represent_ordereddict(dumper, data):
@@ -110,7 +116,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="LaMachine list")
     #parser.add_argument('--yaml', help="Read metadata from standard input (YAML format)", action='store_true',required=False)
-    parser.add_argument('-r', "--registry", type=str,help="Short output", action='store',required=False, default="{{lm_prefix}}/var/lamachine-registry.json")
+    parser.add_argument('-r', "--registry", type=str,help="Short output", action='store',required=False, default=LM_PREFIX + "/var/lamachine-registry.json")
     parser.add_argument("--csv", type=str, help="Output to CSV file", action='store',required=False, default="")
     parser.add_argument("--md", help="Output to Markdown", action='store',required=False, default="")
     parser.add_argument('-s', "--short", help="Short output", action='store_true',required=False)
