@@ -31,13 +31,13 @@ def yaml_simplify(d):
     else:
         return d
 
-def flatten(x):
+def flatten(x, multilineprefix="", tt=""):
     if isinstance(x, str):
         return x.strip()
     if isinstance(x, (list, tuple)):
         l = [ flatten(y) for y in x if y ]
         if all("\n" in y for y in l):
-            return "".join(l)
+            return multilineprefix.join(l)
         else:
             return "; ".join(l)
     if isinstance(x, dict):
@@ -46,13 +46,11 @@ def flatten(x):
         elif 'parentOrganization' in x: #organization
             return x.get('name','') + ", " + flatten(x['parentOrganization'])
         elif 'urlTemplate' in x: #entryPoints
-            return x.get('name','') + " [" + x.get('interfaceType','?') + "; " + x.get('urlTemplate','').replace('file://','') + "]: " + x.get('description','') + "\n"
+            return x.get('name','') + " [" + x.get('interfaceType','?') + "; " + tt + x.get('urlTemplate','').replace('file:///','') + tt +  "]: " + x.get('description','') + "\n"
         elif 'name' in x:
             return x['name'].strip()
         else:
             return ""
-
-
 
 
 
@@ -63,16 +61,50 @@ CSVCOLUMNS = ('identifier',
               'version',
               'description',
               'url',
-              'codeRepository',
-              'programmingLanguage',
-              'issueTracker',
-              'contIntegration',
+              'coderepository',
+              'programminglanguage',
+              'issuetracker',
+              'contintegration',
               'license',
-              'dateCreated',
-              'entryPoints',
+              'datecreated',
+              'entrypoints',
               'keywords',
               'funder',
-              'developmentStatus')
+              'developmentstatus')
+
+LABELS = {
+    'identifier': 'Identifier',
+    'name': 'Name',
+    'author': 'Author(s)',
+    'producer': 'Producer(s)',
+    'version': 'Version',
+    'description':'Description',
+    'url':'Website',
+    'coderepository':'Code Repository',
+    'programminglanguage': 'Programming Language(s)',
+    'issuetracker': 'Issue Tracker',
+    'contintegration': 'Continuous Integration Tests',
+    'license': 'Licence',
+    'datecreated':'Date created',
+    'entrypoints':'Entry points',
+    'keywords':'Keywords',
+    'funder':'Funder(s)',
+    'developmentstatus':'Development Status'
+}
+
+MARKDOWNFIELDS = ('author',
+              'producer',
+              'url',
+              'coderepository',
+              'programminglanguage',
+              'issuetracker',
+              'contintegration',
+              'license',
+              'datecreated',
+              'keywords',
+              'funder',
+              'developmentstatus',
+              'entrypoints')
 
 if __name__ == "__main__":
 
@@ -80,6 +112,7 @@ if __name__ == "__main__":
     #parser.add_argument('--yaml', help="Read metadata from standard input (YAML format)", action='store_true',required=False)
     parser.add_argument('-r', "--registry", type=str,help="Short output", action='store',required=False, default="{{lm_prefix}}/var/lamachine-registry.json")
     parser.add_argument("--csv", type=str, help="Output to CSV file", action='store',required=False, default="")
+    parser.add_argument("--md", help="Output to Markdown", action='store',required=False, default="")
     parser.add_argument('-s', "--short", help="Short output", action='store_true',required=False)
     parser.add_argument('-v', "--versions", help="Outputs a customversions.yml file which you can use to bootstrap another LaMachine with the exact same versions", action='store_true',required=False)
     parser.add_argument("--json", help="Short output", action='store_true',required=False)
@@ -104,7 +137,7 @@ if __name__ == "__main__":
     if args.csv:
         csvfile = open(args.csv, 'w', newline='')
         csvwriter = csv.DictWriter(csvfile, fieldnames=CSVCOLUMNS,quoting=csv.QUOTE_ALL)
-        csvwriter.writerow( { k:k for k in CSVCOLUMNS } )
+        csvwriter.writerow( { k:LABELS[k] for k in CSVCOLUMNS } )
     for data in sorted(registry['@graph'], key=lambda x: x['identifier'].lower()):
         if not softwarelist or data['identifier'].lower() in softwarelist:
             if args.versions:
@@ -115,6 +148,12 @@ if __name__ == "__main__":
                     print("WARNING: No version information for " + data['identifier'],file=sys.stderr)
             elif args.csv:
                 csvwriter.writerow( { key: flatten(data.get(key,"")) for key in CSVCOLUMNS } )
+            elif args.md:
+                print("* **{}** ({})".format(data.get('name',data['identifier'].lower()), data.get('version','unknown version')) + ": " + data.get('description',''))
+                if not args.short:
+                    for field in MARKDOWNFIELDS:
+                        if field in data:
+                            print("   * *" + LABELS[field] + "*: " + flatten(data[field], multilineprefix="      * ",tt="``"))
             elif args.short:
                 print('{0: <20}'.format(data['identifier'].lower()) + "\t" + '{0: <30}'.format(data.get('name','unknown')) + "\t" + data.get('version','unknown')+ "\t" + data.get('description',''))
             elif args.json:
