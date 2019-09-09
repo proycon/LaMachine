@@ -193,3 +193,5 @@
           - folialint
           - colibri-classencode
           - colibri-patternmodeller
+      ignore_errors: "{{ignore_tests|bool}}"
+

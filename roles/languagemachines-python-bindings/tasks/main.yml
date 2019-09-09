@@ -44,6 +44,7 @@
           - timbl
           - frog
           - colibricore
+      ignore_errors: "{{ignore_tests|bool}}"
 
     - name: Updating metadata for CLARIAH software
       include_role:

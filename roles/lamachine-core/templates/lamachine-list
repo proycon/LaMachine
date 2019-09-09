@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import os
 import argparse
 from collections import OrderedDict
 import json
@@ -8,6 +9,11 @@ import yaml
 import csv
 from codemeta.codemeta import resolve
 
+try:
+    LM_PREFIX = os.environ['LM_PREFIX']
+except KeyError:
+    print("You are not in LaMachine!",file=sys.stderr)
+    sys.exit(2)
 
 if yaml is not None:
     def represent_ordereddict(dumper, data):
@@ -31,13 +37,13 @@ def yaml_simplify(d):
     else:
         return d
 
-def flatten(x):
+def flatten(x, multilineprefix="", bold="", tt=""):
     if isinstance(x, str):
         return x.strip()
     if isinstance(x, (list, tuple)):
-        l = [ flatten(y) for y in x if y ]
+        l = [ flatten(y,multilineprefix,bold, tt) for y in x if y ]
         if all("\n" in y for y in l):
-            return "".join(l)
+            return multilineprefix.join(l)
         else:
             return "; ".join(l)
     if isinstance(x, dict):
@@ -46,13 +52,25 @@ def flatten(x):
         elif 'parentOrganization' in x: #organization
             return x.get('name','') + ", " + flatten(x['parentOrganization'])
         elif 'urlTemplate' in x: #entryPoints
-            return x.get('name','') + " [" + x.get('interfaceType','?') + "; " + x.get('urlTemplate','').replace('file://','') + "]: " + x.get('description','') + "\n"
+            name = x.get('name','')
+            if name: name = bold + name + bold + ', '
+            desc = x.get('description','')
+            if desc:  desc = ": " + desc
+            return name + INTERFACETYPE.get(x.get('interfaceType','?'),'?') + "; " + tt + x.get('urlTemplate','').replace('file:///','') + tt +  desc + "\n"
         elif 'name' in x:
             return x['name'].strip()
         else:
             return ""
 
 
+INTERFACETYPE = {
+    'CLI': "Command-line tool",
+    'GUI': "Graphical User Interface",
+    'WUI': "Web-based User Interface",
+    'WS': "Webservice",
+    'REST': "RESTful webservice",
+    '?': "interface unknown",
+}
 
 
 
@@ -74,12 +92,47 @@ CSVCOLUMNS = ('identifier',
               'funder',
               'developmentStatus')
 
+LABELS = {
+    'identifier': 'Identifier',
+    'name': 'Name',
+    'author': 'Author(s)',
+    'producer': 'Producer(s)',
+    'version': 'Version',
+    'description':'Description',
+    'url':'Website',
+    'codeRepository':'Code Repository',
+    'programmingLanguage': 'Programming Language(s)',
+    'issueTracker': 'Issue Tracker',
+    'contIntegration': 'Continuous Integration Tests',
+    'license': 'Licence',
+    'dateCreated':'Date created',
+    'entryPoints':'Entry points',
+    'keywords':'Keywords',
+    'funder':'Funder(s)',
+    'developmentStatus':'Development Status'
+}
+
+MARKDOWNFIELDS = ('author',
+              'producer',
+              'url',
+              'codeRepository',
+              'programmingLanguage',
+              'issuetracker',
+              'contIntegration',
+              'license',
+              'dateCreated',
+              'keywords',
+              'funder',
+              'developmentStatus',
+              'entryPoints')
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="LaMachine list")
     #parser.add_argument('--yaml', help="Read metadata from standard input (YAML format)", action='store_true',required=False)
-    parser.add_argument('-r', "--registry", type=str,help="Short output", action='store',required=False, default="{{lm_prefix}}/var/lamachine-registry.json")
+    parser.add_argument('-r', "--registry", type=str,help="Short output", action='store',required=False, default=LM_PREFIX + "/var/lamachine-registry.json")
     parser.add_argument("--csv", type=str, help="Output to CSV file", action='store',required=False, default="")
+    parser.add_argument("--md", help="Output to Markdown", action='store_true')
     parser.add_argument('-s', "--short", help="Short output", action='store_true',required=False)
     parser.add_argument('-v', "--versions", help="Outputs a customversions.yml file which you can use to bootstrap another LaMachine with the exact same versions", action='store_true',required=False)
     parser.add_argument("--json", help="Short output", action='store_true',required=False)
@@ -104,7 +157,7 @@ if __name__ == "__main__":
     if args.csv:
         csvfile = open(args.csv, 'w', newline='')
         csvwriter = csv.DictWriter(csvfile, fieldnames=CSVCOLUMNS,quoting=csv.QUOTE_ALL)
-        csvwriter.writerow( { k:k for k in CSVCOLUMNS } )
+        csvwriter.writerow( { k:LABELS[k] for k in CSVCOLUMNS } )
     for data in sorted(registry['@graph'], key=lambda x: x['identifier'].lower()):
         if not softwarelist or data['identifier'].lower() in softwarelist:
             if args.versions:
@@ -115,6 +168,13 @@ if __name__ == "__main__":
                     print("WARNING: No version information for " + data['identifier'],file=sys.stderr)
             elif args.csv:
                 csvwriter.writerow( { key: flatten(data.get(key,"")) for key in CSVCOLUMNS } )
+            elif args.md:
+                print("* **{}** ({})".format(data.get('name',data['identifier'].lower()), data.get('version','unknown version')) + ": " + data.get('description',''))
+                if not args.short:
+                    for field in MARKDOWNFIELDS:
+                        if field in data:
+                            nl = "\n       - " if field == "entryPoints" else ""
+                            print("   * *" + LABELS[field] + "*: " + nl +  flatten(data[field], multilineprefix="      - ",bold="**", tt="``"))
             elif args.short:
                 print('{0: <20}'.format(data['identifier'].lower()) + "\t" + '{0: <30}'.format(data.get('name','unknown')) + "\t" + data.get('version','unknown')+ "\t" + data.get('description',''))
             elif args.json:

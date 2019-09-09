@@ -18,6 +18,7 @@ web_group: "{{web_user}}"
 maintainer_name: "{{unix_user}}" #The name of the person maintaining this LaMachine installation
 maintainer_mail: "{{unix_user}}@{{hostname}}" #Maintainer mail
 http_port: 80 #webserver port
+ignore_tests: false
 services:
   - all
 lab: true #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)

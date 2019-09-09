@@ -17,6 +17,7 @@
       with_items:
           - KafNafParserPy
           - "naffoliapy.folia2naf"
+      ignore_errors: "{{ignore_tests|bool}}"
 
 
     - name: Adding affiliation metadata
