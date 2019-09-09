@@ -39,6 +39,7 @@
           name: lamachine-run
       vars:
           command: "python3 -c 'import {{ item }}'"
+          allow_failure: "{{ignore_tests|bool}}"
       with_items:
           - ucto
           - timbl
