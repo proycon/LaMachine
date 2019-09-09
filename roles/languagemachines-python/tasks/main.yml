@@ -27,6 +27,7 @@
           - pynlpl
           - pynlpl.formats.folia #legacy!
           - folia.main
+      ignore_errors: "{{ignore_tests|bool}}"
 
     - name: Updating metadata for CLARIAH software
       include_role:
@@ -64,6 +65,7 @@
           - folia2txt
           - foliaquery
           - babelente
+      ignore_errors: "{{ignore_tests|bool}}"
 
     - when: webserver|bool
       block:

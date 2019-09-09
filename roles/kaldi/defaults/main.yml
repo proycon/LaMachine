@@ -1,7 +1,7 @@
 ---
 kaldi_source: "https://github.com/kaldi-asr/kaldi.git"
 kaldi_branch: master
-kaldi_test_ignore_errors: no
+kaldi_test_ignore_errors: "{{ignore_tests}}"
 kaldi_configure_options: "--shared --openblas-root=/usr"
 recompile_kaldi: yes
 
