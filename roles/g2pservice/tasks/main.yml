@@ -17,6 +17,8 @@
           name: lamachine-register
       vars:
         update: "g2pservice"
+        package:
+           pip: "g2pservice"
         allow_failure: yes #in case the app is not installed
         metadata: #add entrypoint metadata to registry
             identifier: "g2pservice"

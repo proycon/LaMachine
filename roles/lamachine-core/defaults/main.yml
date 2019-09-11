@@ -40,6 +40,9 @@ github_clst_users:
   - kosloot
   - fkunneman
   - erkanbasar
+  - woseseltops
+  - schemreier
+  - GreekPerspective
 metadata_extra: [] #Extra metadata to register, consist of list of dictionaries, may have a url field, codemeta field, or metadata block that will be passed to the registry
 metadata_producer_unknown: {}
 metadata_producer_clst:
