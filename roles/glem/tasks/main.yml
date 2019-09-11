@@ -14,10 +14,10 @@
       vars:
         update: "glem"
         allow_failure: yes #in case the app is not installed
+        package:
+            pip: "glem"
         metadata: #add entrypoint metadata to registry
             identifier: "glem"
-            package:
-               pip: "glem"
             entryPoints:
               - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/glem", interfaceType: "WUI" }
               - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/glem", interfaceType: "REST", specification: "{{lm_base_url}}/glem/info" }

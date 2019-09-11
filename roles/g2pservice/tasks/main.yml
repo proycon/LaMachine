@@ -17,11 +17,11 @@
           name: lamachine-register
       vars:
         update: "g2pservice"
+        package:
+           pip: "g2pservice"
         allow_failure: yes #in case the app is not installed
         metadata: #add entrypoint metadata to registry
             identifier: "g2pservice"
-            package:
-               pip: "g2pservice"
             entryPoints:
               - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/g2pservice", interfaceType: "WUI" }
               - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/g2pservice", interfaceType: "REST", specification: "{{lm_base_url}}/g2pservice/info" }

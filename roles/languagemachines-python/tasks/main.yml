@@ -90,6 +90,8 @@
             name: lamachine-register
           vars:
             update: "foliadocserve"
+            package:
+              pip: foliadocserve
             metadata:
               entryPoints:
                 - "@type": "EntryPoint"
