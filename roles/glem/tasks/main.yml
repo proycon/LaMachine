@@ -18,6 +18,7 @@
             pip: "glem"
         metadata: #add entrypoint metadata to registry
             identifier: "glem"
+            producer: "{{ metadata_producer_clst }}"
             entryPoints:
               - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/glem", interfaceType: "WUI" }
               - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/glem", interfaceType: "REST", specification: "{{lm_base_url}}/glem/info" }
