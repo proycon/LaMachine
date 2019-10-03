@@ -25,7 +25,13 @@
           chdir: "{{source_path}}/valkuil-gecco"
       when: not valkuil_model.stat.exists
 
-
+    - name: Installing valkuil webservice
+      include_role:
+        name: lamachine-python-install
+      vars:
+        package:
+           github_user: "proycon"
+           github_repo: "valkuil-gecco"
 
 
 
