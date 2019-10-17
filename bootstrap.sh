@@ -697,7 +697,7 @@ if [[ "$OS" == "mac" ]]; then
     if ! which brew; then
         NEED+=("brew")
     fi
-    NEED+=("brew-cask")
+    #NEED+=("brew-cask")
 fi
 if [ ! -z "$NEED" ]; then
     echo " Missing dependencies: ${NEED[@]}"
@@ -931,9 +931,10 @@ for package in ${NEED[@]}; do
             esac
         done
         /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" || fatalerror "Homebrew installation failed!"
-        brew tap caskroom/cask || brew tap caskroom/cask || fatalerror "Failed to install brew-cask, ran: brew tap caskroom/cask"
+        #brew tap caskroom/cask-cask || brew tap caskroom/cask-cask || fatalerror "Failed to install brew-cask, ran: brew tap caskroom/cask"
         #                      ^-- command is repeated in case of failure because homebrew may update and fail once and work the 2nd time
     elif [ "$package" = "brew-cask" ]; then
+        #(NO LONGER USED!)
         echo "Installing brew-cask"
         brew tap caskroom/cask || brew tap caskroom/cask || fatalerror "Failed to install brew-cask, ran: brew tap caskroom/cask"
     elif [ "$package" = "git" ]; then

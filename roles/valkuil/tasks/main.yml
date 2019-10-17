@@ -25,9 +25,83 @@
           chdir: "{{source_path}}/valkuil-gecco"
       when: not valkuil_model.stat.exists
 
+    - name: Installing valkuil webservice
+      include_role:
+        name: lamachine-python-install
+      vars:
+        package:
+           github_user: "proycon"
+           github_repo: "valkuil-gecco"
 
+    - name: Installing valkuil frontend
+      include_role:
+        name: lamachine-python-install
+      vars:
+        package:
+           github_user: "proycon"
+           github_repo: "valkuil-frontend"
 
+    - name: Link Python package installation in opt/
+      become: "{{lm_become}}"
+      become_user: root
+      shell: |
+        export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
+        if [ ! -e "$DIR" ]; then
+            echo "Unable to find dir"
+            exit 2
+        fi
+        if [ -e "{{lm_prefix}}/opt/{{item}}" ]; then
+          rm "{{lm_prefix}}/opt/{{item}}"
+        fi
+        ln -sf $DIR {{lm_prefix}}/opt/{{item}}
+      with_items:
+        - valkuilwebservice
+        - valkuilnet
+      environment: "{{lm_env}}"
 
+      - name: "Install webserver configuration"
+        become: "{{lm_become}}"
+        become_user: root
+        template:
+          src: "nginx/valkuil.conf"
+          dest: "{{lm_prefix}}/etc/nginx/conf.d/valkuil.conf"
+          force: yes
+          backup: yes
+          owner: "{{unix_user}}"
+          group: "{{unix_group}}"
+        when: webservertype == "nginx" and ("all" in services or "valkuil"  in services)
+
+      - name: "Install uwsgi configurations"
+        become: "{{lm_become}}"
+        become_user: root
+        template:
+          src: "uwsgi/{{item}}.ini"
+          dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{item}}.ini"
+          force: yes
+          backup: yes
+          owner: "{{web_user}}" #permissions need to match the runner
+          group: "{{web_group}}"
+          mode: u+rw,a+r
+        when: '"all" in services or item in services'
+        with_items:
+          - valkuilnet
+          - valkuilwebservice
+
+      - name: "Install clam configuration"
+        become: "{{lm_become}}"
+        become_user: root
+        template:
+          src: "clam/{{item}}.config.yml"
+          dest: "{{lm_prefix}}/etc/{{item}}.config.yml"
+          force: yes
+          backup: yes
+          owner: "{{unix_user}}"
+          group: "{{unix_group}}"
+          mode: u+rw,a+r
+        when: '"all" in services or item in services'
+        with_items:
+          - valkuilwebservice
+          - valkuilnet
 
 
 
