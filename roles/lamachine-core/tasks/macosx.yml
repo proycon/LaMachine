@@ -37,6 +37,8 @@
             - ansible
             - boost
             - boost-python3
+            - poppler
+            - pandoc
       rescue:
         - name: "Error invoking Homebrew"
           fail:

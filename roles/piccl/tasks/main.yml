@@ -15,7 +15,7 @@
         - { debian: tesseract-ocr-nld, redhat: tesseract-langpack-nld, arch: tesseract-data-nld }
         - { debian: tesseract-ocr-deu, redhat: tesseract-langpack-deu, arch: tesseract-data-deu }
         - { debian: tesseract-ocr-fra, redhat: tesseract-langpack-fra, arch: tesseract-data-fra }
-        - { debian: poppler-utils, redhat: poppler-utils, arch: poppler }
+        - { debian: poppler-utils, redhat: poppler-utils, arch: poppler } #should already be installed earlier but no harm in making it explicit here anyway
         - { debian: djvulibre-bin, redhat: djvulibre, arch: djvulibre }
         - { debian: libdjvulibre-text }
         - { debian: imagemagick, redhat: ImageMagick, arch: imagemagick }
