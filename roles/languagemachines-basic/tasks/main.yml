@@ -16,6 +16,7 @@
               - timbl
               - timblserver
               - mbt
+              - mbtserver
               - frogdata
               - frog
               - foliautils
@@ -31,6 +32,7 @@
               - timbl
               - timblserver
               - mbt
+              - mbtserver
               - frogdata
               - frog
               - foliautils
@@ -54,6 +56,7 @@
               - { user: "LanguageMachines", repo: "frog" }
               - { user: "LanguageMachines", repo: "timbl" }
               - { user: "LanguageMachines", repo: "mbt" }
+              - { user: "LanguageMachines", repo: "mbtserver" }
               - { user: "LanguageMachines", repo: "foliautils" }
             loop_control:
               loop_var: package

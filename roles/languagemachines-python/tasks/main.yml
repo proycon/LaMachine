@@ -111,6 +111,15 @@
                github_repo: "clamservices"
                pip: "clamservices"
 
+        - name: Installing piereling
+          include_role:
+            name: lamachine-python-install
+          vars:
+            package:
+               github_user: "proycon"
+               github_repo: "piereling"
+               pip: "piereling"
+
         - name: Register webservices
           include_role:
               name: lamachine-register
@@ -128,6 +137,7 @@
             - ucto
             - timbl
             - babelente
+            - piereling
 
         - name: Register colibri-core webservice
           include_role:
@@ -160,9 +170,10 @@
             - django
             - flat
             - babelente
+            - piereling
           environment: "{{lm_env}}"
 
-        - name: "Install webserver configuration"
+        - name: "Install webserver configuration for clamservices"
           become: "{{lm_become}}"
           become_user: root
           template:
@@ -173,6 +184,30 @@
             owner: "{{unix_user}}"
             group: "{{unix_group}}"
           when: webservertype == "nginx" and ("all" in services or "ucto"  in services or "frog" in services or "timbl" in services or "colibricore" in services)
+
+        - name: "Install webserver configuration for babelente"
+          become: "{{lm_become}}"
+          become_user: root
+          template:
+            src: "nginx/babelente.conf"
+            dest: "{{lm_prefix}}/etc/nginx/conf.d/babelente.conf"
+            force: yes
+            backup: yes
+            owner: "{{unix_user}}"
+            group: "{{unix_group}}"
+          when: webservertype == "nginx" and ("all" in services or "babelente"  in services)
+
+        - name: "Install webserver configuration for piereling"
+          become: "{{lm_become}}"
+          become_user: root
+          template:
+            src: "nginx/piereling.conf"
+            dest: "{{lm_prefix}}/etc/nginx/conf.d/piereling.conf"
+            force: yes
+            backup: yes
+            owner: "{{unix_user}}"
+            group: "{{unix_group}}"
+          when: webservertype == "nginx" and ("all" in services or "piereling"  in services)
 
         - name: "Install uwsgi configurations"
           become: "{{lm_become}}"
@@ -191,7 +226,8 @@
             - ucto
             - timbl
             - colibricore
-            - babelente #technically not part of clamservices but included here for convenience
+            - babelente
+            - piereling
           #note: some things like alpino are deferred to that respective role
 
         - name: "Install clam configuration"
@@ -212,6 +248,7 @@
             - timbl
             - colibricore
             - babelente
+            - piereling
 
         - name: "Setting up FLAT"
           import_tasks: flat.yml
