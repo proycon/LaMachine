@@ -59,49 +59,49 @@
         - valkuilnet
       environment: "{{lm_env}}"
 
-      - name: "Install webserver configuration"
-        become: "{{lm_become}}"
-        become_user: root
-        template:
-          src: "nginx/valkuil.conf"
-          dest: "{{lm_prefix}}/etc/nginx/conf.d/valkuil.conf"
-          force: yes
-          backup: yes
-          owner: "{{unix_user}}"
-          group: "{{unix_group}}"
-        when: webservertype == "nginx" and ("all" in services or "valkuil"  in services)
+    - name: "Install webserver configuration"
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: "nginx/valkuil.conf"
+        dest: "{{lm_prefix}}/etc/nginx/conf.d/valkuil.conf"
+        force: yes
+        backup: yes
+        owner: "{{unix_user}}"
+        group: "{{unix_group}}"
+      when: webservertype == "nginx" and ("all" in services or "valkuil"  in services)
 
-      - name: "Install uwsgi configurations"
-        become: "{{lm_become}}"
-        become_user: root
-        template:
-          src: "uwsgi/{{item}}.ini"
-          dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{item}}.ini"
-          force: yes
-          backup: yes
-          owner: "{{web_user}}" #permissions need to match the runner
-          group: "{{web_group}}"
-          mode: u+rw,a+r
-        when: '"all" in services or item in services'
-        with_items:
-          - valkuilnet
-          - valkuilwebservice
+    - name: "Install uwsgi configurations"
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: "uwsgi/{{item}}.ini"
+        dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{item}}.ini"
+        force: yes
+        backup: yes
+        owner: "{{web_user}}" #permissions need to match the runner
+        group: "{{web_group}}"
+        mode: u+rw,a+r
+      when: '"all" in services or item in services'
+      with_items:
+        - valkuilnet
+        - valkuilwebservice
 
-      - name: "Install clam configuration"
-        become: "{{lm_become}}"
-        become_user: root
-        template:
-          src: "clam/{{item}}.config.yml"
-          dest: "{{lm_prefix}}/etc/{{item}}.config.yml"
-          force: yes
-          backup: yes
-          owner: "{{unix_user}}"
-          group: "{{unix_group}}"
-          mode: u+rw,a+r
-        when: '"all" in services or item in services'
-        with_items:
-          - valkuilwebservice
-          - valkuilnet
+    - name: "Install clam configuration"
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: "clam/{{item}}.config.yml"
+        dest: "{{lm_prefix}}/etc/{{item}}.config.yml"
+        force: yes
+        backup: yes
+        owner: "{{unix_user}}"
+        group: "{{unix_group}}"
+        mode: u+rw,a+r
+      when: '"all" in services or item in services'
+      with_items:
+        - valkuilwebservice
+        - valkuilnet
 
 
 
