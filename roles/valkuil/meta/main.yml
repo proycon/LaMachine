@@ -1,6 +1,6 @@
 ---
 dependencies:
-  - { role: languagemachines-basic }
-  - { role: languagemachines-python }
-  - { role: languagemachines-python-bindings }
-  - { role: gecco }
+  - { role: languagemachines-basic, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: languagemachines-python, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: languagemachines-python-bindings, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: gecco, when: "'fullrunonly' not in ansible_skip_tags"  }
