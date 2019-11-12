@@ -162,7 +162,6 @@
 
   - when: locality=="local"
     block:
-
       - name: Create writable directories for uwsgi (local)
         file:
             path: "{{ lm_prefix }}/{{item}}"

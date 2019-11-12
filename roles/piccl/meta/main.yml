@@ -1,8 +1,8 @@
 ---
 dependencies:
-  - { role: python-core }
-  - { role: java-core }
-  - { role: languagemachines-basic }
-  - { role: languagemachines-python }
-  - { role: nextflow }
-  - { role: languagemachines-pipelines }
+  - { role: python-core, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: java-core, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: languagemachines-basic, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: languagemachines-python, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: nextflow, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: languagemachines-pipelines, when: "'fullrunonly' not in ansible_skip_tags"  }

@@ -44,7 +44,7 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo "--editonly        Opens a text editor to edit the configuration and installation manifest, does not update."
     echo "--noninteractive  Do not query to user to input at any point."
     echo "--only [package]  Update only the specified package (or comma seperated list of multiple) "
-    echo "                  Note that this still automatically updates any dependencies."
+    echo "                  Note that this tries to leave most dependencies as-is (but no guarantees!)."
     echo "VARIABLES:"
     echo "force=1        Force recompilation of all sources"
     echo "force=2        Delete all sources prior to update"
@@ -103,8 +103,8 @@ else
     else
         echo "---" > "install.tmp.yml"
         grep "hosts:" install.yml >> "install.tmp.yml"
-        echo "  roles: [ $ONLY ]"  >> "install.tmp.yml"
-        ansible-playbook -i "hosts.ini" "install.tmp.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
+        echo "  roles: [ lamachine-core, $ONLY ]"  >> "install.tmp.yml"
+        ansible-playbook -i "hosts.ini" "install.tmp.yml" -v $OPTS --extra-vars "${*:$FIRST} --skip-tags=fullrunonly" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
         rc=${PIPESTATUS[0]}
     fi
 fi

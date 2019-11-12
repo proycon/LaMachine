@@ -1,6 +1,11 @@
 ---
   - when: webserver is defined and webserver == true
     block:
+      - name: Removing old sources of Labirinto
+        file:
+           path: "{{ source_path }}/labirinto"
+           state: absent
+
       - name: Obtaining Labirinto
         include_role:
           name: lamachine-git

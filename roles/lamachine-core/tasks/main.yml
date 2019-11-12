@@ -42,6 +42,11 @@
           msg: Forcing recompilation of all packages
       when: force is defined
 
+    - name: Checking whether we do a full run (skipped if not the case)
+      debug:
+          msg: Doing a full run
+      tags: fullrunonly
+
     - when: flavour == "vagrant" and extra_disksize is defined and extra_disksize > 0 and locality == "global"
       block:
 
@@ -145,6 +150,7 @@
         executable: /bin/bash
         chdir: "{{source_path}}"
       when: force is defined and force|int >= 2
+      tags: fullrunonly
 
     - name: Create home bin directory
       file:
@@ -238,21 +244,27 @@
 
     - import_tasks: debian.yml
       when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint") and root
+      tags: fullrunonly
 
     - import_tasks: redhat.yml
       when: (ansible_distribution|lower == 'redhat' or ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'fedora') and root
+      tags: fullrunonly
 
     - import_tasks: arch.yml
       when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro') and root
+      tags: fullrunonly
 
     - import_tasks: macosx.yml
       when: (ansible_distribution|lower == 'macosx')
+      tags: fullrunonly
 
     - import_tasks: conda.yml
       when: localenv_type == 'conda' and locality == "local"
+      tags: fullrunonly
 
     - import_tasks: virtualenv.yml
       when: localenv_type == 'virtualenv' and locality == "local"
+      tags: fullrunonly
 
     - name: Enable sudo access to LaMachine
       become: yes
@@ -495,6 +507,7 @@
           state: latest
           virtualenv: "{{ local_prefix }}"
       when: python_version.stdout >= "3.5" and locality == "local" and localenv_type == "virtualenv" and ansible_distribution|lower != 'macosx'
+      tags: fullrunonly
 
     - name: Installing ansible locally (virtualenv macOS)
       shell: |
@@ -505,6 +518,7 @@
           pip install ansible
       environment: "{{lm_env}}"
       when: python_version.stdout >= "3.5" and locality == "local" and localenv_type == "virtualenv" and ansible_distribution|lower == 'macosx'
+      tags: fullrunonly
 
     - name: Installing ansible locally (virtualenv, old version)
       pip:
@@ -512,6 +526,7 @@
           virtualenv: "{{ local_prefix }}"
           version: "2.4.4.0"
       when: python_version.stdout <= "3.4" and locality == "local" and localenv_type == "virtualenv"
+      tags: fullrunonly
 
     - name: Sending anonymous usage analytics to LaMachine creators
       shell: |
@@ -544,6 +559,7 @@
       become_user: root
       shell: pip3 install --upgrade pip {% if locality == 'global' %}--prefix "{{ lm_prefix }}"{% endif %}
       environment: "{{lm_env}}"
+      tags: fullrunonly
 
     - name: "Finding global pip3"
       shell: hash -r pip3 && which pip3
@@ -580,6 +596,7 @@
         dest: "{{lm_prefix}}/var/lamachine-registry.json"
         content: "{}"
         mode: u+rwx,a+rx
+      tags: fullrunonly
 
     - name: Installing CodeMetaPy, needed for registering metadata
       include_role:
@@ -596,6 +613,7 @@
           metadata: "{% if 'metadata' in item %}{{item.metadata}}{% else %}{}{% endif %}"
       when: metadata_extra is defined and metadata_extra
       with_items: "{{metadata_extra}}"
+      tags: fullrunonly
 
     - name: "Register metadata for certain base packages (apt/debian)" #should be in debian.yml but codemetapy is not available at that stage yet, so we do it here for now:
       shell: |
@@ -606,9 +624,11 @@
       environment: "{{lm_env}}"
       when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
       with_items: [python3, libboost-python, libicu, libxml2, libxslt1, gcc, g++, autoconf, automake, libaspell, libhunspell, curl]
+      tags: fullrunonly
 
     - import_tasks: webserver.yml
       when: webserver is defined and webserver
+      tags: fullrunonly
 
     - name: "Adding custom activation script"
       become: "{{lm_become}}"

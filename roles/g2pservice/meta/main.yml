@@ -1,4 +1,4 @@
 ---
 dependencies:
-  - { role: python-core }
+  - { role: python-core, when: "'fullrunonly' not in ansible_skip_tags"  }
   - { role: phonetisaurus }

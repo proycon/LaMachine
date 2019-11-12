@@ -1,3 +1,3 @@
 ---
 dependencies:
-  - { role: languagemachines-python-bindings }
+  - { role: languagemachines-python-bindings, when: "'fullrunonly' in ansible_skip_tags" }

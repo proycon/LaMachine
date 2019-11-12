@@ -1,5 +1,5 @@
 ---
 dependencies:
-  - { role: languagemachines-basic }
-  - { role: languagemachines-python }
-  - { role: alpino }
+  - { role: languagemachines-basic, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: languagemachines-python, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: alpino, when: "'fullrunonly' not in ansible_skip_tags"  }
