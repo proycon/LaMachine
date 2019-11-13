@@ -53,11 +53,10 @@
             become: true
             become_user: root
             apt:
-              name: "{{item}}"
+              name: [aptitude, parted, e2fsprogs]
               state: present
               update_cache: yes
               cache_valid_time: 900
-            with_items: [aptitude, parted, e2fsprogs]
             when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint") and root
 
           - name: "Adding extra LaMachine partition" #only if it does not exist yet
