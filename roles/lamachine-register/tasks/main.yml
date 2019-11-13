@@ -81,10 +81,10 @@
 
         #the temporary files will simply be empty and thus without any effects if they are not used
         if [ "$TYPE" = "PYTHON" ]; then
-          {{lm_prefix}}/bin/codemetapy --with-entrypoints -i json,json,json,python  {{lm_prefix}}/var/metadata/$IDENTIFIER.json {{lm_prefix}}/var/remote.codemeta.tmp.json {{lm_prefix}}/var/passed.codemeta.tmp.json $PYTHON_IDENTIFIER
+          {{lm_prefix}}/bin/codemetapy --with-entrypoints -i json,json,json,python  {{lm_prefix}}/var/metadata/$IDENTIFIER.json {{lm_prefix}}/var/remote.codemeta.tmp.json {{lm_prefix}}/var/passed.codemeta.tmp.json $PYTHON_IDENTIFIER > "{{lm_prefix}}/var/metadata/$IDENTIFIER.json"
           exit $?
         else
-          {{lm_prefix}}/bin/codemetapy --with-entrypoints -i json,json,json  {{lm_prefix}}/var/metadata/$IDENTIFIER.json {{lm_prefix}}/var/remote.codemeta.tmp.json {{lm_prefix}}/var/passed.codemeta.tmp.json
+          {{lm_prefix}}/bin/codemetapy --with-entrypoints -i json,json,json  {{lm_prefix}}/var/metadata/$IDENTIFIER.json {{lm_prefix}}/var/remote.codemeta.tmp.json {{lm_prefix}}/var/passed.codemeta.tmp.json > "{{lm_prefix}}/var/metadata/$IDENTIFIER.json"
           exit $?
         fi
       args:
