@@ -48,6 +48,7 @@
         #!/bin/bash
         # what we do here is build a chain of metadata, each one updating over the last, effectively merging all the fields
         set -o pipefail
+        echo "REGISTERING METADATA">&2
         echo "Run environment:">&2
         echo "    LM_NAME=$LM_NAME">&2
         echo "    PATH=$PATH">&2
@@ -57,16 +58,13 @@
         echo "    PYTHON=$(which python3)">&2
         echo "    PIP=$(which pip3)">&2
 
-        {% if 'pip' in package %}
-        TYPE="python"
-        {% else %}
         TYPE="other"
-        {% endif %}
 
         {% if 'pip' in package %}
         PYTHON_IDENTIFIER="{{package.pip}}"
         IDENTIFIER="{{package.pip}}"
         TYPE="python"
+        echo "Metadata for python package: $PYTHON_IDENTIFIER">&2
         {% endif %}
 
         {% if 'metadata' in package and 'identifier' in package.metadata  %}
