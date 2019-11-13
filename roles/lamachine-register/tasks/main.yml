@@ -19,13 +19,21 @@
         dest: "{{lm_prefix}}/var/{{item}}"
         force: yes
       with_items:
-        - "remote.codemeta.tmp.json"
+        - "provided.codemeta.tmp.json"
         - "passed.codemeta.tmp.json"
+
+
+    - name: "Use metadata provided by the repository"
+      copy:
+          src: "{{codemeta}}"
+          dest: "{{lm_prefix}}/var/provided.codemeta.tmp.json"
+          force: yes
+      when: codemeta is defined and codemeta != ""
 
     - name: "Download remote metadata {% if url is defined and url %}from {{url}}{% endif %}"
       get_url:
           url: "{{url}}"
-          dest: "{{lm_prefix}}/var/remote.codemeta.tmp.json"
+          dest: "{{lm_prefix}}/var/provided.codemeta.tmp.json"
           force: yes
       when: url is defined and url != ""
 
@@ -77,14 +85,14 @@
 
         if [ ! -f "{{lm_prefix}}/var/metadata/$IDENTIFIER.json" ]; then
           #create an initially empty metadata file
-          echo "{}" > "{{lm_prefix}}/var/metadata/$IDENTIFIER.json"
+          echo '{}' > "{{lm_prefix}}/var/metadata/$IDENTIFIER.json"
         fi
 
         #the temporary files will simply be empty and thus without any effects if they are not used
         if [ "$TYPE" = "python" ]; then
-        COMMAND="{{lm_prefix}}/bin/codemetapy --with-entrypoints -i json,json,json,python  {{lm_prefix}}/var/metadata/$IDENTIFIER.json {{lm_prefix}}/var/remote.codemeta.tmp.json {{lm_prefix}}/var/passed.codemeta.tmp.json $PYTHON_IDENTIFIER"
+          COMMAND="{{lm_prefix}}/bin/codemetapy --with-entrypoints -i json,json,json,python  {{lm_prefix}}/var/metadata/$IDENTIFIER.json  {{lm_prefix}}/var/passed.codemeta.tmp.json {{lm_prefix}}/var/provided.codemeta.tmp.json $PYTHON_IDENTIFIER"
         else
-          COMMAND="{{lm_prefix}}/bin/codemetapy --with-entrypoints -i json,json,json  {{lm_prefix}}/var/metadata/$IDENTIFIER.json {{lm_prefix}}/var/remote.codemeta.tmp.json {{lm_prefix}}/var/passed.codemeta.tmp.json"
+          COMMAND="{{lm_prefix}}/bin/codemetapy --with-entrypoints -i json,json,json  {{lm_prefix}}/var/metadata/$IDENTIFIER.json  {{lm_prefix}}/var/passed.codemeta.tmp.json {{lm_prefix}}/var/provided.codemeta.tmp.json"
         fi
         echo "Running: $COMMAND">&2
         $COMMAND > "{{lm_prefix}}/var/out.codemeta.tmp.json"
