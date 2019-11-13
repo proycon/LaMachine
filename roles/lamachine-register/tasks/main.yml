@@ -73,6 +73,7 @@
           echo "No identifier passed" >&2
           exit 2
         fi
+        echo "Identifier: $IDENTIFIER">&2
 
         if [ ! -f "{{lm_prefix}}/var/metadata/$IDENTIFIER.json" ]; then
           #create an initially empty metadata file
@@ -81,12 +82,13 @@
 
         #the temporary files will simply be empty and thus without any effects if they are not used
         if [ "$TYPE" = "PYTHON" ]; then
-          {{lm_prefix}}/bin/codemetapy --with-entrypoints -i json,json,json,python  {{lm_prefix}}/var/metadata/$IDENTIFIER.json {{lm_prefix}}/var/remote.codemeta.tmp.json {{lm_prefix}}/var/passed.codemeta.tmp.json $PYTHON_IDENTIFIER > "{{lm_prefix}}/var/out.codemeta.tmp.json"
-          rc=$?
+          COMMAND="{{lm_prefix}}/bin/codemetapy --with-entrypoints -i json,json,json,python  {{lm_prefix}}/var/metadata/$IDENTIFIER.json {{lm_prefix}}/var/remote.codemeta.tmp.json {{lm_prefix}}/var/passed.codemeta.tmp.json $PYTHON_IDENTIFIER > \"{{lm_prefix}}/var/out.codemeta.tmp.json\""
         else
-          {{lm_prefix}}/bin/codemetapy --with-entrypoints -i json,json,json  {{lm_prefix}}/var/metadata/$IDENTIFIER.json {{lm_prefix}}/var/remote.codemeta.tmp.json {{lm_prefix}}/var/passed.codemeta.tmp.json > "{{lm_prefix}}/var/out.codemeta.tmp.json"
-          rc=$?
+          COMMAND="{{lm_prefix}}/bin/codemetapy --with-entrypoints -i json,json,json  {{lm_prefix}}/var/metadata/$IDENTIFIER.json {{lm_prefix}}/var/remote.codemeta.tmp.json {{lm_prefix}}/var/passed.codemeta.tmp.json > \"{{lm_prefix}}/var/out.codemeta.tmp.json\""
         fi
+        echo "Running: $COMMAND">&2
+        $COMMAND
+        rc=$?
         if [ $rc -eq 0 ]; then
           cp "{{lm_prefix}}/var/out.codemeta.tmp.json" "{{lm_prefix}}/var/metadata/$IDENTIFIER.json"
         fi
