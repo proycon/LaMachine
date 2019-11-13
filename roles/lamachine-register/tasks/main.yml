@@ -79,6 +79,8 @@
           echo "No identifier passed" >&2
           exit 2
         fi
+        IDENTIFIER=$(echo $IDENTIFIER | tr '[:upper:]' '[:lower:]')
+
         echo "Identifier: $IDENTIFIER">&2
 
         if [ ! -f "{{lm_prefix}}/var/metadata/$IDENTIFIER.json" ]; then
