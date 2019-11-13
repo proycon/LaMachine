@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="LaMachine list")
     #parser.add_argument('--yaml', help="Read metadata from standard input (YAML format)", action='store_true',required=False)
-    parser.add_argument('-r', "--registry", type=str,help="Short output", action='store',required=False, default=LM_PREFIX + "/var/lamachine-registry.json")
+    parser.add_argument('-r', "--registry", type=str,help="Registry file", action='store',required=False, default=LM_PREFIX + "/var/lamachine-registry.json")
     parser.add_argument("--csv", type=str, help="Output to CSV file", action='store',required=False, default="")
     parser.add_argument("--md", help="Output to Markdown", action='store_true')
     parser.add_argument('-s', "--short", help="Short output", action='store_true',required=False)

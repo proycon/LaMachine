@@ -591,12 +591,20 @@
         force: "yes"
         mode: u+rwx,a+rx
 
-    - name: Reinitialize LaMachine registry
-      copy:
-        dest: "{{lm_prefix}}/var/lamachine-registry.json"
-        content: "{}"
+    - name: Install LaMachine registry build script
+      template:
+        src: lamachine-build-registry
+        dest: "{{lm_prefix}}/bin/lamachine-build-registry"
+        force: "yes"
         mode: u+rwx,a+rx
-      tags: fullrunonly
+
+    - name: Create metadata directory
+      file:
+          path: "{{ lm_prefix }}/var/metadata"
+          state: directory
+          owner: "{{unix_user}}"
+          group: "{{unix_group}}"
+          mode: u+rwx,g+rwsx,a+rx
 
     - name: Installing CodeMetaPy, needed for registering metadata
       include_role:

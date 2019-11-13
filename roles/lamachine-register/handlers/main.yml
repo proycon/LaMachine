@@ -1,0 +1,7 @@
+---
+  - name: lamachine-build-registry
+    include_role:
+      name: lamachine-run
+    vars:
+      command: lamachine-build-registry
+      chdir: "{{ lm_prefix }}/var"

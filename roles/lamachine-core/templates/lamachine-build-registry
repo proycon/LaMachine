@@ -1,0 +1,6 @@
+#!/bin/bash
+REGISTRY="{{lm_prefix}}/var/lamachine-registry.json"
+rm $REGISTRY
+for f in {{lm_prefix}}/var/metadata/*.json; do
+    codemetapy -r $REGISTRY -i json $f || exit 2
+done
