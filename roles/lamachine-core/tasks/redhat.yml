@@ -30,18 +30,16 @@
       become: true
       become_user: root
       yum:
-        name: "{{item}}"
+        name: [psmisc, pkgconfig, git, mercurial, icu, libtool, autoconf, automake, autoconf-archive, nano, make, gcc, gcc-c++, libxml2, libxml2-devel, libxslt, libxslt-devel, libtar, libtar-devel, zlib, zlib-devel, bzip2, bzip2-devel, libcurl, gnutls-devel, libcurl-devel, wget, curl, libexttextcat, libexttextcat-devel, zip, unzip, pcre, pcre-devel, poppler-utils, pandoc]
         state: installed
         update_cache: "{% if nosysupdate is not defined or nosysupdate == 0 %}yes{% else %}no{% endif %}"
-      with_items: [psmisc, pkgconfig, git, mercurial, icu, libtool, autoconf, automake, autoconf-archive, nano, make, gcc, gcc-c++, libxml2, libxml2-devel, libxslt, libxslt-devel, libtar, libtar-devel, zlib, zlib-devel, bzip2, bzip2-devel, libcurl, gnutls-devel, libcurl-devel, wget, curl, libexttextcat, libexttextcat-devel, zip, unzip, pcre, pcre-devel, poppler-utils, pandoc]
 
     - name: Installing Python base packages for CentOS/RHEL (yum)
       become: true
       become_user: root
       yum:
-        name: "{{item}}"
+        name: [python36u, python36u-devel, python36u-pip, python36u-setuptools, libicu-devel]
         state: installed
-      with_items: [python36u, python36u-devel, python36u-pip, python36u-setuptools, libicu-devel]
       when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
 
     - name: Linking Python 3.6 (RHEL/CentOS)
@@ -75,9 +73,8 @@
       become: true
       become_user: root
       yum:
-        name: "{{item}}"
+        name: [python3, python3-devel, python3-pip, python3-virtualenv, boost, boost-devel, boost-python3, libicu-devel ]
         state: installed
-      with_items: [python3, python3-devel, python3-pip, python3-virtualenv, boost, boost-devel, boost-python3, libicu-devel ]
       when: ansible_distribution|lower != "centos" and ansible_distribution|lower != "rhel" #aka fedora mainly
 
 
