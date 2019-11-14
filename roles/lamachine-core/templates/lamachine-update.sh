@@ -98,12 +98,16 @@ if [ -e "hosts.{{conf_name}}" ]; then
 else
     #LaMachine v2.1.0+
     if [ -z "$ONLY" ]; then
+        grep "lamachine-core-finish" install.yml >/dev/null
+        if [ $? -ne 0 ]; then
+            lamachine-add "lamachine-core-finish"
+        fi
         ansible-playbook -i "hosts.ini" "install.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
         rc=${PIPESTATUS[0]}
     else
         echo "---" > "install.tmp.yml"
         grep "hosts:" install.yml >> "install.tmp.yml"
-        echo "  roles: [ lamachine-core, $ONLY ]"  >> "install.tmp.yml"
+        echo "  roles: [ lamachine-core, $ONLY, lamachine-core-finish ]"  >> "install.tmp.yml"
         ansible-playbook -i "hosts.ini" "install.tmp.yml" -v $OPTS --extra-vars "${*:$FIRST} --skip-tags=fullrunonly" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
         rc=${PIPESTATUS[0]}
     fi

@@ -1389,7 +1389,7 @@ if [ $BUILD -eq 1 ]; then
             if [ "$VERSION" = "custom" ]; then
                 echo "  vars_files: [ customversions.yml ]" >> $STAGEDMANIFEST
             fi
-            echo "  roles: [ lamachine-core, $INSTALL ]" >> $STAGEDMANIFEST
+            echo "  roles: [ lamachine-core, $INSTALL, lamachine-core-finish ]" >> $STAGEDMANIFEST
         else
             #use the template
             cp $SOURCEDIR/install-template.yml $STAGEDMANIFEST || fatalerror "Unable to copy $SOURCEDIR/install-template.yml"
