@@ -101,7 +101,7 @@
                                               #to customise installed languages, we only ship a subset by default)
                                               #(Needs to be started manually using 'spotlight' and a language code parameter)
      # - fasttext                         ## Library for efficient text classification and representation learning
-
+      - lamachine-core-finish             ## Always leave this one as the last task!
 
 # NOTE: ensure that all enabled roles are lined up with the same amount of spaces!
 #       (all hyphens must be vertically on the same column!)

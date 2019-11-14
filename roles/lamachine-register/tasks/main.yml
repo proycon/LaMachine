@@ -107,4 +107,3 @@
       register: register_result
       failed_when: "register_result.rc != 0 and register_result.rc != 3"
       environment: "{{lm_env}}"
-      notify: lamachine-build-registry
