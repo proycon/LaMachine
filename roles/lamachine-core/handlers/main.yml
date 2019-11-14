@@ -16,5 +16,4 @@
     environment:
         PATH: "{{ansible_env.HOME}}/bin:{{ansible_env.PATH}}"
     ignore_errors: "{{allow_failure|default(False)}}"
-    register: lamachine_run
     changed_when: 'sideeffects is defined and sideeffects == True'

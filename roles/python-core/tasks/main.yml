@@ -5,20 +5,8 @@
          become: yes
          become_user: root
          apt:
-             name: "{{item}}"
+             name: [ cython3, python3-numpy, python3-scipy, python3-matplotlib, python3-crypto, python3-yaml, python3-requests, python3-requests-oauthlib, python3-flask, python3-cherrypy3, python3-jinja2 ]
              state: latest
-         with_items:
-             - cython3
-             - python3-numpy
-             - python3-scipy
-             - python3-matplotlib
-             - python3-crypto
-             - python3-yaml
-             - python3-requests
-             - python3-requests-oauthlib
-             - python3-flask
-             - python3-cherrypy3
-             - python3-jinja2
          when: ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint"
 
 
