@@ -12,7 +12,7 @@
     - name: "{% if 'debian' in package %}{{package.debian}}{% else %}(NOT APPLICABLE){% endif %} - Registering package metadata (Debian/Ubuntu)"
       shell: |
         #!/bin/bash
-        apt show {{package.debian}} | {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i apt
+        apt show {{package.debian}} | {{lm_prefix}}/bin/codemetapy --with-entrypoints -i apt - > {{lm_prefix}}/var/metadata/{{item|lower}}.json
       args:
         executable: /bin/bash
       environment: "{{lm_env}}"

@@ -625,7 +625,7 @@
     - name: "Register metadata for certain base packages (apt/debian)" #should be in debian.yml but codemetapy is not available at that stage yet, so we do it here for now:
       shell: |
         #!/bin/bash
-        apt show {{item}} | {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i apt
+        apt show {{item}} | {{lm_prefix}}/bin/codemetapy --with-entrypoints -i apt - > {{lm_prefix}}/var/metadata/{{item|lower}}.json
       args:
         executable: /bin/bash
       environment: "{{lm_env}}"
