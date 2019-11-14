@@ -1,6 +1,6 @@
 ---
 dependencies:
-  - { role: python-core }
-  - { role: languagemachines-basic }
-  - { role: languagemachines-python }
-  - { role: moses }
+  - { role: python-core, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: languagemachines-basic, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: languagemachines-python, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: moses, when: "'fullrunonly' not in ansible_skip_tags"  }
