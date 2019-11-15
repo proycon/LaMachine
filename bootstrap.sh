@@ -1293,6 +1293,8 @@ if [ $NOSYSUPDATE -ne 0 ]; then
     echo "nosysupdate: $NOSYSUPDATE #Skips updating the global packages provided by the distribution" >> $STAGEDCONFIG
 fi
     if [[ $FLAVOUR == "local" ]] || [[ "$OS" == "mac" ]]; then
+        echo "python_bin: python3 #The Python interpreter to use to set up the virtual environment, may be an absolute path" >> $STAGEDCONFIG
+        echo "pip_bin: pip3 #The pip tool belonging to the above interpreter, may be an absolute path" >> $STAGEDCONFIG
         echo "web_user: \"$USERNAME\"" >> $STAGEDCONFIG
         echo "web_group: \"$GROUP\"" >> $STAGEDCONFIG
     else

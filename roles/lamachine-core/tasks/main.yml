@@ -461,7 +461,7 @@
           when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
 
         - block:
-            - name: Obtaining Python version
+            - name: Obtaining local environment's Python version
               shell: python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'
               register: python_version
               environment: "{{lm_env}}"
@@ -488,7 +488,9 @@
         - name: Obtaining global Python version
           shell: |
                  #!/bin/bash
-                 [[ -f /usr/bin/python3 ]] && /usr/bin/python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'
+                 if which "{{ python_bin }}"; then
+                  {{python_bin}} -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'
+                 fi
           args:
             executable: /bin/bash
           register: global_python_version
@@ -558,12 +560,12 @@
         - name: Upgrade pip #we need at least pip10, this is not always the case in distro-supplied packages
           become: "{{lm_become}}"
           become_user: root
-          shell: pip3 install --upgrade pip {% if locality == 'global' %}--prefix "{{ lm_prefix }}"{% endif %}
+          shell: pip install --upgrade pip {% if locality == 'global' %}--prefix "{{ lm_prefix }}"{% endif %}
           environment: "{{lm_env}}"
           tags: fullrunonly
 
         - name: "Finding global pip3"
-          shell: hash -r pip3 && which pip3
+          shell: hash -r {{pip_bin}} && which {{pip_bin}}
           register: pip
           environment: "{{lm_env}}"
           when: locality == "global"
@@ -571,8 +573,8 @@
         - name: "Testing global pip3"
           shell: |
             #!/bin/bash
-            python3 -c "import pip; print(pip.__path__[0])"
-            pip3 list
+            {{python_bin}} -c "import pip; print(pip.__path__[0])"
+            {{pip_bin}} list
           environment: "{{lm_env}}"
           args:
             executable: /bin/bash
