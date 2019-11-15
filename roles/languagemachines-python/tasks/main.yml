@@ -1,255 +1,259 @@
 ---
-    - name: "Extra global pip3 test"
-      shell: pip3 list
-      environment: "{{lm_env}}"
-      when: locality == "global"
-
-    - name: Installing Python packages
-      include_role:
-        name: lamachine-python-install
-      with_items:
-          - { github_user: "proycon", github_repo: "pynlpl", pip: "pynlpl" }
-          - { github_user: "proycon", github_repo: "clam", pip: "clam" }
-          - { github_user: "proycon", github_repo: "foliapy", pip: "folia" }
-          - { github_user: "proycon", github_repo: "foliatools", pip: "folia-tools" }
-          - { github_user: "proycon", github_repo: "foliadocserve", pip: "foliadocserve" }
-          - { github_user: "proycon", github_repo: "babelpy", pip: "babelpy" }
-          - { github_user: "proycon", github_repo: "babelente", pip: "babelente" }
-      loop_control:
-           loop_var: package
-
-    - name: Testing Python packages
-      include_role:
-          name: lamachine-run
-      vars:
-          command: "python3 -c 'import {{ item }}'"
-          allow_failure: "{{ignore_tests|bool}}"
-      with_items:
-          - pynlpl
-          - pynlpl.formats.folia #legacy!
-          - folia.main
-      ignore_errors: "{{ignore_tests|bool}}"
-
-    - name: Updating metadata for CLARIAH software
-      include_role:
-        name: lamachine-register
-      vars:
-        update: "{{item}}"
-        metadata:
-          identifier: "{{item}}"
-          funder:
-            - "@type": Organization
-              name: CLARIAH
-              url: https://clariah.nl
-      with_items:
-        - clam
-        - folia-tools
-
-    - name: Updating metadata for BabelEnte
-      include_role:
-        name: lamachine-register
-      vars:
-        update: "babelente"
-        metadata:
-          identifier: babelente
-          funder: "TraMOOC"
-
-    - name: Testing whether python-based tools start
-      include_role:
-          name: lamachine-run
-      vars:
-          command: "{{ item }} -h"
-      with_items:
-          - foliavalidator
-          - clamservice
-          - folia2html
-          - folia2txt
-          - foliaquery
-          - babelente
-      ignore_errors: "{{ignore_tests|bool}}"
-
-    - when: webserver|bool
+    - when: ran_languagemachines_python is not defined
       block:
-        - name: Installing FLAT
+        - name: "Extra global pip3 test"
+          shell: pip3 list
+          environment: "{{lm_env}}"
+          when: locality == "global"
+
+        - name: Installing Python packages
           include_role:
             name: lamachine-python-install
-          vars:
-            package:
-               github_user: "proycon"
-               github_repo: "flat"
-               pip: "FoLiA-Linguistic-Annotation-Tool"
-            metadata:
-              identifier: "folia-linguistic-annotation-tool"
-              name: "FLAT: FoLiA Linguistic Annotation Tool"
-              entryPoints:
-                - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/flat", interfaceType: "WUI" }
-          when: '"all" in services or "flat" in services'
+          with_items:
+              - { github_user: "proycon", github_repo: "pynlpl", pip: "pynlpl" }
+              - { github_user: "proycon", github_repo: "clam", pip: "clam" }
+              - { github_user: "proycon", github_repo: "foliapy", pip: "folia" }
+              - { github_user: "proycon", github_repo: "foliatools", pip: "folia-tools" }
+              - { github_user: "proycon", github_repo: "foliadocserve", pip: "foliadocserve" }
+              - { github_user: "proycon", github_repo: "babelpy", pip: "babelpy" }
+              - { github_user: "proycon", github_repo: "babelente", pip: "babelente" }
+          loop_control:
+               loop_var: package
 
-        - name: Registering foliadocserve entrypoint
+        - name: Testing Python packages
+          include_role:
+              name: lamachine-run
+          vars:
+              command: "python3 -c 'import {{ item }}'"
+              allow_failure: "{{ignore_tests|bool}}"
+          with_items:
+              - pynlpl
+              - pynlpl.formats.folia #legacy!
+              - folia.main
+          ignore_errors: "{{ignore_tests|bool}}"
+
+        - name: Updating metadata for CLARIAH software
           include_role:
             name: lamachine-register
           vars:
-            update: "foliadocserve"
-            package:
-              pip: foliadocserve
+            update: "{{item}}"
             metadata:
-              entryPoints:
-                - "@type": "EntryPoint"
-                  urlTemplate: "{{lm_base_url}}/foliadocserve"
-                  interfaceType: "WUI"
-                - "@type": "EntryPoint"
-                  urlTemplate: "{{lm_base_url}}/foliadocserve"
-                  interfaceType: "REST"
-          when: '"all" in services or "foliadocserve" in services'
-
-        - name: Installing webservices
-          include_role:
-            name: lamachine-python-install
-          vars:
-            package:
-               github_user: "proycon"
-               github_repo: "clamservices"
-               pip: "clamservices"
-
-        - name: Installing piereling
-          include_role:
-            name: lamachine-python-install
-          vars:
-            package:
-               github_user: "proycon"
-               github_repo: "piereling"
-               pip: "piereling"
-
-        - name: Register webservices
-          include_role:
-              name: lamachine-register
-          vars:
-              update: "{{item}}"
-              allow_failure: "yes" #in case the app is not installed
-              metadata: #add entrypoint metadata to registry
-                  identifier: "{{item}}"
-                  entryPoints:
-                    - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "WUI", mediatorApplication: "#clamservices" }
-                    - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "REST", specification: "{{lm_base_url}}/{{item}}/info",  mediatorApplication: "#clamservices" }
-          when: '"all" in services or item in services'
-          with_items:
-            - frog
-            - ucto
-            - timbl
-            - babelente
-            - piereling
-
-        - name: Register colibri-core webservice
-          include_role:
-              name: lamachine-register
-          vars:
-            update: "colibri-core"
-            allow_failure: "yes" #in case the app is not installed
-            metadata: #add entrypoint metadata to registry
-                identifier: "colibri-core"
-                entryPoints:
-                  - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/colibricore", interfaceType: "WUI", mediatorApplication: "#clamservices" }
-                  - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/colibricore", interfaceType: "REST", specification: "{{lm_base_url}}/colibricore/info",  mediatorApplication: "#clamservices" }
-
-        - name: Link Python package installation in opt/
-          become: "{{lm_become}}"
-          become_user: root
-          shell: |
-            export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
-            if [ ! -e "$DIR" ]; then
-                echo "Unable to find dir"
-                exit 2
-            fi
-            if [ -e "{{lm_prefix}}/opt/{{item}}" ]; then
-              rm "{{lm_prefix}}/opt/{{item}}"
-            fi
-            ln -sf $DIR {{lm_prefix}}/opt/{{item}}
+              identifier: "{{item}}"
+              funder:
+                - "@type": Organization
+                  name: CLARIAH
+                  url: https://clariah.nl
           with_items:
             - clam
-            - clamservices
-            - django
-            - flat
-            - babelente
-            - piereling
-          environment: "{{lm_env}}"
+            - folia-tools
 
-        - name: "Install webserver configuration for clamservices"
-          become: "{{lm_become}}"
-          become_user: root
-          template:
-            src: "nginx/clamservices.conf"
-            dest: "{{lm_prefix}}/etc/nginx/conf.d/clamservices.conf"
-            force: yes
-            backup: yes
-            owner: "{{unix_user}}"
-            group: "{{unix_group}}"
-          when: webservertype == "nginx" and ("all" in services or "ucto"  in services or "frog" in services or "timbl" in services or "colibricore" in services)
+        - name: Updating metadata for BabelEnte
+          include_role:
+            name: lamachine-register
+          vars:
+            update: "babelente"
+            metadata:
+              identifier: babelente
+              funder: "TraMOOC"
 
-        - name: "Install webserver configuration for babelente"
-          become: "{{lm_become}}"
-          become_user: root
-          template:
-            src: "nginx/babelente.conf"
-            dest: "{{lm_prefix}}/etc/nginx/conf.d/babelente.conf"
-            force: yes
-            backup: yes
-            owner: "{{unix_user}}"
-            group: "{{unix_group}}"
-          when: webservertype == "nginx" and ("all" in services or "babelente"  in services)
-
-        - name: "Install webserver configuration for piereling"
-          become: "{{lm_become}}"
-          become_user: root
-          template:
-            src: "nginx/piereling.conf"
-            dest: "{{lm_prefix}}/etc/nginx/conf.d/piereling.conf"
-            force: yes
-            backup: yes
-            owner: "{{unix_user}}"
-            group: "{{unix_group}}"
-          when: webservertype == "nginx" and ("all" in services or "piereling"  in services)
-
-        - name: "Install uwsgi configurations"
-          become: "{{lm_become}}"
-          become_user: root
-          template:
-            src: "uwsgi/{{item}}.ini"
-            dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{item}}.ini"
-            force: yes
-            backup: yes
-            owner: "{{web_user}}" #permissions need to match the runner
-            group: "{{web_group}}"
-            mode: u+rw,a+r
-          when: '"all" in services or item in services'
+        - name: Testing whether python-based tools start
+          include_role:
+              name: lamachine-run
+          vars:
+              command: "{{ item }} -h"
           with_items:
-            - frog
-            - ucto
-            - timbl
-            - colibricore
-            - babelente
-            - piereling
-          #note: some things like alpino are deferred to that respective role
+              - foliavalidator
+              - clamservice
+              - folia2html
+              - folia2txt
+              - foliaquery
+              - babelente
+          ignore_errors: "{{ignore_tests|bool}}"
 
-        - name: "Install clam configuration"
-          become: "{{lm_become}}"
-          become_user: root
-          template:
-            src: "clam/{{item}}.config.yml"
-            dest: "{{lm_prefix}}/etc/{{item}}.config.yml"
-            force: yes
-            backup: yes
-            owner: "{{unix_user}}"
-            group: "{{unix_group}}"
-            mode: u+rw,a+r
-          when: '"all" in services or item in services'
-          with_items:
-            - frog
-            - ucto
-            - timbl
-            - colibricore
-            - babelente
-            - piereling
+        - when: webserver|bool
+          block:
+            - name: Installing FLAT
+              include_role:
+                name: lamachine-python-install
+              vars:
+                package:
+                   github_user: "proycon"
+                   github_repo: "flat"
+                   pip: "FoLiA-Linguistic-Annotation-Tool"
+                metadata:
+                  identifier: "folia-linguistic-annotation-tool"
+                  name: "FLAT: FoLiA Linguistic Annotation Tool"
+                  entryPoints:
+                    - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/flat", interfaceType: "WUI" }
+              when: '"all" in services or "flat" in services'
 
-        - name: "Setting up FLAT"
-          import_tasks: flat.yml
-          when: '"all" in services or "flat" in services'
+            - name: Registering foliadocserve entrypoint
+              include_role:
+                name: lamachine-register
+              vars:
+                update: "foliadocserve"
+                package:
+                  pip: foliadocserve
+                metadata:
+                  entryPoints:
+                    - "@type": "EntryPoint"
+                      urlTemplate: "{{lm_base_url}}/foliadocserve"
+                      interfaceType: "WUI"
+                    - "@type": "EntryPoint"
+                      urlTemplate: "{{lm_base_url}}/foliadocserve"
+                      interfaceType: "REST"
+              when: '"all" in services or "foliadocserve" in services'
+
+            - name: Installing webservices
+              include_role:
+                name: lamachine-python-install
+              vars:
+                package:
+                   github_user: "proycon"
+                   github_repo: "clamservices"
+                   pip: "clamservices"
+
+            - name: Installing piereling
+              include_role:
+                name: lamachine-python-install
+              vars:
+                package:
+                   github_user: "proycon"
+                   github_repo: "piereling"
+                   pip: "piereling"
+
+            - name: Register webservices
+              include_role:
+                  name: lamachine-register
+              vars:
+                  update: "{{item}}"
+                  allow_failure: "yes" #in case the app is not installed
+                  metadata: #add entrypoint metadata to registry
+                      identifier: "{{item}}"
+                      entryPoints:
+                        - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "WUI", mediatorApplication: "#clamservices" }
+                        - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "REST", specification: "{{lm_base_url}}/{{item}}/info",  mediatorApplication: "#clamservices" }
+              when: '"all" in services or item in services'
+              with_items:
+                - frog
+                - ucto
+                - timbl
+                - babelente
+                - piereling
+
+            - name: Register colibri-core webservice
+              include_role:
+                  name: lamachine-register
+              vars:
+                update: "colibri-core"
+                allow_failure: "yes" #in case the app is not installed
+                metadata: #add entrypoint metadata to registry
+                    identifier: "colibri-core"
+                    entryPoints:
+                      - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/colibricore", interfaceType: "WUI", mediatorApplication: "#clamservices" }
+                      - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/colibricore", interfaceType: "REST", specification: "{{lm_base_url}}/colibricore/info",  mediatorApplication: "#clamservices" }
+
+            - name: Link Python package installation in opt/
+              become: "{{lm_become}}"
+              become_user: root
+              shell: |
+                export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
+                if [ ! -e "$DIR" ]; then
+                    echo "Unable to find dir"
+                    exit 2
+                fi
+                if [ -e "{{lm_prefix}}/opt/{{item}}" ]; then
+                  rm "{{lm_prefix}}/opt/{{item}}"
+                fi
+                ln -sf $DIR {{lm_prefix}}/opt/{{item}}
+              with_items:
+                - clam
+                - clamservices
+                - django
+                - flat
+                - babelente
+                - piereling
+              environment: "{{lm_env}}"
+
+            - name: "Install webserver configuration for clamservices"
+              become: "{{lm_become}}"
+              become_user: root
+              template:
+                src: "nginx/clamservices.conf"
+                dest: "{{lm_prefix}}/etc/nginx/conf.d/clamservices.conf"
+                force: yes
+                backup: yes
+                owner: "{{unix_user}}"
+                group: "{{unix_group}}"
+              when: webservertype == "nginx" and ("all" in services or "ucto"  in services or "frog" in services or "timbl" in services or "colibricore" in services)
+
+            - name: "Install webserver configuration for babelente"
+              become: "{{lm_become}}"
+              become_user: root
+              template:
+                src: "nginx/babelente.conf"
+                dest: "{{lm_prefix}}/etc/nginx/conf.d/babelente.conf"
+                force: yes
+                backup: yes
+                owner: "{{unix_user}}"
+                group: "{{unix_group}}"
+              when: webservertype == "nginx" and ("all" in services or "babelente"  in services)
+
+            - name: "Install webserver configuration for piereling"
+              become: "{{lm_become}}"
+              become_user: root
+              template:
+                src: "nginx/piereling.conf"
+                dest: "{{lm_prefix}}/etc/nginx/conf.d/piereling.conf"
+                force: yes
+                backup: yes
+                owner: "{{unix_user}}"
+                group: "{{unix_group}}"
+              when: webservertype == "nginx" and ("all" in services or "piereling"  in services)
+
+            - name: "Install uwsgi configurations"
+              become: "{{lm_become}}"
+              become_user: root
+              template:
+                src: "uwsgi/{{item}}.ini"
+                dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{item}}.ini"
+                force: yes
+                backup: yes
+                owner: "{{web_user}}" #permissions need to match the runner
+                group: "{{web_group}}"
+                mode: u+rw,a+r
+              when: '"all" in services or item in services'
+              with_items:
+                - frog
+                - ucto
+                - timbl
+                - colibricore
+                - babelente
+                - piereling
+              #note: some things like alpino are deferred to that respective role
+
+            - name: "Install clam configuration"
+              become: "{{lm_become}}"
+              become_user: root
+              template:
+                src: "clam/{{item}}.config.yml"
+                dest: "{{lm_prefix}}/etc/{{item}}.config.yml"
+                force: yes
+                backup: yes
+                owner: "{{unix_user}}"
+                group: "{{unix_group}}"
+                mode: u+rw,a+r
+              when: '"all" in services or item in services'
+              with_items:
+                - frog
+                - ucto
+                - timbl
+                - colibricore
+                - babelente
+                - piereling
+
+            - name: "Setting up FLAT"
+              import_tasks: flat.yml
+              when: '"all" in services or "flat" in services'
+
+    - set_fact: ran_languagemachines_python=1

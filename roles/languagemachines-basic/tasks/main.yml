@@ -1,200 +1,203 @@
 ---
-
-    - name: Installation on Mac OS X using homebrew
+    - when: ran_languagemachines_basic is not defined
       block:
-          - name: Ensuring legacy homebrew/science tap is removed
-            shell: brew untap homebrew/science || /usr/bin/true
-          - name: Adding homebrew tap
-            command: brew tap fbkarsdorp/homebrew-lamachine
-          - name: Uninstalling from homebrew
-            command: "brew reinstall {{item}}"
-            with_items:
-              - ticcutils
-              - libfolia
-              - uctodata
-              - ucto
-              - timbl
-              - timblserver
-              - mbt
-              - mbtserver
-              - frogdata
-              - frog
-              - foliautils
-              - wopr
-            when: force is defined and force
-          - name: Installing from homebrew
-            command: "brew install {{item}}" #TODO: toad still missing cause it failed to compile earlier
-            with_items:
-              - ticcutils
-              - libfolia
-              - uctodata
-              - ucto
-              - timbl
-              - timblserver
-              - mbt
-              - mbtserver
-              - frogdata
-              - frog
-              - foliautils
-              - wopr
-            register: macosx
-            when: force is not defined or not force
 
-            #we still need to download the sources to check for codemeta.json
-            #and register the metadata, this is not ideal, eventually we should
-            #read the codemeta.json from the brew packages as there may be version
-            #discrepancies otherwise
-          - name: Obtaining sources and registering metadata if present (macOS)
-            include_role:
-              name: lamachine-git
-            vars:
-              do_registration: true
-            with_items:
-              - { user: "LanguageMachines", repo: "ticcutils" }
-              - { user: "LanguageMachines", repo: "libfolia" }
-              - { user: "LanguageMachines", repo: "ucto" }
-              - { user: "LanguageMachines", repo: "frog" }
-              - { user: "LanguageMachines", repo: "timbl" }
-              - { user: "LanguageMachines", repo: "mbt" }
-              - { user: "LanguageMachines", repo: "mbtserver" }
-              - { user: "LanguageMachines", repo: "foliautils" }
-            loop_control:
-              loop_var: package
+        - name: Installation on Mac OS X using homebrew
+          block:
+              - name: Ensuring legacy homebrew/science tap is removed
+                shell: brew untap homebrew/science || /usr/bin/true
+              - name: Adding homebrew tap
+                command: brew tap fbkarsdorp/homebrew-lamachine
+              - name: Uninstalling from homebrew
+                command: "brew reinstall {{item}}"
+                with_items:
+                  - ticcutils
+                  - libfolia
+                  - uctodata
+                  - ucto
+                  - timbl
+                  - timblserver
+                  - mbt
+                  - mbtserver
+                  - frogdata
+                  - frog
+                  - foliautils
+                  - wopr
+                when: force is defined and force
+              - name: Installing from homebrew
+                command: "brew install {{item}}" #TODO: toad still missing cause it failed to compile earlier
+                with_items:
+                  - ticcutils
+                  - libfolia
+                  - uctodata
+                  - ucto
+                  - timbl
+                  - timblserver
+                  - mbt
+                  - mbtserver
+                  - frogdata
+                  - frog
+                  - foliautils
+                  - wopr
+                register: macosx
+                when: force is not defined or not force
 
-      when: ansible_distribution|lower == 'macosx' and root and version == "stable" #note: no locality check here, we use homebrew even in local mode
+                #we still need to download the sources to check for codemeta.json
+                #and register the metadata, this is not ideal, eventually we should
+                #read the codemeta.json from the brew packages as there may be version
+                #discrepancies otherwise
+              - name: Obtaining sources and registering metadata if present (macOS)
+                include_role:
+                  name: lamachine-git
+                vars:
+                  do_registration: true
+                with_items:
+                  - { user: "LanguageMachines", repo: "ticcutils" }
+                  - { user: "LanguageMachines", repo: "libfolia" }
+                  - { user: "LanguageMachines", repo: "ucto" }
+                  - { user: "LanguageMachines", repo: "frog" }
+                  - { user: "LanguageMachines", repo: "timbl" }
+                  - { user: "LanguageMachines", repo: "mbt" }
+                  - { user: "LanguageMachines", repo: "mbtserver" }
+                  - { user: "LanguageMachines", repo: "foliautils" }
+                loop_control:
+                  loop_var: package
 
-    - name: Link frogdata on Mac OS X
-      shell: |
-          ln -sf /usr/local/opt/frogdata/share/frog/ /usr/local/opt/frog/share
-      when: ansible_distribution|lower == 'macosx' and root and version == "stable" #note: no locality check here, we use homebrew even in local mode
+          when: ansible_distribution|lower == 'macosx' and root and version == "stable" #note: no locality check here, we use homebrew even in local mode
 
-    - name: Installation on Arch Linux
-      block:
-        - name: Installing packages from Arch User Repository
-          include_role:
-              name: aur
-          vars:
-              package: "{{ item }}"
-          with_items:
-            - ticcutils
-            - libfolia
-            - uctodata
-            - ucto
-            - timbl
-            - timblserver
-            - mbt
-            - mbtserver
-            - frogdata
-            - frog
-            - foliautils
-            - toad
-          register: arch
-      when: ansible_distribution|lower == 'archlinux' and root == True and locality == "global" and version == "stable" #mimicks old LaMachine v1 behaviour
+        - name: Link frogdata on Mac OS X
+          shell: |
+              ln -sf /usr/local/opt/frogdata/share/frog/ /usr/local/opt/frog/share
+          when: ansible_distribution|lower == 'macosx' and root and version == "stable" #note: no locality check here, we use homebrew even in local mode
 
-    - name: Installation from Github
-      block:
-        - name: Installing from LanguageMachines github
-          include_role:
-            name: lamachine-git-autoconf
-          with_items:
-            - repo: ticcutils
-              user: LanguageMachines
-              configure_opts: "{% if (ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'rhel') and locality == 'local' %}--with-boost={{lm_prefix}}{% endif %}"
-              build_environment:
-                 TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
-                 CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
-            - repo: libfolia
-              user: LanguageMachines
-              build_environment:
-                 CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
-            - repo: uctodata
-              user: LanguageMachines
-            - repo: ucto
-              user: LanguageMachines
-              build_environment:
-                 TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
-                 TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/ -ltextcat{% endif %}"
-                 CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D HAVE_OLD_TEXTCAT{% endif %} -D U_USING_ICU_NAMESPACE=1"
-            - repo: timbl
-              user: LanguageMachines
-            - repo: timblserver
-              user: LanguageMachines
-            - repo: mbt
-              user: LanguageMachines
-            - repo: mbtserver
-              user: LanguageMachines
-            - repo: frogdata
-              user: LanguageMachines
-            - repo: frog
-              user: LanguageMachines
-              build_environment:
-                 CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
-            - repo: foliautils
-              user: LanguageMachines
-              build_environment:
-                 TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
-                 TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/ -ltextcat{% endif %}"
-                 CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D HAVE_OLD_TEXTCAT{% endif %} -D U_USING_ICU_NAMESPACE=1"
-            - repo: toad
-              user: LanguageMachines
-              build_environment:
-                 CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
-              exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
-            - repo: wopr
-              user: LanguageMachines
-              exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
-              build_environment:
-                 CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
-          loop_control:
-              loop_var: package
-      when: not (ansible_distribution|lower == 'macosx' and root and version == "stable") and not (ansible_distribution|lower == 'arch' and root and version == "stable")
+        - name: Installation on Arch Linux
+          block:
+            - name: Installing packages from Arch User Repository
+              include_role:
+                  name: aur
+              vars:
+                  package: "{{ item }}"
+              with_items:
+                - ticcutils
+                - libfolia
+                - uctodata
+                - ucto
+                - timbl
+                - timblserver
+                - mbt
+                - mbtserver
+                - frogdata
+                - frog
+                - foliautils
+                - toad
+              register: arch
+          when: ansible_distribution|lower == 'archlinux' and root == True and locality == "global" and version == "stable" #mimicks old LaMachine v1 behaviour
 
-    - name: Installing Colibri Core from github
-      include_role:
-        name: lamachine-git-autoconf
-      vars:
-        package:
-            user: proycon
-            repo: colibri-core
+        - name: Installation from Github
+          block:
+            - name: Installing from LanguageMachines github
+              include_role:
+                name: lamachine-git-autoconf
+              with_items:
+                - repo: ticcutils
+                  user: LanguageMachines
+                  configure_opts: "{% if (ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'rhel') and locality == 'local' %}--with-boost={{lm_prefix}}{% endif %}"
+                  build_environment:
+                     TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
+                     CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
+                - repo: libfolia
+                  user: LanguageMachines
+                  build_environment:
+                     CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
+                - repo: uctodata
+                  user: LanguageMachines
+                - repo: ucto
+                  user: LanguageMachines
+                  build_environment:
+                     TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
+                     TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/ -ltextcat{% endif %}"
+                     CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D HAVE_OLD_TEXTCAT{% endif %} -D U_USING_ICU_NAMESPACE=1"
+                - repo: timbl
+                  user: LanguageMachines
+                - repo: timblserver
+                  user: LanguageMachines
+                - repo: mbt
+                  user: LanguageMachines
+                - repo: mbtserver
+                  user: LanguageMachines
+                - repo: frogdata
+                  user: LanguageMachines
+                - repo: frog
+                  user: LanguageMachines
+                  build_environment:
+                     CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
+                - repo: foliautils
+                  user: LanguageMachines
+                  build_environment:
+                     TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
+                     TEXTCAT_LIBS: "{% if ansible_distribution|lower == 'macosx' %}-L/usr/local/opt/libtextcat/lib/ -ltextcat{% endif %}"
+                     CXXFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-D HAVE_OLD_TEXTCAT{% endif %} -D U_USING_ICU_NAMESPACE=1"
+                - repo: toad
+                  user: LanguageMachines
+                  build_environment:
+                     CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
+                  exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
+                - repo: wopr
+                  user: LanguageMachines
+                  exclude_when: "{{ ansible_distribution|lower == 'macosx' }}"
+                  build_environment:
+                     CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
+              loop_control:
+                  loop_var: package
+          when: not (ansible_distribution|lower == 'macosx' and root and version == "stable") and not (ansible_distribution|lower == 'arch' and root and version == "stable")
 
-    - when: ansible_distribution|lower != "macosx"
-      block:
-        - name: Installing Colibri Utils from github
+        - name: Installing Colibri Core from github
           include_role:
             name: lamachine-git-autoconf
           vars:
             package:
                 user: proycon
-                repo: colibri-utils
+                repo: colibri-core
 
-    - name: Running ldconfig
-      become: yes
-      command: ldconfig
-      when: root and locality == "global" and ansible_distribution|lower != 'macosx'
+        - when: ansible_distribution|lower != "macosx"
+          block:
+            - name: Installing Colibri Utils from github
+              include_role:
+                name: lamachine-git-autoconf
+              vars:
+                package:
+                    user: proycon
+                    repo: colibri-utils
 
-    - name: Downloading FoLiA sources (schemas, specification, set definitions, examples)
-      include_role:
-        name: lamachine-git
-      vars:
-        do_registration: true
-      with_items:
-        - { user: "proycon", repo: "folia" }
-      loop_control:
-        loop_var: package
+        - name: Running ldconfig
+          become: yes
+          command: ldconfig
+          when: root and locality == "global" and ansible_distribution|lower != 'macosx'
 
-    - name: Testing whether tools start
-      include_role:
-          name: lamachine-run
-      vars:
-          command: "{{item}} -h"
-      with_items:
-          - ucto
-          - timbl
-          - timblserver
-          - frog
-          - mbt
-          - folialint
-          - colibri-classencode
-          - colibri-patternmodeller
-      ignore_errors: "{{ignore_tests|bool}}"
+        - name: Downloading FoLiA sources (schemas, specification, set definitions, examples)
+          include_role:
+            name: lamachine-git
+          vars:
+            do_registration: true
+          with_items:
+            - { user: "proycon", repo: "folia" }
+          loop_control:
+            loop_var: package
 
+        - name: Testing whether tools start
+          include_role:
+              name: lamachine-run
+          vars:
+              command: "{{item}} -h"
+          with_items:
+              - ucto
+              - timbl
+              - timblserver
+              - frog
+              - mbt
+              - folialint
+              - colibri-classencode
+              - colibri-patternmodeller
+          ignore_errors: "{{ignore_tests|bool}}"
+
+    - set_fact: ran_languagemachines_basic=1
