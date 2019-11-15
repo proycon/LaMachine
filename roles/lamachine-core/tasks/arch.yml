@@ -10,7 +10,7 @@
       become: true
       become_user: root
       pacman:
-        name: [pkg-config, git, mercurial, autoconf-archive, icu, libxml2, zlib, libtar, boost, boost-libs, nano, make, wget curl, libexttextcat, perl, python, python-virtualenv, python-pip, zip, unzip, pcre, poppler, pandoc]
+        name: [pkgconf, git, mercurial, autoconf-archive, icu, libxml2, zlib, libtar, boost, boost-libs, nano, make, wget curl, libexttextcat, perl, python, python-virtualenv, python-pip, zip, unzip, pcre, poppler, pandoc]
         state: installed
 
       #############################################################
