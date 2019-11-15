@@ -1,0 +1,18 @@
+---
+  - name: lamachine-build-registry
+    shell: |
+        #!/bin/bash
+        export LM_QUIET=1
+        if [ -e {{homedir}}/bin/lamachine-{{ conf_name }}-activate ]; then
+            source {{homedir}}/bin/lamachine-{{ conf_name }}-activate
+        else
+            echo "Activation script {{homedir}}/bin/lamachine-{{ conf_name }}-activate not found! ">&2
+            exit 2
+        fi
+        lamachine-build-registry
+    args:
+        executable: /bin/bash
+        chdir: "{% if chdir is defined %}{{ chdir }}{% else %}{{homedir}}{% endif %}"
+    environment:
+        PATH: "{{ansible_env.HOME}}/bin:{{ansible_env.PATH}}"
+    ignore_errors: "{{allow_failure|default(False)}}"

@@ -1,4 +1,6 @@
 ---
+  - when: ran_freeling is not defined
+    block:
     - name: Installing FreeLing for macOS
       homebrew:
         name: "freeling"
@@ -48,3 +50,4 @@
         args:
           chdir: "{{source_path}}/FreeLing"
           executable: /bin/bash
+  - set_fact: ran_freeling=1

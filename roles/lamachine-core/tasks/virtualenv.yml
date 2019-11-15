@@ -9,7 +9,7 @@
     - when: virtualenv.stat.isdir is not defined or not virtualenv.stat.isdir
       block:
            - name: Creating bare virtualenv environment for LaMachine
-             shell: "virtualenv --python=python3 {{ local_prefix }}"
+             shell: "virtualenv --always-copy --python={{ python_bin }} {{ local_prefix }}"
 
     - name: Adapting activation script for virtualenv
       blockinfile:

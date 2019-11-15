@@ -13,11 +13,10 @@
       become: true
       become_user: root
       apt:
-        name: "{{item}}"
+        name: [ jq, ack, xmlstarlet, gnuplot, graphviz ]
         state: present
         update_cache: yes
         cache_valid_time: 900
-      with_items: [ jq, ack, xmlstarlet, gnuplot, graphviz ]
       when: (ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "debian" or ansible_distribution|lower == "linux mint") and root
       ignore_errors: yes #allowed to fail if package is missing (older distros)
 
@@ -25,25 +24,22 @@
       become: true
       become_user: root
       pacman:
-        name: "{{item}}"
+        name: [ jq, bat, ack, xmlstarlet, gnuplot, graphviz ]
         state: installed
-      with_items: [ jq, bat, ack, xmlstarlet, gnuplot, graphviz ]
       when: (ansible_distribution|lower == "archlinux" or ansible_distribution|lower == "manjaro") and root
 
     - name: Installing extra utilities (yum)
       become: true
       become_user: root
       yum:
-        name: "{{item}}"
+        name: [ jq, ack, xmlstarlet, gnuplot, graphviz ]
         state: installed
         update_cache: "{% if nosysupdate is not defined or nosysupdate == 0 %}yes{% else %}no{% endif %}"
-      with_items: [ jq, ack, xmlstarlet, gnuplot, graphviz ]
       when: (ansible_distribution|lower == 'redhat' or ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'fedora') and root
       ignore_errors: yes #allowed to fail if package is missing (older distros)
 
     - name: Installing extra utilities (macOS/homebrew)
       homebrew:
-        name: "{{item}}"
+        name: [ jq, bat, ack, xmlstarlet, gnuplot, feedgnuplot, graphviz ]
         state: present
-      with_items: [ jq, bat, ack, xmlstarlet, gnuplot, feedgnuplot, graphviz ]
       when: ansible_distribution|lower == "macosx"

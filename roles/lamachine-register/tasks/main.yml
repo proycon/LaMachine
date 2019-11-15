@@ -13,17 +13,34 @@
       debug:
            var: metadata
 
+    - name: "Clear temporary metadata"
+      copy:
+        content: "{}"
+        dest: "{{lm_prefix}}/var/{{item}}"
+        force: yes
+      with_items:
+        - "provided.codemeta.tmp.json"
+        - "passed.codemeta.tmp.json"
+
+
+    - name: "Use metadata provided by the repository"
+      copy:
+          src: "{{codemeta}}"
+          dest: "{{lm_prefix}}/var/provided.codemeta.tmp.json"
+          force: yes
+      when: codemeta is defined and codemeta != ""
+
     - name: "Download remote metadata {% if url is defined and url %}from {{url}}{% endif %}"
       get_url:
           url: "{{url}}"
-          dest: "{{lm_prefix}}/var/codemeta.tmp.json"
+          dest: "{{lm_prefix}}/var/provided.codemeta.tmp.json"
           force: yes
       when: url is defined and url != ""
 
-    - name: "Outputting temporary metadata"
+    - name: "Outputting temporary metadata" #either explicitly or implicitly passed (parameters vs defaults)
       copy:
         content: '{% if "metadata" in package %}{{ metadata_defaults|combine(metadata)|combine(package.metadata)|to_json }}{% else %}{{ metadata_defaults|combine(metadata)|to_json }}{% endif %}'
-        dest: "{{lm_prefix}}/var/tmpmetadata.json"
+        dest: "{{lm_prefix}}/var/passed.codemeta.tmp.json"
         force: yes
 
     - name: "{% if 'pip' in package and package.pip %}{{package.pip}}{% elif 'metadata' in package and 'identifier' in package.metadata %}{{ metadata.package.identifier }}{% elif 'identifier' in metadata %}{{ metadata.identifier }}{% elif metadata_defaults is defined and 'identifier' in metadata_defaults %}{{ metadata_defaults.identifier }}{% endif %} - Registering metadata"
@@ -31,6 +48,7 @@
         #!/bin/bash
         # what we do here is build a chain of metadata, each one updating over the last, effectively merging all the fields
         set -o pipefail
+        echo "REGISTERING METADATA">&2
         echo "Run environment:">&2
         echo "    LM_NAME=$LM_NAME">&2
         echo "    PATH=$PATH">&2
@@ -39,15 +57,54 @@
         echo "    PYTHONPATH=$PYTHONPATH">&2
         echo "    PYTHON=$(which python3)">&2
         echo "    PIP=$(which pip3)">&2
-        {% if 'pip' in package and package.pip %}
-        python3 -m pip show -v {{package.pip}} | {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}{% if url is defined and url %}json,{% endif %}json,pip {% if update %}{{update}}{% endif %} {% if url is defined and url %}{{lm_prefix}}/var/codemeta.tmp.json{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json -
-        exit $?
-        {% else %}
-        {{lm_prefix}}/bin/codemetapy --with-entrypoints -r {{lm_prefix}}/var/lamachine-registry.json -i {% if update %}registry,{% endif %}{% if codemeta %}json,{% endif %}{% if url is defined and url %}json,{% endif %}json {% if update %}{{update}}{% endif %} {% if url is defined and url %}{{lm_prefix}}/var/codemeta.tmp.json{% endif %} {% if codemeta %}{{codemeta}}{% endif %} {{lm_prefix}}/var/tmpmetadata.json
-        exit $?
+
+        TYPE="other"
+
+        {% if 'pip' in package %}
+        PYTHON_IDENTIFIER="{{package.pip}}"
+        IDENTIFIER="{{package.pip}}"
+        TYPE="python"
+        echo "Metadata for python package: $PYTHON_IDENTIFIER">&2
         {% endif %}
+
+        {% if 'metadata' in package and 'identifier' in package.metadata  %}
+        IDENTIFIER="{{metadata.package.identifier}}"
+        {% elif 'identifier' in metadata  %}
+        IDENTIFIER="{{metadata.identifier}}"
+        {% elif metadata_defaults is defined and 'identifier' in metadata_defaults %}
+        IDENTIFIER="{{metadata_defaults.identifier}}"
+        {% endif %}
+
+        if [ -z "$IDENTIFIER" ]; then
+          echo "No identifier passed" >&2
+          exit 2
+        fi
+        IDENTIFIER=$(echo $IDENTIFIER | tr '[:upper:]' '[:lower:]')
+
+        echo "Identifier: $IDENTIFIER">&2
+
+        if [ ! -f "{{lm_prefix}}/var/metadata/$IDENTIFIER.json" ]; then
+          #create an initially empty metadata file
+          echo '{}' > "{{lm_prefix}}/var/metadata/$IDENTIFIER.json"
+        fi
+
+        #the temporary files will simply be empty and thus without any effects if they are not used
+        if [ "$TYPE" = "python" ]; then
+          COMMAND="{{lm_prefix}}/bin/codemetapy --with-entrypoints -i json,json,json,python  {{lm_prefix}}/var/metadata/$IDENTIFIER.json  {{lm_prefix}}/var/passed.codemeta.tmp.json {{lm_prefix}}/var/provided.codemeta.tmp.json $PYTHON_IDENTIFIER"
+        else
+          COMMAND="{{lm_prefix}}/bin/codemetapy --with-entrypoints -i json,json,json  {{lm_prefix}}/var/metadata/$IDENTIFIER.json  {{lm_prefix}}/var/passed.codemeta.tmp.json {{lm_prefix}}/var/provided.codemeta.tmp.json"
+        fi
+        echo "Running: $COMMAND">&2
+        $COMMAND > "{{lm_prefix}}/var/out.codemeta.tmp.json"
+        rc=$?
+        if [ $rc -eq 0 ]; then
+          cp "{{lm_prefix}}/var/out.codemeta.tmp.json" "{{lm_prefix}}/var/metadata/$IDENTIFIER.json"
+        fi
+        exit $rc
+
       args:
         executable: /bin/bash
       register: register_result
       failed_when: "register_result.rc != 0 and register_result.rc != 3"
       environment: "{{lm_env}}"
+      notify: lamachine-build-registry

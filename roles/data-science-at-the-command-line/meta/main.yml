@@ -1,6 +1,6 @@
 ---
 dependencies:
-  - { role: python-core }
-  - { role: r-core }
-  - { role: jupyter }
-  - { role: extra-utils }
+  - { role: python-core, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: r-core, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: jupyter, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: extra-utils, when: "'fullrunonly' not in ansible_skip_tags"  }

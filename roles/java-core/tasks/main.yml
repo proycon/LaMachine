@@ -1,44 +1,47 @@
 ---
-  - name: Installing Java (Linux)
-    include_role:
-      name: lamachine-package-install
-    with_items:
-      - { debian: default-jdk, redhat: java-11-openjdk, arch: jdk-openjdk }
-      - { debian: maven, redhat: maven, arch: maven } #not sure if this works on CentOS
-    loop_control:
-       loop_var: package
-    when: root and (ansible_distribution|lower != "macosx")
+    - when: ran_java is not defined
+      block:
+        - name: Installing Java (Linux)
+          include_role:
+            name: lamachine-package-install
+          with_items:
+            - { debian: default-jdk, redhat: java-11-openjdk, arch: jdk-openjdk }
+            - { debian: maven, redhat: maven, arch: maven } #not sure if this works on CentOS
+          loop_control:
+             loop_var: package
+          when: root and (ansible_distribution|lower != "macosx")
 
-  - name: Installing Java (Mac OS X)
-    homebrew_cask:
-      name: java
-      state: present
-    when: ansible_distribution|lower == "macosx"
+        - name: Installing Java (Mac OS X)
+          homebrew_cask:
+            name: java
+            state: present
+          when: ansible_distribution|lower == "macosx"
 
-  #- name: Ensure correct java version is selected (Debian/Ubuntu)
-    #become: "{{lm_become}}"
-    #become_user: root
-    #alternatives:
-      #  name: java
-      #  path: /usr/lib/jvm/java-11-openjdk-amd64/jre/bin/java
-      #when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
-    #ignore_errors: yes
+        #- name: Ensure correct java version is selected (Debian/Ubuntu)
+          #become: "{{lm_become}}"
+          #become_user: root
+          #alternatives:
+            #  name: java
+            #  path: /usr/lib/jvm/java-11-openjdk-amd64/jre/bin/java
+            #when: root and (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
+          #ignore_errors: yes
 
-  - name: Create java classpath
-    become: "{{lm_become}}"
-    become_user: root
-    file:
-        path: "{{ lm_prefix }}/lib/java"
-        state: directory
-        owner: "{{unix_user}}"
-        group: "{{unix_group}}"
-        mode: u+rwx,g+rwsx,a+rx
+        - name: Create java classpath
+          become: "{{lm_become}}"
+          become_user: root
+          file:
+              path: "{{ lm_prefix }}/lib/java"
+              state: directory
+              owner: "{{unix_user}}"
+              group: "{{unix_group}}"
+              mode: u+rwx,g+rwsx,a+rx
 
-  - name: "Adding activation script for Java classpath"
-    become: "{{lm_become}}"
-    become_user: root
-    copy:
-      dest: "{{lm_prefix}}/bin/activate.d/java.sh"
-      content: |
-        export CLASSPATH="{{lm_prefix}}/lib/java/*"
-      mode: u+rwx,a+rx
+        - name: "Adding activation script for Java classpath"
+          become: "{{lm_become}}"
+          become_user: root
+          copy:
+            dest: "{{lm_prefix}}/bin/activate.d/java.sh"
+            content: |
+              export CLASSPATH="{{lm_prefix}}/lib/java/*"
+            mode: u+rwx,a+rx
+    - set_fact: ran_java_core=1
