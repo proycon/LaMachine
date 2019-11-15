@@ -28,7 +28,10 @@ if __name__ == '__main__':
             elif roles:
                 if line.strip().startswith('-') or line.strip().startswith('# -'):
                     package = line.strip('- #\n').split('##')[0].strip()
-                    descriptions[package] += line.split('##')[1].strip() + ' '
+                    try:
+                        descriptions[package] += line.split('##')[1].strip() + ' '
+                    except:
+                        pass
                 elif line.startswith(' ') and line.strip().startswith('#') and package:
                     #continued description
                     descriptions[package] += line.strip('# \n') + ' '
