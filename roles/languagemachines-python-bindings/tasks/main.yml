@@ -1,6 +1,7 @@
 ---
 
-
+  - when: ran_python_bindings is not defined
+    block:
     - name: Installing Python bindings
       include_role:
         name: lamachine-python-install
@@ -61,3 +62,4 @@
       with_items:
         - python-frog
         - python-ucto
+  - set_fact: ran_python_bindings=1

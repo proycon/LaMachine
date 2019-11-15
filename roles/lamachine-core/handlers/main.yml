@@ -16,4 +16,3 @@
     environment:
         PATH: "{{ansible_env.HOME}}/bin:{{ansible_env.PATH}}"
     ignore_errors: "{{allow_failure|default(False)}}"
-    changed_when: 'sideeffects is defined and sideeffects == True'

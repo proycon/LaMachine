@@ -1,6 +1,5 @@
 ---
 dependencies:
-  - { role: lamachine-core }
   - { role: python-core, when: "'fullrunonly' not in ansible_skip_tags" }
   - { role: languagemachines-basic, when: "'fullrunonly' not in ansible_skip_tags" }
   - { role: languagemachines-python, when: "'fullrunonly' not in ansible_skip_tags" }
