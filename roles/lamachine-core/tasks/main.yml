@@ -565,7 +565,7 @@
           tags: fullrunonly
 
         - name: "Finding global pip3"
-          shell: hash -r {{pip_bin}} && which {{pip_bin}}
+          shell: hash -r && which {{pip_bin}}
           register: pip
           environment: "{{lm_env}}"
           when: locality == "global"
