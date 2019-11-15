@@ -1,5 +1,6 @@
 ---
-
+  - when: ran_moses is not defined
+    block:
     - name: Check for unsupported OS for Moses
       fail:
         msg: "Moses is only on supported Debian/Ubuntu and Arch for now, it may not work on your OS !!!"
@@ -36,3 +37,4 @@
         src: "{{source_path}}/mosesdecoder"
         dest: "{{lm_prefix}}/opt/moses"
         state: link
+  - set_fact: ran_moses=1

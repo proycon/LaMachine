@@ -1,107 +1,110 @@
 ---
 
-  - name: Check for unsupported OS for Kaldi
-    debug:
-      msg: "Kaldi is not supported on Mac OS X"
-    when: ansible_distribution|lower == "macosx"
-
-  - name: "Configuration Overview for kaldi"
-    debug:
-         var: "{{item}}"
-    with_items:
-         - kaldi_branch
-         - kaldi_source
-         - kaldi_test_ignore_errors
-         - kaldi_configure_options
-         - recompile_kaldi
-
-  - name: Installing global dependencies for Kaldi
-    include_role:
-      name: lamachine-package-install
-    with_items:
-      - { debian: sox, redhat: sox }
-      - { debian: subversion, redhat: subversion }
-      - { debian: libopenblas-base-dev, redhat: openblas-devel }
-      - { debian: gfortran, redhat: libgfortran, arch: gcc-fortran }
-    loop_control:
-        loop_var: package
-    when: root
-
-  - import_tasks: arch.yml
-    when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro') and root
-
-  - when: recompile_kaldi is not defined or recompile_kaldi #default
+  - when: ran_kaldi is not defined
     block:
-      - name: "Checking out Kaldi"
-        git:
-          repo: "{{kaldi_source}}"
-          dest: "{{lm_prefix}}/opt/kaldi"
-          version: "{{kaldi_branch}}"
-          force: yes
+      - name: Check for unsupported OS for Kaldi
+        debug:
+          msg: "Kaldi is not supported on Mac OS X"
+        when: ansible_distribution|lower == "macosx"
 
-      - name: Patch OpenFST makefile so that we can link with it statically (needed for Alex-ASR)
-        shell: sed -i "s/--enable-far --enable-ngram-fsts/--enable-far --with-pic --enable-ngram-fsts/" Makefile
+      - name: "Configuration Overview for kaldi"
+        debug:
+             var: "{{item}}"
+        with_items:
+             - kaldi_branch
+             - kaldi_source
+             - kaldi_test_ignore_errors
+             - kaldi_configure_options
+             - recompile_kaldi
+
+      - name: Installing global dependencies for Kaldi
+        include_role:
+          name: lamachine-package-install
+        with_items:
+          - { debian: sox, redhat: sox }
+          - { debian: subversion, redhat: subversion }
+          - { debian: libopenblas-base-dev, redhat: openblas-devel }
+          - { debian: gfortran, redhat: libgfortran, arch: gcc-fortran }
+        loop_control:
+            loop_var: package
+        when: root
+
+      - import_tasks: arch.yml
+        when: (ansible_distribution|lower == 'archlinux' or ansible_distribution|lower == 'manjaro') and root
+
+      - when: recompile_kaldi is not defined or recompile_kaldi #default
+        block:
+          - name: "Checking out Kaldi"
+            git:
+              repo: "{{kaldi_source}}"
+              dest: "{{lm_prefix}}/opt/kaldi"
+              version: "{{kaldi_branch}}"
+              force: yes
+
+          - name: Patch OpenFST makefile so that we can link with it statically (needed for Alex-ASR)
+            shell: sed -i "s/--enable-far --enable-ngram-fsts/--enable-far --with-pic --enable-ngram-fsts/" Makefile
+            args:
+               chdir: "{{lm_prefix}}/opt/kaldi/tools"
+
+          - name: Compiling kaldi/tools
+            shell: make -j $(nproc)
+            args :
+              chdir: "{{lm_prefix}}/opt/kaldi/tools"
+            environment:
+              KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
+            ignore_errors: yes #obviously not a good idea
+
+          - name: Configuring kaldi/src
+            shell: "./configure {{kaldi_configure_options}}"
+            args:
+              chdir: "{{lm_prefix}}/opt/kaldi/src"
+
+          - name: Compiling kaldi/src
+            shell: make -j $(nproc)
+            args:
+              chdir: "{{lm_prefix}}/opt/kaldi/src"
+            environment:
+              KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
+
+          - name: Testing kaldi
+            shell: make test
+            args:
+              chdir: "{{lm_prefix}}/opt/kaldi/src"
+            environment:
+              KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
+            ignore_errors: "{{ kaldi_test_ignore_errors }}"
+
+          - name: "Adding activation script for Kaldi"
+            become: "{{lm_become}}"
+            become_user: root
+            copy:
+              dest: "{{lm_prefix}}/bin/activate.d/kaldi.sh"
+              content: |
+                export KALDI_ROOT={{lm_prefix}}/opt/kaldi
+              mode: u+rwx,a+rx
+
+      - name: "Kaldi - Get latest commit hash"
+        shell: "git describe --tags || git rev-parse HEAD"
         args:
-           chdir: "{{lm_prefix}}/opt/kaldi/tools"
+          chdir: "{{ lm_prefix }}/opt/kaldi"
+        register: latest_commit
+        changed_when: False
 
-      - name: Compiling kaldi/tools
-        shell: make -j $(nproc)
-        args :
-          chdir: "{{lm_prefix}}/opt/kaldi/tools"
-        environment:
-          KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
-        ignore_errors: yes #obviously not a good idea
+      - name: Register Kaldi
+        include_role:
+           name: lamachine-register
+        vars:
+           metadata:
+             identifier: kaldi
+             name: Kaldi
+             version: "{{ latest_commit.stdout }}"
+             author: (multiple)
+             url: "http://kaldi-asr.org/"
+             codeRepository: "https://github.com/kaldi-asr/kaldi"
+             license: Apache
+             description: "Automatic Speech Recognition Toolkit"
+             programmingLanguage: "C++"
+             interfaceType: CLI
+             keywords: [ "speech recognition", "asr", "cuda" ]
 
-      - name: Configuring kaldi/src
-        shell: "./configure {{kaldi_configure_options}}"
-        args:
-          chdir: "{{lm_prefix}}/opt/kaldi/src"
-
-      - name: Compiling kaldi/src
-        shell: make -j $(nproc)
-        args:
-          chdir: "{{lm_prefix}}/opt/kaldi/src"
-        environment:
-          KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
-
-      - name: Testing kaldi
-        shell: make test
-        args:
-          chdir: "{{lm_prefix}}/opt/kaldi/src"
-        environment:
-          KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
-        ignore_errors: "{{ kaldi_test_ignore_errors }}"
-
-      - name: "Adding activation script for Kaldi"
-        become: "{{lm_become}}"
-        become_user: root
-        copy:
-          dest: "{{lm_prefix}}/bin/activate.d/kaldi.sh"
-          content: |
-            export KALDI_ROOT={{lm_prefix}}/opt/kaldi
-          mode: u+rwx,a+rx
-
-  - name: "Kaldi - Get latest commit hash"
-    shell: "git describe --tags || git rev-parse HEAD"
-    args:
-      chdir: "{{ lm_prefix }}/opt/kaldi"
-    register: latest_commit
-    changed_when: False
-
-  - name: Register Kaldi
-    include_role:
-       name: lamachine-register
-    vars:
-       metadata:
-         identifier: kaldi
-         name: Kaldi
-         version: "{{ latest_commit.stdout }}"
-         author: (multiple)
-         url: "http://kaldi-asr.org/"
-         codeRepository: "https://github.com/kaldi-asr/kaldi"
-         license: Apache
-         description: "Automatic Speech Recognition Toolkit"
-         programmingLanguage: "C++"
-         interfaceType: CLI
-         keywords: [ "speech recognition", "asr", "cuda" ]
-
+  - set_fact: ran_kaldi=1
