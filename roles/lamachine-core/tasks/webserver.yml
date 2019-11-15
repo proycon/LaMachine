@@ -3,9 +3,8 @@
     block:
       - name: Installing webserver (macOS)
         homebrew:
-          name: "{{item}}"
+          name: nginx
           state: latest
-        with_items: [nginx]
 
       - name: Link nginx from global prefix
         file:
@@ -71,9 +70,8 @@
         become: true
         become_user: root
         apt:
-          name: "{{item}}"
+          name: [uwsgi-emperor, uwsgi, uwsgi-plugin-python3]
           state: latest
-        with_items: [uwsgi-emperor, uwsgi, uwsgi-plugin-python3]
         when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
 
       - name: Installing uwsgi globally (RedHat)
@@ -90,9 +88,8 @@
         become: true
         become_user: root
         pacman:
-          name: "{{item}}"
+          name: [uwsgi, uwsgi-plugin-python]
           state: latest
-        with_items: [uwsgi, uwsgi-plugin-python]
         when: (ansible_distribution|lower == "archlinux")
 
 
