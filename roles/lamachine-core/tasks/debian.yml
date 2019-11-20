@@ -43,7 +43,7 @@
       become: true
       become_user: root
       apt:
-        name: [coreutils, procps, lsof, dirmngr, pkg-config, git-core, mercurial, nano, make, gcc, g++, autoconf, automake, autoconf-archive, libtool, autotools-dev, libicu-dev, libxml2-dev, libxslt1-dev, libbz2-dev, zlib1g-dev, libtar-dev, libaspell-dev, libhunspell-dev,  python, python-lxml, python3, python3-pip, python3-setuptools, python3-wheel, python3-dev, python3-lxml, libboost-all-dev, libboost-python-dev, wget, curl, libexttextcat-dev, libcurl4-gnutls-dev, poppler-utils, perl, zip, unzip, libpcre3-dev, libpcre3, pandoc]
+        name: [coreutils, procps, lsof, dirmngr, pkg-config, git-core, mercurial, nano, make, gcc, g++, autoconf, automake, autoconf-archive, libtool, autotools-dev, libicu-dev, libxml2-dev, libxslt1-dev, libbz2-dev, zlib1g-dev, libtar-dev, libaspell-dev, libhunspell-dev,  python, python-lxml, python3, python3-pip, python3-setuptools, python3-wheel, python3-dev, python3-lxml, libboost-all-dev, libboost-python-dev, wget, curl, libexttextcat-dev, libcurl4-gnutls-dev, poppler-utils, perl, zip, unzip, libpcre3-dev, libpcre3, pandoc, libhdf5-dev, hdf5-tools]
         state: present
         update_cache: yes
         cache_valid_time: 900
