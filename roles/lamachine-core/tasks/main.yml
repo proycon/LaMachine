@@ -10,6 +10,7 @@
               - conf_name
               - ansible_distribution
               - ansible_distribution_version
+              - ansible_skip_tags
               - hostname
               - version
               - lamachine_path
