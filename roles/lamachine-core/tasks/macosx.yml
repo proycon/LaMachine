@@ -19,7 +19,7 @@
     - block:
         - name: Installing common base packages (Homebrew)
           homebrew:
-            name: [ pkg-config, autoconf, automake, libtool, autoconf-archive, xml2, libxslt, icu4c, libtextcat, libtar, python, wget, ansible, boost, boost-python3, poppler, pandoc ]
+            name: [ pkg-config, autoconf, automake, libtool, autoconf-archive, xml2, libxslt, icu4c, libtextcat, libtar, python, wget, ansible, boost, boost-python3, poppler, pandoc, hdf5 ]
             state: present
       rescue:
         - name: "Error invoking Homebrew"

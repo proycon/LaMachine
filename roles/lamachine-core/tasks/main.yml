@@ -10,6 +10,7 @@
               - conf_name
               - ansible_distribution
               - ansible_distribution_version
+              - ansible_skip_tags
               - hostname
               - version
               - lamachine_path
@@ -188,7 +189,6 @@
             dest: "{{homedir}}/bin/lamachine-{{ conf_name }}-update"
             force: "yes"
             mode: u+rwx,a+rx
-            output_encoding: "utf-8"   #should not be necessary because it's the default
 
         - name: Set generic update script
           copy:
