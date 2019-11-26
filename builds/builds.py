@@ -59,6 +59,12 @@ buildmatrix = [
         "context": "debian9",
     },
     {
+        "name": 'stable-venv-debian10',
+        "flavour": 'local',
+        "version": 'stable',
+        "context": "debian10",
+    },
+    {
         "name": 'stable-venv-centos7',
         "flavour": 'local',
         "version": 'stable',
