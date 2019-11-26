@@ -27,6 +27,7 @@
       copy:
           src: "{{codemeta}}"
           dest: "{{lm_prefix}}/var/provided.codemeta.tmp.json"
+          remote_src: yes
           force: yes
       when: codemeta is defined and codemeta != ""
 
