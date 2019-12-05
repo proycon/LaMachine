@@ -10,7 +10,7 @@
     "@type": "SoftwareSourceCode",
     "identifier": "lamachine",
     "name": "LaMachine",
-    "version": "2.12",
+    "version": "2.13",
     "description": "LaMachine is a unified software distribution for Natural Language Processing. We integrate numerous open-source NLP tools, programming libraries, web-services, and web-applications in a single Virtual Research Environment that can be installed on a wide variety of machines.",
     "license": "https://spdx.org/licenses/GPL-3.0",
 	"url": "https://proycon.github.io/LaMachine",
