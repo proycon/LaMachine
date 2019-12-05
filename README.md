@@ -45,7 +45,7 @@ alternatively also offers the option to download pre-built images (installation 
 
 ### B) Pre-built container image for Docker
 
-We regularly build a basic LaMachine image an publish it to [Docker Hub](https://hub.docker.com/r/proycon/lamachine/).
+We regularly build a basic LaMachine image and publish it to [Docker Hub](https://hub.docker.com/r/proycon/lamachine/).
 The above installation path A also offers access to this, but you may opt to do it directly:
 
 To download and use it, run:
@@ -57,7 +57,7 @@ docker run  -p 8080:80 -h latest -t -i proycon/lamachine
 
 This requires you to already have [Docker](https://www.docker.com/) installed and running on your system.
 
-The pre-built image contains the stable version with only a basic set of common software rather than the full set, run ``lamachine-stable-update --edit``
+The pre-built image contains the stable version with only a basic set of common software rather than the full set, run ``lamachine-add``
 inside the container to select extra software to install. Alternatively, other specialised LaMachine builds may be available
 on Docker Hub.
 
@@ -149,7 +149,7 @@ the installation procedure.
     * [Kaldi](http://kaldi-asr.org) - Speech Recognition Framework (ASR)
     * [Moses](http://www.statmt.org/moses) - Statistical Machine Translation system
 
-Note that some software may not be available on certain platforms/distributions (most notably Mac OS X).
+Note that some software may not be available on certain platforms/distributions (most notably macOS).
 
 For a verbose list of installed software and its metadata, run ``lamachine-list`` once you are inside your LaMachine
 installation. For more information regarding software metadata, check the corresponding section in the [the contributor
@@ -172,10 +172,12 @@ LaMachine can be installed in multiple *flavours*:
  * **Global installation** - Installs LaMachine globally on a Linux/BSD machine. (only one per machine)
  * **Docker container** - Installs LaMachine in a docker container
  * **Virtual Machine** - Installs LaMachine in a Virtual Machine
+ * **LXC container** - Installs LaMachine in an LXC/LXD container.
  * **Remote installation** - Installs LaMachine globally on another Linux/BSD machine. (only one per machine)
 
 In all cases, the installation is mediated through [Ansible](https://www.ansible.com), providing a level of abstraction
-over whatever underlying technology is employed. Containerisation uses [Docker](https://docker.com). Virtualisation is
+over whatever underlying technology is employed. Containerisation uses [Docker](https://docker.com) or
+[LXD](https://linuxcontainers.org/lxd/introduction/). Virtualisation is
 made possible through [Vagrant](https://vagrantup.com) and [VirtualBox](https://virtualbox.org). The local installation
 variant uses virtualenv with some custom extensions.
 
@@ -185,21 +187,44 @@ through all the options. It will eventually invoke a so-called ansible playbook 
 of the individual software projects included in LaMachine, depending on your distribution and flavour.
 
 LaMachine uses [Debian](https://www.debian.org) as primary Linux distribution (for virtualisation and containerisation),
-we generally support the following platforms (but certain participating software may not support all!):
+we support the distributions/platforms listed below for a native installation of LaMachine (i.e. compiled against the libraries
+of that distribution). We distinguish three categories of support (and for all we only support the x86-64 architecture):
 
- * Debian 9 (stretch) - *This is the primary platform and the only one for which ALL participating software is
-   guaranteed to work*
- * Ubuntu 18.04 LTS
- * Ubuntu 16.04 LTS
- * Ubuntu 14.04 LTS - *Being phased out and not recommended*
- * CentOS 7 / RedHat Enterprise Linux 7
- * Fedora 27
- * Arch Linux
- * Mac OS X 10.13 (High Sierra) - *Limited functionality only! No webservices/applications. Various optional software will not support Mac OS X either*
+* **Gold support** - All participating software should work on these platforms and things are tested frequently.
+ * Debian 10 (buster)  (next: Debian 11)
+ * Ubuntu 18.04 LTS (next: Ubuntu 20.04 LTS)
 
-This concerns the platforms LaMachine runs on natively or on which you can bootstrap your own build (installation path A). The options for host platforms
-for simply running a pre-built LaMachine Virtual Machine or Docker container, are much larger, and also include Windows
-(see installation paths B & C).
+* **Silver support** - Most software should work
+ * Debian 9 (stretch) - The previous stable release
+ * Ubuntu 16.04 LTS - The previous LTS release
+ * CentOS 8 / RedHat Enterprise Linux 8 - This is offered because it is a popular choice in enterprise environments.
+    Testing is less frequent though.
+
+* **Bronze support** - Certain software is known not to work or things are more prone to breakage.
+    tested less extensively
+  * macOS (a recent version) - Not all software is supported on macOS by definition, but a considerable portion does
+  * Arch Linux (rolling release; things tend to work fine for most software but the nature of a rolling release makes breakages more common, e.g. on each major Python upgrade)
+  * Fedora (latest version); supported in principle but not really tested.
+      work. Things tend to be more prone to breakage, however, and testing is not as rigorous.
+  * Linux Mint (recent version) - Supported in principle due to being an Ubuntu derivative, but not really tested so there could be surprises
+
+* **Deprecated**:
+  * Ubuntu 14.04 LTS
+  * CentOS 7 / RedHat Enterprise Linux 7
+
+* **Unsupported (not exhaustive!)** - We can not support these because our effort reached its limits:
+  * FreeBSD and other BSDs
+  * openSuSE / SuSE
+  * Alpine
+  * Gentoo
+  * Void Linux
+  * nixOS
+  * Solaris
+  * Windows
+
+Note that this concerns the platforms LaMachine runs on natively or on which you can bootstrap your own build
+(installation path A). The options for host platforms for simply running a pre-built LaMachine Virtual Machine or Docker
+container, are much larger, and also include Windows (see installation paths B & C).
 
 In addition to a flavour, users can opt for one of three versions of LaMachine:
  * **stable** - Installs the latest official releases of all participating software
