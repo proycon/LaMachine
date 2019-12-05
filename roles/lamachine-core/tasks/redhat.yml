@@ -38,7 +38,7 @@
       become: true
       become_user: root
       yum:
-        name: [psmisc, pkgconfig, git, mercurial, icu, libtool, autoconf, automake, autoconf-archive, nano, make, gcc, gcc-c++, libxml2, libxml2-devel, libxslt, libxslt-devel, libtar, zlib, zlib-devel, bzip2, bzip2-devel, libcurl, gnutls-devel, libcurl-devel, wget, libexttextcat, zip, unzip, pcre, pcre-devel, poppler-utils, pandoc, hdf5]
+        name: [psmisc, pkgconfig, git, mercurial, icu, libtool, autoconf, automake, autoconf-archive, nano, make, gcc, gcc-c++, libxml2, libxml2-devel, libxslt, libxslt-devel, libtar, zlib, zlib-devel, bzip2, bzip2-devel, gnutls-devel, libcurl-devel, wget, curl, libexttextcat, zip, unzip, pcre, pcre-devel, poppler-utils, pandoc, hdf5]
         state: installed
         update_cache: "{% if nosysupdate is not defined or nosysupdate == 0 %}yes{% else %}no{% endif %}"
 
@@ -55,7 +55,7 @@
       become: true
       become_user: root
       yum:
-        name: [libtar-devel, libexttextcat-devel, curl]
+        name: [libtar-devel, libexttextcat-devel, libcurl]
         state: installed
         update_cache: "{% if nosysupdate is not defined or nosysupdate == 0 %}yes{% else %}no{% endif %}"
       when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int != 8
