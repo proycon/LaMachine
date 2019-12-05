@@ -172,7 +172,7 @@ LaMachine can be installed in multiple *flavours*:
  * **Global installation** - Installs LaMachine globally (natively) on a Linux machine. (only one per machine)
  * **Docker container** - Installs LaMachine in a docker container
  * **Virtual Machine** - Installs LaMachine in a Virtual Machine
- * **LXC container** - Installs LaMachine in an LXC/LXD container.https://anaproy.nl/vocavue/
+ * **LXC container** - Installs LaMachine in an LXC/LXD container.
  * **Remote installation** - Installs LaMachine globally (natively) on another Linux machine. (only one per machine)
 
 In all cases, the installation is mediated through [Ansible](https://www.ansible.com), providing a level of abstraction
