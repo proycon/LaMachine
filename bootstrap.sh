@@ -204,7 +204,7 @@ if which python; then
         fatalerror "Conflict error: The default Python on this system is managed by Anaconda, this is incompatible with LaMachine. Ensure the Python found in your \$PATH corresponds to a regular version as supplied with your OS, editing the order of your \$PATH in ~/.bashrc or ~/.bash_profile should be sufficient to solve this without completely uninstalling anaconda. See also https://stackoverflow.com/a/37377981/3311445"
     fi
 else
-    if [ "$OS" != "debian" ]; then #newest ubuntu/debian doesn't always install python2.7 but apt will handle the dependency later
+    if [ "$OS" != "debian" && "$OS" != "redhat" ] ; then #newest ubuntu/debian/centos doesn't always install python2.7 but apt/yum will handle the dependency later
         fatalerror "No Python found! However, python should be available by default on all supported platforms; please install it yourself through your package manager (and ensure it is in your \$PATH)"
     fi
 fi
@@ -1185,7 +1185,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path, you can change this" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
-        if [ "$VAGRANTBOX" == "centos/7" ]; then
+        if [ "$VAGRANTBOX" == "centos/7" ] || [ "$VAGRANTBOX" == "centos/8" ]; then
             echo "ansible_python_interpreter: \"/usr/bin/python\" #Python interpreter for Vagrant to use with Ansible" >> $STAGEDCONFIG
         else
             echo "ansible_python_interpreter: \"/usr/bin/python3\" #Python interpreter for Vagrant to use with Ansible. This interpreter must be already available in vagrant box $VAGRANTBOX, you may want to set it to python2 instead" >> $STAGEDCONFIG
