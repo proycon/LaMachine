@@ -1,5 +1,5 @@
 buildmatrix = [
-    ##### DEBIAN 9 (stretch) [default] ######
+    ##### DEBIAN [default] ######
     {
         "name": 'stable',
         "flavour": 'vagrant',
@@ -22,10 +22,16 @@ buildmatrix = [
     },
     ##### OTHER DISTRIBUTIONS ######
     {
-        "name": 'stable-centos7',
+        "name": 'stable-centos7', #deprecated
         "flavour": 'vagrant',
         "version": 'stable',
         "vagrantbox": "centos/7"
+    },
+    {
+        "name": 'stable-centos8',
+        "flavour": 'vagrant',
+        "version": 'stable',
+        "vagrantbox": "centos/8"
     },
     {
         "name": 'stable-ubuntu1604',
@@ -40,10 +46,10 @@ buildmatrix = [
         "vagrantbox": "ubuntu/bionic64"
     },
     {
-        "name": 'development-centos7',
+        "name": 'development-centos8',
         "flavour": 'vagrant',
         "version": 'development',
-        "vagrantbox": "centos/7"
+        "vagrantbox": "centos/8"
     },
     #{
     #    "name": 'stable-fedora27',
@@ -69,6 +75,12 @@ buildmatrix = [
         "flavour": 'local',
         "version": 'stable',
         "context": "centos7",
+    },
+    {
+        "name": 'stable-venv-centos8',
+        "flavour": 'local',
+        "version": 'stable',
+        "context": "centos8",
     },
     {
         "name": 'stable-venv-ubuntu1604',
