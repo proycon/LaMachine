@@ -204,7 +204,7 @@ if which python; then
         fatalerror "Conflict error: The default Python on this system is managed by Anaconda, this is incompatible with LaMachine. Ensure the Python found in your \$PATH corresponds to a regular version as supplied with your OS, editing the order of your \$PATH in ~/.bashrc or ~/.bash_profile should be sufficient to solve this without completely uninstalling anaconda. See also https://stackoverflow.com/a/37377981/3311445"
     fi
 else
-    if [ "$OS" != "debian" && "$OS" != "redhat" ] ; then #newest ubuntu/debian/centos doesn't always install python2.7 but apt/yum will handle the dependency later
+    if [ "$OS" != "debian" ] && [ "$OS" != "redhat" ]; then #newest ubuntu/debian/centos doesn't always install python2.7 but apt will handle the dependency later
         fatalerror "No Python found! However, python should be available by default on all supported platforms; please install it yourself through your package manager (and ensure it is in your \$PATH)"
     fi
 fi
