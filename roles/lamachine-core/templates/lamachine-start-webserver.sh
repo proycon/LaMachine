@@ -8,7 +8,7 @@ export LC_ALL=en_US.UTF-8
 
 {% if locality == "global" and root %}
 #### global flavour ##############################################################################################################
-if which systemctl >/dev/null 2>/dev/null; then
+if systemctl is-system-running >/dev/null 2>/dev/null; then
     HAVE_SYSTEMCTL=1
 else
     HAVE_SYSTEMCTL=0 #If there is no systemd, assume init V and 'service' command, this is relevant also in most docker containers where systemd makes less sense
