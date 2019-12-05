@@ -168,12 +168,12 @@ documentation](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md
 
 LaMachine can be installed in multiple *flavours*:
 
- * **Local installation** - Installs LaMachine locally in a user environment on a Linux/BSD or Mac OS X machine (multiple per machine possible)
- * **Global installation** - Installs LaMachine globally on a Linux/BSD machine. (only one per machine)
+ * **Local installation** - Installs LaMachine locally (natively) in a user environment on Linux or macOS machine (multiple per machine possible)
+ * **Global installation** - Installs LaMachine globally (natively) on a Linux machine. (only one per machine)
  * **Docker container** - Installs LaMachine in a docker container
  * **Virtual Machine** - Installs LaMachine in a Virtual Machine
- * **LXC container** - Installs LaMachine in an LXC/LXD container.
- * **Remote installation** - Installs LaMachine globally on another Linux/BSD machine. (only one per machine)
+ * **LXC container** - Installs LaMachine in an LXC/LXD container.https://anaproy.nl/vocavue/
+ * **Remote installation** - Installs LaMachine globally (natively) on another Linux machine. (only one per machine)
 
 In all cases, the installation is mediated through [Ansible](https://www.ansible.com), providing a level of abstraction
 over whatever underlying technology is employed. Containerisation uses [Docker](https://docker.com) or
@@ -201,7 +201,7 @@ of that distribution). We distinguish three categories of support (and for all w
     Testing is less frequent though.
 
 * **Bronze support** - Certain software is known not to work or things are more prone to breakage.
-    tested less extensively
+    Tested less extensively.
   * macOS (a recent version) - Not all software is supported on macOS by definition, but a considerable portion does
   * Arch Linux (rolling release; things tend to work fine for most software but the nature of a rolling release makes breakages more common, e.g. on each major Python upgrade)
   * Fedora (latest version); supported in principle but not really tested.
