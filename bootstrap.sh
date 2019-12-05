@@ -21,6 +21,7 @@ green=${normal}$(tput setaf 2) #  green
 yellow=${normal}$(tput setaf 3) #  yellow
 blue=${normal}$(tput setaf 4) #  blue
 boldblue=${bold}$(tput setaf 4) #  blue
+boldyellow=${bold}$(tput setaf 3) #  yellow
 normal=$(tput sgr0)
 
 export LM_VERSION="v2.12" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
@@ -1516,7 +1517,12 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     fi
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ "$SUDO" -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
-        echo "${bold}The installation will now begin and will ask you for a BECOME password, here you need to fill in your sudo password as this is needed to install certain global packages from your distribution, it will only be used for limited parts of the installation. The installation process may take quite some time and produce a lot of output (most of which you can safely ignore). Press ENTER to continue and feel free to get yourself a tea or coffee while you wait!${normal}"
+        echo "${bold}The installation will now begin and will ask you for a BECOME password, "
+        echo "here you need to fill in your sudo password as this is needed to install certain
+        echo "global packages from your distribution, it will only be used for limited parts of"
+        echo "the installation. The installation process may take quite some time and produce a
+        echo "lot of output (most of which you can safely ignore)."
+        echo "Press ENTER to continue and feel free to get yourself a tea or coffee while you wait!${normal}"
         read
         ASKSUDO="--ask-become-pass"
     else
@@ -1592,9 +1598,12 @@ elif [[ "$FLAVOUR" == "lxc" ]]; then
         lxc launch ubuntu:18.04 $LM_NAME || fatalerror "Unable to create new container. Ensure LXD is installed, the current user is in the lxd group, and the container $LM_NAME does not already exist"
         echo "${boldblue}Launching LaMachine bootstrap inside the new container${normal}"
         echo "${boldblue}------------------------------------------------------${normal}"
-        echo "${boldred}Important note: anything below this point will be executed in the container rather than on the host system!${normal}"
-        echo "${boldred}                The sudo password can be left empty and will work${normal}"
-        sleep 5
+        echo "${boldyellow}Important note: anything below this point will be executed in the container rather than on the host system!${normal}"
+        echo "${boldyellow}                The sudo/become password can be left empty when asked for and will work${normal}"
+        if [ $INTERACTIVE -eq 1]; then
+            echo "(Press ENTER to continue)"
+            read
+        fi
         OPTS=""
         if [ ! -z "$INSTALL" ]; then
             OPTS="$OPTS --install \"$INSTALL\""
