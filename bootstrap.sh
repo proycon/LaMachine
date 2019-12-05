@@ -1579,10 +1579,14 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
         echo "======================================================================================"
         if [ $BUILD -eq 1 ]; then
             echo "${boldgreen}All done, a docker image has been built!${normal}"
-            echo "- to create and run a *new* interactive container using this image, run: docker run -p 8080:80 -h $HOSTNAME -t -i $DOCKERREPO:$LM_NAME"
+            echo "- to run a *new* interactive container using this image, run: docker run -t -i $DOCKERREPO:$LM_NAME"
+            echo "- to run a non-interactive container: docker run -t $DOCKERREPO:$LM_NAME nameofyourtoolhere"
+            echo "- to start a new container with a webserver: docker run -p 8080:80 -h $HOSTNAME -t $DOCKERREPO:$LM_NAME lamachine-start-webserver ,  and then connect on http://localhost:8080"
         else
             echo "${boldgreen}All done, a docker image has been downloaded!${normal}"
-            echo "- to create and run a *new* interactive container using this image, run: docker run -p 8080:80 -h latest -t -i $DOCKERREPO"
+            echo "- to run a *new* interactive container using this image, run: docker run -t -i $DOCKERREPO"
+            echo "- to run a non-interactive container: docker run -t $DOCKERREPO nameofyourtoolhere"
+            echo "- to start a new container with a webserver: docker run -p 8080:80 -h latest -t $DOCKERREPO lamachine-start-webserver ,  and then connect on http://localhost:8080"
         fi
     else
         echo "======================================================================================"
