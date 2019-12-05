@@ -50,6 +50,7 @@ def test(build, args):
         cwd = os.getcwd()
         os.chdir("context/" + build['context'])
         cmd = "docker build -t proycon/lamachine:" + build['name'] + " --build-arg NAME=" + build['name'] + " --build-arg VERSION=" + build['version'] + " --build-arg BRANCH=develop --build-arg HOSTNAME=lamachine-" + build['name'] + " . 2> " + cwd + "/logs/" + buildid(build).replace(':','-') + '.log >&2'
+        print("[LaMachine Test] Running: ", cmd, file=sys.stderr)
         r = os.system(cmd)
         os.chdir(cwd)
     else:
