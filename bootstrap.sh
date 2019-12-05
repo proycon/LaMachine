@@ -1588,7 +1588,7 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
         fi
     fi
 elif [[ "$FLAVOUR" == "lxc" ]]; then
-        echo "Building LXC container (unprivileged!)"
+        echo "Building LXC container (unprivileged!), using the default profile"
         lxc launch ubuntu:18.04 $LM_NAME || fatalerror "Unable to create new container. Ensure LXD is installed, the current user is in the lxd group, and the container $LM_NAME does not already exist"
         echo "${boldblue}Launching LaMachine bootstrap inside the new container${normal}"
         echo "${boldblue}------------------------------------------------------${normal}"
@@ -1618,12 +1618,12 @@ elif [[ "$FLAVOUR" == "lxc" ]]; then
         echo -e "#!/bin/bash\nlxc delete $LM_NAME; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-destroy
         chmod a+x $HOMEDIR/bin/lamachine-$LM_NAME-*
         ln -sf $HOMEDIR/bin/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
-        CMD="lxc exec $LM_NAME -- su ubuntu -l -c \"bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global $OPTS\""
+        CMD="lxc exec $LM_NAME -- su ubuntu -l -c \"bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global $OPTS\"" #NOTE: command is duplicated below, update that one too!
         echo $CMD
-        $CMD || fatalerror "Unable to bootstrap (command was $CMD)"
+        lxc exec $LM_NAME -- su ubuntu -l -c "bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global $OPTS"  || fatalerror "Unable to bootstrap (command was $CMD)"
         if [ $rc -eq 0 ]; then
             echo "======================================================================================"
-            echo "${boldgreen}All done, you LXD container has been built!${normal}"
+            echo "${boldgreen}All done, your LXD container has been built!${normal}"
             echo "- to enter your container, run lamachine-$LM_NAME-activate"
         fi
 elif [[ "$FLAVOUR" == "singularity" ]]; then
