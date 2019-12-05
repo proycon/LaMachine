@@ -200,13 +200,14 @@ of that distribution). We distinguish three categories of support (and for all w
   * CentOS 8 / RedHat Enterprise Linux 8 - This is offered because it is a popular choice in enterprise environments.
     Testing is less frequent though.
 
-* **Bronze support** - Certain software is known not to work or things are more prone to breakage.
-    Tested less extensively.
+* **Bronze support** - Certain software is known not to work and/or things are more prone to breakage and have not been
+    tested.
+  * Debian testing (bullseye) and debian unstable (sid) - Should work but not tested.
+  * Ubuntu (a non-LTS version) - Should work as long as it's newer than the one mentioned under silver support, but not tested.
   * macOS (a recent version) - Not all software is supported on macOS by definition, but a considerable portion does
   * Arch Linux (rolling release; things tend to work fine for most software but the nature of a rolling release makes breakages more common, e.g. on each major Python upgrade)
-  * Fedora (latest version); supported in principle but not really tested.
-      work. Things tend to be more prone to breakage, however, and testing is not as rigorous.
   * Linux Mint (recent version) - Supported in principle due to being an Ubuntu derivative, but not really tested so there could be surprises
+  * Fedora (latest version); supported in principle but not really tested.
 
 * **Deprecated**:
   * Ubuntu 14.04 LTS

@@ -1,4 +1,12 @@
 ---
+    - name: Enable extra repositories
+      become: true
+      become_user: root
+      shell: |
+          dnf -y install 'dnf-command(config-manager)'
+          dnf config-manager --set-enabled PowerTools
+      when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
+
     - name: Enable EPEL Repositories
       become: true
       become_user: root
@@ -14,7 +22,7 @@
            yum install -y https://$(rpm -E '%{?centos:centos}%{!?centos:rhel}%{rhel}').iuscommunity.org/ius-release.rpm
       args:
           executable: /bin/bash
-      when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+      when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 7
       ignore_errors: yes #would return 1 when already installed (during update)
 
     - name: Updating base system (YUM)
@@ -30,19 +38,53 @@
       become: true
       become_user: root
       yum:
-        name: [psmisc, pkgconfig, git, mercurial, icu, libtool, autoconf, automake, autoconf-archive, nano, make, gcc, gcc-c++, libxml2, libxml2-devel, libxslt, libxslt-devel, libtar, libtar-devel, zlib, zlib-devel, bzip2, bzip2-devel, libcurl, gnutls-devel, libcurl-devel, wget, curl, libexttextcat, libexttextcat-devel, zip, unzip, pcre, pcre-devel, poppler-utils, pandoc, hdf5]
+        name: [psmisc, pkgconfig, git, mercurial, icu, libtool, autoconf, automake, autoconf-archive, nano, make, gcc, gcc-c++, libxml2, libxml2-devel, libxslt, libxslt-devel, libtar, zlib, zlib-devel, bzip2, bzip2-devel, libcurl, gnutls-devel, libcurl-devel, wget, curl, libexttextcat, libexttextcat-devel, zip, unzip, pcre, pcre-devel, poppler-utils, pandoc, hdf5]
         state: installed
         update_cache: "{% if nosysupdate is not defined or nosysupdate == 0 %}yes{% else %}no{% endif %}"
 
-    - name: Installing Python base packages for CentOS/RHEL (yum)
+    - name: installing extra packages on CentOS 8 (yum)
+      become: true
+      become_user: root
+      yum:
+        name: [boost,boost-devel]
+        state: installed
+        update_cache: "{% if nosysupdate is not defined or nosysupdate == 0 %}yes{% else %}no{% endif %}"
+      when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
+
+    - name: Installing extra base packages (yum) when not on CentOS 8
+      become: true
+      become_user: root
+      yum:
+        name: [libtar-devel]
+        state: installed
+        update_cache: "{% if nosysupdate is not defined or nosysupdate == 0 %}yes{% else %}no{% endif %}"
+      when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int != 8
+
+    - name: Install extra packages not in distribution on CentOS 8 (yum)
+      become: true
+      become_user: root
+      shell: |
+        cd /tmp/
+        yum install -y http://repo.okay.com.mx/centos/8/x86_64/release//libexttextcat-devel-3.4.5-2.el8.x86_64.rpm
+
+      when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
+    - name: Installing Python base packages for CentOS/RHEL 8 (yum)
+      become: true
+      become_user: root
+      yum:
+        name: [python3, python3-devel, python3-pip, python3-setuptools, libicu-devel, python3-virtualenv, sqlite]
+        state: installed
+      when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
+
+    - name: Installing Python base packages for CentOS/RHEL 7 (yum)
       become: true
       become_user: root
       yum:
         name: [python36u, python36u-devel, python36u-pip, python36u-setuptools, libicu-devel]
         state: installed
-      when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+      when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 7
 
-    - name: Linking Python 3.6 (RHEL/CentOS)
+    - name: Linking Python 3.6 (Old RHEL/CentOS)
       become: yes
       become_user: root
       file:
@@ -58,15 +100,15 @@
           - { src: /usr/bin/pydoc3.6, dest: /usr/bin/pydoc3 }
           - { src: /usr/bin/easy_install-3.6, dest: /usr/bin/easy_install-3 }
           - { src: /usr/include/python3.6m, dest: /usr/include/python3.6 }
-      when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+      when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 7
 
 
 
-    - name: Installing virtualenv for CentOS/RHEL
+    - name: Installing virtualenv for CentOS/RHEL 7
       become: true
       become_user: root
       shell: "pip3 install virtualenv"
-      when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+      when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 7
 
 
     - name: installing Python base packages for Fedora
@@ -78,9 +120,9 @@
       when: ansible_distribution|lower != "centos" and ansible_distribution|lower != "rhel" #aka fedora mainly
 
 
-    - when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+    - when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 7
       block:
-        - name: "Download and extract SQLite (system version is too old)"
+        - name: "Download and extract SQLite (system version is too old on CentOS 7)"
           become: true
           become_user: root
           shell: |

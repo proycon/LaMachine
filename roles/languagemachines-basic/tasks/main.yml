@@ -101,7 +101,7 @@
               with_items:
                 - repo: ticcutils
                   user: LanguageMachines
-                  configure_opts: "{% if (ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'rhel') and locality == 'local' %}--with-boost={{lm_prefix}}{% endif %}"
+                  configure_opts: "{% if (ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'rhel') and ansible_distribution_major_version == 7 and locality == 'local' %}--with-boost={{lm_prefix}}{% endif %}"
                   build_environment:
                      TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
                      CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"
