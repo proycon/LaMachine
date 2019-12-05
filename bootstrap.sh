@@ -864,7 +864,7 @@ for package in ${NEED[@]}; do
             cmd=""
         fi
         if [ ! -z "$cmd" ]; then
-            echo "LXD is required for LaMachine with LXC but not installed yet. ${bold}Install now?${normal}"
+            echo "LXD is required for LaMachine with LXD but not installed yet. ${bold}Install now?${normal}"
             while true; do
                 echo -n "${bold}Run:${normal} $cmd ? [yn] "
                 if [ "$INTERACTIVE" -eq 1 ]; then
@@ -873,8 +873,8 @@ for package in ${NEED[@]}; do
                     yn="y"
                 fi
                 case $yn in
-                    [Yy]* ) $cmd || fatalerror "LXC installation failed!"; break;;
-                    [Nn]* ) echo "Please install LXC manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
+                    [Yy]* ) $cmd || fatalerror "LXD installation failed!"; break;;
+                    [Nn]* ) echo "Please install LXD manually, see https://linuxcontainers.org/lxd/getting-started-cli/" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
                     * ) echo "Please answer yes or no.";;
                 esac
             done
