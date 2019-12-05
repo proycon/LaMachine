@@ -191,13 +191,13 @@ we support the distributions/platforms listed below for a native installation of
 of that distribution). We distinguish three categories of support (and for all we only support the x86-64 architecture):
 
 * **Gold support** - All participating software should work on these platforms and things are tested frequently.
- * Debian 10 (buster)  (next: Debian 11)
- * Ubuntu 18.04 LTS (next: Ubuntu 20.04 LTS)
+  * Debian 10 (buster)  (next: Debian 11)
+  * Ubuntu 18.04 LTS (next: Ubuntu 20.04 LTS)
 
 * **Silver support** - Most software should work
- * Debian 9 (stretch) - The previous stable release
- * Ubuntu 16.04 LTS - The previous LTS release
- * CentOS 8 / RedHat Enterprise Linux 8 - This is offered because it is a popular choice in enterprise environments.
+  * Debian 9 (stretch) - The previous stable release
+  * Ubuntu 16.04 LTS - The previous LTS release
+  * CentOS 8 / RedHat Enterprise Linux 8 - This is offered because it is a popular choice in enterprise environments.
     Testing is less frequent though.
 
 * **Bronze support** - Certain software is known not to work or things are more prone to breakage.
