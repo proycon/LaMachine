@@ -190,11 +190,12 @@ LaMachine uses [Debian](https://www.debian.org) as primary Linux distribution (f
 we support the distributions/platforms listed below for a native installation of LaMachine (i.e. compiled against the libraries
 of that distribution). We distinguish three categories of support (and for all we only support the x86-64 architecture):
 
-* **Gold support** - All participating software should work on these platforms and things are tested frequently.
+* **Gold support** - All participating software should work on these platforms and things are tested frequently. The
+    pre-built LaMachine containers and VMs we offer always use one of these.
   * Debian 10 (buster)  (next: Debian 11)
   * Ubuntu 18.04 LTS (next: Ubuntu 20.04 LTS)
 
-* **Silver support** - Most software should work
+* **Silver support** - Most software should work.
   * Debian 9 (stretch) - The previous stable release
   * Ubuntu 16.04 LTS - The previous LTS release
   * CentOS 8 / RedHat Enterprise Linux 8 - This is offered because it is a popular choice in enterprise environments.
@@ -205,6 +206,8 @@ of that distribution). We distinguish three categories of support (and for all w
   * Debian testing (bullseye) and debian unstable (sid) - Should work but not tested.
   * Ubuntu (a non-LTS version) - Should work as long as it's newer than the one mentioned under silver support, but not tested.
   * macOS (a recent version) - Not all software is supported on macOS by definition, but a considerable portion does
+      work. Things are a bit more prone to break if the user's environment has been heavily tweaked and differs from the
+      stock experience.
   * Arch Linux (rolling release; things tend to work fine for most software but the nature of a rolling release makes breakages more common, e.g. on each major Python upgrade)
   * Linux Mint (recent version) - Supported in principle due to being an Ubuntu derivative, but not really tested so there could be surprises
   * Fedora (latest version); supported in principle but not really tested.
