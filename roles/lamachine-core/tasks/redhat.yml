@@ -46,7 +46,7 @@
       become: true
       become_user: root
       yum:
-        name: [boost,boost-devel]
+        name: [boost,boost-devel, glibc-langpack-en]
         state: installed
         update_cache: "{% if nosysupdate is not defined or nosysupdate == 0 %}yes{% else %}no{% endif %}"
       when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
