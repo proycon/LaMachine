@@ -64,10 +64,11 @@
       become: true
       become_user: root
       shell: |
-        cd /tmp/
-        yum install -y http://repo.okay.com.mx/centos/8/x86_64/release//libexttextcat-devel-3.4.5-2.el8.x86_64.rpm
-
+        yum install -y libexttextcat-devel-3.4.5-2.el8.x86_64.rpm
+      args:
+        chdir: "{{ source_path }}/LaMachine/deps"
       when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
+
     - name: Installing Python base packages for CentOS/RHEL 8 (yum)
       become: true
       become_user: root
