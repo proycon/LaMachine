@@ -1,0 +1,32 @@
+---
+    - name: Enabling extra repository for Tesseract on CentOS 8
+      shell: |
+        dnf config-manager --add-repo https://download.opensuse.org/repositories/home:/Alexander_Pozdnyakov/CentOS_8/
+        rpm --import https://build.opensuse.org/projects/home:Alexander_Pozdnyakov/public_key
+      when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
+
+    - name: Installing Tesseract OCR engine
+      include_role:
+        name: lamachine-package-install
+      with_items:
+        - { debian: tesseract-ocr, redhat: tesseract, arch: tesseract }
+        - { debian: tesseract-ocr-eng, arch: tesseract-data-eng } #English is already included on redhat? no package tesseract-data-eng
+        - { debian: tesseract-ocr-nld, redhat: tesseract-langpack-nld, arch: tesseract-data-nld }
+        - { debian: tesseract-ocr-deu, redhat: tesseract-langpack-deu, arch: tesseract-data-deu }
+        - { debian: tesseract-ocr-fra, redhat: tesseract-langpack-fra, arch: tesseract-data-fra }
+      loop_control:
+          loop_var: package
+
+    - name: Installing Fraktur support for Tesseract on CentOS 8
+      include_role:
+        name: lamachine-package-install
+      with_items:
+        - { redhat: tesseract-script-frak }
+      when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
+
+    - name: Installing Fraktur support for Tesseract on Debian/Ubuntu
+      include_role:
+        name: lamachine-package-install
+      with_items:
+        - { redhat: tesseract-ocr-script-frak }
+      when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu")

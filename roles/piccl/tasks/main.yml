@@ -6,15 +6,10 @@
         msg: "PICCL is not supported on Mac OS X"
       when: ansible_distribution|lower == "macosx"
 
-    - name: Installing global dependencies for PICCL
+    - name: Installing global dependencies for PICCL #note that tesseract is a seperate role
       include_role:
         name: lamachine-package-install
       with_items:
-        - { debian: tesseract-ocr, redhat: tesseract, arch: tesseract }
-        - { debian: tesseract-ocr-eng, arch: tesseract-data-eng } #English is already included on redhat? no package tesseract-data-eng
-        - { debian: tesseract-ocr-nld, redhat: tesseract-langpack-nld, arch: tesseract-data-nld }
-        - { debian: tesseract-ocr-deu, redhat: tesseract-langpack-deu, arch: tesseract-data-deu }
-        - { debian: tesseract-ocr-fra, redhat: tesseract-langpack-fra, arch: tesseract-data-fra }
         - { debian: poppler-utils, redhat: poppler-utils, arch: poppler } #should already be installed earlier but no harm in making it explicit here anyway
         - { debian: djvulibre-bin, redhat: djvulibre, arch: djvulibre }
         - { debian: libdjvulibre-text }
