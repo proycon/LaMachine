@@ -309,6 +309,7 @@ In this example we assume your LaMachine image has the tag **latest**, which cor
 	* Set ``-h`` with the desired hostname, this too must match the setting LaMachine has been built with!
     * The ``-f`` argument ensures the script waits in the foreground and doesn't exit after starting.
 	* If started in this way, you can connect your webbrowser on the host system to http://127.0.0.1:8080 .
+* To make persistent storage available in the container, e.g. for sharing data, use something like: ``--mount type=bind,source=/path/on/host,target=/data``
 
 If you use LaMachine with docker, we expect you to actually be familiar with
 docker and understand the difference between images, containers, how to commit
