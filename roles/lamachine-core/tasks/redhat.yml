@@ -60,14 +60,20 @@
         update_cache: "{% if nosysupdate is not defined or nosysupdate == 0 %}yes{% else %}no{% endif %}"
       when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int != 8
 
-    - name: Install extra packages not in distribution on CentOS 8 (yum)
-      become: true
-      become_user: root
-      shell: |
-        yum install -y libexttextcat-devel-3.4.5-2.el8.x86_64.rpm
-      args:
-        chdir: "{{ source_path }}/LaMachine/deps"
-      when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
+    - when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
+      block:
+        - name: Copy libexttextcat-devel package for CentOS 8
+          copy:
+            src: "deps/libexttextcat-devel-3.4.5-2.el8.x86_64.rpm"
+            dest: "/tmp/"
+            force: no
+        - name: Install libexttextcat-devel package for CentOS 8 (yum)
+          become: true
+          become_user: root
+          shell: |
+            yum install -y libexttextcat-devel-3.4.5-2.el8.x86_64.rpm
+          args:
+            chdir: "/tmp"
 
     - name: Installing Python base packages for CentOS/RHEL 8 (yum)
       become: true
