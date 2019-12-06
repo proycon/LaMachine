@@ -314,7 +314,7 @@ proycon/lamachine`` manually you will need to run the docker commands yourself:
         * The ``-f`` argument to ``lamachine-start-webserver`` ensures the script waits in the foreground and doesn't exit after starting.
 	* If started in this way, you can connect your webbrowser on the host system to http://127.0.0.1:8080 .
 
-The scripts will automatically share your data directory (your home directory by default)with the container, mounted at ``/data`` by default. To manually make persistent storage available in the container, e.g. for sharing data, use docker parameters like: ``--mount type=bind,source=/path/on/host,target=/data``
+The scripts will automatically share your designated data directory (your home directory by default) with the container, mounted at ``/data`` by default. To manually make persistent storage available in the container, e.g. for sharing data, use docker parameters like: ``--mount type=bind,source=/path/on/host,target=/data``
 
 If you use LaMachine with docker, we expect you to actually be familiar with docker and understand the non-persistent
 nature of containers, understand the difference between images and containers. Be aware that new containers are created
