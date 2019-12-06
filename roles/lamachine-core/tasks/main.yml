@@ -458,7 +458,7 @@
           args:
               executable: /bin/bash
               chdir: "{{source_path}}"
-          when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
+          when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 7
 
         - block:
             - name: Obtaining local environment's Python version
