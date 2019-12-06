@@ -82,6 +82,8 @@ usage () {
     echo " ${bold}--services${normal} - Preset enabled services (comma seperated list). Default: all"
     echo " ${bold}--force${normal} - Preset a default force parameter (set to 1 or 2). Note that this will take effect on ANY subsequent update!"
     echo " ${bold}--disksize${normal} - Sets extra disksize for VMs; you'll want to use  this if you plan to include particularly large software and exceed the default 8GB"
+    echo " ${bold}--datapath${normal} - The data path on the host machine that will be shared with the container/VM"
+    echo " ${bold}--port${normal} - The port for HTTP traffic to forward from the host machine to the container/VM"
 }
 
 USER_SET=0 #explicitly set?
@@ -409,6 +411,16 @@ while [[ $# -gt 0 ]]; do
         ;;
         --vmmem) #extra ansible parameters
         VMMEM=$2
+        shift
+        shift
+        ;;
+        --datapath)
+        HOSTDATAPATH="$2"
+        shift
+        shift
+        ;;
+        --port)
+        HOSTPORT="$2"
         shift
         shift
         ;;
@@ -1128,6 +1140,7 @@ if [ $BUILD -eq 1 ] && [[ "$FLAVOUR" != "lxc" ]]; then
         fi
         echo -n "${bold}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal} "
         read HOSTNAME
+        HOSTNAME="${HOSTNAME%\\n}"
         if [ -z "$HOSTNAME" ]; then
             HOSTNAME=$DETECTEDHOSTNAME
         fi
@@ -1141,6 +1154,7 @@ if [[ "$FLAVOUR" == "remote" ]]; then
         echo "as root is explicitly forbidden. The user, on the other hand, does require sudo rights on the remote machine."
         echo -n "${bold}What user should LaMachine use to provision the remote machine?${normal} "
         read USERNAME
+        USERNAME="${USERNAME%\\n}"
     fi
 fi
 
@@ -1148,6 +1162,31 @@ STAGEDCONFIG="$BASEDIR/lamachine-$LM_NAME.yml"
 STAGEDMANIFEST="$BASEDIR/install-$LM_NAME.yml"
 
 HOMEDIR=$(echo ~)
+
+
+if [ $INTERACTIVE -eq 1 ]; then
+    if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "lxc" ]]; then
+        echo "In order to share data files, LaMachine shares a directory from your actual host machine"
+        echo "with the VM/container, which will be mounted at /data by default."
+        echo "${bold}What directory do you want to share?${normal} (if left empty, your home directory $HOMEDIR will be shared by default)"
+        read HOSTDATAPATH
+        HOSTDATAPATH="${HOSTDATAPATH%\\n}"
+    fi
+
+    if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "lxc" ]]; then
+        echo "To offer convenient access to the HTTP webserver in your VM/container, a port will be forwarded from your host system"
+        echo "${bold}What port do you want to forward for HTTP?${normal} (if left empty, 8080 will be the default)"
+        read HOSTPORT
+        HOSTPORT="${HOSTPORT%\\n}"
+    fi
+fi
+
+if [ -z "$HOSTDATAPATH" ]; then
+    HOSTDATAPATH=$HOMEDIR
+fi
+if [ -z "$HOSTPORT" ]; then
+    HOSTPORT="8080"
+fi
 
 if [ $BUILD -eq 1 ] && [[ "$FLAVOUR" != "lxc" ]]; then
  if [ ! -e "$STAGEDCONFIG" ]; then
@@ -1181,7 +1220,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "unix_group: \"vagrant\" #(don't change this unless you know what you're doing)" >> $STAGEDCONFIG
         echo "homedir: \"/home/vagrant\"" >> $STAGEDCONFIG
         echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is originally stored/shared" >> $STAGEDCONFIG
-        echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
+        echo "host_data_path: \"$HOSTDATAPATH\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path, you can change this" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
@@ -1197,7 +1236,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "unix_group: \"lamachine\" #must be same as unix_user, changing this is not supported yet" >> $STAGEDCONFIG
         echo "homedir: \"/home/lamachine\"" >> $STAGEDCONFIG
         echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared" >> $STAGEDCONFIG
-        echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
+        echo "host_data_path: \"$HOSTDATAPATH\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
@@ -1207,7 +1246,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "unix_group: \"lamachine\" #must be same as unix_user, changing this is not supported yet" >> $STAGEDCONFIG
         echo "homedir: \"/home/lamachine\"" >> $STAGEDCONFIG
         echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared (do not change this for singularity!" >> $STAGEDCONFIG
-        echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
+        echo "host_data_path: \"$HOSTDATAPATH\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path (do not change this for singularity)" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
@@ -1275,7 +1314,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
     else
         echo "http_port: 8080 #webserver port" >> $STAGEDCONFIG
     fi
-echo "mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker only)
+echo "mapped_http_port: $HOSTPORT #mapped webserver port on host system (for VM/docker only)
 services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all possible services from the software categories you install will be provided. You can remove this and list specific services you want to enable. This is especially needed in case of a LaMachine installation that intends to only provide a single service.
 webservertype: nginx #If set to anything different, the internal webserver will not be enabled/provided by LaMachine (which allows you to run your own external one), do leave webserver: true set as is though.
 " >> $STAGEDCONFIG
@@ -1286,7 +1325,7 @@ else
 fi
 echo "lab_password_sha1: \"sha1:fa40baddab88:c498070b5885ee26ed851104ddef37926459b0c4\" #default password for Jupyter Lab: lamachine, change this with 'lamachine-passwd lab'" >> $STAGEDCONFIG
 echo "lab_allow_origin: \"*\" #hosts that may access the lab environment" >> $STAGEDCONFIG
-echo "flat_password: \"flat\" #initial password for the FLAT administrator (if installed; username 'flat'), updating this later has no effect (edit in FLAT itself)!" >> $STAGEDCONFIG
+echo "flat_password: \"flat\" #initial password for the FLAT administrator (if installed; username 'flat'), updating this later than on initial installation has no effect (edit in FLAT itself)!" >> $STAGEDCONFIG
 if [ $FORCE -ne 0 ]; then
     echo "force: $FORCE #Sets the default force parameter for updates, set to 1 to force updates or 2 to explicitly remove all sources and start from scratch on each update. Remove this line entirely if you don't need it or are in doubt" >> $STAGEDCONFIG
 fi
@@ -1462,9 +1501,10 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     else
         cp -f $SOURCEDIR/Vagrantfile.prebuilt $SOURCEDIR/Vagrantfile || fatalerror "Unable to copy Vagrantfile"
         sed -i.bak s/lamachine-vm/$LM_NAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+        sed -i.bak "s/Dir.home/\"$HOSTDATAPATH\"/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         if [ $INTERACTIVE -eq 1 ]; then
             #not needed for BUILD=1 because most interesting parameters inherited from the ansible host configuration
-            echo "${bold}Do you want to open the vagrant configuration in an editor for final configuration? (recommended to increase memory/cpu cores) [yn]${normal}"
+            echo "${bold}Do you want to open the vagrant configuration in an editor for final configuration? (recommended to increase memory/cpu cores!) [yn]${normal}"
             read choice
             case $choice in
                 [n]* ) break;;
@@ -1570,6 +1610,7 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
         #echo "$HOSTNAME ansible_connection=local" > $SOURCEDIR/hosts.ini #not needed
         docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME --build-arg LM_VERSION=$LM_VERSION --build-arg HOSTNAME=$HOSTNAME . 2>&1 | tee lamachine-$LM_NAME.log
         rc=${PIPESTATUS[0]}
+        #add activation script on the host machine:
     else
         echo "Pulling pre-built docker image.."
         docker pull $DOCKERREPO
@@ -1588,6 +1629,9 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
             echo "- to run a non-interactive container: docker run -t $DOCKERREPO nameofyourtoolhere"
             echo "- to start a new container with a webserver: docker run -p 8080:80 -h latest -t $DOCKERREPO lamachine-start-webserver ,  and then connect on http://localhost:8080"
         fi
+        echo -e "#!/bin/bash\necho \"Instantiating a **new** interactive Docker container with LaMachine...\"; docker run -i -t -h $HOSTNAME --mount type=bind,source=$DATA_SOURCE,target=/data $DOCKERREPO:$LM_NAME" > $HOMEDIR/bin/lamachine-$LM_NAME-activate
+        echo -e "#!/bin/bash\necho \"Instantiating a **new** interactive Docker container with LaMachine...\"; docker run -i -t -h $HOSTNAME --mount type=bind,source=$DATA_SOURCE,target=/data $DOCKERREPO:$LM_NAME \$@" > $HOMEDIR/bin/lamachine-$LM_NAME-run
+        echo -e "#!/bin/bash\necho \"Instantiating a **new** Docker container with the LaMachine webserver; connect on http://127.0.0.1:$HOSTPORT\"; docker run -t -p $HOSTPORT:80 -h $HOSTNAME --mount type=bind,source=$DATA_SOURCE,target=/data $DOCKERREPO:$LM_NAME lamachine-start-webserver -f" > $HOMEDIR/bin/lamachine-$LM_NAME-start
     else
         echo "======================================================================================"
         echo "${boldred}The docker build has failed unfortunately.${normal} You have several options:"
