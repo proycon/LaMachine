@@ -455,7 +455,7 @@ fi
 
 if [ -z "$FLAVOUR" ]; then
     while true; do
-        echo "${bold}Where do you want to install LaMachine?${normal}"
+        echo "${boldblue}Where do you want to install LaMachine?${normal}"
         echo "  1) in a local user environment"
         echo "       installs as much as possible in a separate directory"
         echo "       for a particular user; can exists alongside existing"
@@ -508,7 +508,7 @@ fi
 if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
   if [[ "$FLAVOUR" == "vagrant" || "$FLAVOUR" == "docker" || "$FLAVOUR" == "singularity" ]]; then
     while true; do
-        echo "${bold}Do you want to build a new personalised LaMachine image or use and download a prebuilt one?${normal}"
+        echo "${boldblue}Do you want to build a new personalised LaMachine image or use and download a prebuilt one?${normal}"
         echo "  1) Build a new image"
         echo "       Offers most flexibility and ensures you are on the latest versions."
         echo "       Allows you to choose even for development versions or custom versions."
@@ -527,7 +527,7 @@ if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
     done
 
     if [[ "$FLAVOUR" == "vagrant" ]] && [ $BUILD -eq 1 ] && [ $DISKSIZE -eq 0 ]; then
-        echo "${bold}Allocate extra diskspace?${normal}"
+        echo "${boldblue}Allocate extra diskspace?${normal}"
         echo "  The standard LaMachine disk is limited in size (about 9GB). If you plan to include certain very large software"
         echo "  collections that LaMachine offers (such as kaldi, valkuil) then this is not sufficient and"
         echo "  you need to allocate an extra virtual disk, specify the size below:"
@@ -541,7 +541,7 @@ if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
             esac
         done
     elif [[ "$FLAVOUR" == "docker" ]] && [ $BUILD -eq 1 ] && [ $DISKSIZE -eq 0 ]; then
-        echo "${bold}Container diskspace${normal}"
+        echo "${boldblue}Container diskspace${normal}"
         echo "  A standard docker container is limited in size (usually 10GB). If you plan to include certain very large optional software"
         echo "  collections that LaMachine offers (such as kaldi, valkuil) then this is not sufficient and"
         echo "  you need to increase the base size of your containers (depending on the storage driver you use for docker)."
@@ -566,7 +566,7 @@ fi
 if [[ "$LOCALITY" == "local" ]]; then
     if [ -z "$LOCALENV_TYPE" ]; then
         LOCALENV_TYPE="virtualenv"
-        #echo "${bold}We support two forms of local user environments:${normal}"
+        #echo "${boldblue}We support two forms of local user environments:${normal}"
         #echo "  1) Using virtualenv"
         #echo "       (originally for Python but extended by us)"
         #echo "  2) Using conda"
@@ -653,7 +653,7 @@ if [ -z "$SUDO" ]; then
             echo "or another official source whenever possible. You need to have sudo permission for this though..."
             echo "${red}Answering 'no' to this question may make installation on your system impossible!${normal}"
             echo
-            echo -n "${bold}Do you have administrative access (root/sudo) on the current system?${normal} [yn] "
+            echo -n "${boldblue}Do you have administrative access (root/sudo) on the current system?${normal} [yn] "
             read yn
             case $yn in
                 [Yy]* ) SUDO=1; break;;
@@ -1138,7 +1138,7 @@ if [ $BUILD -eq 1 ] && [[ "$FLAVOUR" != "lxc" ]]; then
         if [ "$FLAVOUR" = "remote" ]; then
             echo "This determines the remote machine LaMachine will be installed on!"
         fi
-        echo -n "${bold}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal} "
+        echo -n "${boldblue}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal} "
         read HOSTNAME
         HOSTNAME="${HOSTNAME%\\n}"
         if [ -z "$HOSTNAME" ]; then
@@ -1149,10 +1149,12 @@ fi
 
 if [[ "$FLAVOUR" == "remote" ]]; then
     if [ $USER_SET -eq 0 ] && [ $INTERACTIVE -eq 1 ]; then
+        echo
+        echo
         echo "To provision the remote machine, LaMachine needs to be able to connect over ssh as specific user."
         echo "The user must exist and ideally passwordless ssh keypairs should be available. Note that connecting and running"
         echo "as root is explicitly forbidden. The user, on the other hand, does require sudo rights on the remote machine."
-        echo -n "${bold}What user should LaMachine use to provision the remote machine?${normal} "
+        echo -n "${boldblue}What user should LaMachine use to provision the remote machine?${normal} "
         read USERNAME
         USERNAME="${USERNAME%\\n}"
     fi
@@ -1166,16 +1168,20 @@ HOMEDIR=$(echo ~)
 
 if [ $INTERACTIVE -eq 1 ]; then
     if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "lxc" ]]; then
+        echo
+        echo
         echo "In order to share data files, LaMachine shares a directory from your actual host machine"
         echo "with the VM/container, which will be mounted at /data by default."
-        echo "${bold}What directory do you want to share?${normal} (if left empty, your home directory $HOMEDIR will be shared by default)"
+        echo "${boldblue}What directory do you want to share?${normal} (if left empty, your home directory $HOMEDIR will be shared by default)"
         read HOSTDATAPATH
         HOSTDATAPATH="${HOSTDATAPATH%\\n}"
     fi
 
     if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "lxc" ]]; then
+        echo
+        echo
         echo "To offer convenient access to the HTTP webserver in your VM/container, a port will be forwarded from your host system"
-        echo "${bold}What port do you want to forward for HTTP?${normal} (if left empty, 8080 will be the default)"
+        echo "${boldblue}What port do you want to forward for HTTP?${normal} (if left empty, 8080 will be the default)"
         read HOSTPORT
         HOSTPORT="${HOSTPORT%\\n}"
     fi
