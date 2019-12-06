@@ -49,6 +49,7 @@
         #!/bin/bash
         # what we do here is build a chain of metadata, each one updating over the last, effectively merging all the fields
         set -o pipefail
+        export LC_ALL=en_US.UTF-8
         echo "REGISTERING METADATA">&2
         echo "Run environment:">&2
         echo "    LM_NAME=$LM_NAME">&2
@@ -58,6 +59,8 @@
         echo "    PYTHONPATH=$PYTHONPATH">&2
         echo "    PYTHON=$(which python3)">&2
         echo "    PIP=$(which pip3)">&2
+        echo "    LANG=$LANG">&2
+        echo "    LC_ALL=$LC_ALL">&2
 
         TYPE="other"
 
