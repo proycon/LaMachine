@@ -9,7 +9,7 @@
     - when: virtualenv.stat.isdir is not defined or not virtualenv.stat.isdir
       block:
            - name: Creating bare virtualenv environment for LaMachine
-             shell: "virtualenv {% if ansible_distribution != "centos" and ansible_distribution != "rhel" %}--always-copy{% endif %} --python={{ python_bin }} {{ local_prefix }}"
+             shell: "virtualenv {% if ansible_distribution != 'centos' and ansible_distribution != 'rhel' %}--always-copy{% endif %} --python={{ python_bin }} {{ local_prefix }}"
 
     - name: Adapting activation script for virtualenv
       blockinfile:
