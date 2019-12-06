@@ -49,6 +49,7 @@
         #!/bin/bash
         # what we do here is build a chain of metadata, each one updating over the last, effectively merging all the fields
         set -o pipefail
+        export LANG=en_US.UTF-8
         export LC_ALL=en_US.UTF-8
         echo "REGISTERING METADATA">&2
         echo "Run environment:">&2
