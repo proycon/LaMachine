@@ -51,14 +51,6 @@
         update_cache: "{% if nosysupdate is not defined or nosysupdate == 0 %}yes{% else %}no{% endif %}"
       when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
 
-    - name: Install libtar from source on CentOS 8 #because libtar-devel package does not exist in CentOS 8 and we need it!
-      include_role:
-        name: lamachine-git-autoconf
-      vars:
-        package:
-           repo: libtar
-           user: tklauser
-      when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
 
     - name: Installing extra base packages (yum) when not on CentOS 8
       become: true

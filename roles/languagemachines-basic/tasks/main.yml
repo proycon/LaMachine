@@ -70,6 +70,15 @@
               ln -sf /usr/local/opt/frogdata/share/frog/ /usr/local/opt/frog/share
           when: ansible_distribution|lower == 'macosx' and root and version == "stable" #note: no locality check here, we use homebrew even in local mode
 
+        - name: Install dependency libtar from source on CentOS 8 #because libtar-devel package does not exist in CentOS 8 and we need it!
+          include_role:
+            name: lamachine-git-autoconf
+          vars:
+            package:
+               repo: libtar
+               user: tklauser
+          when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
+
         - name: Installation on Arch Linux
           block:
             - name: Installing packages from Arch User Repository
