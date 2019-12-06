@@ -438,7 +438,7 @@
           command: ldconfig -v
           when: root and locality == "global" and ansible_distribution|lower != 'macosx'
 
-        - name: Compiling boost from source for CentOS/RHEL (may take quite a while!)
+        - name: Compiling boost from source for CentOS/RHEL  7 (may take quite a while!)
           shell: |
               #!/bin/bash
               if [ ! -d boost_1_66_0 ]; then
@@ -458,7 +458,7 @@
           args:
               executable: /bin/bash
               chdir: "{{source_path}}"
-          when: ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel"
+          when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
 
         - block:
             - name: Obtaining local environment's Python version
