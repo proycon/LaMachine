@@ -83,16 +83,18 @@
           become: yes
           become_user: root
           copy:
-            remote_src: "{{lm_prefix}}/include/libtar.h"
+            src: "{{lm_prefix}}/include/libtar.h"
             dest: "/usr/include/libtar.h"
+            remote_src: yes
           when: root and (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
 
         - name: Copy libtar_listhash header to global location on CentOS 8
           become: yes
           become_user: root
           copy:
-            remote_src: "{{lm_prefix}}/include/libtar_listhash.h"
+            src: "{{lm_prefix}}/include/libtar_listhash.h"
             dest: "/usr/include/libtar_listhash.h"
+            remote_src: yes
           when: root and (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
 
         - name: Installation on Arch Linux
