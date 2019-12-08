@@ -1565,9 +1565,9 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ "$SUDO" -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
         echo "${bold}The installation will now begin and will ask you for a BECOME password, "
-        echo "here you need to fill in your sudo password as this is needed to install certain
+        echo "here you need to fill in your sudo password as this is needed to install certain"
         echo "global packages from your distribution, it will only be used for limited parts of"
-        echo "the installation. The installation process may take quite some time and produce a
+        echo "the installation. The installation process may take quite some time and produce a"
         echo "lot of output (most of which you can safely ignore)."
         echo "Press ENTER to continue and feel free to get yourself a tea or coffee while you wait!${normal}"
         read
