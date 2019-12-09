@@ -1,6 +1,6 @@
 port: 8806
 urlprefix: "tscan"
-root: "{{lm_prefix}}/var/www-data/tscan.clam/"
+root: "{{www_data_path}}/tscan.clam/"
 bindir: "{{lm_prefix}}/bin/"
 tscandir: "{{lm_prefix}}/src/tscan"
 flaturl: "{% if http_port|int == 443 %}https://{% else %}http://{% endif %}{{hostname}}{% if http_port != 80 and http_port != 443 %}:{{http_port}}{% endif %}/flat"

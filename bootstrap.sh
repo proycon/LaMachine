@@ -84,6 +84,7 @@ usage () {
     echo " ${bold}--disksize${normal} - Sets extra disksize for VMs; you'll want to use  this if you plan to include particularly large software and exceed the default 8GB"
     echo " ${bold}--datapath${normal} - The data path on the host machine that will be shared with the container/VM"
     echo " ${bold}--port${normal} - The port for HTTP traffic to forward from the host machine to the container/VM"
+    echo " ${bold}--sharewwwdata${normal} - Put the data for the web services on the shared volume (for container/VM)"
 }
 
 USER_SET=0 #explicitly set?
@@ -198,6 +199,7 @@ VAGRANTBOX="debian/contrib-buster64" #base distribution for VM
 DOCKERREPO="proycon/lamachine"
 CONTROLLER="internal"
 BUILD=1
+SHARED_WWW_DATA="no"
 
 if which python; then
     echo "Checking sanity of your Python installation..."
@@ -421,6 +423,11 @@ while [[ $# -gt 0 ]]; do
         ;;
         --port)
         HOSTPORT="$2"
+        shift
+        shift
+        ;;
+        --sharewwwdata)
+        SHARED_WWW_DATA="yes"
         shift
         shift
         ;;
@@ -1228,6 +1235,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is originally stored/shared" >> $STAGEDCONFIG
         echo "host_data_path: \"$HOSTDATAPATH\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path, you can change this" >> $STAGEDCONFIG
+        echo "shared_www_data: $SHARED_WWW_DATA #Put web data in the shared data path (rather than inside the container)" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
         if [ "$VAGRANTBOX" == "centos/7" ] || [ "$VAGRANTBOX" == "centos/8" ]; then
@@ -1244,6 +1252,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared" >> $STAGEDCONFIG
         echo "host_data_path: \"$HOSTDATAPATH\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path" >> $STAGEDCONFIG
+        echo "shared_www_data: $SHARED_WWW_DATA #Put web data in the shared data path (rather than inside the container)" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
     elif [[ $FLAVOUR == "singularity" ]] || [[ $FLAVOUR == "lxc" ]]; then
@@ -1254,6 +1263,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared (do not change this for singularity!" >> $STAGEDCONFIG
         echo "host_data_path: \"$HOSTDATAPATH\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path (do not change this for singularity)" >> $STAGEDCONFIG
+        echo "shared_www_data: $SHARED_WWW_DATA #Put web data in the shared data path (rather than inside the container)" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
     else

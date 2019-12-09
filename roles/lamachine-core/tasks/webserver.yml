@@ -117,7 +117,7 @@
           groups: "{{web_group}}"
           append: yes
 
-      - name: Create webserver writable directories (global)
+      - name: Create webserver writable directories
         become: "{{lm_become}}"
         become_user: root
         file:
@@ -129,8 +129,26 @@
         with_items:
             - "var/log/uwsgi"
             - "var/log/nginx"
-            - "var/www-data"
-            - "var/www-data/tmp"
+            - "var/tmp"
+
+      - name: Create webserver data directory (writable)
+        become: "{{lm_become}}"
+        become_user: root
+        file:
+            path: "{{ www_data_path }}"
+            state: directory
+            owner: "{{unix_user}}"
+            group: "{{web_group}}"
+            mode: u+rwx,g+rwsx,a+rx
+
+      - name: Symlink webserver data directory
+        become: "{{lm_become}}"
+        become_user: root
+        file:
+          src: "{{lm_prefix}}/var/www-data"
+          dest: "{{www_data_path}}"
+          state: link
+        when: shared_www_data
 
       - name: Link nginx from global prefix
         file:
@@ -286,7 +304,7 @@
     become: "{{lm_become}}"
     become_user: root
     file:
-        path: "{{ lm_prefix }}/var/www-data/docroot"
+        path: "{{www_data_path}}/docroot"
         state: directory
         owner: "{{unix_user}}"
         mode: u+rwx,a+rx
@@ -296,6 +314,6 @@
     become_user: root
     copy:
       src: "{{item}}"
-      dest: "{{ lm_prefix}}/var/www-data/docroot"
+      dest: "{{www_data_path}}/docroot"
     with_fileglob:
       - "{{lm_path}}/webserver/docroot/*"
