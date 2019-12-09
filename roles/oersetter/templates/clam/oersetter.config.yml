@@ -1,6 +1,6 @@
 port: 8810
 urlprefix: "oersetter"
-root: "{{lm_prefix}}/var/www-data/oersetter.clam/"
+root: "{{www_data_path}}/oersetter.clam/"
 bindir: "{{lm_prefix}}/bin/"
 mtsystem_nlfy_host: 'localhost'
 mtsystem_nlfy_port: 2003

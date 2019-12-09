@@ -1,4 +1,4 @@
 port: 8804
 urlprefix: "timbl"
-root: "{{lm_prefix}}/var/www-data/timbl.clam/"
+root: "{{www_data_path}}/timbl.clam/"
 bindir: "{{lm_prefix}}/bin/"

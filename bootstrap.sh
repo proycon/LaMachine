@@ -84,6 +84,7 @@ usage () {
     echo " ${bold}--disksize${normal} - Sets extra disksize for VMs; you'll want to use  this if you plan to include particularly large software and exceed the default 8GB"
     echo " ${bold}--datapath${normal} - The data path on the host machine that will be shared with the container/VM"
     echo " ${bold}--port${normal} - The port for HTTP traffic to forward from the host machine to the container/VM"
+    echo " ${bold}--sharewwwdata${normal} - Put the data for the web services on the shared volume (for container/VM)"
 }
 
 USER_SET=0 #explicitly set?
@@ -198,6 +199,7 @@ VAGRANTBOX="debian/contrib-buster64" #base distribution for VM
 DOCKERREPO="proycon/lamachine"
 CONTROLLER="internal"
 BUILD=1
+SHARED_WWW_DATA="no"
 
 if which python; then
     echo "Checking sanity of your Python installation..."
@@ -264,7 +266,7 @@ if [ "$OS" != "mac" ]; then
             OUTDATED=1
         fi
     elif [ "$DISTRIB_ID" = "arch" ] || [ "$DISTRIB_ID" = "manjaro" ]; then
-        echo "Rolling release, okay"
+        echo "(You are on a rolling release distribution, that's okay but be aware that it makes local LaMachine environments more prone to breakage)"
     else
         echo "WARNING: Your Linux distribution was not properly recognized and may be unsupported!"
         OUTDATED=1
@@ -424,6 +426,11 @@ while [[ $# -gt 0 ]]; do
         shift
         shift
         ;;
+        --sharewwwdata)
+        SHARED_WWW_DATA="yes"
+        shift
+        shift
+        ;;
         --quiet)
         ANSIBLE_OPTIONS=""
         shift
@@ -452,37 +459,103 @@ if [ $INTERACTIVE -eq 1 ]; then
     echo
 fi
 
+SUPPORT=unknown
 
 if [ -z "$FLAVOUR" ]; then
     while true; do
         echo "${boldblue}Where do you want to install LaMachine?${normal}"
-        echo "  1) in a local user environment"
+        echo "  ${bold}1)${normal} in a ${bold}local user environment${normal} (native for your machine)"
         echo "       installs as much as possible in a separate directory"
-        echo "       for a particular user; can exists alongside existing"
+        echo "       for a particular (the current) user; can exists alongside existing"
         echo "       installations. May also be used (limited) by multiple"
-        echo "       users/groups if file permissions allow it. Can work without"
-        echo "       root but only if all global dependencies are already satisfied."
+        echo "       users/groups if file permissions allow it."
         echo "       (uses virtualenv)"
+        if [[ $OS == "mac" ]]; then
+            SUPPORT=bronze
+        elif [[ $DISTRIB_ID == "ubuntu" ]] && [[ $DISTRIB_RELEASE == "18.04" ]]; then
+            SUPPORT=gold
+        elif [[ $DISTRIB_ID == "ubuntu" ]] && [[ $DISTRIB_RELEASE == "16.04" ]]; then
+            SUPPORT=silver
+        elif [[ $DISTRIB_ID == "debian" ]] && [[ $DISTRIB_RELEASE == "10" ]]; then
+            SUPPORT=gold
+        elif [[ $DISTRIB_ID == "debian" ]] && [[ $DISTRIB_RELEASE == "9" ]]; then
+            SUPPORT=silver
+        elif [[ $DISTRIB_ID == "debian" ]]; then
+            if [ "${DISTRIB_RELEASE%\.*}" -lt 9 ]; then
+                SUPPORT=deprecated
+            else
+                SUPPORT=bronze
+            fi
+        elif [[ $DISTRIB_ID == "ubuntu" ]]; then
+            if [ "${DISTRIB_RELEASE%\.*}" -lt 16 ]; then
+                SUPPORT=deprecated
+            else
+                SUPPORT=bronze
+            fi
+        elif [[ $DISTRIB_ID == "centos" ]] && [[ $DISTRIB_RELEASE == "8" ]]; then
+            SUPPORT=silver
+        elif [[ $DISTRIB_ID == "centos" ]]; then
+            SUPPORT=deprecated
+        elif [[ $DISTRIB_ID == "rhel" ]] && [[ $DISTRIB_RELEASE == "8" ]]; then
+            SUPPORT=silver
+        elif [[ $DISTRIB_ID == "rhel" ]]; then
+            SUPPORT=deprecated
+        elif [[ $DISTRIB_ID == "fedora" ]]; then
+            if [ "${DISTRIB_RELEASE%\.*}" -lt 30 ]; then
+                SUPPORT=deprecated
+            else
+                SUPPORT=bronze
+            fi
+        elif [[ $DISTRIB_ID == "linuxmint" ]]; then
+                SUPPORT=bronze
+        elif [[ $DISTRIB_ID == "arch" ]]; then
+                SUPPORT=bronze
+        fi
+        if [[ "$SUPPORT" == "gold" ]]; then
+            echo "       [${boldgreen}fully supported on your machine${normal}] (GOLD support level! Everything should work)"
+        elif [[ "$SUPPORT" == "silver" ]]; then
+            echo "       [${boldgreen}mostly supported on your machine${normal}] (SILVER support level: Almost everything should work)"
+        elif [[ "$SUPPORT" == "bronze" ]]; then
+            echo "       [${boldyellow}partially supported on your machine${normal}] (BRONZE support level: Certain software is known not to work and/or things are more prone to breakage. Testing has not been as extensive)"
+        elif [[ "$SUPPORT" == "unknown" ]]; then
+            echo "       [${boldred}support unknown${normal}] (you can try but things will likely fail)"
+        elif [[ "$SUPPORT" == "deprecated" ]]; then
+            echo "       [${boldred}not supported, your machine's distribution is deprecated${normal}] (upgrade to a more recent version)"
+        fi
         if [ $WINDOWS -eq 0 ]; then
-        echo "  2) in a Virtual Machine"
+        echo "  ${bold}2)${normal} in a ${bold}Virtual Machine${normal}"
         echo "       complete separation from the host OS"
         echo "       (uses Vagrant and VirtualBox)"
-        echo "  3) in a Docker container"
+        echo "       [${boldgreen}supported on your machine${normal}]"
+        echo "  ${bold}3)${normal} in a ${bold}Docker container${normal}"
         echo "       (uses Docker and Ansible)"
+        if which docker > /dev/null 2> /dev/null; then
+            echo "       [${boldgreen}supported on your machine${normal}]"
+        else
+            echo "       [${boldred}not supported on your machine, docker not found, install docker first${normal}]"
         fi
-        echo "  4) Globally on this machine"
+        fi
+        echo "  ${bold}4)${normal} Globally on this machine (native for your machine)"
         echo "       dedicates the entire machine to LaMachine and"
         echo "       modifies the existing system and may"
-        echo "       interact with existing packages. Usually requires root."
-        echo "  5) On a remote server"
-        echo "       modifies an existing remote system! Usually requires root."
+        echo "       interact with existing packages."
+        echo "       [${boldyellow}advanced users only!${normal}]"
+        echo "  ${bold}5)${normal} On a ${bold}remote server${normal}"
+        echo "       Direct provisioning of a remote system, modifies an existing remote system"
         echo "       (uses ansible)"
+        echo "       [${boldyellow}advanced users only!${normal}]"
         if [ $WINDOWS -eq 0 ]; then
         echo "  6) in an LXC/LXD container"
         echo "       Provides a more persistent and VM-like container experience than Docker"
         echo "       (uses LXD, LXC and Ansible)"
-        echo "  7) in a Singularity container (EXPERIMENTAL!)"
+        if which lxd > /dev/null 2> /dev/null; then
+            echo "       [${boldgreen}supported on your machine${normal}]"
+        else
+            echo "       [${boldred}not supported on your machine, lxd not found, install lxd first${normal}]"
+        fi
+        echo "  7) in a Singularity container"
         echo "       (uses Singularity and Ansible)"
+        echo "       [${boldyellow}experimental, not supported yet${normal}]"
         fi
         echo -n "${bold}Your choice?${normal} [12345] "
         read choice
@@ -509,12 +582,12 @@ if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
   if [[ "$FLAVOUR" == "vagrant" || "$FLAVOUR" == "docker" || "$FLAVOUR" == "singularity" ]]; then
     while true; do
         echo "${boldblue}Do you want to build a new personalised LaMachine image or use and download a prebuilt one?${normal}"
-        echo "  1) Build a new image"
+        echo "  ${bold}1)${normal} Build a new image"
         echo "       Offers most flexibility and ensures you are on the latest versions."
         echo "       Allows you to choose even for development versions or custom versions."
         echo "       Allows you to choose what software to include from scratch."
         echo "       Best integration with your custom data."
-        echo "  2) Download a prebuilt one"
+        echo "  ${bold}2)${normal} Download a prebuilt one"
         echo "       Comes with a fixed selection of software, allows you to update with extra software later."
         echo "       Fast & easy but less flexible"
         echo -n "${bold}Your choice?${normal} [12] "
@@ -651,7 +724,7 @@ if [ -z "$SUDO" ]; then
             echo "The installation relies on certain software to be available on your (host)"
             echo "system. It will be automatically obtained from your distribution's package manager"
             echo "or another official source whenever possible. You need to have sudo permission for this though..."
-            echo "${red}Answering 'no' to this question may make installation on your system impossible!${normal}"
+            echo "${red}Answering 'no' to this question may make automated installation on your system impossible!${normal}"
             echo
             echo -n "${boldblue}Do you have administrative access (root/sudo) on the current system?${normal} [yn] "
             read yn
@@ -1175,6 +1248,16 @@ if [ $INTERACTIVE -eq 1 ]; then
         echo "${boldblue}What directory do you want to share?${normal} (if left empty, your home directory $HOMEDIR will be shared by default)"
         read HOSTDATAPATH
         HOSTDATAPATH="${HOSTDATAPATH%\\n}"
+
+        echo "${boldblue}Do you want to put data from the web services and webi applications on the shared data volume as well?${normal} (recommended when you are not building this container/VM for sharing) [Yn]"
+        while true; do
+            read yn
+            case $yn in
+                [Yy]* ) $SHARED_WWW_DATA="yes"; break;;
+                [Nn]* ) $SHARED_WWW_DATA="no"; break;;
+                * ) echo "Please answer yes or no.";;
+            esac
+        done
     fi
 
     if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "lxc" ]]; then
@@ -1228,6 +1311,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is originally stored/shared" >> $STAGEDCONFIG
         echo "host_data_path: \"$HOSTDATAPATH\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path, you can change this" >> $STAGEDCONFIG
+        echo "shared_www_data: $SHARED_WWW_DATA #Put web data in the shared data path (rather than inside the container)" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
         if [ "$VAGRANTBOX" == "centos/7" ] || [ "$VAGRANTBOX" == "centos/8" ]; then
@@ -1244,6 +1328,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared" >> $STAGEDCONFIG
         echo "host_data_path: \"$HOSTDATAPATH\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path" >> $STAGEDCONFIG
+        echo "shared_www_data: $SHARED_WWW_DATA #Put web data in the shared data path (rather than inside the container)" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
     elif [[ $FLAVOUR == "singularity" ]] || [[ $FLAVOUR == "lxc" ]]; then
@@ -1254,6 +1339,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared (do not change this for singularity!" >> $STAGEDCONFIG
         echo "host_data_path: \"$HOSTDATAPATH\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path (do not change this for singularity)" >> $STAGEDCONFIG
+        echo "shared_www_data: $SHARED_WWW_DATA #Put web data in the shared data path (rather than inside the container)" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
     else

@@ -26,7 +26,7 @@ hostname = gethostname()
 ##############################################################################
 
 #Configure your database here, by default a simple sqlite database will be used
-DBFILE = "{{lm_prefix}}/var/www-data/flat.db"
+DBFILE = "{{www_data_path}}/flat.db"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
@@ -46,7 +46,7 @@ DATABASES = {
 
 #This is the path to the document root directory, this is the same directory as specified when running foliadocserve.
 #If the document server is running on a different system, the remote root disk will have to be mounted and the mountpoint specified here.
-WORKDIR = "{{lm_prefix}}/var/www-data/flat.docroot"
+WORKDIR = "{{www_data_path}}/flat.docroot"
 
 #The path and port on which the FoLiA Document Server can be reached (these defaults suffice for a local connection)
 FOLIADOCSERVE_HOST = 'localhost'

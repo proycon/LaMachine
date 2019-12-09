@@ -1,4 +1,4 @@
 port: 8812
 urlprefix: "g2pservice"
-root: "{{lm_prefix}}/var/www-data/g2pservice.clam/"
+root: "{{www_data_path}}/g2pservice.clam/"
 bindir: "{{lm_prefix}}/bin/"

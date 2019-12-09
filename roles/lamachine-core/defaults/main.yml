@@ -20,6 +20,7 @@ web_group: "{{web_user}}"
 maintainer_name: "{{unix_user}}" #The name of the person maintaining this LaMachine installation
 maintainer_mail: "{{unix_user}}@{{hostname}}" #Maintainer mail
 http_port: 80 #webserver port
+shared_www_data: no
 ignore_tests: false
 services:
   - all
