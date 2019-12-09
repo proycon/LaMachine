@@ -62,3 +62,7 @@ ChangeLog
 
 #Mac cruft
 .DS_Store
+
+builds/logs/
+builds/lamachine-controller/
+lamachine-controller/
