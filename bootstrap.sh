@@ -266,7 +266,7 @@ if [ "$OS" != "mac" ]; then
             OUTDATED=1
         fi
     elif [ "$DISTRIB_ID" = "arch" ] || [ "$DISTRIB_ID" = "manjaro" ]; then
-        echo "Rolling release, okay"
+        echo "(You are on a rolling release distribution, that's okay but be aware that it makes local LaMachine environments more prone to breakage)"
     else
         echo "WARNING: Your Linux distribution was not properly recognized and may be unsupported!"
         OUTDATED=1
@@ -512,11 +512,11 @@ if [ -z "$FLAVOUR" ]; then
                 SUPPORT=bronze
         fi
         if [[ "$SUPPORT" == "gold" ]]; then
-            echo "       [${boldgreen}fully supported on your machine${normal}] (GOLD support! Everything should work)"
+            echo "       [${boldgreen}fully supported on your machine${normal}] (GOLD support level! Everything should work)"
         elif [[ "$SUPPORT" == "silver" ]]; then
-            echo "       [${boldgreen}mostly supported on your machine${normal}] (SILVER support! Almost everything should work)"
+            echo "       [${boldgreen}mostly supported on your machine${normal}] (SILVER support level: Almost everything should work)"
         elif [[ "$SUPPORT" == "bronze" ]]; then
-            echo "       [${boldyellow}partially supported on your machine${normal}] (BRONZE support! Certain software is known not to work and/or things are more prone to breakage. Testing has not been as extensive)"
+            echo "       [${boldyellow}partially supported on your machine${normal}] (BRONZE support level: Certain software is known not to work and/or things are more prone to breakage. Testing has not been as extensive)"
         elif [[ "$SUPPORT" == "unknown" ]]; then
             echo "       [${boldred}support unknown${normal}] (you can try but things will likely fail)"
         elif [[ "$SUPPORT" == "deprecated" ]]; then
@@ -540,8 +540,8 @@ if [ -z "$FLAVOUR" ]; then
         echo "       modifies the existing system and may"
         echo "       interact with existing packages."
         echo "       [${boldyellow}advanced users only!${normal}]"
-        echo "  ${bold}5)${normal} On a ${bold}remote server${noral}"
-        echo "       Direct provisioning of a remote system, modifies an existing remote system!"
+        echo "  ${bold}5)${normal} On a ${bold}remote server${normal}"
+        echo "       Direct provisioning of a remote system, modifies an existing remote system"
         echo "       (uses ansible)"
         echo "       [${boldyellow}advanced users only!${normal}]"
         if [ $WINDOWS -eq 0 ]; then
