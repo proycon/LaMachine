@@ -31,4 +31,4 @@ globalenv:
      LANG: "en_US.UTF-8"
      LM_QUIET: 1
 lm_env: "{% if locality == 'global'  %}{{globalenv}}{% else %}{{localenv}}{% endif %}"
-www_data_path: "{% if shared_www_data and data_path %}{{ data_path }}/www-data{% else %}{{ lm_prefix }}/var/www-data{% endif %}"
+www_data_path: "{% if shared_www_data|bool and data_path %}{{ data_path }}/www-data{% else %}{{ lm_prefix }}/var/www-data{% endif %}"
