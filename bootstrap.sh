@@ -459,37 +459,103 @@ if [ $INTERACTIVE -eq 1 ]; then
     echo
 fi
 
+SUPPORT=unknown
 
 if [ -z "$FLAVOUR" ]; then
     while true; do
         echo "${boldblue}Where do you want to install LaMachine?${normal}"
-        echo "  1) in a local user environment"
+        echo "  ${bold}1)${normal} in a ${bold}local user environment${normal} (native for your machine)"
         echo "       installs as much as possible in a separate directory"
-        echo "       for a particular user; can exists alongside existing"
+        echo "       for a particular (the current) user; can exists alongside existing"
         echo "       installations. May also be used (limited) by multiple"
-        echo "       users/groups if file permissions allow it. Can work without"
-        echo "       root but only if all global dependencies are already satisfied."
+        echo "       users/groups if file permissions allow it."
         echo "       (uses virtualenv)"
+        if [[ $OS == "mac" ]]; then
+            SUPPORT=bronze
+        elif [[ $DISTRIB_ID == "ubuntu" ]] && [[ $DISTRIB_RELEASE == "18.04" ]]; then
+            SUPPORT=gold
+        elif [[ $DISTRIB_ID == "ubuntu" ]] && [[ $DISTRIB_RELEASE == "16.04" ]]; then
+            SUPPORT=silver
+        elif [[ $DISTRIB_ID == "debian" ]] && [[ $DISTRIB_RELEASE == "10" ]]; then
+            SUPPORT=gold
+        elif [[ $DISTRIB_ID == "debian" ]] && [[ $DISTRIB_RELEASE == "9" ]]; then
+            SUPPORT=silver
+        elif [[ $DISTRIB_ID == "debian" ]]; then
+            if [ "${DISTRIB_RELEASE%\.*}" -lt 9 ]; then
+                SUPPORT=deprecated
+            else
+                SUPPORT=bronze
+            fi
+        elif [[ $DISTRIB_ID == "ubuntu" ]]; then
+            if [ "${DISTRIB_RELEASE%\.*}" -lt 16 ]; then
+                SUPPORT=deprecated
+            else
+                SUPPORT=bronze
+            fi
+        elif [[ $DISTRIB_ID == "centos" ]] && [[ $DISTRIB_RELEASE == "8" ]]; then
+            SUPPORT=silver
+        elif [[ $DISTRIB_ID == "centos" ]]; then
+            SUPPORT=deprecated
+        elif [[ $DISTRIB_ID == "rhel" ]] && [[ $DISTRIB_RELEASE == "8" ]]; then
+            SUPPORT=silver
+        elif [[ $DISTRIB_ID == "rhel" ]]; then
+            SUPPORT=deprecated
+        elif [[ $DISTRIB_ID == "fedora" ]]; then
+            if [ "${DISTRIB_RELEASE%\.*}" -lt 30 ]; then
+                SUPPORT=deprecated
+            else
+                SUPPORT=bronze
+            fi
+        elif [[ $DISTRIB_ID == "linuxmint" ]]; then
+                SUPPORT=bronze
+        elif [[ $DISTRIB_ID == "arch" ]]; then
+                SUPPORT=bronze
+        fi
+        if [[ "$SUPPORT" == "gold" ]]; then
+            echo "       [${boldgreen}fully supported on your machine${normal}] (GOLD support! Everything should work)"
+        elif [[ "$SUPPORT" == "silver" ]]; then
+            echo "       [${boldgreen}mostly supported on your machine${normal}] (SILVER support! Almost everything should work)"
+        elif [[ "$SUPPORT" == "bronze" ]]; then
+            echo "       [${boldyellow}partially supported on your machine${normal}] (BRONZE support! Certain software is known not to work and/or things are more prone to breakage. Testing has not been as extensive)"
+        elif [[ "$SUPPORT" == "unknown" ]]; then
+            echo "       [${boldred}support unknown${normal}] (you can try but things will likely fail)"
+        elif [[ "$SUPPORT" == "deprecated" ]]; then
+            echo "       [${boldred}not supported, your machine's distribution is deprecated${normal}] (upgrade to a more recent version)"
+        fi
         if [ $WINDOWS -eq 0 ]; then
-        echo "  2) in a Virtual Machine"
+        echo "  ${bold}2)${normal} in a ${bold}Virtual Machine${normal}"
         echo "       complete separation from the host OS"
         echo "       (uses Vagrant and VirtualBox)"
-        echo "  3) in a Docker container"
+        echo "       [${boldgreen}supported on your machine${normal}]"
+        echo "  ${bold}3)${normal} in a ${bold}Docker container${normal}"
         echo "       (uses Docker and Ansible)"
+        if which docker > /dev/null 2> /dev/null; then
+            echo "       [${boldgreen}supported on your machine${normal}]"
+        else
+            echo "       [${boldred}not supported on your machine, docker not found, install docker first${normal}]"
         fi
-        echo "  4) Globally on this machine"
+        fi
+        echo "  ${bold}4)${normal} Globally on this machine (native for your machine)"
         echo "       dedicates the entire machine to LaMachine and"
         echo "       modifies the existing system and may"
-        echo "       interact with existing packages. Usually requires root."
-        echo "  5) On a remote server"
-        echo "       modifies an existing remote system! Usually requires root."
+        echo "       interact with existing packages."
+        echo "       [${boldyellow}advanced users only!${normal}]"
+        echo "  ${bold}5)${normal} On a ${bold}remote server${noral}"
+        echo "       Direct provisioning of a remote system, modifies an existing remote system!"
         echo "       (uses ansible)"
+        echo "       [${boldyellow}advanced users only!${normal}]"
         if [ $WINDOWS -eq 0 ]; then
         echo "  6) in an LXC/LXD container"
         echo "       Provides a more persistent and VM-like container experience than Docker"
         echo "       (uses LXD, LXC and Ansible)"
-        echo "  7) in a Singularity container (EXPERIMENTAL!)"
+        if which lxd > /dev/null 2> /dev/null; then
+            echo "       [${boldgreen}supported on your machine${normal}]"
+        else
+            echo "       [${boldred}not supported on your machine, lxd not found, install lxd first${normal}]"
+        fi
+        echo "  7) in a Singularity container"
         echo "       (uses Singularity and Ansible)"
+        echo "       [${boldyellow}experimental, not supported yet${normal}]"
         fi
         echo -n "${bold}Your choice?${normal} [12345] "
         read choice
@@ -516,12 +582,12 @@ if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
   if [[ "$FLAVOUR" == "vagrant" || "$FLAVOUR" == "docker" || "$FLAVOUR" == "singularity" ]]; then
     while true; do
         echo "${boldblue}Do you want to build a new personalised LaMachine image or use and download a prebuilt one?${normal}"
-        echo "  1) Build a new image"
+        echo "  ${bold}1)${normal} Build a new image"
         echo "       Offers most flexibility and ensures you are on the latest versions."
         echo "       Allows you to choose even for development versions or custom versions."
         echo "       Allows you to choose what software to include from scratch."
         echo "       Best integration with your custom data."
-        echo "  2) Download a prebuilt one"
+        echo "  ${bold}2)${normal} Download a prebuilt one"
         echo "       Comes with a fixed selection of software, allows you to update with extra software later."
         echo "       Fast & easy but less flexible"
         echo -n "${bold}Your choice?${normal} [12] "
@@ -658,7 +724,7 @@ if [ -z "$SUDO" ]; then
             echo "The installation relies on certain software to be available on your (host)"
             echo "system. It will be automatically obtained from your distribution's package manager"
             echo "or another official source whenever possible. You need to have sudo permission for this though..."
-            echo "${red}Answering 'no' to this question may make installation on your system impossible!${normal}"
+            echo "${red}Answering 'no' to this question may make automated installation on your system impossible!${normal}"
             echo
             echo -n "${boldblue}Do you have administrative access (root/sudo) on the current system?${normal} [yn] "
             read yn
