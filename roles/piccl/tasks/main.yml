@@ -18,6 +18,16 @@
       loop_control:
           loop_var: package
 
+    - name: Installing djvulibre (except for CentOS 8)
+      include_role:
+        name: lamachine-package-install
+      with_items:
+        - { debian: djvulibre-bin, redhat: djvulibre, arch: djvulibre }
+        - { debian: libdjvulibre-text }
+      loop_control:
+          loop_var: package
+      when: not ((ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8)
+
     - name: Installing optional global dependencies for PICCL
       include_role:
         name: lamachine-package-install
