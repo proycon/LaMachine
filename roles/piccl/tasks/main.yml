@@ -11,8 +11,6 @@
         name: lamachine-package-install
       with_items:
         - { debian: poppler-utils, redhat: poppler-utils, arch: poppler } #should already be installed earlier but no harm in making it explicit here anyway
-        - { debian: djvulibre-bin, redhat: djvulibre, arch: djvulibre }
-        - { debian: libdjvulibre-text }
         - { debian: imagemagick, redhat: ImageMagick, arch: imagemagick }
         - { debian: perl, redhat: perl, arch: perl }
       loop_control:
