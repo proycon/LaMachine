@@ -1182,6 +1182,16 @@ if [ $INTERACTIVE -eq 1 ]; then
         echo "${boldblue}What directory do you want to share?${normal} (if left empty, your home directory $HOMEDIR will be shared by default)"
         read HOSTDATAPATH
         HOSTDATAPATH="${HOSTDATAPATH%\\n}"
+
+        echo "${boldblue}Do you want to put data from the web services and webi applications on the shared data volume as well?${normal} (recommended when you are not building this container/VM for sharing) [Yn]"
+        while true; do
+            read yn
+            case $yn in
+                [Yy]* ) $SHARED_WWW_DATA="yes"; break;;
+                [Nn]* ) $SHARED_WWW_DATA="no"; break;;
+                * ) echo "Please answer yes or no.";;
+            esac
+        done
     fi
 
     if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "lxc" ]]; then

@@ -148,7 +148,7 @@
           src: "{{lm_prefix}}/var/www-data"
           dest: "{{www_data_path}}"
           state: link
-        when: shared_www_data
+        when: shared_www_data|bool
 
       - name: Link nginx from global prefix
         file:
