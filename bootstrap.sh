@@ -1183,7 +1183,7 @@ done
 if [ -z "$LM_NAME" ]; then
     echo "Your LaMachine installation is identified by a name (local env name, VM name) etc.."
     echo "(This does not need to match the hostname or domain name, which is a separate configuration setting)"
-    echo -n "${bold}Enter a name for your LaMachine installation (no spaces!):${normal} "
+    echo -n "${boldblue}Enter a name for your LaMachine installation (no spaces!):${normal} "
     read LM_NAME
     LM_NAME="${LM_NAME%\\n}"
 fi
