@@ -1249,7 +1249,7 @@ if [ $INTERACTIVE -eq 1 ]; then
         read HOSTDATAPATH
         HOSTDATAPATH="${HOSTDATAPATH%\\n}"
 
-        echo "${boldblue}Do you want to put data from the web services and webi applications on the shared data volume as well?${normal} (recommended when you are not building this container/VM for sharing) [Yn]"
+        echo "${boldblue}Do you want to put data from the web services and web applications on the shared data volume as well?${normal} (recommended when you are not building this container/VM for sharing) [yn]"
         while true; do
             read yn
             case $yn in
