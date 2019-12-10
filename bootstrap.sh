@@ -1714,18 +1714,20 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
         echo "======================================================================================"
         if [ $BUILD -eq 1 ]; then
             echo "${boldgreen}All done, a docker image has been built!${normal}"
-            echo "- to run a *new* interactive container using this image, run: docker run -t -i $DOCKERREPO:$LM_NAME"
-            echo "- to run a non-interactive container: docker run -t $DOCKERREPO:$LM_NAME nameofyourtoolhere"
-            echo "- to start a new container with a webserver: docker run -p 8080:80 -h $HOSTNAME -t $DOCKERREPO:$LM_NAME lamachine-start-webserver ,  and then connect on http://localhost:8080"
+            echo "- to run a *new* interactive container using this image, run: lamachine-$LM_NAME-activate or: docker run -t -i $DOCKERREPO:$LM_NAME"
+            echo "- to run a non-interactive container: lamachine-$LM_NAME-run nameofyourtoolhere or: docker run -t $DOCKERREPO:$LM_NAME nameofyourtoolhere"
+            echo "- to start a new container with a webserver run lamachine-$LM_NAME-start or docker run -p 8080:80 -h $HOSTNAME -t $DOCKERREPO:$LM_NAME lamachine-start-webserver ,  and then connect on http://localhost:8080"
         else
             echo "${boldgreen}All done, a docker image has been downloaded!${normal}"
             echo "- to run a *new* interactive container using this image, run: docker run -t -i $DOCKERREPO"
             echo "- to run a non-interactive container: docker run -t $DOCKERREPO nameofyourtoolhere"
             echo "- to start a new container with a webserver: docker run -p 8080:80 -h latest -t $DOCKERREPO lamachine-start-webserver ,  and then connect on http://localhost:8080"
         fi
-        echo -e "#!/bin/bash\necho \"Instantiating a **new** interactive Docker container with LaMachine...\"; docker run -i -t -h $HOSTNAME --mount type=bind,source=$DATA_SOURCE,target=/data $DOCKERREPO:$LM_NAME" > $HOMEDIR/bin/lamachine-$LM_NAME-activate
-        echo -e "#!/bin/bash\necho \"Instantiating a **new** interactive Docker container with LaMachine...\"; docker run -i -t -h $HOSTNAME --mount type=bind,source=$DATA_SOURCE,target=/data $DOCKERREPO:$LM_NAME \$@" > $HOMEDIR/bin/lamachine-$LM_NAME-run
-        echo -e "#!/bin/bash\necho \"Instantiating a **new** Docker container with the LaMachine webserver; connect on http://127.0.0.1:$HOSTPORT\"; docker run -t -p $HOSTPORT:80 -h $HOSTNAME --mount type=bind,source=$DATA_SOURCE,target=/data $DOCKERREPO:$LM_NAME lamachine-start-webserver -f" > $HOMEDIR/bin/lamachine-$LM_NAME-start
+        echo -e "#!/bin/bash\necho \"Instantiating a **new** interactive Docker container with LaMachine...\"; docker run -i -t -h $HOSTNAME --mount type=bind,source=$HOSTDATAPATH,target=/data $DOCKERREPO:$LM_NAME" > $HOMEDIR/bin/lamachine-$LM_NAME-activate
+        echo -e "#!/bin/bash\necho \"Instantiating a **new** interactive Docker container with LaMachine...\"; docker run -i -t -h $HOSTNAME --mount type=bind,source=$HOSTDATAPATH,target=/data $DOCKERREPO:$LM_NAME \$@" > $HOMEDIR/bin/lamachine-$LM_NAME-run
+        echo -e "#!/bin/bash\necho \"Instantiating a **new** Docker container with the LaMachine webserver; connect on http://127.0.0.1:$HOSTPORT\"; docker run -t -p $HOSTPORT:80 -h $HOSTNAME --mount type=bind,source=$HOSTDATAPATH,target=/data $DOCKERREPO:$LM_NAME lamachine-start-webserver -f" > $HOMEDIR/bin/lamachine-$LM_NAME-start
+        chmod a+x $HOMEDIR/bin/lamachine-$LM_NAME-*
+        ln -sf $HOMEDIR/bin/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
     else
         echo "======================================================================================"
         echo "${boldred}The docker build has failed unfortunately.${normal} You have several options:"
