@@ -141,6 +141,18 @@
             group: "{{web_group}}"
             mode: u+rwx,g+rwsx,a+rx
 
+      - name: Create webserver data subdirectories (writable)
+        become: "{{lm_become}}"
+        become_user: root
+        file:
+            path: "{{ www_data_path }}/{{item}}"
+            state: directory
+            owner: "{{unix_user}}"
+            group: "{{web_group}}"
+            mode: u+rwx,g+rwsx,a+rx
+        with_items:
+           - "notebooks"
+
       - name: Symlink webserver data directory
         become: "{{lm_become}}"
         become_user: root
@@ -229,6 +241,7 @@
                 - "var/log/nginx"
                 - "var/www-data"
                 - "var/www-data/tmp"
+                - "var/www-data/notebooks"
                 - "etc/nginx"
                 - "etc/nginx/conf.d"
 
