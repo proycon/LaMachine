@@ -22,6 +22,7 @@ export LM_LOCALITY="{{locality}}"
 export LM_GLOBAL_PREFIX="{{global_prefix}}"
 export LM_LOCALENV_TYPE="{{localenv_type}}"
 export LM_DATA_PATH="{{data_path}}"
+export LM_WWW_DATA_PATH="{{www_data_path}}"
 export LM_SOURCEPATH="{{source_path}}"
 if [[ "{{ ansible_distribution|lower }}" == "macosx" ]]; then
    export CLANG_CXX_LIBRARY="libc++" #needed for python bindings in lamachine-python-install
