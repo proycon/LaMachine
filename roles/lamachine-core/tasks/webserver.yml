@@ -189,6 +189,7 @@
                   ln -sf $LM_DATA_PATH/www-data $LM_WWW_DATA_PATH
                 else
                   echo "External data volume already contains www-data! Refusing to overwrite, just linking to existing data...">&2
+                  rm -rf ${LM_WWW_DATA_PATH}.bak >/dev/null 2>/dev/null
                   mv $LM_WWW_DATA_PATH ${LM_WWW_DATA_PATH}.bak
                   ln -sf $LM_DATA_PATH/www-data $LM_WWW_DATA_PATH
                 fi
