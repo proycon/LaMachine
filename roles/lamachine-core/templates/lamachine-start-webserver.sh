@@ -20,7 +20,7 @@ normal=$(tput sgr0)
 #### global flavour ##############################################################################################################
 
 {% if move_share_www_data|bool %}
-sudo {{lm_prefix}}/bin/lamachine-move-www-data
+{{lm_prefix}}/bin/lamachine-move-www-data
 {% endif %}
 
 if systemctl is-system-running >/dev/null 2>/dev/null; then
