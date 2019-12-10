@@ -6,4 +6,5 @@ c.NotebookApp.ip = '0.0.0.0'
 c.NotebookApp.port = 9888
 c.NotebookApp.trust_xheaders = True #necessary if reverse proxy handles SSL
 c.NotebookApp.notebook_dir = '{{lm_prefix}}/var/notebooks'
+c.NotebookApp.terminado_settings = { 'shell_command': 'bash' }
 #c.NotebookApp.nbserver_extensions = {"jupyterlab_git": True}
