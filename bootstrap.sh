@@ -1253,8 +1253,8 @@ if [ $INTERACTIVE -eq 1 ]; then
         while true; do
             read yn
             case $yn in
-                [Yy]* ) $SHARED_WWW_DATA="yes"; break;;
-                [Nn]* ) $SHARED_WWW_DATA="no"; break;;
+                [Yy]* ) SHARED_WWW_DATA="yes"; break;;
+                [Nn]* ) SHARED_WWW_DATA="no"; break;;
                 * ) echo "Please answer yes or no.";;
             esac
         done
