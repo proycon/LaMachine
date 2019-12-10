@@ -684,7 +684,7 @@ fi
 if [ $BUILD -eq 1 ]; then
     if [[ "$VERSION" == "undefined" ]]; then
         echo "${bold}LaMachine comes in several versions:${normal}"
-        echo " 1) a stable version; you get the latest releases deemed stable (recommended)"
+        echo " 1) a stable version; you get the latest releases deemed stable ${boldgreen}(recommended)${normal}"
         echo " 2) a development version; you get the very latest development versions for testing, this may not always work as expected!"
         echo " 3) custom version; you decide explicitly what exact versions you want (for reproducibility);"
         echo "    this expects you to provide a LaMachine version file (customversions.yml) with exact version numbers."
