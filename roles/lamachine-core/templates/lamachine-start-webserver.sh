@@ -18,6 +18,11 @@ normal=$(tput sgr0)
 
 {% if locality == "global" and root %}
 #### global flavour ##############################################################################################################
+
+if [ "{{move_share_www_data}}" = "yes" ]; then
+    {{lm_prefix}}/bin/lamachine-move-www-data
+fi
+
 if systemctl is-system-running >/dev/null 2>/dev/null; then
     HAVE_SYSTEMCTL=1
 else

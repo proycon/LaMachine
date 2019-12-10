@@ -1249,7 +1249,7 @@ if [ $INTERACTIVE -eq 1 ]; then
         read HOSTDATAPATH
         HOSTDATAPATH="${HOSTDATAPATH%\\n}"
 
-        echo "${boldblue}Do you want to put data from the web services and web applications on the shared data volume as well?${normal} (recommended when you are not building this container/VM for sharing) [yn]"
+        echo "${boldblue}Do you want to put data from the web services and web applications on the shared data volume as well?${normal}  [yn]"
         while true; do
             read yn
             case $yn in
@@ -1328,7 +1328,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared" >> $STAGEDCONFIG
         echo "host_data_path: \"$HOSTDATAPATH\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path" >> $STAGEDCONFIG
-        echo "shared_www_data: $SHARED_WWW_DATA #Put web data in the shared data path (rather than inside the container)" >> $STAGEDCONFIG
+        echo "move_share_www_data: $SHARED_WWW_DATA #Move www-data to the shared volume" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
     elif [[ $FLAVOUR == "singularity" ]] || [[ $FLAVOUR == "lxc" ]]; then
