@@ -21,6 +21,7 @@ maintainer_name: "{{unix_user}}" #The name of the person maintaining this LaMach
 maintainer_mail: "{{unix_user}}@{{hostname}}" #Maintainer mail
 http_port: 80 #webserver port
 shared_www_data: no
+clam_include: "" #a base clam configuration file to include
 ignore_tests: false
 services:
   - all

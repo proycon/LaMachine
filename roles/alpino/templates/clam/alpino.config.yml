@@ -1,3 +1,6 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
 port: 8805
 urlprefix: "alpino"
 root: "{{www_data_path}}/alpino.clam/"

@@ -1,3 +1,6 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
 port: 8812
 urlprefix: "g2pservice"
 root: "{{www_data_path}}/g2pservice.clam/"

@@ -1,3 +1,6 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
 port: 8805
 root: "{{www_data_path}}/foliastats.clam/"
 bindir: "{{lm_prefix}}/bin/"

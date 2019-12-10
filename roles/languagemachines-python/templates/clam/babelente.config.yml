@@ -1,3 +1,6 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
 port: 8808
 urlprefix: "babelente"
 root: "{{www_data_path}}/babelente.clam/"

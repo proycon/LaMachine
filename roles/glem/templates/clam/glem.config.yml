@@ -1,3 +1,6 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
 port: 8811
 urlprefix: "glem"
 root: "{{www_data_path}}/glem.clam/"

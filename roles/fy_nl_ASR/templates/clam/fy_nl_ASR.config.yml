@@ -1,3 +1,6 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
 port: 8809
 urlprefix: "fy_nl_ASR"
 root: "{{ www_data_path }}/fy_nl_ASR.clam/"

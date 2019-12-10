@@ -1,3 +1,6 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
 port: 8815
 urlprefix: "t2t"
 root: "{{www_data_path}}/t2t.clam/"

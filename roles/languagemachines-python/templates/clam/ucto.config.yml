@@ -1,3 +1,6 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
 port: 8802
 urlprefix: "ucto"
 root: "{{www_data_path}}/ucto.clam/"
