@@ -119,7 +119,7 @@ echo
 echo "${boldgreen}If no errors were reported above, the webserver should now be started"
 echo "and accessible on port {{http_port}}.${normal}"
 echo "If you have LaMachine running in a Virtual Machine or container,"
-echo "you can use the mapped port ({{mapped_http_port}}) directly from your host system."
+echo "you can use the mapped port ({{mapped_http_port}}) directly from your host system ( http://127.0.0.1:{{mapped_http_port}} )."
 
 if [ "$1" = "-f" ]; then
     #run in foreground/keep running (nginx error log)
