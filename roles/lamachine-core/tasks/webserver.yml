@@ -145,8 +145,8 @@
         become: "{{lm_become}}"
         become_user: root
         file:
-          src: "{{lm_prefix}}/var/www-data"
-          dest: "{{www_data_path}}"
+          src: "{{www_data_path}}"
+          dest: "{{lm_prefix}}/var/www-data"
           state: link
         when: shared_www_data|bool
 
