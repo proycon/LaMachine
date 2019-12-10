@@ -188,25 +188,12 @@
         when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
 
       - name: Add lamachine-move-www-data script
-        copy:
+        template:
+          src: "lamachine-move-www-data.sh"
           dest: "{{lm_prefix}}/bin/lamachine-move-www-data"
-          content: |
-              #!/bin/bash
-              if [ -d "$LM_DATA_PATH" ]; then
-                rm -rf ${LM_WWW_DATA_PATH}.bak >/dev/null 2>/dev/null
-                if [ ! -e "$LM_DATA_PATH/www-data" ]; then
-                  echo "Moving www-data to external data volume... ($LM_DATA_PATH/www-data)">&2
-                  mv $LM_WWW_DATA_PATH $LM_DATA_PATH/www-data 2>/dev/null
-                  mv $LM_WWW_DATA_PATH ${LM_WWW_DATA_PATH}.bak 2>/dev/null #in case move wasn't entirely succesful (due to permission denied error on removing)
-                  ln -sf $LM_DATA_PATH/www-data $LM_WWW_DATA_PATH
-                else
-                  echo "External data volume already contains www-data! Refusing to overwrite, just linking to existing data...">&2
-                  mv $LM_WWW_DATA_PATH ${LM_WWW_DATA_PATH}.bak 2>/dev/null
-                  ln -sf $LM_DATA_PATH/www-data $LM_WWW_DATA_PATH
-                fi
-              else
-                echo "Data path $LM_DATA_PATH does not exist. Not moving www-data anywhere.">&2
-              fi
+          force: yes
+          owner: "{{unix_user}}"
+          group: "{{unix_group}}"
           mode: u+rwx,a+rx
 
   - when: locality=="local"
