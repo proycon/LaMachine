@@ -48,6 +48,25 @@
       owner: "{{unix_user}}"
       group: "{{unix_group}}"
 
+  - name: Install systemd service for JupyterLab
+    become: "{{lm_become}}"
+    become_user: root
+    template:
+      src: "jupyterlab.service"
+      dest: "/lib/systemd/system/jupyterlab.service"
+      force: yes
+      owner: "{{unix_user}}"
+      group: "{{unix_group}}"
+    when: locality == "global" and root
+
+  - name: Enable systemd service for JupyterLab
+    systemd:
+      name:  jupyterlab
+      enabled: yes
+      masked: no
+      state: started
+    when: locality == "global" and root
+
   - name: Register Jupyter Lab metadata
     include_role:
         name: lamachine-register
