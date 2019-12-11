@@ -1,5 +1,7 @@
 [Unit]
 Description=LaMachine Webservices
+Before=nginx.service
+After=data.mount
 
 [Service]
 Type=forking

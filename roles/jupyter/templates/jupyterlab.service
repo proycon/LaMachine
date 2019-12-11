@@ -1,7 +1,9 @@
 [Unit]
 Description=Jupyterlab
 Before=nginx.service
-After=virtualbox-guest-utils.service
+After=data.mount
+StartLimitInterval=200
+StartLimitBurst=5
 
 [Service]
 User={{unix_user}}
@@ -10,6 +12,8 @@ ExecStart={{lm_prefix}}/bin/jupyter lab --no-browser --config={{lm_prefix}}/etc/
 WorkingDirectory={{data_path}}
 StandardOutput=file:{{lm_prefix}}/var/log/jupyterlab.log
 StandardError=inherit
+Restart=always
+RestartSec=30
 
 [Install]
 WantedBy=multi-user.target
