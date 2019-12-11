@@ -58,14 +58,16 @@
       owner: "{{unix_user}}"
       group: "{{unix_group}}"
     when: locality == "global" and root
+    ignore_errors: yes
 
   - name: Enable systemd service for JupyterLab
-    systemd:
-      name:  jupyterlab
-      enabled: yes
-      masked: no
-      state: started
+    become: "{{lm_become}}"
+    become_user: root
+    shell: |
+      systemctl enable jupyterlab
+      systemctl start jupyterlab
     when: locality == "global" and root
+    ignore_errors: yes
 
   - name: Register Jupyter Lab metadata
     include_role:
