@@ -1,6 +1,7 @@
 [Unit]
 Description=Jupyterlab
 Before=nginx.service
+After=virtualbox-guest-utils.service
 
 [Service]
 User={{unix_user}}
