@@ -107,7 +107,7 @@
 
         - name: Ensure FLAT user database is writable
           file:
-            path: "{{lm_prefix}}/var/www-data/flat.db"
+            path: "{{www_data_path}}/flat.db"
             mode: u+rw,g+rw,a+r
 
         - name: Register FLAT

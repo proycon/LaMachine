@@ -1,6 +1,6 @@
 ---
 
-- name: "{{pkg_name}} - Invoke bootstrap if it exists"
+- name: "{{pkg_name}} - Run autoreconf if needed (through bootstrap if it exists)"
   shell: |
     #!/bin/bash
     if [ -f ./bootstrap.sh ]; then
@@ -9,8 +9,16 @@
     elif [ -f ./bootstrap ]; then
       bash bootstrap
       exit $?
+    elif [ -f ./configure ]; then
+      #we already have a configure, things should be fine
+      exit 0
+    elif [ -f ./configure.ac ]; then
+      #no bootstrap, we do it ourselves:
+      autoreconf --install
+      exit $?
     else
-      exit 0 #no bootstrap, should be fine?
+      echo "No configure, configure.ac or bootstrap.sh found!">&2
+      exit 1
     fi
   args:
       chdir: "{{ pkg_source_dir }}"

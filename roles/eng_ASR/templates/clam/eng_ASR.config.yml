@@ -1,6 +1,9 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
 port: 8812
 urlprefix: "eng_ASR"
-root: "{{lm_prefix}}/var/www-data/eng_ASR.clam/"
+root: "{{www_data_path}}/eng_ASR.clam/"
 resourcedirectory: "{{lm_prefix}}/opt/eng_ASR_resources/"
-scratchdirectory: "{{lm_prefix}}/var/www-data/eng_ASR.clam/scratch/"
+scratchdirectory: "{{www_data_path}}/eng_ASR.clam/scratch/"
 bindir: "{{lm_prefix}}/bin/"

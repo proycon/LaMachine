@@ -6,3 +6,4 @@ dependencies:
   - { role: languagemachines-python, when: "'fullrunonly' not in ansible_skip_tags"  }
   - { role: nextflow, when: "'fullrunonly' not in ansible_skip_tags"  }
   - { role: languagemachines-pipelines, when: "'fullrunonly' not in ansible_skip_tags"  }
+  - { role: tesseract, when: "'fullrunonly' not in ansible_skip_tags"  }

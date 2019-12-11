@@ -1,5 +1,8 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
 port: 8802
 urlprefix: "ucto"
-root: "{{lm_prefix}}/var/www-data/ucto.clam/"
+root: "{{www_data_path}}/ucto.clam/"
 bindir: "{{lm_prefix}}/bin/"
 flaturl: "{% if http_port|int == 443 %}https://{% else %}http://{% endif %}{{hostname}}{% if http_port != 80 and http_port != 443 %}:{{http_port}}{% endif %}/flat"

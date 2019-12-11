@@ -21,9 +21,10 @@ green=${normal}$(tput setaf 2) #  green
 yellow=${normal}$(tput setaf 3) #  yellow
 blue=${normal}$(tput setaf 4) #  blue
 boldblue=${bold}$(tput setaf 4) #  blue
+boldyellow=${bold}$(tput setaf 3) #  yellow
 normal=$(tput sgr0)
 
-export LM_VERSION="v2.12" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
+export LM_VERSION="v2.13" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "${bold}=====================================================================${normal}"
 echo "           ,              ${bold}LaMachine $LM_VERSION${normal} - NLP Software distribution"
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
@@ -81,6 +82,9 @@ usage () {
     echo " ${bold}--services${normal} - Preset enabled services (comma seperated list). Default: all"
     echo " ${bold}--force${normal} - Preset a default force parameter (set to 1 or 2). Note that this will take effect on ANY subsequent update!"
     echo " ${bold}--disksize${normal} - Sets extra disksize for VMs; you'll want to use  this if you plan to include particularly large software and exceed the default 8GB"
+    echo " ${bold}--datapath${normal} - The data path on the host machine that will be shared with the container/VM"
+    echo " ${bold}--port${normal} - The port for HTTP traffic to forward from the host machine to the container/VM"
+    echo " ${bold}--sharewwwdata${normal} - Put the data for the web services on the shared volume (for container/VM)"
 }
 
 USER_SET=0 #explicitly set?
@@ -195,6 +199,7 @@ VAGRANTBOX="debian/contrib-buster64" #base distribution for VM
 DOCKERREPO="proycon/lamachine"
 CONTROLLER="internal"
 BUILD=1
+SHARED_WWW_DATA="no"
 
 if which python; then
     echo "Checking sanity of your Python installation..."
@@ -203,7 +208,7 @@ if which python; then
         fatalerror "Conflict error: The default Python on this system is managed by Anaconda, this is incompatible with LaMachine. Ensure the Python found in your \$PATH corresponds to a regular version as supplied with your OS, editing the order of your \$PATH in ~/.bashrc or ~/.bash_profile should be sufficient to solve this without completely uninstalling anaconda. See also https://stackoverflow.com/a/37377981/3311445"
     fi
 else
-    if [ "$OS" != "debian" ]; then #newest ubuntu/debian doesn't always install python2.7 but apt will handle the dependency later
+    if [ "$OS" != "debian" ] && [ "$OS" != "redhat" ]; then #newest ubuntu/debian/centos doesn't always install python2.7 but apt will handle the dependency later
         fatalerror "No Python found! However, python should be available by default on all supported platforms; please install it yourself through your package manager (and ensure it is in your \$PATH)"
     fi
 fi
@@ -261,7 +266,7 @@ if [ "$OS" != "mac" ]; then
             OUTDATED=1
         fi
     elif [ "$DISTRIB_ID" = "arch" ] || [ "$DISTRIB_ID" = "manjaro" ]; then
-        echo "Rolling release, okay"
+        echo "(You are on a rolling release distribution, that's okay but be aware that it makes local LaMachine environments more prone to breakage)"
     else
         echo "WARNING: Your Linux distribution was not properly recognized and may be unsupported!"
         OUTDATED=1
@@ -411,6 +416,21 @@ while [[ $# -gt 0 ]]; do
         shift
         shift
         ;;
+        --datapath)
+        HOSTDATAPATH="$2"
+        shift
+        shift
+        ;;
+        --port)
+        HOSTPORT="$2"
+        shift
+        shift
+        ;;
+        --sharewwwdata)
+        SHARED_WWW_DATA="yes"
+        shift
+        shift
+        ;;
         --quiet)
         ANSIBLE_OPTIONS=""
         shift
@@ -439,37 +459,103 @@ if [ $INTERACTIVE -eq 1 ]; then
     echo
 fi
 
+SUPPORT=unknown
 
 if [ -z "$FLAVOUR" ]; then
     while true; do
-        echo "${bold}Where do you want to install LaMachine?${normal}"
-        echo "  1) in a local user environment"
+        echo "${boldblue}Where do you want to install LaMachine?${normal}"
+        echo "  ${bold}1)${normal} in a ${bold}local user environment${normal} (native for your machine)"
         echo "       installs as much as possible in a separate directory"
-        echo "       for a particular user; can exists alongside existing"
+        echo "       for a particular (the current) user; can exists alongside existing"
         echo "       installations. May also be used (limited) by multiple"
-        echo "       users/groups if file permissions allow it. Can work without"
-        echo "       root but only if all global dependencies are already satisfied."
+        echo "       users/groups if file permissions allow it."
         echo "       (uses virtualenv)"
+        if [[ $OS == "mac" ]]; then
+            SUPPORT=bronze
+        elif [[ $DISTRIB_ID == "ubuntu" ]] && [[ $DISTRIB_RELEASE == "18.04" ]]; then
+            SUPPORT=gold
+        elif [[ $DISTRIB_ID == "ubuntu" ]] && [[ $DISTRIB_RELEASE == "16.04" ]]; then
+            SUPPORT=silver
+        elif [[ $DISTRIB_ID == "debian" ]] && [[ $DISTRIB_RELEASE == "10" ]]; then
+            SUPPORT=gold
+        elif [[ $DISTRIB_ID == "debian" ]] && [[ $DISTRIB_RELEASE == "9" ]]; then
+            SUPPORT=silver
+        elif [[ $DISTRIB_ID == "debian" ]]; then
+            if [ "${DISTRIB_RELEASE%\.*}" -lt 9 ]; then
+                SUPPORT=deprecated
+            else
+                SUPPORT=bronze
+            fi
+        elif [[ $DISTRIB_ID == "ubuntu" ]]; then
+            if [ "${DISTRIB_RELEASE%\.*}" -lt 16 ]; then
+                SUPPORT=deprecated
+            else
+                SUPPORT=bronze
+            fi
+        elif [[ $DISTRIB_ID == "centos" ]] && [[ $DISTRIB_RELEASE == "8" ]]; then
+            SUPPORT=silver
+        elif [[ $DISTRIB_ID == "centos" ]]; then
+            SUPPORT=deprecated
+        elif [[ $DISTRIB_ID == "rhel" ]] && [[ $DISTRIB_RELEASE == "8" ]]; then
+            SUPPORT=silver
+        elif [[ $DISTRIB_ID == "rhel" ]]; then
+            SUPPORT=deprecated
+        elif [[ $DISTRIB_ID == "fedora" ]]; then
+            if [ "${DISTRIB_RELEASE%\.*}" -lt 30 ]; then
+                SUPPORT=deprecated
+            else
+                SUPPORT=bronze
+            fi
+        elif [[ $DISTRIB_ID == "linuxmint" ]]; then
+                SUPPORT=bronze
+        elif [[ $DISTRIB_ID == "arch" ]]; then
+                SUPPORT=bronze
+        fi
+        if [[ "$SUPPORT" == "gold" ]]; then
+            echo "       [${boldgreen}fully supported on your machine${normal}] (GOLD support level! Everything should work)"
+        elif [[ "$SUPPORT" == "silver" ]]; then
+            echo "       [${boldgreen}mostly supported on your machine${normal}] (SILVER support level: Almost everything should work)"
+        elif [[ "$SUPPORT" == "bronze" ]]; then
+            echo "       [${boldyellow}partially supported on your machine${normal}] (BRONZE support level: Certain software is known not to work and/or things are more prone to breakage. Testing has not been as extensive)"
+        elif [[ "$SUPPORT" == "unknown" ]]; then
+            echo "       [${boldred}support unknown${normal}] (you can try but things will likely fail)"
+        elif [[ "$SUPPORT" == "deprecated" ]]; then
+            echo "       [${boldred}not supported, your machine's distribution is deprecated${normal}] (upgrade to a more recent version)"
+        fi
         if [ $WINDOWS -eq 0 ]; then
-        echo "  2) in a Virtual Machine"
+        echo "  ${bold}2)${normal} in a ${bold}Virtual Machine${normal}"
         echo "       complete separation from the host OS"
         echo "       (uses Vagrant and VirtualBox)"
-        echo "  3) in a Docker container"
+        echo "       [${boldgreen}supported on your machine${normal}]"
+        echo "  ${bold}3)${normal} in a ${bold}Docker container${normal}"
         echo "       (uses Docker and Ansible)"
+        if which docker > /dev/null 2> /dev/null; then
+            echo "       [${boldgreen}supported on your machine${normal}]"
+        else
+            echo "       [${boldred}not supported on your machine, docker not found, install docker first${normal}]"
         fi
-        echo "  4) Globally on this machine"
+        fi
+        echo "  ${bold}4)${normal} Globally on this machine (native for your machine)"
         echo "       dedicates the entire machine to LaMachine and"
         echo "       modifies the existing system and may"
-        echo "       interact with existing packages. Usually requires root."
-        echo "  5) On a remote server"
-        echo "       modifies an existing remote system! Usually requires root."
+        echo "       interact with existing packages."
+        echo "       [${boldyellow}advanced users only!${normal}]"
+        echo "  ${bold}5)${normal} On a ${bold}remote server${normal}"
+        echo "       Direct provisioning of a remote system, modifies an existing remote system"
         echo "       (uses ansible)"
+        echo "       [${boldyellow}advanced users only!${normal}]"
         if [ $WINDOWS -eq 0 ]; then
         echo "  6) in an LXC/LXD container"
         echo "       Provides a more persistent and VM-like container experience than Docker"
         echo "       (uses LXD, LXC and Ansible)"
-        echo "  7) in a Singularity container (EXPERIMENTAL!)"
+        if which lxd > /dev/null 2> /dev/null; then
+            echo "       [${boldgreen}supported on your machine${normal}]"
+        else
+            echo "       [${boldred}not supported on your machine, lxd not found, install lxd first${normal}]"
+        fi
+        echo "  7) in a Singularity container"
         echo "       (uses Singularity and Ansible)"
+        echo "       [${boldyellow}experimental, not supported yet${normal}]"
         fi
         echo -n "${bold}Your choice?${normal} [12345] "
         read choice
@@ -495,13 +581,13 @@ fi
 if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
   if [[ "$FLAVOUR" == "vagrant" || "$FLAVOUR" == "docker" || "$FLAVOUR" == "singularity" ]]; then
     while true; do
-        echo "${bold}Do you want to build a new personalised LaMachine image or use and download a prebuilt one?${normal}"
-        echo "  1) Build a new image"
+        echo "${boldblue}Do you want to build a new personalised LaMachine image or use and download a prebuilt one?${normal}"
+        echo "  ${bold}1)${normal} Build a new image"
         echo "       Offers most flexibility and ensures you are on the latest versions."
         echo "       Allows you to choose even for development versions or custom versions."
         echo "       Allows you to choose what software to include from scratch."
         echo "       Best integration with your custom data."
-        echo "  2) Download a prebuilt one"
+        echo "  ${bold}2)${normal} Download a prebuilt one"
         echo "       Comes with a fixed selection of software, allows you to update with extra software later."
         echo "       Fast & easy but less flexible"
         echo -n "${bold}Your choice?${normal} [12] "
@@ -514,7 +600,7 @@ if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
     done
 
     if [[ "$FLAVOUR" == "vagrant" ]] && [ $BUILD -eq 1 ] && [ $DISKSIZE -eq 0 ]; then
-        echo "${bold}Allocate extra diskspace?${normal}"
+        echo "${boldblue}Allocate extra diskspace?${normal}"
         echo "  The standard LaMachine disk is limited in size (about 9GB). If you plan to include certain very large software"
         echo "  collections that LaMachine offers (such as kaldi, valkuil) then this is not sufficient and"
         echo "  you need to allocate an extra virtual disk, specify the size below:"
@@ -528,7 +614,7 @@ if [[ $INTERACTIVE -eq 1 ]] && [[ $WINDOWS -eq 0 ]]; then
             esac
         done
     elif [[ "$FLAVOUR" == "docker" ]] && [ $BUILD -eq 1 ] && [ $DISKSIZE -eq 0 ]; then
-        echo "${bold}Container diskspace${normal}"
+        echo "${boldblue}Container diskspace${normal}"
         echo "  A standard docker container is limited in size (usually 10GB). If you plan to include certain very large optional software"
         echo "  collections that LaMachine offers (such as kaldi, valkuil) then this is not sufficient and"
         echo "  you need to increase the base size of your containers (depending on the storage driver you use for docker)."
@@ -553,7 +639,7 @@ fi
 if [[ "$LOCALITY" == "local" ]]; then
     if [ -z "$LOCALENV_TYPE" ]; then
         LOCALENV_TYPE="virtualenv"
-        #echo "${bold}We support two forms of local user environments:${normal}"
+        #echo "${boldblue}We support two forms of local user environments:${normal}"
         #echo "  1) Using virtualenv"
         #echo "       (originally for Python but extended by us)"
         #echo "  2) Using conda"
@@ -598,7 +684,7 @@ fi
 if [ $BUILD -eq 1 ]; then
     if [[ "$VERSION" == "undefined" ]]; then
         echo "${bold}LaMachine comes in several versions:${normal}"
-        echo " 1) a stable version; you get the latest releases deemed stable (recommended)"
+        echo " 1) a stable version; you get the latest releases deemed stable ${boldgreen}(recommended)${normal}"
         echo " 2) a development version; you get the very latest development versions for testing, this may not always work as expected!"
         echo " 3) custom version; you decide explicitly what exact versions you want (for reproducibility);"
         echo "    this expects you to provide a LaMachine version file (customversions.yml) with exact version numbers."
@@ -638,9 +724,9 @@ if [ -z "$SUDO" ]; then
             echo "The installation relies on certain software to be available on your (host)"
             echo "system. It will be automatically obtained from your distribution's package manager"
             echo "or another official source whenever possible. You need to have sudo permission for this though..."
-            echo "${red}Answering 'no' to this question may make installation on your system impossible!${normal}"
+            echo "${red}Answering 'no' to this question may make automated installation on your system impossible!${normal}"
             echo
-            echo -n "${bold}Do you have administrative access (root/sudo) on the current system?${normal} [yn] "
+            echo -n "${boldblue}Do you have administrative access (root/sudo) on the current system?${normal} [yn] "
             read yn
             case $yn in
                 [Yy]* ) SUDO=1; break;;
@@ -1097,7 +1183,7 @@ done
 if [ -z "$LM_NAME" ]; then
     echo "Your LaMachine installation is identified by a name (local env name, VM name) etc.."
     echo "(This does not need to match the hostname or domain name, which is a separate configuration setting)"
-    echo -n "${bold}Enter a name for your LaMachine installation (no spaces!):${normal} "
+    echo -n "${boldblue}Enter a name for your LaMachine installation (no spaces!):${normal} "
     read LM_NAME
     LM_NAME="${LM_NAME%\\n}"
 fi
@@ -1125,8 +1211,9 @@ if [ $BUILD -eq 1 ] && [[ "$FLAVOUR" != "lxc" ]]; then
         if [ "$FLAVOUR" = "remote" ]; then
             echo "This determines the remote machine LaMachine will be installed on!"
         fi
-        echo -n "${bold}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal} "
+        echo -n "${boldblue}Please enter the hostname (or FQDN) of the LaMachine system (just press ENTER if you want to use $DETECTEDHOSTNAME here):${normal} "
         read HOSTNAME
+        HOSTNAME="${HOSTNAME%\\n}"
         if [ -z "$HOSTNAME" ]; then
             HOSTNAME=$DETECTEDHOSTNAME
         fi
@@ -1135,11 +1222,14 @@ fi
 
 if [[ "$FLAVOUR" == "remote" ]]; then
     if [ $USER_SET -eq 0 ] && [ $INTERACTIVE -eq 1 ]; then
+        echo
+        echo
         echo "To provision the remote machine, LaMachine needs to be able to connect over ssh as specific user."
         echo "The user must exist and ideally passwordless ssh keypairs should be available. Note that connecting and running"
         echo "as root is explicitly forbidden. The user, on the other hand, does require sudo rights on the remote machine."
-        echo -n "${bold}What user should LaMachine use to provision the remote machine?${normal} "
+        echo -n "${boldblue}What user should LaMachine use to provision the remote machine?${normal} "
         read USERNAME
+        USERNAME="${USERNAME%\\n}"
     fi
 fi
 
@@ -1147,6 +1237,45 @@ STAGEDCONFIG="$BASEDIR/lamachine-$LM_NAME.yml"
 STAGEDMANIFEST="$BASEDIR/install-$LM_NAME.yml"
 
 HOMEDIR=$(echo ~)
+
+
+if [ $INTERACTIVE -eq 1 ]; then
+    if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "lxc" ]]; then
+        echo
+        echo
+        echo "In order to share data files, LaMachine shares a directory from your actual host machine"
+        echo "with the VM/container, which will be mounted at /data by default."
+        echo "${boldblue}What directory do you want to share?${normal} (if left empty, your home directory $HOMEDIR will be shared by default)"
+        read HOSTDATAPATH
+        HOSTDATAPATH="${HOSTDATAPATH%\\n}"
+
+        echo "${boldblue}Do you want to put data from the web services and web applications on the shared data volume as well?${normal}  [yn]"
+        while true; do
+            read yn
+            case $yn in
+                [Yy]* ) SHARED_WWW_DATA="yes"; break;;
+                [Nn]* ) SHARED_WWW_DATA="no"; break;;
+                * ) echo "Please answer yes or no.";;
+            esac
+        done
+    fi
+
+    if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "lxc" ]]; then
+        echo
+        echo
+        echo "To offer convenient access to the HTTP webserver in your VM/container, a port will be forwarded from your host system"
+        echo "${boldblue}What port do you want to forward for HTTP?${normal} (if left empty, 8080 will be the default)"
+        read HOSTPORT
+        HOSTPORT="${HOSTPORT%\\n}"
+    fi
+fi
+
+if [ -z "$HOSTDATAPATH" ]; then
+    HOSTDATAPATH=$HOMEDIR
+fi
+if [ -z "$HOSTPORT" ]; then
+    HOSTPORT="8080"
+fi
 
 if [ $BUILD -eq 1 ] && [[ "$FLAVOUR" != "lxc" ]]; then
  if [ ! -e "$STAGEDCONFIG" ]; then
@@ -1180,11 +1309,12 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "unix_group: \"vagrant\" #(don't change this unless you know what you're doing)" >> $STAGEDCONFIG
         echo "homedir: \"/home/vagrant\"" >> $STAGEDCONFIG
         echo "lamachine_path: \"/vagrant\" #Path where LaMachine source is originally stored/shared" >> $STAGEDCONFIG
-        echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
+        echo "host_data_path: \"$HOSTDATAPATH\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path, you can change this" >> $STAGEDCONFIG
+        echo "shared_www_data: $SHARED_WWW_DATA #Put web data in the shared data path (rather than inside the container)" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
-        if [ "$VAGRANTBOX" == "centos/7" ]; then
+        if [ "$VAGRANTBOX" == "centos/7" ] || [ "$VAGRANTBOX" == "centos/8" ]; then
             echo "ansible_python_interpreter: \"/usr/bin/python\" #Python interpreter for Vagrant to use with Ansible" >> $STAGEDCONFIG
         else
             echo "ansible_python_interpreter: \"/usr/bin/python3\" #Python interpreter for Vagrant to use with Ansible. This interpreter must be already available in vagrant box $VAGRANTBOX, you may want to set it to python2 instead" >> $STAGEDCONFIG
@@ -1196,8 +1326,9 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "unix_group: \"lamachine\" #must be same as unix_user, changing this is not supported yet" >> $STAGEDCONFIG
         echo "homedir: \"/home/lamachine\"" >> $STAGEDCONFIG
         echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared" >> $STAGEDCONFIG
-        echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
+        echo "host_data_path: \"$HOSTDATAPATH\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path" >> $STAGEDCONFIG
+        echo "move_share_www_data: $SHARED_WWW_DATA #Move www-data to the shared volume" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
     elif [[ $FLAVOUR == "singularity" ]] || [[ $FLAVOUR == "lxc" ]]; then
@@ -1206,8 +1337,9 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
         echo "unix_group: \"lamachine\" #must be same as unix_user, changing this is not supported yet" >> $STAGEDCONFIG
         echo "homedir: \"/home/lamachine\"" >> $STAGEDCONFIG
         echo "lamachine_path: \"/lamachine\" #Path where LaMachine source is initially stored/shared (do not change this for singularity!" >> $STAGEDCONFIG
-        echo "host_data_path: \"$BASEDIR\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
+        echo "host_data_path: \"$HOSTDATAPATH\" #Data path on the host machine that will be shared with LaMachine" >> $STAGEDCONFIG
         echo "data_path: \"/data\" #Shared data path (in LaMachine) that is tied to host_data_path (do not change this for singularity)" >> $STAGEDCONFIG
+        echo "shared_www_data: $SHARED_WWW_DATA #Put web data in the shared data path (rather than inside the container)" >> $STAGEDCONFIG
         echo "global_prefix: \"/usr/local\" #Path for global installations (only change once on initial installation)" >> $STAGEDCONFIG
         echo "source_path: \"/usr/local/src\" #Path where sources will be stored/compiled (only change once on initial installation)" >> $STAGEDCONFIG
     else
@@ -1274,9 +1406,10 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
     else
         echo "http_port: 8080 #webserver port" >> $STAGEDCONFIG
     fi
-echo "mapped_http_port: 8080 #mapped webserver port on host system (for VM or docker only)
+echo "mapped_http_port: $HOSTPORT #mapped webserver port on host system (for VM/docker only)
 services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all possible services from the software categories you install will be provided. You can remove this and list specific services you want to enable. This is especially needed in case of a LaMachine installation that intends to only provide a single service.
 webservertype: nginx #If set to anything different, the internal webserver will not be enabled/provided by LaMachine (which allows you to run your own external one), do leave webserver: true set as is though.
+clam_include: \"\" #You can set this to a CLAM base configuration file that will be included from all the webservices, it allows you to do configure common traits like authentication
 " >> $STAGEDCONFIG
 if [[ $OS == "mac" ]] || [[ "$FLAVOUR" == "remote" ]]; then
     echo "lab: false #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)" >> $STAGEDCONFIG
@@ -1285,7 +1418,7 @@ else
 fi
 echo "lab_password_sha1: \"sha1:fa40baddab88:c498070b5885ee26ed851104ddef37926459b0c4\" #default password for Jupyter Lab: lamachine, change this with 'lamachine-passwd lab'" >> $STAGEDCONFIG
 echo "lab_allow_origin: \"*\" #hosts that may access the lab environment" >> $STAGEDCONFIG
-echo "flat_password: \"flat\" #initial password for the FLAT administrator (if installed; username 'flat'), updating this later has no effect (edit in FLAT itself)!" >> $STAGEDCONFIG
+echo "flat_password: \"flat\" #initial password for the FLAT administrator (if installed; username 'flat'), updating this later than on initial installation has no effect (edit in FLAT itself)!" >> $STAGEDCONFIG
 if [ $FORCE -ne 0 ]; then
     echo "force: $FORCE #Sets the default force parameter for updates, set to 1 to force updates or 2 to explicitly remove all sources and start from scratch on each update. Remove this line entirely if you don't need it or are in doubt" >> $STAGEDCONFIG
 fi
@@ -1461,9 +1594,11 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     else
         cp -f $SOURCEDIR/Vagrantfile.prebuilt $SOURCEDIR/Vagrantfile || fatalerror "Unable to copy Vagrantfile"
         sed -i.bak s/lamachine-vm/$LM_NAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+        sed -i.bak "s/Dir.home/\"$HOSTDATAPATH\"/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+        sed -i.bak "s/8080/\"$HOSTPORT\"/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         if [ $INTERACTIVE -eq 1 ]; then
             #not needed for BUILD=1 because most interesting parameters inherited from the ansible host configuration
-            echo "${bold}Do you want to open the vagrant configuration in an editor for final configuration? (recommended to increase memory/cpu cores) [yn]${normal}"
+            echo "${bold}Do you want to open the vagrant configuration in an editor for final configuration? (recommended to increase memory/cpu cores!) [yn]${normal}"
             read choice
             case $choice in
                 [n]* ) break;;
@@ -1516,7 +1651,12 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     fi
 elif [[ "$FLAVOUR" == "local" ]] || [[ "$FLAVOUR" == "global" ]]; then
     if [ "$SUDO" -eq 1 ] && [ $INTERACTIVE -eq 1 ]; then
-        echo "${bold}The installation will now begin and will ask you for a BECOME password, here you need to fill in your sudo password as this is needed to install certain global packages from your distribution, it will only be used for limited parts of the installation. The installation process may take quite some time and produce a lot of output (most of which you can safely ignore). Press ENTER to continue and feel free to get yourself a tea or coffee while you wait!${normal}"
+        echo "${bold}The installation will now begin and will ask you for a BECOME password, "
+        echo "here you need to fill in your sudo password as this is needed to install certain"
+        echo "global packages from your distribution, it will only be used for limited parts of"
+        echo "the installation. The installation process may take quite some time and produce a"
+        echo "lot of output (most of which you can safely ignore)."
+        echo "Press ENTER to continue and feel free to get yourself a tea or coffee while you wait!${normal}"
         read
         ASKSUDO="--ask-become-pass"
     else
@@ -1564,6 +1704,7 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
         #echo "$HOSTNAME ansible_connection=local" > $SOURCEDIR/hosts.ini #not needed
         docker build -t $DOCKERREPO:$LM_NAME --build-arg LM_NAME=$LM_NAME --build-arg LM_VERSION=$LM_VERSION --build-arg HOSTNAME=$HOSTNAME . 2>&1 | tee lamachine-$LM_NAME.log
         rc=${PIPESTATUS[0]}
+        #add activation script on the host machine:
     else
         echo "Pulling pre-built docker image.."
         docker pull $DOCKERREPO
@@ -1573,11 +1714,20 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
         echo "======================================================================================"
         if [ $BUILD -eq 1 ]; then
             echo "${boldgreen}All done, a docker image has been built!${normal}"
-            echo "- to create and run a *new* interactive container using this image, run: docker run -p 8080:80 -h $HOSTNAME -t -i $DOCKERREPO:$LM_NAME"
+            echo "- to run a *new* interactive container using this image, run: lamachine-$LM_NAME-activate or: docker run -t -i $DOCKERREPO:$LM_NAME"
+            echo "- to run a non-interactive container: lamachine-$LM_NAME-run nameofyourtoolhere or: docker run -t $DOCKERREPO:$LM_NAME nameofyourtoolhere"
+            echo "- to start a new container with a webserver run lamachine-$LM_NAME-start or docker run -p 8080:80 -h $HOSTNAME -t $DOCKERREPO:$LM_NAME lamachine-start-webserver ,  and then connect on http://localhost:8080"
         else
             echo "${boldgreen}All done, a docker image has been downloaded!${normal}"
-            echo "- to create and run a *new* interactive container using this image, run: docker run -p 8080:80 -h latest -t -i $DOCKERREPO"
+            echo "- to run a *new* interactive container using this image, run: docker run -t -i $DOCKERREPO"
+            echo "- to run a non-interactive container: docker run -t $DOCKERREPO nameofyourtoolhere"
+            echo "- to start a new container with a webserver: docker run -p 8080:80 -h latest -t $DOCKERREPO lamachine-start-webserver ,  and then connect on http://localhost:8080"
         fi
+        echo -e "#!/bin/bash\necho \"Instantiating a **new** interactive Docker container with LaMachine...\"; docker run -i -t -h $HOSTNAME --mount type=bind,source=$HOSTDATAPATH,target=/data $DOCKERREPO:$LM_NAME" > $HOMEDIR/bin/lamachine-$LM_NAME-activate
+        echo -e "#!/bin/bash\necho \"Instantiating a **new** interactive Docker container with LaMachine...\"; docker run -i -t -h $HOSTNAME --mount type=bind,source=$HOSTDATAPATH,target=/data $DOCKERREPO:$LM_NAME \$@" > $HOMEDIR/bin/lamachine-$LM_NAME-run
+        echo -e "#!/bin/bash\necho \"Instantiating a **new** Docker container with the LaMachine webserver; connect on http://127.0.0.1:$HOSTPORT\"; docker run -t -p $HOSTPORT:80 -h $HOSTNAME --mount type=bind,source=$HOSTDATAPATH,target=/data $DOCKERREPO:$LM_NAME lamachine-start-webserver -f" > $HOMEDIR/bin/lamachine-$LM_NAME-start
+        chmod a+x $HOMEDIR/bin/lamachine-$LM_NAME-*
+        ln -sf $HOMEDIR/bin/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
     else
         echo "======================================================================================"
         echo "${boldred}The docker build has failed unfortunately.${normal} You have several options:"
@@ -1588,13 +1738,16 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
         fi
     fi
 elif [[ "$FLAVOUR" == "lxc" ]]; then
-        echo "Building LXC container (unprivileged!)"
+        echo "Building LXC container (unprivileged!), using the default profile"
         lxc launch ubuntu:18.04 $LM_NAME || fatalerror "Unable to create new container. Ensure LXD is installed, the current user is in the lxd group, and the container $LM_NAME does not already exist"
         echo "${boldblue}Launching LaMachine bootstrap inside the new container${normal}"
         echo "${boldblue}------------------------------------------------------${normal}"
-        echo "${boldred}Important note: anything below this point will be executed in the container rather than on the host system!${normal}"
-        echo "${boldred}                The sudo password can be left empty and will work${normal}"
-        sleep 5
+        echo "${boldyellow}Important note: anything below this point will be executed in the container rather than on the host system!${normal}"
+        echo "${boldyellow}                The sudo/become password can be left empty when asked for and will work${normal}"
+        if [ $INTERACTIVE -eq 1]; then
+            echo "(Press ENTER to continue)"
+            read
+        fi
         OPTS=""
         if [ ! -z "$INSTALL" ]; then
             OPTS="$OPTS --install \"$INSTALL\""
@@ -1618,12 +1771,12 @@ elif [[ "$FLAVOUR" == "lxc" ]]; then
         echo -e "#!/bin/bash\nlxc delete $LM_NAME; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-destroy
         chmod a+x $HOMEDIR/bin/lamachine-$LM_NAME-*
         ln -sf $HOMEDIR/bin/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
-        CMD="lxc exec $LM_NAME -- su ubuntu -l -c \"bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global $OPTS\""
+        CMD="lxc exec $LM_NAME -- su ubuntu -l -c \"bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global $OPTS\"" #NOTE: command is duplicated below, update that one too!
         echo $CMD
-        $CMD || fatalerror "Unable to bootstrap (command was $CMD)"
+        lxc exec $LM_NAME -- su ubuntu -l -c "bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/$BRANCH/bootstrap.sh) --name $LM_NAME --flavour global $OPTS"  || fatalerror "Unable to bootstrap (command was $CMD)"
         if [ $rc -eq 0 ]; then
             echo "======================================================================================"
-            echo "${boldgreen}All done, you LXD container has been built!${normal}"
+            echo "${boldgreen}All done, your LXD container has been built!${normal}"
             echo "- to enter your container, run lamachine-$LM_NAME-activate"
         fi
 elif [[ "$FLAVOUR" == "singularity" ]]; then

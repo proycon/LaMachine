@@ -13,10 +13,10 @@
         dest: "{{lm_prefix}}/opt/python-course"
         state: link
 
-    - name: "Symlink python-course in {{lm_prefix}}/var/notebooks"
+    - name: "Symlink python-course in {{www_data_path}}/notebooks"
       file:
         src: "{{source_path}}/python-course"
-        dest: "{{lm_prefix}}/var/notebooks/python-course"
+        dest: "{{www_data_path}}/notebooks/python-course"
         state: link
 
     - name: Installing additional Python packages used by the course

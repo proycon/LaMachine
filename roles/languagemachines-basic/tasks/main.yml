@@ -70,6 +70,41 @@
               ln -sf /usr/local/opt/frogdata/share/frog/ /usr/local/opt/frog/share
           when: ansible_distribution|lower == 'macosx' and root and version == "stable" #note: no locality check here, we use homebrew even in local mode
 
+        - name: Install dependency libtar from source on CentOS 8 #because libtar-devel package does not exist in CentOS 8 and we need it!
+          include_role:
+            name: lamachine-git-autoconf
+          vars:
+            package:
+               repo: libtar
+               user: tklauser
+          when: (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
+
+        - name: Copy libtar headers to global location on CentOS 8
+          become: yes
+          become_user: root
+          copy:
+            src: "{{lm_prefix}}/include/libtar.h"
+            dest: "/usr/include/libtar.h"
+            remote_src: yes
+          when: root and (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
+
+        - name: Copy libtar_listhash header to global location on CentOS 8
+          become: yes
+          become_user: root
+          copy:
+            src: "{{lm_prefix}}/include/libtar_listhash.h"
+            dest: "/usr/include/libtar_listhash.h"
+            remote_src: yes
+          when: root and (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
+
+        - name: Copy libtar library to global location on CentOS 8
+          become: yes
+          become_user: root
+          shell: |
+            cp -f {{lm_prefix}}/lib/libtar* /usr/lib64/
+          when: root and (ansible_distribution|lower == "centos" or ansible_distribution|lower == "rhel") and ansible_distribution_major_version|int == 8
+
+
         - name: Installation on Arch Linux
           block:
             - name: Installing packages from Arch User Repository
@@ -101,7 +136,7 @@
               with_items:
                 - repo: ticcutils
                   user: LanguageMachines
-                  configure_opts: "{% if (ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'rhel') and locality == 'local' %}--with-boost={{lm_prefix}}{% endif %}"
+                  configure_opts: "{% if (ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'rhel') and ansible_distribution_major_version == 7 and locality == 'local' %}--with-boost={{lm_prefix}}{% endif %}"
                   build_environment:
                      TEXTCAT_CFLAGS: "{% if ansible_distribution|lower == 'macosx' %}-I/usr/local/opt/libtextcat/include/libtextcat/{% endif %}"
                      CXXFLAGS: "-D U_USING_ICU_NAMESPACE=1"

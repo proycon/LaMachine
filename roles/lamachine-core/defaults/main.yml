@@ -1,5 +1,5 @@
 ---
-lamachine_version: "2.12" #also change in bootstrap.sh and codemeta.json
+lamachine_version: "2.13" #also change in bootstrap.sh and codemeta.json
 conf_name: "default"
 version: "stable" #stable, development or custom
 controller: internal
@@ -20,6 +20,9 @@ web_group: "{{web_user}}"
 maintainer_name: "{{unix_user}}" #The name of the person maintaining this LaMachine installation
 maintainer_mail: "{{unix_user}}@{{hostname}}" #Maintainer mail
 http_port: 80 #webserver port
+shared_www_data: no
+move_share_www_data: no #for docker, whether to actively move the www-data to the shared data volume on lamachine-start-webserver (shared_www_data is always no though)
+clam_include: "" #a base clam configuration file to include
 ignore_tests: false
 services:
   - all

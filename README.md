@@ -45,7 +45,7 @@ alternatively also offers the option to download pre-built images (installation 
 
 ### B) Pre-built container image for Docker
 
-We regularly build a basic LaMachine image an publish it to [Docker Hub](https://hub.docker.com/r/proycon/lamachine/).
+We regularly build a basic LaMachine image and publish it to [Docker Hub](https://hub.docker.com/r/proycon/lamachine/).
 The above installation path A also offers access to this, but you may opt to do it directly:
 
 To download and use it, run:
@@ -57,7 +57,7 @@ docker run  -p 8080:80 -h latest -t -i proycon/lamachine
 
 This requires you to already have [Docker](https://www.docker.com/) installed and running on your system.
 
-The pre-built image contains the stable version with only a basic set of common software rather than the full set, run ``lamachine-stable-update --edit``
+The pre-built image contains the stable version with only a basic set of common software rather than the full set, run ``lamachine-add``
 inside the container to select extra software to install. Alternatively, other specialised LaMachine builds may be available
 on Docker Hub.
 
@@ -169,14 +169,16 @@ documentation](https://github.com/proycon/LaMachine/blob/develop/CONTRIBUTING.md
 
 LaMachine can be installed in multiple *flavours*:
 
- * **Local installation** - Installs LaMachine locally in a user environment on a Linux/BSD or macOS machine (multiple per machine possible)
- * **Global installation** - Installs LaMachine globally on a Linux/BSD machine. (only one per machine)
+ * **Local installation** - Installs LaMachine locally (natively) in a user environment on Linux or macOS machine (multiple per machine possible)
+ * **Global installation** - Installs LaMachine globally (natively) on a Linux machine. (only one per machine)
  * **Docker container** - Installs LaMachine in a docker container
  * **Virtual Machine** - Installs LaMachine in a Virtual Machine
- * **Remote installation** - Installs LaMachine globally on another Linux/BSD machine. (only one per machine)
+ * **LXC container** - Installs LaMachine in an LXC/LXD container.
+ * **Remote installation** - Installs LaMachine globally (natively) on another Linux machine. (only one per machine)
 
 In all cases, the installation is mediated through [Ansible](https://www.ansible.com), providing a level of abstraction
-over whatever underlying technology is employed. Containerisation uses [Docker](https://docker.com). Virtualisation is
+over whatever underlying technology is employed. Containerisation uses [Docker](https://docker.com) or
+[LXD](https://linuxcontainers.org/lxd/introduction/). Virtualisation is
 made possible through [Vagrant](https://vagrantup.com) and [VirtualBox](https://virtualbox.org). The local installation
 variant uses virtualenv with some custom extensions.
 
@@ -186,21 +188,48 @@ through all the options. It will eventually invoke a so-called ansible playbook 
 of the individual software projects included in LaMachine, depending on your distribution and flavour.
 
 LaMachine uses [Debian](https://www.debian.org) as primary Linux distribution (for virtualisation and containerisation),
-we generally support the following platforms (but certain participating software may not support all!):
+we support the distributions/platforms listed below for a native installation of LaMachine (i.e. compiled against the libraries
+of that distribution). We distinguish three categories of support (and for all we only support the x86-64 architecture):
 
- * Debian 9 (stretch) - *This is the primary platform and the only one for which ALL participating software is
-   guaranteed to work*
- * Ubuntu 18.04 LTS
- * Ubuntu 16.04 LTS
- * Ubuntu 14.04 LTS - *Being phased out and not recommended*
- * CentOS 7 / RedHat Enterprise Linux 7
- * Fedora 27
- * Arch Linux
- * macOS 10.13 (High Sierra) - *Limited functionality only! No webservices/applications. Various optional software will not support macOS either*
+* **Gold support** - All participating software should work on these platforms and things are tested frequently. The
+    pre-built LaMachine containers and VMs we offer always use one of these.
+  * Debian 10 (buster)  (next: Debian 11)
+  * Ubuntu 18.04 LTS (next: Ubuntu 20.04 LTS)
 
-This concerns the platforms LaMachine runs on natively or on which you can bootstrap your own build (installation path A). The options for host platforms
-for simply running a pre-built LaMachine Virtual Machine or Docker container, are much larger, and also include Windows
-(see installation paths B & C).
+* **Silver support** - Most software should work.
+  * Debian 9 (stretch) - The previous stable release
+  * Ubuntu 16.04 LTS - The previous LTS release
+  * CentOS 8 / RedHat Enterprise Linux 8 - This is offered because it is a popular choice in enterprise environments.
+    Testing is less frequent though.
+
+* **Bronze support** - Certain software is known not to work and/or things are more prone to breakage and have not been
+    tested.
+  * Debian testing (bullseye) and debian unstable (sid) - Should work but not tested.
+  * Ubuntu (a non-LTS version) - Should work as long as it's newer than the one mentioned under silver support, but not tested.
+  * macOS (a recent version) - Not all software is supported on macOS by definition, but a considerable portion does
+      work. Things are a bit more prone to break if the user's environment has been heavily tweaked and differs from the
+      stock experience.
+  * Arch Linux (rolling release; things tend to work fine for most software but the nature of a rolling release makes breakages more common, e.g. on each major Python upgrade)
+  * Linux Mint (recent version) - Supported in principle due to being an Ubuntu derivative, but not really tested so there could be surprises
+  * Fedora (latest version); supported in principle but not really tested.
+
+* **Deprecated**:
+  * Ubuntu 14.04 LTS
+  * CentOS 7 / RedHat Enterprise Linux 7
+
+* **Unsupported (not exhaustive!)** - We can not support these because our effort reached its limits:
+  * FreeBSD and other BSDs
+  * openSuSE / SuSE
+  * Alpine
+  * Gentoo
+  * Void Linux
+  * nixOS
+  * Solaris
+  * Windows
+
+Note that this concerns the platforms LaMachine runs on natively or on which you can bootstrap your own build
+(installation path A). The options for host platforms for simply running a pre-built LaMachine Virtual Machine or Docker
+container, are much larger, and also include Windows (see installation paths B & C).
 
 In addition to a flavour, users can opt for one of three versions of LaMachine:
  * **stable** - Installs the latest official releases of all participating software
@@ -224,7 +253,7 @@ Run the generated activation script to activate the local environment (here we a
 
 ### Virtual Machine
 
-If you built your own LaMachine you have various scripts at your disposal (here we assume your LaMachine VM is called **stable**!):
+If you built your own LaMachine you have various scripts at your disposal (here we assume your LaMachine VM is called **stable**! The script names will be different for other names, replace as needed):
 * Run ``lamachine-stable-start`` to start the VM
 * Run ``lamachine-stable-connect`` to connect to a running VM and obtain a command line shell (over ssh)
 * Run ``lamachine-stable-stop`` to stop the VM
@@ -270,22 +299,28 @@ Manual](https://www.virtualbox.org/manual/ch06.html#natforward) itself.
 
 ### Docker Container
 
-In this example we assume your LaMachine image has the tag **latest**, which corresponds to the latest stable LaMachine release
-(and can technically be omitted as it is the default), run ``docker image ls`` to see all images you have available:
+If you used the LaMachine bootstrap script, you will have several scripts at your disposition (we assume that your
+LaMachine VM is called stable, adapt the script names to your own situation). If you instead issued a ``docker pull
+proycon/lamachine`` manually you will need to run the docker commands yourself:
 
-* To start a **new** interactive container, run ``docker run -i -t proycon/lamachine:latest``
-* To start a **new** container with a command line tool, just append the command: ``docker run -t proycon/lamachine:latest ucto -L nld /data/input.txt /data/output.folia.xml``
-	* Add the ``-i`` flag if the tool is an interactive tool that reads from standard input (i.e. keyboard input).
-* To start a **new** container with the webserver: ``docker run -p 8080:80 -h hostname -t proycon/lamachine:latest lamachine-start-webserver -f ``
-	* The numbers values for ``-p`` are the port numbers on the host side and on the container side respectively, the latter must always match with the ``http_port`` setting LaMachine has been built with.
-	* Set ``-h`` with the desired hostname, this too must match the setting LaMachine has been built with!
-    * The ``-f`` argument ensures the script waits in the foreground and doesn't exit after starting.
+* Run ``lamachine-stable-activate`` to start a **new** interactive container
+    * This corresponds to ``docker run -i -t proycon/lamachine``
+* Run ``lamachine-stable-run`` to start the command specified as a parameter in a **new** container (e.g.  ``lamachine-stable-run frog``)
+    * This corresponds to : ``docker run -i -t proycon/lamachine:latest frog``
+        * You can omit the ``-i`` flag if the tool is not an interactive tool that reads from standard input (i.e. keyboard input).
+* Run ``lamachine-stable-start`` to start a webserver and all enabled webservices in a **new** LaMachine container:
+    * This corresponds to: ``docker run -p 8080:80 -h hostname -t proycon/lamachine:latest lamachine-start-webserver -f ``
+        * The numbers values for ``-p`` are the port numbers on the host side and on the container side respectively, the latter must always match with the ``http_port`` setting LaMachine has been built with (defaults to 80).
+        * Set ``-h`` with the desired hostname, this too must match the setting LaMachine has been built with!
+        * The ``-f`` argument to ``lamachine-start-webserver`` ensures the script waits in the foreground and doesn't exit after starting.
 	* If started in this way, you can connect your webbrowser on the host system to http://127.0.0.1:8080 .
 
-If you use LaMachine with docker, we expect you to actually be familiar with
-docker and understand the difference between images, containers, how to commit
-changes (``docker commit``), and how to reuse existing containers if that is
-what you need (``docker start``, ``docker attach``).
+The scripts will automatically share your designated data directory (your home directory by default) with the container, mounted at ``/data`` by default. To manually make persistent storage available in the container, e.g. for sharing data, use docker parameters like: ``--mount type=bind,source=/path/on/host,target=/data``
+
+If you use LaMachine with docker, we expect you to actually be familiar with docker and understand the non-persistent
+nature of containers, understand the difference between images and containers. Be aware that new containers are created
+every time you run any of the above commands. If you want a more VM-like container experience, you can consider LXD
+instead of Docker.
 
 ### Updating LaMachine
 

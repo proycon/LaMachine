@@ -117,7 +117,7 @@
           groups: "{{web_group}}"
           append: yes
 
-      - name: Create webserver writable directories (global)
+      - name: Create webserver writable directories
         become: "{{lm_become}}"
         become_user: root
         file:
@@ -129,8 +129,38 @@
         with_items:
             - "var/log/uwsgi"
             - "var/log/nginx"
-            - "var/www-data"
-            - "var/www-data/tmp"
+            - "var/tmp"
+
+      - name: Create webserver data directory (writable)
+        become: "{{lm_become}}"
+        become_user: root
+        file:
+            path: "{{ www_data_path }}"
+            state: directory
+            owner: "{{unix_user}}"
+            group: "{{web_group}}"
+            mode: u+rwx,g+rwsx,a+rx
+
+      - name: Create webserver data subdirectories (writable)
+        become: "{{lm_become}}"
+        become_user: root
+        file:
+            path: "{{ www_data_path }}/{{item}}"
+            state: directory
+            owner: "{{unix_user}}"
+            group: "{{web_group}}"
+            mode: u+rwx,g+rwsx,a+rx
+        with_items:
+           - "notebooks"
+
+      - name: Symlink webserver data directory
+        become: "{{lm_become}}"
+        become_user: root
+        file:
+          src: "{{www_data_path}}"
+          dest: "{{lm_prefix}}/var/www-data"
+          state: link
+        when: shared_www_data|bool
 
       - name: Link nginx from global prefix
         file:
@@ -156,6 +186,15 @@
             - "etc/uwsgi-emperor"
             - "etc/uwsgi-emperor/vassals"
         when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
+
+      - name: Add lamachine-move-www-data script
+        template:
+          src: "lamachine-move-www-data.sh"
+          dest: "{{lm_prefix}}/bin/lamachine-move-www-data"
+          force: yes
+          owner: "{{unix_user}}"
+          group: "{{unix_group}}"
+          mode: u+rwx,a+rx
 
   - when: locality=="local"
     block:
@@ -189,6 +228,7 @@
                 - "var/log/nginx"
                 - "var/www-data"
                 - "var/www-data/tmp"
+                - "var/www-data/notebooks"
                 - "etc/nginx"
                 - "etc/nginx/conf.d"
             ignore_errors: yes
@@ -287,7 +327,7 @@
     become: "{{lm_become}}"
     become_user: root
     file:
-        path: "{{ lm_prefix }}/var/www-data/docroot"
+        path: "{{www_data_path}}/docroot"
         state: directory
         owner: "{{unix_user}}"
         mode: u+rwx,a+rx
@@ -297,6 +337,6 @@
     become_user: root
     copy:
       src: "{{item}}"
-      dest: "{{ lm_prefix}}/var/www-data/docroot"
+      dest: "{{www_data_path}}/docroot"
     with_fileglob:
       - "{{lm_path}}/webserver/docroot/*"
