@@ -1,5 +1,6 @@
 [Unit]
 Description=Jupyterlab
+Before=nginx.service
 
 [Service]
 User={{unix_user}}
