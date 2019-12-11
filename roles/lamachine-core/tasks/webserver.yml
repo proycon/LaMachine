@@ -162,6 +162,22 @@
           state: link
         when: shared_www_data|bool
 
+      - name: Move original global document root out of the way
+        become: "{{lm_become}}"
+        become_user: root
+        shell: |
+          if [ -d /var/www ] && [ ! -e /var/www.orig ]; then
+            mv -f /var/www /var/www.orig
+          fi
+
+      - name: Symlink global document root data directory
+        become: "{{lm_become}}"
+        become_user: root
+        file:
+          src: "{{www_data_path}}/docroot"
+          dest: "/var/www"
+          state: link
+
       - name: Link nginx from global prefix
         file:
           src: "/etc/nginx"

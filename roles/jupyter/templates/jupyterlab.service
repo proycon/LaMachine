@@ -1,0 +1,14 @@
+[Unit]
+Description=Jupyterlab
+Before=nginx.service
+
+[Service]
+User={{unix_user}}
+Group={{web_group}}
+ExecStart={{lm_prefix}}/bin/jupyter lab --no-browser --config={{lm_prefix}}/etc/jupyter_notebook_config.py
+WorkingDirectory={{data_path}}
+StandardOutput=file:{{lm_prefix}}/var/log/jupyterlab.log
+StandardError=inherit
+
+[Install]
+WantedBy=multi-user.target
