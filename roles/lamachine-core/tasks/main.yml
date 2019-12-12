@@ -331,6 +331,7 @@
               group: "{{unix_group}}"
               mode: u+rwx,g+rwsx,a+rx
           when: "data_path != homedir"
+          ignore_errors: yes
 
         - name: Create directories
           become: "{{lm_become}}"
