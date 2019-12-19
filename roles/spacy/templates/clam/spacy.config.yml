@@ -1,0 +1,8 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
+port: 8815
+urlprefix: "spacy"
+root: "{{www_data_path}}/spacy.clam/"
+bindir: "{{lm_prefix}}/bin/"
+flaturl: "{% if http_port|int == 443 %}https://{% else %}http://{% endif %}{{hostname}}{% if http_port != 80 and http_port != 443 %}:{{http_port}}{% endif %}/flat"
