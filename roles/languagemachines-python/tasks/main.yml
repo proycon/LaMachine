@@ -230,7 +230,7 @@
                 - colibricore
                 - babelente
                 - piereling
-              #note: some things like alpino are deferred to that respective role
+              #note: some things like alpino,spacy are deferred to that respective role
 
             - name: "Install clam configuration"
               become: "{{lm_become}}"

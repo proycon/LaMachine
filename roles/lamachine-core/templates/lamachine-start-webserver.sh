@@ -24,8 +24,10 @@ normal=$(tput sgr0)
 {% endif %}
 
 if systemctl is-system-running >/dev/null 2>/dev/null; then
+    echo "(systemd is available and running)">&2
     HAVE_SYSTEMCTL=1
 else
+    echo "(systemd is not available, falling back to alternatives)">&2
     HAVE_SYSTEMCTL=0 #If there is no systemd, assume init V and 'service' command, this is relevant also in most docker containers where systemd makes less sense
 fi
 

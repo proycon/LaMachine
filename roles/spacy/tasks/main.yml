@@ -53,4 +53,33 @@
             content: ""
             dest: "{{lm_path}}/.spacydata"
 
+    - when: webserver is defined and webserver
+      block:
+          - name: "Install webserver configuration for spacy"
+            become: "{{lm_become}}"
+            become_user: root
+            template:
+              src: "nginx/spacy.conf"
+              dest: "{{lm_prefix}}/etc/nginx/conf.d/spacy.conf"
+              force: yes
+              backup: yes
+              owner: "{{unix_user}}"
+              group: "{{unix_group}}"
+            when: webservertype == "nginx" and ("all" in services or "spacy"  in services)
+
+          - name: "Install uwsgi configuration for spacy"
+            become: "{{lm_become}}"
+            become_user: root
+            template:
+              src: "uwsgi/spacy.ini"
+              dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/spacy.ini"
+              force: yes
+              backup: yes
+              owner: "{{web_user}}" #permissions need to match the runner
+              group: "{{web_group}}"
+              mode: u+rw,a+r
+            when: '"all" in services or item in services'
+
+
+
 

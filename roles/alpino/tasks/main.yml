@@ -61,6 +61,7 @@
         dest: "{{lm_prefix}}/bin/activate.d/alpino.sh"
         content: |
           export ALPINO_HOME={{lm_prefix}}/opt/Alpino
+          export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:{{lm_prefix}}/opt/Alpino/create_bin/extralibs/boost:{{lm_prefix}}/opt/Alpino/create_bin/extralibs
         mode: u+rwx,a+rx
 
     - name: "Linking Alpino binary from {{lm_prefix}}/bin/Alpino"

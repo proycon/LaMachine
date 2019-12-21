@@ -7,6 +7,9 @@ ARG HOSTNAME=lamachine-docker
 ARG ANSIBLE_OPTIONS="-vv"
 ARG LM_VERSION=unknown
 EXPOSE 80
+EXPOSE 8080
+EXPOSE 8888
+EXPOSE 9999
 USER root
 MAINTAINER Maarten van Gompel <proycon@anaproy.nl>
 LABEL description="A unified distribution of NLP software. Developed by the Centre of Language and Speech Technology (Radboud University Nijmegen) and partners" value="$LM_VERSION"
