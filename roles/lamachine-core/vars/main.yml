@@ -8,6 +8,7 @@ localenv:
      VIRTUAL_ENV: "{{local_prefix}}"
      PATH: "{{local_prefix}}/bin:{{ansible_env.PATH}}"
      LD_LIBRARY_PATH: "{{local_prefix}}/lib:{% if 'LD_LIBRARY_PATH' in ansible_env %}{{ansible_env.LD_LIBRARY_PATH}}{% else %}/usr/lib{% endif %}"
+     KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
      CLANG_CXX_LIBRARY: "{% if ansible_distribution|lower == 'macosx' %}libc++{% endif %}" #needed for python bindings in lamachine-python-install
      MACOSX_DEPLOYMENT_TARGET: "{% if ansible_distribution|lower == 'macosx' %}{{ ansible_distribution_version }}{% endif %}"
      GIT_AUTHOR_NAME: "{{ maintainer_name }}"
@@ -21,6 +22,7 @@ globalenv:
      PATH: "{{global_prefix}}/bin:{{ansible_env.PATH}}"
      LD_LIBRARY_PATH: "{{global_prefix}}/lib:{% if 'LD_LIBRARY_PATH' in ansible_env %}{{ansible_env.LD_LIBRARY_PATH}}{% else %}/usr/lib{% endif %}"
      PYTHONPATH: "{{lm_pythonpath}}"
+     KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
      CLANG_CXX_LIBRARY: "{% if ansible_distribution|lower == 'macosx' %}libc++{% endif %}" #needed for python bindings in lamachine-python-install
      MACOSX_DEPLOYMENT_TARGET: "{% if ansible_distribution|lower == 'macosx' %}{{ ansible_distribution_version }}{% endif %}"
      GIT_AUTHOR_NAME: "{{ maintainer_name }}"
