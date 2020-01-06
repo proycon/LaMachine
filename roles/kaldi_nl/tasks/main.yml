@@ -1,0 +1,17 @@
+---
+
+    - name: Output warning
+      debug:
+        msg: "kaldi-nl requires access to a private gitlab server and will fail if you do not have access (based on ssh keypairs)"
+
+    - name: Obtaining kaldi_nl from private git server
+      git:
+        repo: "git@gitlab.science.ru.nl:clst-asr/kaldi_nl.git"
+        dest: "{{ lm_prefix }}/opt/kaldi_nl"
+        update: yes
+        recursive: yes
+
+    - name: Setting up kaldi_nl
+      command: local/configure_basic.sh
+      args:
+        chdir: "{{ lm_prefix }}/opt/kaldi_nl"
