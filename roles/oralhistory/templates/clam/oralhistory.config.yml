@@ -1,0 +1,9 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
+port: 8816
+urlprefix: "oralhistory"
+root: "{{www_data_path}}/oralhistory.clam/"
+resourcedirectory: "{{lm_prefix}}/opt/kaldi_nl/"
+scratchdirectory: "{{www_data_path}}/oralhistory.clam/scratch/"
+bindir: "{{lm_prefix}}/bin/"
