@@ -3,7 +3,7 @@
 ## Requirements and guidelines
 
 * Only add relevant NLP software
-* LaMachine is only intended for POSIX-compliant systems (i.e. Linux, BSD, Mac OS X).
+* LaMachine is only intended for linux and, with some limitations, unix-like systems (BSD, macOS).
   Other systems such as Windows are only supported as a host system for a VM.
 * All software must be in public version control (we recommend *github*), be *public*, and be fully *open source* with
   an explicitly stated licence.
@@ -18,9 +18,12 @@
   LaMachine can in turn obtain it from these
   repositories.
 * Your software should have some form of documentation, at least a decent README
-* Any Python software should support Python 3 (and not just 2.7)
-* The software should be maintained and should work on modern linux distributions.
-  LaMachine is not intended for legacy or archiving purposes.
+* Any Python software should support Python 3.4 or above. Python 2.7 is not supported.
+* The software should be maintained and should work on modern linux distributions. More precisely, it should always work
+  on the operating systems that we have designated with **gold support status**, and preferably also on those designated
+  with **silver support status**. Support for the bronze category is much appreciated but not required. Note that these
+  categories get updates as time progresses, see the general README.
+* LaMachine is not intended for legacy or archiving purposes. (that is not to say that the resulting images themselves can not be used for archiving).
 
 ## Why use LaMachine?
 
@@ -40,6 +43,7 @@ Why should you want to participate in LaMachine to distribute your software?
 * LaMachine does not replace or reinvent existing technologies, but builds on them: Linux Distributions, Ansible, Vagrant, Docker, pip, virtualenv
     * This means LaMachine remains an optional solution to make things easier, but build on established installation methods that remain usable outside LaMachine.
 * LaMachine handles software metadata
+
 
 ## How to contribute?
 
