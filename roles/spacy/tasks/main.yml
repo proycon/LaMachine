@@ -80,6 +80,20 @@
               mode: u+rw,a+r
             when: '"all" in services or item in services'
 
+          - name: Register spaCy webservice
+            include_role:
+                name: lamachine-register
+            vars:
+                update: "{{item}}"
+                metadata: #add entrypoint metadata to registry
+                    identifier: "{{item}}"
+                    entryPoints:
+                      - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "WUI", mediatorApplication: "#clamservices" }
+                      - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "REST", specification: "{{lm_base_url}}/{{item}}/info",  mediatorApplication: "#clamservices" }
+            when: '"all" in services or item in services'
+            with_items:
+              - spacy
+
 
 
 
