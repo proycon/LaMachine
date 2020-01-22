@@ -25,7 +25,7 @@
       become_user: root
       pacman:
         name: [ jq, bat, ack, xmlstarlet, gnuplot, graphviz ]
-        state: installed
+        state: present
       when: (ansible_distribution|lower == "archlinux" or ansible_distribution|lower == "manjaro") and root
 
     - name: Installing extra utilities (yum)
@@ -33,7 +33,7 @@
       become_user: root
       yum:
         name: [ jq, ack, xmlstarlet, gnuplot, graphviz ]
-        state: installed
+        state: present
         update_cache: "{% if nosysupdate is not defined or nosysupdate == 0 %}yes{% else %}no{% endif %}"
       when: (ansible_distribution|lower == 'redhat' or ansible_distribution|lower == 'centos' or ansible_distribution|lower == 'fedora') and root
       ignore_errors: yes #allowed to fail if package is missing (older distros)
