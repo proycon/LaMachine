@@ -11,7 +11,7 @@
       become_user: root
       pacman:
         name: go
-        state: installed
+        state: present
       when: ansible_distribution|lower == 'archlinux' and root
 
       #other distributions are likely out of date so we grab binaries straight from the Go page itself

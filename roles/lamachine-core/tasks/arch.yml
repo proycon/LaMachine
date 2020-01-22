@@ -11,7 +11,7 @@
       become_user: root
       pacman:
         name: [pkgconf, git, mercurial, autoconf-archive, icu, libxml2, zlib, libtar, boost, boost-libs, nano, make, wget, curl, libexttextcat, perl, python, python-virtualenv, python-pip, zip, unzip, pcre, poppler, pandoc, hdf5]
-        state: installed
+        state: present
 
       #############################################################
       # ANSIBLE installation so we can bootstrap ourselves
@@ -24,4 +24,4 @@
           become_user: root
           pacman:
             name: "ansible"
-            state: installed
+            state: present
