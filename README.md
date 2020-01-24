@@ -31,11 +31,10 @@ bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/master/bootst
 This will prompt you for some questions on how you would like your LaMachine installation and allows you to include precisely
 the software you want or need and ensures that all is up to date. A screenshot is shown at the end of this subsection.
 
-Are you on Windows 10 or 2016? Then you need to run this command in a Linux subsystem; to do this you must first install
-the Linux Subsystem with a distribution of your choice (we recommend Ubuntu) from the Microsoft Store. Follow the
-instructions [here](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide). Are you on an older Windows or you
-are on Windows and want a VM and not a custom build? Then this won't work you have will to use a pre-built Virtual
-Machine as explained in installation path C.
+Are you on Windows 10 or 2016? Then you need to run this command in the Windows Linux subsystem, we do not support
+Windows natively. To do this you must first install the Linux Subsystem with a distribution of your choice (we recommend
+Ubuntu) from the Microsoft Store. Follow the instructions
+[here](https://msdn.microsoft.com/en-us/commandline/wsl/install_guide). Alternatively, you may want to choose for a pre-built Virtual Machine image as explained in installation path C.
 
 Building LaMachine can take quite some time, depending also on your computer's resources, internet connection, and the
 amount of software you selected to install. Half an hour to an hour is a normal build time. The bootstrap script
