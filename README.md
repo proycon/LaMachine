@@ -336,7 +336,7 @@ press ENTER and leave it empty, do not run the entire script with escalated priv
 
 Updating everything can be a time-consuming endeavour. If you know what you are doing then you can limit your update to
 certain packages, you can specify these packages (as a comma separated list) to the ``--only`` parameter, e.g:
-``lamachine-update --only=python-core,java-core``. Do be aware that this could result in your LaMachine ending up in an
+``lamachine-update --only python-core,java-core``. Do be aware that this could result in your LaMachine ending up in an
 unusable state (in which case a normal update should remedy the problem again).
 
 ### Webservices and web applications
