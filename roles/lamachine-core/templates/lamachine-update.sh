@@ -108,6 +108,12 @@ else
         rc=${PIPESTATUS[0]}
     fi
 fi
+#rerun all activation scripts
+for f in $LM_PREFIX/bin/activate.d/*.sh; do
+    if [ ! -z "$f" ]; then
+        source $f
+    fi
+done
 echo "======================================================================================"
 if [ $rc -eq 0 ]; then
         echo "${boldgreen}The LaMachine update completed succesfully!${normal}"
