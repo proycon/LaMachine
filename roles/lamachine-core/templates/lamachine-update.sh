@@ -39,6 +39,7 @@ FIRST=1
 INTERACTIVE=1
 if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo "lamachine-update updates your LaMachine installation"
+    echo "USAGE: lamachine-update [options] [variables]"
     echo "OPTIONS:"
     echo "--edit            Opens a text editor to edit the configuration and installation manifest prior to update."
     echo "--editonly        Opens a text editor to edit the configuration and installation manifest, does not update."
@@ -108,6 +109,12 @@ else
         rc=${PIPESTATUS[0]}
     fi
 fi
+#rerun all activation scripts
+for f in $LM_PREFIX/bin/activate.d/*.sh; do
+    if [ ! -z "$f" ]; then
+        source $f
+    fi
+done
 echo "======================================================================================"
 if [ $rc -eq 0 ]; then
         echo "${boldgreen}The LaMachine update completed succesfully!${normal}"
