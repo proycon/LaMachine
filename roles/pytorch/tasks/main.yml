@@ -15,3 +15,10 @@
         package:
           pip: flair
       when: python_version.stdout >= "3.6"
+
+    - name: "Installing Transformers"
+      include_role:
+          name: lamachine-python-install
+      vars:
+        package:
+          pip: transformers
