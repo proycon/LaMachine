@@ -200,6 +200,7 @@ VAGRANTBOX="debian/contrib-buster64" #base distribution for VM
 LXCBASE="ubuntu:18.04"
 DOCKERREPO="proycon/lamachine"
 CONTROLLER="internal"
+LXCPROFILE="default"
 BUILD=1
 SHARED_WWW_DATA="no"
 
