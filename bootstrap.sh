@@ -1746,7 +1746,7 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
         fi
     fi
 elif [[ "$FLAVOUR" == "lxc" ]]; then
-        echo "Building LXC container (unprivileged!), using the default profile"
+        echo "Building LXC container (unprivileged!), using the profile: $LXCPROFILE"
         lxc launch $LXCBASE $LM_NAME --profile $LXCPROFILE || fatalerror "Unable to create new container. Ensure LXD is installed, the current user is in the lxd group, and the container $LM_NAME does not already exist"
         echo "${boldblue}Launching LaMachine bootstrap inside the new container${normal}"
         echo "${boldblue}------------------------------------------------------${normal}"
