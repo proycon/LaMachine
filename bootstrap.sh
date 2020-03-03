@@ -85,6 +85,7 @@ usage () {
     echo " ${bold}--datapath${normal} - The data path on the host machine that will be shared with the container/VM"
     echo " ${bold}--port${normal} - The port for HTTP traffic to forward from the host machine to the container/VM"
     echo " ${bold}--sharewwwdata${normal} - Put the data for the web services on the shared volume (for container/VM)"
+    echo " ${bold}--lxcprofile${normal} - Name of the LXC profile to use"
 }
 
 USER_SET=0 #explicitly set?
@@ -428,6 +429,11 @@ while [[ $# -gt 0 ]]; do
         ;;
         --sharewwwdata)
         SHARED_WWW_DATA="yes"
+        shift
+        shift
+        ;;
+        --lxcprofile)
+        LXCPROFILE="$2"
         shift
         shift
         ;;
@@ -1739,7 +1745,7 @@ elif [[ "$FLAVOUR" == "docker" ]]; then
     fi
 elif [[ "$FLAVOUR" == "lxc" ]]; then
         echo "Building LXC container (unprivileged!), using the default profile"
-        lxc launch ubuntu:18.04 $LM_NAME || fatalerror "Unable to create new container. Ensure LXD is installed, the current user is in the lxd group, and the container $LM_NAME does not already exist"
+        lxc launch ubuntu:18.04 $LM_NAME --profile $LXCPROFILE || fatalerror "Unable to create new container. Ensure LXD is installed, the current user is in the lxd group, and the container $LM_NAME does not already exist"
         echo "${boldblue}Launching LaMachine bootstrap inside the new container${normal}"
         echo "${boldblue}------------------------------------------------------${normal}"
         echo "${boldyellow}Important note: anything below this point will be executed in the container rather than on the host system!${normal}"
