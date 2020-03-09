@@ -1381,7 +1381,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
             echo "source_path: \"$BASEDIR/$LM_NAME/src\" #Path where sources will be stored/compiled" >> $STAGEDCONFIG
         fi
     fi
-    if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "singularity" ]] || [[ $FLAVOUR == "lxc" ]] && [[ $FLAVOUR == "remote" ]]; then
+    if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "singularity" ]] || [[ $FLAVOUR == "lxc" ]] || [[ $FLAVOUR == "remote" ]]; then
         echo "root: true #Do you have root on the target system?" >> $STAGEDCONFIG
     elif [ $SUDO -eq 1 ]; then
         echo "root: true #Do you have root on the target system?" >> $STAGEDCONFIG
