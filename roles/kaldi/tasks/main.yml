@@ -26,6 +26,7 @@
           - { debian: libopenblas-dev, redhat: openblas-devel }
           - { debian: liblapacke-dev }
           - { debian: gfortran, redhat: libgfortran, arch: gcc-fortran }
+          - { debian: time, redhat: time, arch: time }
         loop_control:
             loop_var: package
         when: root
