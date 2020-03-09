@@ -23,7 +23,7 @@
         with_items:
           - { debian: sox, redhat: sox }
           - { debian: subversion, redhat: subversion }
-          - { debian: libopenblas-base-dev, redhat: openblas-devel }
+          - { debian: libopenblas-dev, redhat: openblas-devel }
           - { debian: gfortran, redhat: libgfortran, arch: gcc-fortran }
         loop_control:
             loop_var: package
