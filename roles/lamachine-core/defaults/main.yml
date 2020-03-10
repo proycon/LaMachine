@@ -30,6 +30,8 @@ lab: true #Enable Jupyter Lab environment, note that this opens the system to ar
 lab_password_sha1: "sha1:fa40baddab88:c498070b5885ee26ed851104ddef37926459b0c4" #default password: lamachine
 lab_allow_origin: "*" #hosts that may access the lab environment
 flat_password: "flat" #admin password for flat
+ssh_public_key: "" #ssh public key
+ssh_private_key: "" #ssh private key
 # defaults file for miniconda (not used now)
 miniconda_mirror : https://repo.continuum.io/miniconda
 miniconda_python_ver : 3

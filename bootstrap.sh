@@ -1427,6 +1427,8 @@ fi
 echo "lab_password_sha1: \"sha1:fa40baddab88:c498070b5885ee26ed851104ddef37926459b0c4\" #default password for Jupyter Lab: lamachine, change this with 'lamachine-passwd lab'" >> $STAGEDCONFIG
 echo "lab_allow_origin: \"*\" #hosts that may access the lab environment" >> $STAGEDCONFIG
 echo "flat_password: \"flat\" #initial password for the FLAT administrator (if installed; username 'flat'), updating this later than on initial installation has no effect (edit in FLAT itself)!" >> $STAGEDCONFIG
+echo "ssh_public_key: \"\" #ssh public key (the actual contents of id_rsa.pub) to allow the container/VM to connect to restricted outside services" >> $STAGEDCONFIG
+echo "ssh_private_key: \"\" #ssh private key (the actual contents of id_rsa) to allow the container/VM to connect to restricted outside services" >> $STAGEDCONFIG
 if [ $FORCE -ne 0 ]; then
     echo "force: $FORCE #Sets the default force parameter for updates, set to 1 to force updates or 2 to explicitly remove all sources and start from scratch on each update. Remove this line entirely if you don't need it or are in doubt" >> $STAGEDCONFIG
 fi
