@@ -55,6 +55,8 @@ Vagrant.configure(2) do |config|
   # argument is a set of non-required options.
   config.vm.synced_folder lamachine_config["host_data_path"], lamachine_config["data_path"]
 
+  config.vm.post_up_message = "Your LaMachine VM has started.\n - The hostname is %s\n- Port %d on the host system is forwarded to the webserver in the VM\n - Port 9999 is also mapped as a free port\n - The path %s on the host is mounted as %s inside the VM\n - For general information on LaMachine, see https://proycon.github.io/LaMachine" % [lamachine_config['hostname'], lamachine_config['mapped_http_port'], lamachine_config['host_data_path'], lamachine_config['data_path']]
+
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
