@@ -6,6 +6,7 @@ lm_base_url: "http{% if http_port == 443 %}s{% endif %}://{{hostname}}{% if http
 lm_pythonpath: "{% if locality == 'global' %}{{global_prefix}}/lib64/python-current/site-packages:{{global_prefix}}/lib/python-current/site-packages:{{global_prefix}}/lib/python-current/dist-packages{% endif %}"
 localenv:
      VIRTUAL_ENV: "{{local_prefix}}"
+     LM_PREFIX: "{{local_prefix}}"
      PATH: "{{local_prefix}}/bin:{{ansible_env.PATH}}"
      LD_LIBRARY_PATH: "{{local_prefix}}/lib:{% if 'LD_LIBRARY_PATH' in ansible_env %}{{ansible_env.LD_LIBRARY_PATH}}{% else %}/usr/lib{% endif %}"
      KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
@@ -19,6 +20,7 @@ localenv:
      LANG: "en_US.UTF-8"
      LM_QUIET: 1
 globalenv:
+     LM_PREFIX: "{{global_prefix}}"
      PATH: "{{global_prefix}}/bin:{{ansible_env.PATH}}"
      LD_LIBRARY_PATH: "{{global_prefix}}/lib:{% if 'LD_LIBRARY_PATH' in ansible_env %}{{ansible_env.LD_LIBRARY_PATH}}{% else %}/usr/lib{% endif %}"
      PYTHONPATH: "{{lm_pythonpath}}"
