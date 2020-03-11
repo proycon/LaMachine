@@ -382,6 +382,30 @@
             force: yes
             mode: u+rwx,a+rx
 
+        - name: Installing SSH public key (if provided and none exists yet)
+          become: "{{lm_become}}"
+          become_user: root
+          copy:
+            dest: "/home/{{unix_user}}/.ssh/id_rsa.pub"
+            content: "{{ssh_public_key}}"
+            force: no
+            mode: u+rw,g+r,o+r
+            owner: "{{unix_user}}"
+            group: "{{unix_group}}"
+          when: ssh_private_key and ssh_public_key
+
+        - name: Installing SSH private key (if provided and none exists yet)
+          become: "{{lm_become}}"
+          become_user: root
+          copy:
+            dest: "/home/{{unix_user}}/.ssh/id_rsa"
+            content: "{{ssh_private_key}}"
+            force: no
+            mode: u+rw,g-rwx,o-rwx
+            owner: "{{unix_user}}"
+            group: "{{unix_group}}"
+          when: ssh_private_key and ssh_public_key
+
         - name: Check existence of LaMachine source dir (migration v2.0.0 -> v2.0.1)
           stat:
              path: "{{ lm_prefix }}/LaMachine"

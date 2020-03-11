@@ -12,6 +12,7 @@
           - { pip: "pycrypto" }
           - { pip: "certifi" }
           - { pip: "pyyaml" }
+          - { pip: "numpy" }
           - { github_user: "proycon", github_repo: "clam", pip: "clam" }
       loop_control:
            loop_var: package

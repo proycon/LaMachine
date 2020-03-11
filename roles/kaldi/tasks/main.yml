@@ -23,9 +23,11 @@
         with_items:
           - { debian: sox, redhat: sox }
           - { debian: subversion, redhat: subversion }
-          - { debian: libopenblas-dev, redhat: openblas-devel }
+          - { debian: libatlas-base-dev, redhat: atlas-devel }
+          - { debian: liblapack3, redhat: lapack-devel }
           - { debian: liblapacke-dev }
           - { debian: gfortran, redhat: libgfortran, arch: gcc-fortran }
+          - { debian: time, redhat: time, arch: time }
         loop_control:
             loop_var: package
         when: root
@@ -54,16 +56,6 @@
             environment:
               KALDI_ROOT: "{{lm_prefix}}/opt/kaldi"
             ignore_errors: yes #obviously not a good idea
-
-          - name: Symlink openblas (patch)
-            become: "{{lm_become}}"
-            become_user: root
-            shell: |
-               #!/bin/bash
-               if [ ! -e /usr/lib/libopenblas.so ] && [ -e /usr/lib/x86_64-linux-gnu/libopenblas.so ]; then
-                ln -s /usr/lib/x86_64-linux-gnu/libopenblas.so /usr/lib/libopenblas.so
-               fi
-               exit 0
 
           - name: Configuring kaldi/src
             shell: "./configure {{kaldi_configure_options}}"
