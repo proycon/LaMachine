@@ -10,6 +10,7 @@
         dest: "{{ lm_prefix }}/opt/kaldi_nl"
         update: yes
         recursive: yes
+        accept_hostkey: yes
 
     - name: Setting up kaldi_nl
       command: local/configure_basic.sh
