@@ -29,7 +29,7 @@ Vagrant.configure(2) do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
   # We use the LaMachine box here
-  config.vm.box = "proycon/lamachine"
+  config.vm.box = "<%= box_name %>"
   config.vm.define "lamachine-vm"
 
   config.vm.hostname = "lamachine-stable"

@@ -70,24 +70,27 @@ docker run  -p 8080:80 -h develop -t -i proycon/lamachine:develop
 ### C) Pre-built Virtual Machine image for Vagrant (recommended for Windows users)
 
 We regularly build a basic LaMachine image and publish it to the [Vagrant Cloud](https://app.vagrantup.com/proycon/).
-The above installation path A also offers access to this (except on Windows), but you may opt to do it directly.
+The above installation path A also offers (simplified) access to this (except on Windows), but you may opt to do it directly.
 
-To download and use it:
+To download and use a LaMachine prebuilt image:
 
 * Ensure you have  [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org) installed on your system. Windows users also have to make sure that Hyper-V is *disabled* in *Control Panel → Programs → Turn Windows features on or off → Hyper-V*
 * Open a terminal or command prompt
-* Navigate to a folder of your choice (this will be the base folder, files inside will be shared with the VM)
-* Run ``vagrant init proycon/lamachine`` from the terminal, this creates a file named ``Vagrantfile``
+* Navigate to a folder of your choice (using ``cd``); this will be the base folder, files inside will be shared within the VM under
+    ``/vagrant``
+* Download [this example vagrant file](https://github.com/proycon/LaMachine/blob/master/Vagrantfile.prebuilt.erb) into
+    that same folder. If you are on linux or macOS you can download directly from command line like this: ``wget https://raw.githubusercontent.com/proycon/LaMachine/master/Vagrantfile.prebuilt.erb``
+* Run ``vagrant init --template Vagrantfile.prebuilt.erb proycon/lamachine`` from the terminal.
 * Open ``Vagrantfile`` in a text editor and change the memory and CPU options to suit your system (the more resources
   the better!).
-   * If you are on Windows and don't have a decent text editor, just use wordpad (not Notepad nor MS Word!)
+   * On an up-to-date windows 10 installation (at least version 1809), you can use Notepad as a text editor, but on older Windows versions this won't work and you need a better text editor!
 * Run ``vagrant up`` from the terminal to boot your VM
 * Run ``vagrant ssh`` from the terminal to connect to the VM
 
 The pre-built image contains only a basic set of common software rather than the full set, run ``lamachine-stable-update --edit``
 inside the virtual machine to select extra software to install.
 
-To stop the VM when you're done, run: ``vagrant halt``. Next time, navigate to the same base folder and run ``vagrant
+To stop the VM when you're done, run: ``vagrant halt``. Next time, navigate to the same base folder in your terminal and run ``vagrant
 up`` and ``vagrant ssh`` again.
 
 ## Included Software
@@ -537,6 +540,15 @@ Your Docker is too old, upgrade to at least 1.9
 
 This error may appear when LaMachine updates from ansible 2.7 to 2.8, if this occurs, simply rerun the update.
 
+#### Q: Someone provided me with a pre-build LaMachine VM image in the form of a *.box file, how do I use it?
+
+This is a Vagrant box file. You will need to follow the instruction as specified in Installation section **C**, with the
+following differences:
+
+* **Prior** to running ``vagrant init``, you will need to run ``vagrant box add --name custom-lamachine /path/to/your/image.box`` (adapt the path to
+    point to the box file you were given). You may change the name ``custom-lamachine`` to anything you like to identify
+    this LaMachine image.
+* Instead of ``vagrant init --template Vagrantbox.prebuilt.erb proycon/lamachine``, do ``vagrant init --template Vagrantbox.prebuilt.erb custom-lamachine`` (or another name if you changed it in the first step)
 
 #### Q: I have another problem, can I report it?
 

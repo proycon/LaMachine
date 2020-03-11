@@ -1602,8 +1602,9 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
             sed -i.bak s/HOSTNAME/$HOSTNAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         fi
     else
-        cp -f $SOURCEDIR/Vagrantfile.prebuilt $SOURCEDIR/Vagrantfile || fatalerror "Unable to copy Vagrantfile"
-        sed -i.bak s/lamachine-vm/$LM_NAME/g $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+        cp -f $SOURCEDIR/Vagrantfile.prebuilt.erb $SOURCEDIR/Vagrantfile || fatalerror "Unable to copy Vagrantfile"
+        sed -i.bak "s/<=% box_name %>/proycon\/lamachine/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+        sed -i.bak "s/lamachine-vm/$LM_NAME/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         sed -i.bak "s/Dir.home/\"$HOSTDATAPATH\"/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         sed -i.bak "s/8080/\"$HOSTPORT\"/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         if [ $INTERACTIVE -eq 1 ]; then
