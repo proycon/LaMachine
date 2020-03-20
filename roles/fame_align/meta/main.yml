@@ -1,0 +1,3 @@
+---
+dependencies:
+  - { role: kaldi, when: "'fullrunonly' not in ansible_skip_tags" }
