@@ -26,9 +26,9 @@
       vars:
         package:
            github_user: "schemreier"
-           github_repo: "frisianalign" #github repo is named differently than the python module (hyphen vs underscore)
+           github_repo: "frisianalign" #github repo is named differently than the python module
            metadata:
-              identifier: "frisianalign"
+              identifier: "fame_align"
 
     - name: Link Python package installation in opt/
       become: "{{lm_become}}"
@@ -45,7 +45,7 @@
         ln -sf $DIR {{lm_prefix}}/opt/{{item}}
       with_items:
         - clam
-        - frisianalign
+        - fame_align
       environment: "{{lm_env}}"
 
     - name: Removing old resources (if present)
