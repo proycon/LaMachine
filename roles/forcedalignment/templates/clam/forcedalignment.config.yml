@@ -1,0 +1,9 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
+port: 8818
+urlprefix: "forcedalignment"
+root: "{{ www_data_path }}/forcedalignment.clam/"
+resourcedirectory: "{{lm_prefix}}/opt/forcedalignment_resources/"
+scratchdirectory: "{{www_data_path}}/forcedalignment.clam/scratch/"
+bindir: "{{lm_prefix}}/bin/"

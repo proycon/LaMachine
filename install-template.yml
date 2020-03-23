@@ -114,6 +114,12 @@
                                              #Authorization is required for this; ensure to
                                              #set fame_user and fame_password in your LaMachine configuration
                                              #contact h.vandenheuvel@let.ru.nl to request access
+     # - forcedalignment                  ## Dutch Forced Alignment system with webservice
+                                             #(>2GB !!!! - Not supported on Mac OS X)
+                                             #Relies on kaldi, another 7GB!!
+                                             #Authorization is required for this; ensure to
+                                             #set fame_user and fame_password in your LaMachine configuration
+                                             #contact h.vandenheuvel@let.ru.nl to request access
      # - eng_ASR                          ## English Speech Recognition system with webservice
                                              #(Not supported on Mac OS X)
                                              #Relies on kaldi, another 7GB!!
