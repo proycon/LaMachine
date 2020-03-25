@@ -1,8 +1,8 @@
 ---
-    - name: Failing if authorization is not properly configured
-      fail:
-        msg: "You did not set fame_user and fame_password in your configuration. This is required for forcedalignment to work! If you do not have the credentials yet, contact h.vandenheuvel@let.ru.nl to request access."
-      when: fame_user == "undefined" or fame_password == "undefined"
+    #- name: Failing if authorization is not properly configured
+    #  fail:
+      #    msg: "You did not set fame_user and fame_password in your configuration. This is required for forcedalignment to work! If you do not have the credentials yet, contact h.vandenheuvel@let.ru.nl to request access."
+    #  when: fame_user == "undefined" or fame_password == "undefined"
 
     - name: Install CLAM #so we don't need to rely on languagemachines-basic nor python-core
       include_role:
@@ -67,8 +67,8 @@
     - name: Downloading resources
       get_url:
         url: https://applejack.science.ru.nl/downloads/forcedalignment/forcedalignment_resources.tar.gz
-        url_username: "{{fame_user}}"
-        url_password: "{{fame_password}}"
+        #url_username: "{{fame_user}}"
+        #url_password: "{{fame_password}}"
         dest: "{{lm_prefix}}/opt/forcedalignment_resources/forcedalignment_resources.tar.gz"
         tmp_dest: "{{lm_prefix}}/opt/forcedalignment_resources"
 
