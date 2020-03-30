@@ -70,7 +70,7 @@
         content: |
           #!/bin/bash
           export ALPINO_HOME={{lm_prefix}}/opt/Alpino
-          {{lm_prefix}}/opt/Alpino/bin/Alpino
+          {{lm_prefix}}/opt/Alpino/bin/Alpino $@
         force: yes
         mode: u+rwx,a+rx
 
