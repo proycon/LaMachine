@@ -1,0 +1,9 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
+port: 8817
+urlprefix: "fame_align"
+root: "{{ www_data_path }}/fame_align.clam/"
+resourcedirectory: "{{lm_prefix}}/opt/fame_align_resources/"
+scratchdirectory: "{{www_data_path}}/fame_align.clam/scratch/"
+bindir: "{{lm_prefix}}/bin/"

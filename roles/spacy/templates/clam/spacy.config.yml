@@ -1,7 +1,7 @@
 {% if clam_include %}
 include: "{{clam_include}}"
 {% endif %}
-port: 8815
+port: 8818
 urlprefix: "spacy"
 root: "{{www_data_path}}/spacy.clam/"
 bindir: "{{lm_prefix}}/bin/"
