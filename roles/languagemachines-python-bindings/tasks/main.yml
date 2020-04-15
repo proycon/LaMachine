@@ -11,14 +11,19 @@
       loop_control:
           loop_var: package
 
-    - name: Installing Python bindings (2)
-      include_role:
-        name: lamachine-python-install
-      with_items:
-          - { github_user: "proycon", github_repo: "python-timbl", pip: "python3-timbl", conda: "", setup: "setup3.py" }
-      loop_control:
-          loop_var: package
-      ignore_errors: "{% if ansible_distribution|lower == 'macosx' %}true{%else%}false{% endif %}"
+    block:
+      - name: Installing Python bindings (2)
+        include_role:
+          name: lamachine-python-install
+        with_items:
+            - { github_user: "proycon", github_repo: "python-timbl", pip: "python3-timbl", conda: "", setup: "setup3.py" }
+        loop_control:
+            loop_var: package
+    rescue:
+      - name: "python-timbl failure?"
+        fail:
+          msg: "Python-timbl installation failed!"
+        when: ansible_distribution|lower != "macosx"
 
 
     - name: Triggering manual mode for Colibri Core #otherwise setup.py will attempt to recompile c++ sources (and fail on a permission issue)
@@ -60,10 +65,10 @@
           name: lamachine-run
       vars:
           command: "python3 -c 'import {{ item }}'"
-          allow_failure: "{{ignore_tests|bool}}"
+          allow_failure: "{% if ignore_tests|bool or ansible_distribution|lower == 'macosx' %}True{%else%}False{% endif %}"
       with_items:
           - timbl
-      ignore_errors: "{% if ignore_tests|bool or ansible_distribution|lower == 'macosx' %}true{%else%}false{% endif %}"
+      ignore_errors: "{% if ignore_tests|bool or ansible_distribution|lower == 'macosx' %}True{%else%}False{% endif %}"
 
     - name: Updating metadata for CLARIAH software
       include_role:
