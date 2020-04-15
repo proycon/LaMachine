@@ -11,7 +11,8 @@
       loop_control:
           loop_var: package
 
-    block:
+
+    - block:
       - name: Installing Python bindings (2)
         include_role:
           name: lamachine-python-install
@@ -19,7 +20,7 @@
             - { github_user: "proycon", github_repo: "python-timbl", pip: "python3-timbl", conda: "", setup: "setup3.py" }
         loop_control:
             loop_var: package
-    rescue:
+     rescue:
       - name: "python-timbl failure?"
         fail:
           msg: "Python-timbl installation failed!"
