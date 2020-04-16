@@ -8,7 +8,7 @@
           FORCE=0
           {% endif %}
           r=0
-          if [ $force -eq 1 ] || [ ! -d openfst-{{openfst_version}} ]; then
+          if [ $FORCE -eq 1 ] || [ ! -d openfst-{{openfst_version}} ]; then
             rm -Rf "openfst-{{openfst_version}}" > /dev/null 2>/dev/null
             wget http://www.openfst.org/twiki/pub/FST/FstDownload/openfst-{{openfst_version}}.tar.gz
             r=$?
