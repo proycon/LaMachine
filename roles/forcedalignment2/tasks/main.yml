@@ -79,6 +79,7 @@
           tar xzf forcedalignment2_resources.tar.gz
           rm -rf forcedalignment2_resources.tar.gz
           mv resources/* .
+          mv resources2/* .
           chown -R {{unix_user}}:{{unix_group}} .
           find . -type d | xargs chmod u+rw,g+rw,a+rx
           find . -type f | xargs chmod u+rw,g+rw,a+r
