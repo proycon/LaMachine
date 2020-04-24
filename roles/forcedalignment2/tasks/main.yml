@@ -25,10 +25,10 @@
         name: lamachine-python-install
       vars:
         package:
-           name: "forcedalignment"
-           git_url: "git@gitlab.science.ru.nl:ltenbosch/forcedalignment.git"
+           name: "forcedalignment2"
+           git_url: "git@gitlab.science.ru.nl:ltenbosch/forcedalignment2.git"
            metadata:
-              identifier: "forcedalignment"
+              identifier: "forcedalignment2"
 
     - name: Link Python package installation in opt/
       become: "{{lm_become}}"
@@ -45,12 +45,12 @@
         ln -sf $DIR {{lm_prefix}}/opt/{{item}}
       with_items:
         - clam
-        - forcedalignment
+        - forcedalignment2
       environment: "{{lm_env}}"
 
     - name: Removing old resources (if present)
       file:
-          path: "{{lm_prefix}}/opt/forcedalignment_resources"
+          path: "{{lm_prefix}}/opt/forcedalignment2_resources"
           state: absent
       ignore_errors: yes #in case it isn't there in the first place
 
@@ -58,7 +58,7 @@
       become: "{{lm_become}}"
       become_user: root
       file:
-          path: "{{lm_prefix}}/opt/forcedalignment_resources"
+          path: "{{lm_prefix}}/opt/forcedalignment2_resources"
           state: directory
           owner: "{{unix_user}}"
           group: "{{unix_group}}"
@@ -66,53 +66,53 @@
 
     - name: Downloading resources
       get_url:
-        url: https://applejack.science.ru.nl/downloads/forcedalignment/forcedalignment_resources.tar.gz
+        url: https://applejack.science.ru.nl/downloads/forcedalignment/forcedalignment2_resources.tar.gz
         #url_username: "{{fame_user}}"
         #url_password: "{{fame_password}}"
-        dest: "{{lm_prefix}}/opt/forcedalignment_resources/forcedalignment_resources.tar.gz"
-        tmp_dest: "{{lm_prefix}}/opt/forcedalignment_resources"
+        dest: "{{lm_prefix}}/opt/forcedalignment2_resources/forcedalignment2_resources.tar.gz"
+        tmp_dest: "{{lm_prefix}}/opt/forcedalignment2_resources"
 
 
     - name: Finalising resource installation
       shell: |
           #!/bin/bash
-          tar xzf forcedalignment_resources.tar.gz
-          rm -rf forcedalignment_resources.tar.gz
+          tar xzf forcedalignment2_resources.tar.gz
+          rm -rf forcedalignment2_resources.tar.gz
           mv resources/* .
           chown -R {{unix_user}}:{{unix_group}} .
           find . -type d | xargs chmod u+rw,g+rw,a+rx
           find . -type f | xargs chmod u+rw,g+rw,a+r
       args:
-          chdir: "{{lm_prefix}}/opt/forcedalignment_resources"
+          chdir: "{{lm_prefix}}/opt/forcedalignment2_resources"
 
-    - name: "Install webserver configuration for forcedalignment"
+    - name: "Install webserver configuration for forcedalignment2"
       become: "{{lm_become}}"
       become_user: root
       template:
-        src: "nginx/forcedalignment.conf"
-        dest: "{{lm_prefix}}/etc/nginx/conf.d/forcedalignment.conf"
+        src: "nginx/forcedalignment2.conf"
+        dest: "{{lm_prefix}}/etc/nginx/conf.d/forcedalignment2.conf"
         force: yes
         backup: yes
         owner: "{{unix_user}}"
       when: webservertype == "nginx"
 
-    - name: "Install uwsgi configuration for forcedalignment"
+    - name: "Install uwsgi configuration for forcedalignment2"
       become: "{{lm_become}}"
       become_user: root
       template:
-        src: "uwsgi/forcedalignment.ini"
-        dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/forcedalignment.ini"
+        src: "uwsgi/forcedalignment2.ini"
+        dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/forcedalignment2.ini"
         force: yes
         backup: yes
         owner: "{{web_user}}"
         group: "{{web_group}}"
 
-    - name: "Install clam configuration for forcedalignment"
+    - name: "Install clam configuration for forcedalignment2"
       become: "{{lm_become}}"
       become_user: root
       template:
-        src: "clam/forcedalignment.config.yml"
-        dest: "{{lm_prefix}}/etc/forcedalignment.config.yml"
+        src: "clam/forcedalignment2.config.yml"
+        dest: "{{lm_prefix}}/etc/forcedalignment2.config.yml"
         force: yes
         backup: yes
         owner: "{{unix_user}}"
@@ -125,10 +125,10 @@
           metadata: #add entrypoint metadata to registry
               identifier: "{{item}}"
               entryPoints:
-                - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "WUI", mediatorApplication: "#forcedalignment" }
-                - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "REST", specification: "{{lm_base_url}}/{{item}}/info",  mediatorApplication: "#forcedalignment" }
+                - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "WUI", mediatorApplication: "#forcedalignment2" }
+                - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "REST", specification: "{{lm_base_url}}/{{item}}/info",  mediatorApplication: "#forcedalignment2" }
       when: '"all" in services or item in services'
       with_items:
-        - forcedalignment
+        - forcedalignment2
 
 
