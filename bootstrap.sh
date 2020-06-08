@@ -1755,7 +1755,7 @@ elif [[ "$FLAVOUR" == "lxc" ]]; then
         echo "${boldblue}------------------------------------------------------${normal}"
         echo "${boldyellow}Important note: anything below this point will be executed in the container rather than on the host system!${normal}"
         echo "${boldyellow}                The sudo/become password can be left empty when asked for and will work${normal}"
-        if [ $INTERACTIVE -eq 1]; then
+        if [ $INTERACTIVE -eq 1 ]; then
             echo "(Press ENTER to continue)"
             read
         fi
@@ -1772,7 +1772,7 @@ elif [[ "$FLAVOUR" == "lxc" ]]; then
         if [ $INTERACTIVE -eq 0 ]; then
             OPTS="$OPTS --noninteractive"
         fi
-        CMD="lxc exec $LM_NAME -- apt $NONINTERACTIVEFLAGS install python"
+        CMD="lxc exec $LM_NAME -- apt $NONINTERACTIVEFLAGS install python3"
         $CMD || fatalerror "Failure when preparing to bootstrap (command was $CMD)"
         echo -e "#!/bin/bash\nlxc start $LM_NAME; lxc exec $LM_NAME -- su ubuntu -l" > $HOMEDIR/bin/lamachine-$LM_NAME-activate
         echo -e "#!/bin/bash\nlxc stop $LM_NAME; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-stop
