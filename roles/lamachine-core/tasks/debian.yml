@@ -56,6 +56,7 @@
       apt:
         name: "python-virtualenv"
         state: present
+      ignore_errors: "yes" #does not exist on older distributions
 
     - name: Installing python3-virtualenv
       become: true
