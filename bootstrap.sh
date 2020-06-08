@@ -1772,7 +1772,7 @@ elif [[ "$FLAVOUR" == "lxc" ]]; then
         if [ $INTERACTIVE -eq 0 ]; then
             OPTS="$OPTS --noninteractive"
         fi
-        CMD="lxc exec $LM_NAME -- apt $NONINTERACTIVEFLAGS install python"
+        CMD="lxc exec $LM_NAME -- apt $NONINTERACTIVEFLAGS install python3"
         $CMD || fatalerror "Failure when preparing to bootstrap (command was $CMD)"
         echo -e "#!/bin/bash\nlxc start $LM_NAME; lxc exec $LM_NAME -- su ubuntu -l" > $HOMEDIR/bin/lamachine-$LM_NAME-activate
         echo -e "#!/bin/bash\nlxc stop $LM_NAME; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-stop
