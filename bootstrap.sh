@@ -1755,7 +1755,7 @@ elif [[ "$FLAVOUR" == "lxc" ]]; then
         echo "${boldblue}------------------------------------------------------${normal}"
         echo "${boldyellow}Important note: anything below this point will be executed in the container rather than on the host system!${normal}"
         echo "${boldyellow}                The sudo/become password can be left empty when asked for and will work${normal}"
-        if [ $INTERACTIVE -eq 1]; then
+        if [ $INTERACTIVE -eq 1 ]; then
             echo "(Press ENTER to continue)"
             read
         fi
