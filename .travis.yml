@@ -9,7 +9,7 @@ matrix:
         #  env:
         #    - CONF_NAME=travis-stable-conda FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda EXTRAOPT=""
         - os: linux
-          dist: xenial
+          dist: bionic
           sudo: required
           language: generic
           env:
@@ -21,7 +21,7 @@ matrix:
         #  env:
         #    - CONF_NAME=travis-stable-conda-noroot FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda EXTRAOPT="--noroot"
         - os: linux
-          dist: xenial
+          dist: bionic
           sudo: required
           language: generic
           env:
@@ -33,7 +33,7 @@ matrix:
         #  env:
         #    - CONF_NAME=travis-dev-conda FLAVOUR=local VERSION=development LOCALENV_TYPE=conda EXTRAOPT=""
         - os: linux
-          dist: xenial
+          dist: bionic
           sudo: required
           language: generic
           env:
@@ -59,13 +59,13 @@ matrix:
         #  env:
         #    - CONF_NAME=travis-dev-conda FLAVOUR=local VERSION=development LOCALENV_TYPE=conda EXTRAOPT=""
         - os: linux
-          dist: xenial
+          dist: bionic
           sudo: required
           language: generic
           env:
             - CONF_NAME=travis-stable-global FLAVOUR=global VERSION=stable LOCALENV_TYPE="virtualenv"
         - os: linux
-          dist: xenial
+          dist: bionic
           sudo: required
           language: generic
           env:
@@ -82,7 +82,7 @@ install:
     - echo -e "[hostsecurity]\ndisabletls10warning = true" > ~/.hgrc
     #- if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo /etc/init.d/postgresql stop; sudo apt remove oracle-java8-installer oracle-java8-unlimited-jce-policy oracle-java9-installer oracle-java9-set-default oracle-java9-unlimited-jce-policy  postgresql-9.3 postgresql-9.4 postgresql-9.5 postgresql-9.6 postgresql-contrib-9.3 postgresql-contrib-9.4 postgresql-contrib-9.5 postgresql-contrib-9.6 ; fi #this is in the way and breaks apt updates for some reason
     - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo rm -rf /opt/pyenv; fi
-    - if [[ $TRAVIS_OS_NAME == "linux" ]] && [[ "$EXTRAOPT" == "--noroot" ]]; then sudo apt-get install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev libgnutls-dev python3 python-virtualenv python3-dev libexttextcat-dev; fi #install global dependencies manually because we pretend not to have root
+    - if [[ $TRAVIS_OS_NAME == "linux" ]] && [[ "$EXTRAOPT" == "--noroot" ]]; then sudo apt-get install pkg-config git-core make gcc g++ autoconf automake autoconf-archive libtool autotools-dev libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev libtar-dev libaspell-dev libhunspell-dev libboost-all-dev libgnutls28-dev python3 python-virtualenv python3-dev libexttextcat-dev; fi #install global dependencies manually because we pretend not to have root
     - if [[ $TRAVIS_OS_NAME == "osx" ]]; then wget https://pypi.python.org/packages/source/p/pip/pip-8.0.1.tar.gz && tar -xvzf pip*.tar.gz; cd pip*; sudo python setup.py install; cd ..; fi #prevent bootstrap from querying this interactively
 script:
     - bash bootstrap.sh --name $CONF_NAME --branch master --flavour $FLAVOUR --version $VERSION --env $LOCALENV_TYPE --private --minimal --prefer-distro --noninteractive $EXTRAOPT --verbose --nosysupdate

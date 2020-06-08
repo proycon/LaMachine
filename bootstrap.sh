@@ -24,7 +24,7 @@ boldblue=${bold}$(tput setaf 4) #  blue
 boldyellow=${bold}$(tput setaf 3) #  yellow
 normal=$(tput sgr0)
 
-export LM_VERSION="v2.17" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
+export LM_VERSION="v2.18" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "${bold}=====================================================================${normal}"
 echo "           ,              ${bold}LaMachine $LM_VERSION${normal} - NLP Software distribution"
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
@@ -197,7 +197,7 @@ NOSYSUPDATE=0
 VMMEM=4096
 DISKSIZE=0 #for extra disk in VM (in GB)
 VAGRANTBOX="debian/contrib-buster64" #base distribution for VM
-LXCBASE="ubuntu:18.04"
+LXCBASE="ubuntu:20.04"
 DOCKERREPO="proycon/lamachine"
 CONTROLLER="internal"
 LXCPROFILE="default"
@@ -480,9 +480,9 @@ if [ -z "$FLAVOUR" ]; then
         echo "       (uses virtualenv)"
         if [[ $OS == "mac" ]]; then
             SUPPORT=bronze
-        elif [[ $DISTRIB_ID == "ubuntu" ]] && [[ $DISTRIB_RELEASE == "18.04" ]]; then
+        elif [[ $DISTRIB_ID == "ubuntu" ]] && [[ $DISTRIB_RELEASE == "20.04" ]]; then
             SUPPORT=gold
-        elif [[ $DISTRIB_ID == "ubuntu" ]] && [[ $DISTRIB_RELEASE == "16.04" ]]; then
+        elif [[ $DISTRIB_ID == "ubuntu" ]] && [[ $DISTRIB_RELEASE == "18.04" ]]; then
             SUPPORT=silver
         elif [[ $DISTRIB_ID == "debian" ]] && [[ $DISTRIB_RELEASE == "10" ]]; then
             SUPPORT=gold
@@ -495,7 +495,7 @@ if [ -z "$FLAVOUR" ]; then
                 SUPPORT=bronze
             fi
         elif [[ $DISTRIB_ID == "ubuntu" ]]; then
-            if [ "${DISTRIB_RELEASE%\.*}" -lt 16 ]; then
+            if [ "${DISTRIB_RELEASE%\.*}" -lt 18 ]; then
                 SUPPORT=deprecated
             else
                 SUPPORT=bronze

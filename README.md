@@ -196,11 +196,11 @@ of that distribution). We distinguish three categories of support (and for all w
 * **Gold support** - All participating software should work on these platforms and things are tested frequently. The
     pre-built LaMachine containers and VMs we offer always use one of these.
   * Debian 10 (buster)  (next: Debian 11)
-  * Ubuntu 18.04 LTS (next: Ubuntu 20.04 LTS)
+  * Ubuntu 20.04 LTS (next: Ubuntu 22.04 LTS)
 
 * **Silver support** - Most software should work.
   * Debian 9 (stretch) - The previous stable release
-  * Ubuntu 16.04 LTS - The previous LTS release
+  * Ubuntu 18.04 LTS - The previous LTS release
   * CentOS 8 / RedHat Enterprise Linux 8 - This is offered because it is a popular choice in enterprise environments.
     Testing is less frequent though.
 
@@ -217,6 +217,7 @@ of that distribution). We distinguish three categories of support (and for all w
 
 * **Deprecated**:
   * Ubuntu 14.04 LTS
+  * Ubuntu 16.04 LTS
   * CentOS 7 / RedHat Enterprise Linux 7
 
 * **Unsupported (not exhaustive!)** - We can not support these because our effort reached its limits:
