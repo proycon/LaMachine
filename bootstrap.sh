@@ -1088,9 +1088,14 @@ for package in ${NEED[@]}; do
     elif [ "$package" = "ansible" ]; then
         if [ "$OS" = "debian" ]; then
             if [ "$DISTRIB_ID" = "ubuntu" ] || [ "$DISTRIB_ID" = "linuxmint" ]; then
-                #add PPA
-                cmd="sudo apt-get update && sudo apt-get $NONINTERACTIVEFLAGS install software-properties-common && sudo apt-add-repository -y ppa:ansible/ansible && sudo apt-get update && sudo apt-get $NONINTERACTIVEFLAGS install ansible"
+                if [ "$DISTRIB_ID" = "ubuntu" ] && [ "${DISTRIB_RELEASE%\.*}" -lt 20 ]; then
+                    #add PPA
+                    cmd="sudo apt-get update && sudo apt-get $NONINTERACTIVEFLAGS install software-properties-common && sudo apt-add-repository -y ppa:ansible/ansible && sudo apt-get update && sudo apt-get $NONINTERACTIVEFLAGS install ansible"
+                else
+                    cmd="sudo apt-get $NONINTERACTIVEFLAGS install ansible"
+                fi
             else
+                #for debian
                 cmd="echo 'deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main' | sudo tee -a /etc/apt/sources.list && sudo apt-get $NONINTERACTIVEFLAGS update && sudo apt-get $NONINTERACTIVEFLAGS install gnupg && sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 && sudo apt-get $NONINTERACTIVEFLAGS update && sudo apt-get $NONINTERACTIVEFLAGS --allow-unauthenticated install ansible"
             fi
         elif [ "$OS" = "redhat" ]; then
