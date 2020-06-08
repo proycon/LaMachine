@@ -1092,7 +1092,7 @@ for package in ${NEED[@]}; do
                     #add PPA
                     cmd="sudo apt-get update && sudo apt-get $NONINTERACTIVEFLAGS install software-properties-common && sudo apt-add-repository -y ppa:ansible/ansible && sudo apt-get update && sudo apt-get $NONINTERACTIVEFLAGS install ansible"
                 else
-                    cmd="sudo apt-get $NONINTERACTIVEFLAGS install ansible"
+                    cmd="sudo apt-get update && sudo apt-get $NONINTERACTIVEFLAGS install ansible"
                 fi
             else
                 #for debian
