@@ -9,7 +9,7 @@ matrix:
         #  env:
         #    - CONF_NAME=travis-stable-conda FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda EXTRAOPT=""
         - os: linux
-          dist: xenial
+          dist: bionic
           sudo: required
           language: generic
           env:
@@ -21,7 +21,7 @@ matrix:
         #  env:
         #    - CONF_NAME=travis-stable-conda-noroot FLAVOUR=local VERSION=stable LOCALENV_TYPE=conda EXTRAOPT="--noroot"
         - os: linux
-          dist: xenial
+          dist: bionic
           sudo: required
           language: generic
           env:
@@ -33,7 +33,7 @@ matrix:
         #  env:
         #    - CONF_NAME=travis-dev-conda FLAVOUR=local VERSION=development LOCALENV_TYPE=conda EXTRAOPT=""
         - os: linux
-          dist: xenial
+          dist: bionic
           sudo: required
           language: generic
           env:
@@ -55,13 +55,13 @@ matrix:
         #  env:
         #    - CONF_NAME=travis-dev-conda FLAVOUR=local VERSION=development LOCALENV_TYPE=conda EXTRAOPT=""
         - os: linux
-          dist: xenial
+          dist: bionic
           sudo: required
           language: generic
           env:
             - CONF_NAME=travis-stable-global FLAVOUR=global VERSION=stable LOCALENV_TYPE="virtualenv"
         - os: linux
-          dist: xenial
+          dist: bionic
           sudo: required
           language: generic
           env:
