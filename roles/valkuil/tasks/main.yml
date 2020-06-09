@@ -76,7 +76,7 @@
         mode: u+rw,a+r
       when: '"all" in services or item in services'
       with_items:
-        - valkuilwebservice
+        - valkuil
 
     - name: "Install clam configuration"
       become: "{{lm_become}}"
@@ -91,7 +91,7 @@
         mode: u+rw,a+r
       when: '"all" in services or item in services'
       with_items:
-        - valkuilwebservice
+        - valkuil
 
 
 
