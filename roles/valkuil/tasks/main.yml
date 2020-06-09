@@ -7,9 +7,9 @@
             user: proycon
             repo: valkuil-gecco
             metadata:
-                name: Valkuil.net
+                name: Valkuil
                 entryPoints:
-                    - { "@type": "EntryPoint", name: "Generic Valkuil interface", urlTemplate: "{{lm_base_url}}/valkuil", interfaceType: "WUI" }
+                    - { "@type": "EntryPoint", name: "Valkuil interface", urlTemplate: "{{lm_base_url}}/valkuil", interfaceType: "WUI" }
                     - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/valkuil", specification: "{{lm_base_url}}/valkuil/info",  interfaceType: "REST" }
 
     - name: Check if models already downloaded
@@ -33,13 +33,6 @@
            github_user: "proycon"
            github_repo: "valkuil-gecco"
 
-    - name: Installing valkuil frontend
-      include_role:
-        name: lamachine-python-install
-      vars:
-        package:
-           github_user: "proycon"
-           github_repo: "valkuil-frontend"
 
     - name: Link Python package installation in opt/
       become: "{{lm_become}}"
@@ -56,7 +49,6 @@
         ln -sf $DIR {{lm_prefix}}/opt/{{item}}
       with_items:
         - valkuilwebservice
-        - valkuilnet
       environment: "{{lm_env}}"
 
     - name: "Install webserver configuration"
@@ -84,7 +76,6 @@
         mode: u+rw,a+r
       when: '"all" in services or item in services'
       with_items:
-        - valkuilnet
         - valkuilwebservice
 
     - name: "Install clam configuration"
@@ -101,7 +92,6 @@
       when: '"all" in services or item in services'
       with_items:
         - valkuilwebservice
-        - valkuilnet
 
 
 
