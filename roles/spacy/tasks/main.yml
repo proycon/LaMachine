@@ -35,8 +35,8 @@
         - name: "Installing Spacy data globally  (Listen carefully, I shall do this only once!)"
           become: "{{lm_become}}"
           become_user: root
-          shell:
-              command: "python3 -m spacy download {{ item }}"
+          command:
+              cmd: "python3 -m spacy download {{ item }}"
           with_items:
               - en
               - de
