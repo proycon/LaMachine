@@ -1431,6 +1431,7 @@ echo "lab_allow_origin: \"*\" #hosts that may access the lab environment" >> $ST
 echo "flat_password: \"flat\" #initial password for the FLAT administrator (if installed; username 'flat'), updating this later than on initial installation has no effect (edit in FLAT itself)!" >> $STAGEDCONFIG
 echo "ssh_public_key: \"\" #ssh public key (the actual contents of id_rsa.pub) to allow the container/VM to connect to restricted outside services" >> $STAGEDCONFIG
 echo "ssh_private_key: \"\" #ssh private key (the actual contents of id_rsa) to allow the container/VM to connect to restricted outside services" >> $STAGEDCONFIG
+echo "ssh_key_filename: \"id_rsa\" #the prefix used to store the above ssh keys (if provided) (.pub will be automatically appended for public key)" >> $STAGEDCONFIG
 if [ $FORCE -ne 0 ]; then
     echo "force: $FORCE #Sets the default force parameter for updates, set to 1 to force updates or 2 to explicitly remove all sources and start from scratch on each update. Remove this line entirely if you don't need it or are in doubt" >> $STAGEDCONFIG
 fi

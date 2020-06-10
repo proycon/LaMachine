@@ -386,7 +386,7 @@
           become: "{{lm_become}}"
           become_user: root
           copy:
-            dest: "/home/{{unix_user}}/.ssh/id_rsa.pub"
+            dest: "/home/{{unix_user}}/.ssh/{{ssh_key_filename}}.pub"
             content: "{{ssh_public_key}}"
             force: no
             mode: u+rw,g+r,o+r
@@ -398,7 +398,7 @@
           become: "{{lm_become}}"
           become_user: root
           copy:
-            dest: "/home/{{unix_user}}/.ssh/id_rsa"
+            dest: "/home/{{unix_user}}/.ssh/{{ssh_key_filename}}"
             content: "{{ssh_private_key}}"
             force: no
             mode: u+rw,g-rwx,o-rwx
