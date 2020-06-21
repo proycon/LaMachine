@@ -1640,6 +1640,9 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR\nvagrant destroy \$@; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-destroy
     echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR\nvagrant package \$@; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-export
     chmod a+x $HOMEDIR/bin/lamachine-$LM_NAME-*
+    export VAGRANT_CWD=$SOURCEDIR
+    echo "Ensuring LaMachine base box is the latest version" >&2
+    vagrant box update
     ln -sf $HOMEDIR/bin/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
     #run the activation script (this will do the actual initial provision as well)
     bash $HOMEDIR/bin/lamachine-$LM_NAME-start 2>&1 | tee lamachine-$LM_NAME.log
