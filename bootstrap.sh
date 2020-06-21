@@ -1614,15 +1614,20 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
         if [ $INTERACTIVE -eq 1 ]; then
             #not needed for BUILD=1 because most interesting parameters inherited from the ansible host configuration
             echo "${bold}Do you want to open the vagrant configuration in an editor for final configuration? (recommended to increase memory/cpu cores!) [yn]${normal}"
-            read choice
-            case $choice in
-                [n]* ) break;;
-                [y]* ) BUILD=0;  break;;
-                * ) echo "Please answer with y or n..";;
-            esac
-            if ! "$EDITOR" "$SOURCEDIR/Vagrantfile"; then
-                echo "ERROR: aborted by editor..." >&2
-                exit 2
+            EDIT=0
+            while true; do
+                read choice
+                case $choice in
+                    [n]* ) break;;
+                    [y]* ) EDIT=1;  break;;
+                    * ) echo "Please answer with y or n..";;
+                esac
+            done
+            if [ $EDIT -eq 1  ]; then
+                if ! "$EDITOR" "$SOURCEDIR/Vagrantfile"; then
+                    echo "ERROR: aborted by editor..." >&2
+                    exit 2
+                fi
             fi
         fi
     fi
