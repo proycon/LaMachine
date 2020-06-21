@@ -49,6 +49,15 @@
         cache_valid_time: 900
       #dirmngr is needed for gpg apt-get key
 
+    - name: installing linux headers (apt)
+      become: true
+      become_user: root
+      apt:
+        name: [ linux-headers-amd64 ]
+        state: present
+      when: flavour == "vagrant"
+      #we need this to properly build the vm guest additions
+
 
     - name: Installing python-virtualenv
       become: true
