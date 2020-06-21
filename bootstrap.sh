@@ -1608,20 +1608,26 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
         cp -f $SOURCEDIR/Vagrantfile.prebuilt.erb $SOURCEDIR/Vagrantfile || fatalerror "Unable to copy Vagrantfile"
         sed -i.bak "s/<%= box_name %>/proycon\/lamachine/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         sed -i.bak "s/lamachine-vm/$LM_NAME/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
-        sed -i.bak "s/Dir.home/\"$HOSTDATAPATH\"/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
-        sed -i.bak "s/8080/\"$HOSTPORT\"/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+        export HOSTDATAPATH_TMP="${HOSTDATAPATH//\//\\/}"
+        sed -i.bak "s/Dir.home/\\\"$HOSTDATAPATH_TMP\\\"/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+        sed -i.bak "s/8080/$HOSTPORT/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         if [ $INTERACTIVE -eq 1 ]; then
             #not needed for BUILD=1 because most interesting parameters inherited from the ansible host configuration
             echo "${bold}Do you want to open the vagrant configuration in an editor for final configuration? (recommended to increase memory/cpu cores!) [yn]${normal}"
-            read choice
-            case $choice in
-                [n]* ) break;;
-                [y]* ) BUILD=0;  break;;
-                * ) echo "Please answer with y or n..";;
-            esac
-            if ! "$EDITOR" "$SOURCEDIR/Vagrantfile"; then
-                echo "ERROR: aborted by editor..." >&2
-                exit 2
+            EDIT=0
+            while true; do
+                read choice
+                case $choice in
+                    [n]* ) break;;
+                    [y]* ) EDIT=1;  break;;
+                    * ) echo "Please answer with y or n..";;
+                esac
+            done
+            if [ $EDIT -eq 1  ]; then
+                if ! "$EDITOR" "$SOURCEDIR/Vagrantfile"; then
+                    echo "ERROR: aborted by editor..." >&2
+                    exit 2
+                fi
             fi
         fi
     fi
@@ -1634,6 +1640,9 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
     echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR\nvagrant destroy \$@; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-destroy
     echo -e "#!/bin/bash\nexport VAGRANT_CWD=$SOURCEDIR\nvagrant package \$@; exit \$?" > $HOMEDIR/bin/lamachine-$LM_NAME-export
     chmod a+x $HOMEDIR/bin/lamachine-$LM_NAME-*
+    export VAGRANT_CWD=$SOURCEDIR
+    echo "Ensuring LaMachine base box is the latest version" >&2
+    vagrant box update
     ln -sf $HOMEDIR/bin/lamachine-$LM_NAME-activate $HOMEDIR/bin/lamachine-activate #shortcut
     #run the activation script (this will do the actual initial provision as well)
     bash $HOMEDIR/bin/lamachine-$LM_NAME-start 2>&1 | tee lamachine-$LM_NAME.log
