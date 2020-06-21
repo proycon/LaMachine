@@ -64,7 +64,7 @@ Vagrant.configure(2) do |config|
   #
   config.vm.provider "virtualbox" do |vb|
      # Customize the amount of memory on the VM:
-     vb.name = "lamachine-stable"
+     vb.name = "lamachine-vm"
      vb.memory = 3072 #<--------- you will want to increase the memory limit for many applications!!
                       #           this is a barely functional minimum, we recommend at least 8GB
      vb.cpus = 2 #<------- you will want to increase the amount of CPUs if possible!!
