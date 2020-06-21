@@ -1608,8 +1608,9 @@ if [[ "$FLAVOUR" == "vagrant" ]]; then
         cp -f $SOURCEDIR/Vagrantfile.prebuilt.erb $SOURCEDIR/Vagrantfile || fatalerror "Unable to copy Vagrantfile"
         sed -i.bak "s/<%= box_name %>/proycon\/lamachine/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         sed -i.bak "s/lamachine-vm/$LM_NAME/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
-        sed -i.bak "s/Dir.home/\"$HOSTDATAPATH\"/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
-        sed -i.bak "s/8080/\"$HOSTPORT\"/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+        export HOSTDATAPATH_TMP="${HOSTDATAPATH//\//\\/}"
+        sed -i.bak "s/Dir.home/\\\"$HOSTDATAPATH_TMP\\\"/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
+        sed -i.bak "s/8080/$HOSTPORT/g" $SOURCEDIR/Vagrantfile || fatalerror "Unable to run sed"
         if [ $INTERACTIVE -eq 1 ]; then
             #not needed for BUILD=1 because most interesting parameters inherited from the ansible host configuration
             echo "${bold}Do you want to open the vagrant configuration in an editor for final configuration? (recommended to increase memory/cpu cores!) [yn]${normal}"
