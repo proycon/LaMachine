@@ -865,7 +865,7 @@ for package in ${NEED[@]}; do
         elif [ "$OS" = "arch" ]; then
             cmd="sudo pacman $NONINTERACTIVEFLAGS -Sy virtualbox vagrant"
         elif [ "$OS" = "mac" ]; then
-            cmd="brew tap caskroom/cask && brew cask install virtualbox vagrant"
+            cmd="brew update; brew tap caskroom/cask && brew cask install virtualbox vagrant"
         else
             cmd=""
         fi
