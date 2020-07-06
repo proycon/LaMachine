@@ -144,7 +144,7 @@ want to access it from your local system outside the RU network, then dig a
 double-SSH tunnel as follows:
 
 ```
-$ ssh -L 8080:localhost:9999 mlp01.science.ru.nl ssh -L 9999:localhost:8080 -N mlp09.science.ru.nl
+$ ssh -A -L 8080:localhost:9999 mlp01.science.ru.nl ssh -A -L 9999:localhost:8080 -N mlp09.science.ru.nl
 ```
 
 After this, you can point your local webbrowser to your local IP
