@@ -252,11 +252,8 @@
                 - "var/www-data/notebooks"
                 - "etc/nginx"
                 - "etc/nginx/conf.d"
-<<<<<<< HEAD
-            ignore_errors: yes
-=======
                 - "etc/nginx/sites-extra"
->>>>>>> develop
+            ignore_errors: yes
 
           - when: ansible_distribution|lower != "macosx" and (nginx.rc != 0 or (force is defined and force))
             block:
