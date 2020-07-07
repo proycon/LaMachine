@@ -1486,7 +1486,11 @@ if [ ! -d lamachine-controller/$LM_NAME ]; then
     echo "Setting up control environment..."
     if [ $NEED_VIRTUALENV -eq 1 ]; then
         echo " (with virtualenv and ansible inside)"
-        virtualenv lamachine-controller/$LM_NAME || fatalerror "Unable to create LaMachine control environment"
+        virtualenv lamachine-controller/$LM_NAME
+        if [ $? -ne 0 ]; then
+            echo "${boldred}ERROR: Virtualenv creation failed!${normal} Trying a fallback method:" >&2
+            python3 -m virtualenv lamachine-controller/$LM_NAME || fatalerror "Unable to create LaMachine control environment"
+        fi
         cd lamachine-controller/$LM_NAME
         source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
         pip install -U setuptools
