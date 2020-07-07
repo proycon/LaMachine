@@ -1,7 +1,7 @@
 {% if clam_include %}
 include: "{{clam_include}}"
 {% endif %}
-port: 8806
+port: 8820
 urlprefix: "tscan"
 root: "{{www_data_path}}/tscan.clam/"
 bindir: "{{lm_prefix}}/bin/"
