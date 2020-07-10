@@ -31,3 +31,4 @@
       become_user: root
       command: pip3 install virtualenv
       when: localenv_type == "virtualenv"
+      ignore_errors: yes
