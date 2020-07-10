@@ -133,13 +133,28 @@
         file:
             path: "{{ lm_prefix }}/{{item}}"
             state: directory
-            owner: "{{unix_user}}"
+            owner: "{{web_group}}"
             group: "{{web_group}}"
             mode: u+rwx,g+rwsx,a+rx
         with_items:
             - "var/log/uwsgi"
             - "var/log/nginx"
             - "var/tmp"
+
+      - name: Recursively setting log/tmp permissions
+        become: "{{lm_become}}"
+        become_user: root
+        file:
+            path: "{{ lm_prefix }}/{{item}}"
+            state: directory
+            owner: "{{web_user}}"
+            group: "{{web_group}}"
+            mode: u+rwX,g+rwX,a+rX
+        with_items:
+            - "var/log/uwsgi"
+            - "var/log/nginx"
+            - "var/tmp"
+        ignore_errors: yes
 
       - name: Create webserver data directory (writable)
         become: "{{lm_become}}"
