@@ -14,6 +14,7 @@ python_bin: "python3" #path to the global python3 interpreter, may be an absolut
 pip_bin: "pip3" #must correspond to the one belonging to the above python interpreter
 webserver: false
 webservertype: "nginx"
+root: false
 unix_group: "{{unix_user}}"
 web_user: "{{unix_user}}"
 web_group: "{{web_user}}"
