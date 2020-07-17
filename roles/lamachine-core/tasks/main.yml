@@ -274,7 +274,7 @@
             content: |
                      Defaults env_keep += "PYTHONPATH"
                      Defaults secure_path = {{global_prefix}}/bin:{{global_prefix}}/sbin:/sbin:/bin:/usr/sbin:/usr/bin
-          when: root and locality == "global"
+          when: locality == "global" and root
 
         - name: Enable activation script globally
           become: "{{lm_become}}"
