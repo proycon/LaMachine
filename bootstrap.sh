@@ -765,13 +765,11 @@ else
         if which ansible-playbook; then
             NEED_VIRTUALENV=0
         elif [ $SUDO -eq 1 ]; then #we can only install ansible globally if we have root
-            if [ "$OS" != "mac" ]; then #pip is preferred on mac
-                if [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
-                    NEED+=("epel") #ansible is in  EPEL
-                fi
-                NEED+=("ansible")
-                NEED_VIRTUALENV=0
+            if [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
+                NEED+=("epel") #ansible is in  EPEL
             fi
+            NEED+=("ansible")
+            NEED_VIRTUALENV=0
         fi
         if [ $NEED_VIRTUALENV -eq 1 ]; then
             if ! which pip; then
@@ -1102,8 +1100,8 @@ for package in ${NEED[@]}; do
             cmd="sudo yum  $NONINTERACTIVEFLAGS install ansible"
         elif [ "$OS" = "arch" ]; then
             cmd="sudo pacman  $NONINTERACTIVEFLAGS -Sy ansible"
-        else
-            continue
+        elif [ "$OS" = "mac" ]; then
+            cmd="brew install ansible"
         fi
         echo "Ansible is required for LaMachine but not installed yet. ${bold}Install now?${normal}"
         if [ ! -z "$cmd" ]; then
