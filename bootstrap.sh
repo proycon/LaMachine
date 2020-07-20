@@ -746,6 +746,12 @@ if [ -z "$SUDO" ]; then
 fi
 
 echo "Looking for dependencies..."
+if [[ "$OS" == "mac" ]]; then
+    if ! which brew; then
+        NEED+=("brew")
+    fi
+    #NEED+=("brew-cask")
+fi
 if [ $BUILD -eq 0 ]; then
     NEED_VIRTUALENV=0 #Do we need a virtualenv with ansible for the controller? Never needed if we are not building ourselves
 else
@@ -786,12 +792,6 @@ if [ -z "$EDITOR" ]; then
     else
         EDITOR=vi
     fi
-fi
-if [[ "$OS" == "mac" ]]; then
-    if ! which brew; then
-        NEED+=("brew")
-    fi
-    #NEED+=("brew-cask")
 fi
 if [ ! -z "$NEED" ]; then
     echo " Missing dependencies: ${NEED[@]}"
