@@ -13,7 +13,7 @@
 
         - name: Installing Java (Mac OS X)
           homebrew_cask:
-            name: java
+            name: java11
             state: present
           when: ansible_distribution|lower == "macosx"
 

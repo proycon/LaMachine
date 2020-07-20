@@ -26,6 +26,10 @@
           fail:
              msg: "Your homebrew installation failed to install the base packages. This most likely means Homebrew on your system is in a broken state (possibly after an OS X update?). You will have to fix this first yourself prior to installing LaMachine."
 
+    - name: Homebrew, enabling cask versions
+      homebrew_tap:
+          name: homebrew/cask-versions
+
     - name: (Re)install virtualenv
       become: yes
       become_user: root
