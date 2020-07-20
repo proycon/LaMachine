@@ -5,7 +5,7 @@
           include_role:
             name: lamachine-package-install
           with_items:
-            - { debian: default-11-jdk, redhat: java-11-openjdk, arch: jdk11-openjdk }
+            - { debian: openjdk-11-jdk, redhat: java-11-openjdk, arch: jdk11-openjdk }
             - { debian: maven, redhat: maven, arch: maven } #not sure if this works on CentOS
           loop_control:
              loop_var: package
