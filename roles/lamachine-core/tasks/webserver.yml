@@ -263,9 +263,11 @@
                 mode: u+rwx,a+rx
             with_items:
                 - "var/log/nginx"
+                - "var/log/lamastats"
                 - "var/www-data"
                 - "var/www-data/tmp"
                 - "var/www-data/notebooks"
+                - "var/www-data/lamastats"
                 - "etc/nginx"
                 - "etc/nginx/conf.d"
                 - "etc/nginx/sites-extra"
@@ -395,3 +397,30 @@
       dest: "/var/www"
       state: link
     when: root and locality == "global"
+
+  - name: Installing lamastats for analytics
+    include_role:
+      name: lamachine-python-install
+    vars:
+      package: { github_user: "proycon", github_repo: "lamastats", pip: "lamastats" }
+
+  - name: Adding lamastats analytics to crontab
+    cron:
+      name: lamastats
+      minute: "0"
+      user: "{{unix_user}}"
+      job: "cd /var/log/lamastats && lamastats --outputdir {{lm_prefix}}/www-data/lamastats --trackclam --foliadocservelog {{lm_prefix}}/var/log/foliadocserve.log nginx:{{lm_prefix}}/var/log/nginx/access.log"
+    when: webservertype == "nginx" and locality == "global"
+
+  - name: Register lamastats webservice
+    include_role:
+        name: lamachine-register
+    vars:
+      update: "lamastats"
+      allow_failure: "yes" #in case the app is not installed
+      metadata: #add entrypoint metadata to registry
+          identifier: "lamastats"
+          entryPoints:
+            - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/lamastats", interfaceType: "WUI" }
+    when: webservertype == "nginx" and locality == "global"
+
