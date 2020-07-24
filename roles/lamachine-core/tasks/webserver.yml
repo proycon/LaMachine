@@ -423,6 +423,6 @@
       metadata: #add entrypoint metadata to registry
           identifier: "lamastats"
           entryPoints:
-            - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/lamastats", interfaceType: "WUI" }
+            - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/lamastats/", interfaceType: "WUI" }
     when: webservertype == "nginx" and locality == "global"
 
