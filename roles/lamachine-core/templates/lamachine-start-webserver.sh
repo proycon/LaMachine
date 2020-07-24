@@ -36,8 +36,10 @@ fi
 if [ $HAVE_SYSTEMCTL -eq 1 ]; then
      sudo systemctl enable uwsgi-emperor
      sudo systemctl start uwsgi-emperor
+     sudo systemctl start cron
 else
      sudo service uwsgi-emperor start
+     sudo service cron start
 fi
 {% else %}
      sudo uwsgi --ini "{{lm_prefix}}/etc/uwsgi-emperor/emperor.ini" --die-on-term 2> "{{lm_prefix}}/var/log/uwsgi/uwsgi.log" >&2 &
@@ -48,8 +50,10 @@ fi
 if [ $HAVE_SYSTEMCTL -eq 1 ]; then
      sudo systemctl enable nginx
      sudo systemctl start nginx
+     sudo systemctl start cron
 else
      sudo service nginx start
+     sudo service cron start
 fi
 {% else %}
     echo "${boldred}WARNNG: You are using a non-default webservertype, unable to manage webserver for you...${normal}">&2
