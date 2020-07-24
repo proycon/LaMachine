@@ -24,7 +24,7 @@ boldblue=${bold}$(tput setaf 4) #  blue
 boldyellow=${bold}$(tput setaf 3) #  yellow
 normal=$(tput sgr0)
 
-export LM_VERSION="v2.20.1" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
+export LM_VERSION="v2.21" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "${bold}=====================================================================${normal}"
 echo "           ,              ${bold}LaMachine $LM_VERSION${normal} - NLP Software distribution"
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
