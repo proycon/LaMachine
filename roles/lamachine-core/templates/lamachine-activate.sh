@@ -43,12 +43,7 @@ if [[ "$LM_LOCALITY" == "local" ]]; then
     export LM_PYTHONVERSION="{{python_version.stdout}}"
     {% endif %}
     if [ -d $LM_LOCAL_PREFIX ]; then
-        if [[ "$LM_LOCALENV_TYPE" == "conda" ]]; then
-            source activate lamachine-{{conf_name}}
-            export VIRTUAL_ENV=$LM_LOCAL_PREFIX #backward compatibility
-        else
-            source "$LM_LOCAL_PREFIX/bin/activate"
-        fi
+        source "$LM_LOCAL_PREFIX/bin/activate"
     fi
 else
     export LM_PREFIX="{{global_prefix}}"

@@ -11,7 +11,25 @@
            - name: Creating bare virtualenv environment for LaMachine
              shell: "virtualenv {% if ansible_distribution|lower != 'centos' and ansible_distribution|lower != 'rhel' %}--always-copy{% endif %} --python={{ python_bin }} {{ local_prefix }}"
 
-    - name: Adapting activation script for virtualenv
+    - name: Adapting activation script for virtualenv (1/2)
+      blockinfile:
+        dest: "{{local_prefix}}/bin/activate"
+        block: |
+          if [ -z "$LM_PREFIX" ]; then
+              source $(which lamachine-{{ conf_name }}-activate)
+              if [ $? -ne 0 ]; then
+                  echo "WARNING: Can't locate the full activation script lamachine-{{conf-name}}-activate ,">&2
+                  echo "         Unable to activate the environment!"
+                  exit 1
+              fi
+              exit 0
+          fi
+        marker: '# {mark} LAMACHINE MANAGED BLOCK - ensure environment is ready'
+        insertafter: "# you cannot run it directly"
+        create: yes
+        mode: u+rwx
+
+    - name: Adapting activation script for virtualenv (2/2)
       blockinfile:
         dest: "{{local_prefix}}/bin/activate"
         block: |
