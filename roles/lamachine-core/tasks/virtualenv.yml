@@ -18,7 +18,7 @@
           if [ -z "$LM_PREFIX" ]; then
               source $(which lamachine-{{ conf_name }}-activate)
               if [ $? -ne 0 ]; then
-                  echo "WARNING: Can't locate the full activation script lamachine-{{conf-name}}-activate ,">&2
+                  echo "WARNING: Can't locate the full activation script lamachine-{{conf_name}}-activate ,">&2
                   echo "         Unable to activate the environment!"
                   exit 1
               fi
