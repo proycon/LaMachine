@@ -16,11 +16,15 @@
         dest: "{{local_prefix}}/bin/activate"
         block: |
           if [ -z "$LM_PREFIX" ]; then
-              source $(which lamachine-{{ conf_name }}-activate)
-              if [ $? -ne 0 ]; then
-                  echo "WARNING: Can't locate the full activation script lamachine-{{conf_name}}-activate ,">&2
-                  echo "         Unable to activate the environment!"
-                  exit 1
+              if [ -e "$LM_PREFIX/bin/lamachine-{{ conf_name }}-activate" ]; then
+                source "$LM_PREFIX/bin/lamachine-{{ conf_name }}-activate"
+              else
+                source $(which lamachine-{{ conf_name }}-activate)
+                if [ $? -ne 0 ]; then
+                    echo "WARNING: Can't locate the full activation script lamachine-{{conf_name}}-activate ,">&2
+                    echo "         Unable to activate the environment!">&2
+                    exit 1
+                fi
               fi
               exit 0
           fi
