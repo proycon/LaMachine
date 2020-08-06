@@ -23,10 +23,10 @@
                 if [ $? -ne 0 ]; then
                     echo "WARNING: Can't locate the full activation script lamachine-{{conf_name}}-activate ,">&2
                     echo "         Unable to activate the environment!">&2
-                    exit 1
+                    return 1
                 fi
               fi
-              exit 0
+              return 0
           fi
         marker: '# {mark} LAMACHINE MANAGED BLOCK - ensure environment is ready'
         insertafter: "# you cannot run it directly"
