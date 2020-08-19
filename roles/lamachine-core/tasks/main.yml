@@ -363,6 +363,7 @@
             dest: "{{lm_prefix}}/etc/motd"
             force: yes
             backup: yes
+            mode: u+rwx,a+rx
 
         - name: Installing lamachine-add script
           become: "{{lm_become}}"
