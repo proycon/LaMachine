@@ -29,5 +29,6 @@ COPY host_vars/$HOSTNAME.yml $LAMACHINE_PATH/host_vars/localhost.yml
 RUN chown -R $UNIX_USER $LAMACHINE_PATH
 USER $UNIX_USER
 RUN ansible-playbook $ANSIBLE_OPTIONS $LAMACHINE_PATH/install.yml -c local
+RUN sudo ldconfig
 WORKDIR /home/$UNIX_USER
 CMD /bin/bash -l
