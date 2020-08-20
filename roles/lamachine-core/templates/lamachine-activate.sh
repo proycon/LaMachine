@@ -56,6 +56,7 @@ else
             source $f
         fi
     done
+    #setting $PATH or $LD_LIBRARY_PATH here shouldn't be necessary, handled from /etc/ld.so.conf.d/ and /etc/profile.d
 fi
 if [ ! -z "$MANPATH" ]; then
     export MANPATH=$LM_PREFIX/man:$MANPATH

@@ -449,6 +449,7 @@
           copy:
             dest: "{{source_path}}/LaMachine/hosts.ini"
             content: "{{hostname}} ansible_connection=local"
+            mode: a+r
             force: "no"
           when: controller is defined and controller == "internal"
 
@@ -457,6 +458,7 @@
           copy:
             dest: "/etc/ld.so.conf.d/lamachine-{{conf_name}}.conf"
             content: "{{global_prefix}}/lib"
+            mode: a+r
           when: root and locality == "global" and ansible_distribution|lower != 'macosx'
 
         - name: Running ldconfig
