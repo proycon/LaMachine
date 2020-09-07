@@ -1,0 +1,8 @@
+---
+    - name: "Installing {{item}}"
+      shell:
+         cargo install {{item}}
+      environment: "{{lm_env}}"
+      with_items:
+          - sesdiff
+          - ssam
