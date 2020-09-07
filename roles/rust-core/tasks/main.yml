@@ -1,6 +1,20 @@
 ---
     - when: ran_rust is not defined
       block:
+        - name: Create cargo directory
+          file:
+              path: "{{ lm_prefix }}/opt/cargo"
+              state: directory
+              owner: "{{unix_user}}"
+              group: "{{unix_group}}"
+              mode: u+rwx,g+rwsx,a+rx
+
+        - name: Link cargo/bin to main bin
+          file:
+              src: "{{ lm_prefix }}/opt/cargo/bin"
+              dest: "{{ lm_prefix }}/bin"
+              state: link
+
         - name: "Check if rustup already exists"
           stat:
             path: "{{ lm_prefix }}/bin/rustup"
