@@ -11,8 +11,8 @@
 
         - name: Link cargo/bin to main bin
           file:
-              src: "{{ lm_prefix }}/opt/cargo/bin"
-              dest: "{{ lm_prefix }}/bin"
+              src: "{{ lm_prefix }}/bin"
+              dest: "{{ lm_prefix }}/opt/cargo/bin"
               state: link
 
         - name: "Check if rustup already exists"
