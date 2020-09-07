@@ -17,7 +17,7 @@ localenv:
      GIT_COMMITTER_NAME: "{{ maintainer_name }}"
      RUSTUP_HOME: "{{lm_prefix}}/opt/rustup"
      CARGO_HOME: "{{lm_prefix}}/opt/cargo"
-     CARGO_INSTALL_ROOT: "{{lm_prefix}}/bin"
+     CARGO_INSTALL_ROOT: "{{lm_prefix}}"
      GIT_COMMITTER_EMAIL: "{{ maintainer_mail }}"
      LC_ALL: "en_US.UTF-8"
      LANG: "en_US.UTF-8"
@@ -36,7 +36,7 @@ globalenv:
      GIT_COMMITTER_EMAIL: "{{ maintainer_mail }}"
      RUSTUP_HOME: "{{lm_prefix}}/opt/rustup"
      CARGO_HOME: "{{lm_prefix}}/opt/cargo"
-     CARGO_INSTALL_ROOT: "{{lm_prefix}}/bin"
+     CARGO_INSTALL_ROOT: "{{lm_prefix}}"
      LC_ALL: "en_US.UTF-8"
      LANG: "en_US.UTF-8"
      LM_QUIET: 1

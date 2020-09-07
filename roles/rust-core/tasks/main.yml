@@ -23,6 +23,6 @@
             content: |
               export RUSTUP_HOME="{{lm_prefix}}/opt/rustup"
               export CARGO_HOME="{{lm_prefix}}/opt/cargo"
-              export CARGO_INSTALL_ROOT="{{lm_prefix}}/bin"
+              export CARGO_INSTALL_ROOT="{{lm_prefix}}"
             mode: u+rwx,a+rx
     - set_fact: ran_rust=1
