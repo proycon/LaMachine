@@ -1,5 +1,5 @@
 ---
-lamachine_version: "2.22" #also change in bootstrap.sh and codemeta.json
+lamachine_version: "2.23" #also change in bootstrap.sh and codemeta.json
 conf_name: "default"
 version: "stable" #stable, development or custom
 controller: internal
@@ -52,6 +52,21 @@ github_clst_users:
   - woseseltops
   - schemreier
   - GreekPerspective
+github_knawhuc_projects:
+  - Frog
+  - python-frog
+  - deepfrog
+  - ucto
+  - python-ucto
+  - folia
+  - foliapy
+  - foliatools
+  - libfolia
+  - folia-rust
+  - foliautils
+  - FLAT
+  - clam
+  - codemetapy
 metadata_extra: [] #Extra metadata to register, consist of list of dictionaries, may have a url field, codemeta field, or metadata block that will be passed to the registry
 metadata_producer_unknown: {}
 metadata_producer_clst:
@@ -85,3 +100,16 @@ metadata_producer_cls:
         location:
             "@type": "Place"
             name: "Nijmegen"
+metadata_producer_knawhuc:
+    "@id": "https://huc.knaw.nl"
+    "@type": "Organization"
+    name: "Humanities Cluster"
+    url: "https://huc.knaw.nl"
+    parentOrganization:
+        "@id": "https://www.knaw.nl"
+        "@type": "Organization"
+        name: "KNAW"
+        url: "https://www.knaw.nl"
+        location:
+            "@type": "Place"
+            name: "Amsterdam"

@@ -1,0 +1,28 @@
+---
+    - when: ran_rust is not defined
+      block:
+        - name: "Check if rustup already exists"
+          stat:
+            path: "{{ lm_prefix }}/bin/rustup"
+          register: rustup_path
+
+        - name: Installing Rust via Rustup
+          shell:
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+          environment: "{{lm_env}}"
+          when: not rustup_path.stat.exists
+
+        - name: Updating rust installation
+          shell:
+             rustup update
+          environment: "{{lm_env}}"
+
+        - name: "Adding activation script for Rust"
+          copy:
+            dest: "{{lm_prefix}}/bin/activate.d/rust.sh"
+            content: |
+              export RUSTUP_HOME="{{lm_prefix}}/opt/rustup"
+              export CARGO_HOME="{{lm_prefix}}/opt/cargo"
+              export CARGO_INSTALL_ROOT="{{lm_prefix}}"
+            mode: u+rwx,a+rx
+    - set_fact: ran_rust=1
