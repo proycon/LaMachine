@@ -46,6 +46,7 @@ if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo "--noninteractive  Do not query to user to input at any point."
     echo "--only [package]  Update only the specified package (or comma seperated list of multiple) "
     echo "                  Note that this tries to leave most dependencies as-is (but no guarantees!)."
+    echo "--debug           Extra debug"
     echo "VARIABLES:"
     echo "force=1        Force recompilation of all sources"
     echo "force=2        Delete all sources prior to update"
@@ -83,9 +84,13 @@ fi
 if [ "$1" = "--editonly" ]; then
     exit 0
 fi
-OPTS=""
+if [ "$1" = "--debug" ]; then
+    OPTS="-v -v"
+else
+    OPTS=""
+fi
 if [[ {{root|int}} -eq 1 ]] && [[ $INTERACTIVE -eq 1 ]]; then
- OPTS="--ask-become-pass"
+ OPTS="$OPTS --ask-become-pass"
 fi
 D=$(date +%Y%m%d_%H%M%S)
 if [ ! -z "$PYTHONPATH" ]; then
