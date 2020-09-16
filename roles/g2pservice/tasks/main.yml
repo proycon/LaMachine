@@ -1,16 +1,13 @@
 ---
 
-    - name: Output warning
-      debug:
-        msg: "g2pservice requires access to a private gitlab server and will fail if you do not have access (based on ssh keypairs)"
-
     - name: Installing g2pservice python package
       include_role:
         name: lamachine-python-install
       vars:
         package:
           name: "g2pservice"
-          git_url: "git@gitlab.science.ru.nl:clst-asr/g2p-service.git"
+          github_user: "opensource-spraakherkenning-nl"
+          github_repo: g2pservice
 
     - name: Register webservice
       include_role:

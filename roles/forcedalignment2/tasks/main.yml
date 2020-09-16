@@ -26,7 +26,8 @@
       vars:
         package:
            name: "forcedalignment2"
-           git_url: "git@gitlab.science.ru.nl:ltenbosch/forcedalignment2.git"
+           github_user: "opensource-spraakherkenning-nl"
+           github_repo: "forcedalignment2"
            metadata:
               identifier: "forcedalignment2"
 
@@ -67,8 +68,6 @@
     - name: Downloading resources
       get_url:
         url: https://applejack.science.ru.nl/downloads/forcedalignment/forcedalignment2_resources.tar.gz
-        #url_username: "{{fame_user}}"
-        #url_password: "{{fame_password}}"
         dest: "{{lm_prefix}}/opt/forcedalignment2_resources/forcedalignment2_resources.tar.gz"
         tmp_dest: "{{lm_prefix}}/opt/forcedalignment2_resources"
 
