@@ -99,18 +99,18 @@ if [ ! -z "$PYTHONPATH" ]; then
 fi
 if [ -e "hosts.{{conf_name}}" ]; then
     #LaMachine v2.0.0
-    ansible-playbook -i "hosts.{{conf_name}}" "install-{{conf_name}}.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
+    ansible-playbook -i "hosts.{{conf_name}}" "install-{{conf_name}}.yml" -v $OPTS --extra-vars "ansible_python_interpreter='$(which python3)' ${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
     rc=${PIPESTATUS[0]}
 else
     #LaMachine v2.1.0+
     if [ -z "$ONLY" ]; then
-        ansible-playbook -i "hosts.ini" "install.yml" -v $OPTS --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
+        ansible-playbook -i "hosts.ini" "install.yml" -v $OPTS --extra-vars "ansible_python_interpreter=$(which python3) ${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
         rc=${PIPESTATUS[0]}
     else
         echo "---" > "install.tmp.yml"
         grep "hosts:" install.yml >> "install.tmp.yml"
         echo "  roles: [ lamachine-core, $ONLY ]"  >> "install.tmp.yml"
-        ansible-playbook -i "hosts.ini" "install.tmp.yml" -v $OPTS --skip-tags fullrunonly --extra-vars "${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
+        ansible-playbook -i "hosts.ini" "install.tmp.yml" -v $OPTS --skip-tags fullrunonly --extra-vars "ansible_python_interpreter='$(which python3)' ${*:$FIRST}" 2>&1 | tee "lamachine-{{conf_name}}-$D.log"
         rc=${PIPESTATUS[0]}
     fi
 fi

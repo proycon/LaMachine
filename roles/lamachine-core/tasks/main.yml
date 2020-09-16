@@ -11,6 +11,7 @@
               - ansible_distribution
               - ansible_distribution_version
               - ansible_skip_tags
+              - ansible_python_interpreter
               - hostname
               - version
               - lamachine_path
