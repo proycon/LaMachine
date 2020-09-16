@@ -16,11 +16,13 @@
     - name: "Clear temporary metadata"
       copy:
         content: "{}"
-        dest: "{{lm_prefix}}/var/{{item}}"
+        dest: "{{lm_prefix}}/var/{{metaitem}}"
         force: yes
       with_items:
         - "provided.codemeta.tmp.json"
         - "passed.codemeta.tmp.json"
+      loop_control:
+        loop_var: metaitem
 
 
     - name: "Use metadata provided by the repository"
