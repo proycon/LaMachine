@@ -68,10 +68,10 @@
       become_user: root
       file:
         path: "{{ lm_prefix }}/src/valkuil-gecco/run"
-          state: directory
-          owner: "{{web_user}}"
-          group: "{{web_group}}"
-          mode: u+rwX,g+rwsX,a+rX
+        state: directory
+        owner: "{{web_user}}"
+        group: "{{web_group}}"
+        mode: u+rwX,g+rwsX,a+rX
       ignore_errors: yes
 
     - name: Recursively setting run permissions
@@ -79,11 +79,11 @@
       become_user: root
       file:
         path: "{{ lm_prefix }}/src/valkuil-gecco/run"
-          state: directory
-          owner: "{{web_user}}"
-          group: "{{web_group}}"
-          mode: u+rwX,g+rwX,a+rX
-          recurse: yes
+        state: directory
+        owner: "{{web_user}}"
+        group: "{{web_group}}"
+        mode: u+rwX,g+rwX,a+rX
+        recurse: yes
       ignore_errors: yes
 
     - name: "Install uwsgi configurations"
