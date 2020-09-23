@@ -5,6 +5,7 @@
         name: lamachine-package-install
       with_items:
         - { debian: dialog, redhat: dialog, arch: dialog } #we don't really use it in non-interactive mode but kaldi_nl tests for it
+        - { debian: libsox-fmt-mp3, redhat: sox, arch: sox }
       loop_control:
           loop_var: package
 
@@ -17,7 +18,9 @@
         accept_hostkey: yes
 
     - name: Setting up kaldi_nl
-      command: "./configure.sh oralhistory"
+      shell: |
+          export modelpack="{{ lm_prefix }}/opt/kaldi_nl/models"
+          ./configure.sh oralhistory
       args:
         chdir: "{{ lm_prefix }}/opt/kaldi_nl"
       environment: "{{lm_env}}"
