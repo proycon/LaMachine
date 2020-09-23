@@ -56,6 +56,17 @@
       with_items:
         - t2t
 
+    - name: "Install webserver configuration for t2t"
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: "nginx/t2t.conf"
+        dest: "{{lm_prefix}}/etc/nginx/conf.d/t2t.conf"
+        force: yes
+        backup: yes
+        owner: "{{unix_user}}"
+      when: webservertype == "nginx"
+
     - name: Link Python package installation in opt/
       become: "{{lm_become}}"
       become_user: root

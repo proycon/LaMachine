@@ -1,27 +1,30 @@
 ---
 
-    - name: Installing g2pservice python package
+    - name: Output warning
+      debug:
+        msg: "asr4J requires access to a private gitlab server and will fail if you do not have access (based on ssh keypairs)"
+
+    - name: Installing asr4J python package
       include_role:
         name: lamachine-python-install
       vars:
         package:
-          name: "g2pservice"
-          github_user: "opensource-spraakherkenning-nl"
-          github_repo: g2pservice
+          name: "asr4J"
+          git_url: "git@gitlab.science.ru.nl:ltenbosch/asr4J.git"
 
     - name: Register webservice
       include_role:
           name: lamachine-register
       vars:
-        update: "g2pservice"
+        update: "asr4J"
         package:
-           pip: "g2pservice"
+           pip: "asr4J"
         allow_failure: yes #in case the app is not installed
         metadata: #add entrypoint metadata to registry
-            identifier: "g2pservice"
+            identifier: "asr4J"
             entryPoints:
-              - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/g2pservice", interfaceType: "WUI" }
-              - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/g2pservice", interfaceType: "REST", specification: "{{lm_base_url}}/g2pservice/info" }
+              - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/asr4J", interfaceType: "WUI" }
+              - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/asr4J", interfaceType: "REST", specification: "{{lm_base_url}}/asr4J/info" }
 
     - name: "Install uwsgi configurations"
       become: "{{lm_become}}"
@@ -36,7 +39,7 @@
         mode: u+rw,a+r
       when: '"all" in services or item in services'
       with_items:
-        - g2pservice
+        - asr4J
 
     - name: "Install clam configuration"
       become: "{{lm_become}}"
@@ -51,7 +54,18 @@
         mode: u+rw,a+r
       when: '"all" in services or item in services'
       with_items:
-        - g2pservice
+        - asr4J
+
+    - name: "Install webserver configuration for asr4J"
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: "nginx/asr4J.conf"
+        dest: "{{lm_prefix}}/etc/nginx/conf.d/asr4J.conf"
+        force: yes
+        backup: yes
+        owner: "{{unix_user}}"
+      when: webservertype == "nginx"
 
     - name: Link Python package installation in opt/
       become: "{{lm_become}}"
@@ -67,5 +81,5 @@
         fi
         ln -sf $DIR {{lm_prefix}}/opt/{{item}}
       with_items:
-        - g2pservice
+        - asr4J
       environment: "{{lm_env}}"
