@@ -1,5 +1,13 @@
 ---
 
+    - name: installing global dependencies for kaldi_nl
+      include_role:
+        name: lamachine-package-install
+      with_items:
+        - { debian: dialog, redhat: dialog, arch: dialog } #we don't really use it in non-interactive mode but kaldi_nl tests for it
+      loop_control:
+          loop_var: package
+
     - name: Obtaining kaldi_nl
       git:
         repo: "https://github.com/opensource-spraakherkenning-nl/Kaldi_NL/"
