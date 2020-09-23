@@ -1,6 +1,6 @@
 ---
 
-    - name: Obtaining kaldi_nl from private git server
+    - name: Obtaining kaldi_nl
       git:
         repo: "https://github.com/opensource-spraakherkenning-nl/Kaldi_NL/"
         dest: "{{ lm_prefix }}/opt/kaldi_nl"
@@ -9,7 +9,7 @@
         accept_hostkey: yes
 
     - name: Setting up kaldi_nl
-      command: "configure.sh oralhistory"
+      command: "./configure.sh oralhistory"
       args:
         chdir: "{{ lm_prefix }}/opt/kaldi_nl"
       environment: "{{lm_env}}"
