@@ -4,22 +4,6 @@
         msg: "You did not set eng_ASR_user and eng_ASR_password in your configuration. This is required for eng_ASR to work! If you do not have the credentials yet, contact h.vandenheuvel@let.ru.nl to request access."
       when: eng_ASR_user == "undefined" or eng_ASR_password == "undefined"
 
-    - name: Install CLAM #so we don't need to rely on languagemachines-basic nor python-core
-      include_role:
-        name: lamachine-python-install
-      with_items:
-          - { pip: "flask" }
-          - { pip: "lxml" }
-          - { pip: "requests" }
-          - { pip: "requests_oauthlib" }
-          - { pip: "requests_toolbelt" }
-          - { pip: "pycrypto" }
-          - { pip: "certifi" }
-          - { pip: "pyyaml" }
-          - { github_user: "proycon", github_repo: "clam", pip: "clam" }
-      loop_control:
-           loop_var: package
-
     - name: Installing webservice
       include_role:
         name: lamachine-python-install
@@ -29,24 +13,6 @@
            github_repo: "eng_ASR"
            metadata:
               identifier: "eng_ASR"
-
-    - name: Link Python package installation in opt/
-      become: "{{lm_become}}"
-      become_user: root
-      shell: |
-        export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
-        if [ ! -e "$DIR" ]; then
-            echo "Unable to find dir"
-            exit 2
-        fi
-        if [ -e "{{lm_prefix}}/opt/{{item}}" ]; then
-          rm "{{lm_prefix}}/opt/{{item}}"
-        fi
-        ln -sf $DIR {{lm_prefix}}/opt/{{item}}
-      with_items:
-        - clam
-        - eng_ASR
-      environment: "{{lm_env}}"
 
     - name: Removing old resources (if present)
       file:
@@ -85,37 +51,21 @@
       args:
           chdir: "{{lm_prefix}}/opt/eng_ASR_resources"
 
-    - name: "Install webserver configuration for eng_ASR"
-      become: "{{lm_become}}"
-      become_user: root
-      template:
-        src: "nginx/eng_ASR.conf"
-        dest: "{{lm_prefix}}/etc/nginx/conf.d/eng_ASR.conf"
-        force: yes
-        backup: yes
-        owner: "{{unix_user}}"
-      when: webservertype == "nginx"
 
-    - name: "Install uwsgi configuration for eng_ASR"
-      become: "{{lm_become}}"
-      become_user: root
-      template:
-        src: "uwsgi/eng_ASR.ini"
-        dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/eng_ASR.ini"
-        force: yes
-        backup: yes
-        owner: "{{web_user}}"
-        group: "{{web_group}}"
+    - name: Installing web service
+      include_role:
+        name: lamachine-web-install
+      vars:
+        service:
+          nginx: eng_ASR
+          clam: eng_ASR
+          uwsgi: eng_ASR
 
-    - name: "Install clam configuration for eng_ASR"
-      become: "{{lm_become}}"
-      become_user: root
-      template:
-        src: "clam/eng_ASR.config.yml"
-        dest: "{{lm_prefix}}/etc/eng_ASR.config.yml"
-        force: yes
-        backup: yes
-        owner: "{{unix_user}}"
+    - name: Link Python package installation in opt/
+      include_role:
+        name: lamachine-python-link
+      with_items:
+        - eng_ASR
 
     - name: Register webservice metadata
       include_role:

@@ -1,0 +1,54 @@
+---
+
+- when: service.nginx
+  block:
+    - name: "Check for presence of custom nginx configuration"
+      stat:
+        path: "{{lm_prefix}}/etc/nginx/conf.d/{{service.nginx}}.custom.conf"
+      register: customuwsgi
+
+    - name: "Install webserver configuration"
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: "nginx/{{service.nginx}}.conf"
+        dest: "{{lm_prefix}}/etc/nginx/conf.d/{{service.nginx}}.conf"
+        force: yes
+        backup: no
+        owner: "{{unix_user}}"
+      when: webservertype == "nginx" and not customnginx.stat.exists
+
+- when: service.uwsgi
+  block:
+    - name: "Check for presence of custom uwsgi configuration"
+      stat:
+        path: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{service.uwsgi}}.custom.ini"
+      register: customuwsgi
+
+    - name: "Install uwsgi configurations"
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: "uwsgi/{{service.uwsgi}}.ini"
+        dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{service.uwsgi}}.ini"
+        force: yes
+        backup: no
+        owner: "{{web_user}}" #permissions need to match the runner
+        group: "{{web_group}}"
+        mode: u+rw,a+r
+      when: '("all" in services or service.uwsgi in services) and not customuwsgi.stat.exists'
+
+- when: service.clam
+  block:
+    - name: "Install clam configuration"
+      become: "{{lm_become}}"
+      become_user: root
+      template:
+        src: "clam/{{service.clam}}.config.yml"
+        dest: "{{lm_prefix}}/etc/{{service.clam}}.config.yml"
+        force: yes
+        backup: yes
+        owner: "{{unix_user}}"
+        group: "{{unix_group}}"
+        mode: u+rw,a+r
+      when: '"all" in services or service.clam in services'

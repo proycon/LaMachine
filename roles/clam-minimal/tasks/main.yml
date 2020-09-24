@@ -1,0 +1,26 @@
+---
+    - when: ran_languagemachines_basic is not defined
+      block:
+
+        - name: Install CLAM #so we don't need to rely on languagemachines-basic nor python-core
+          include_role:
+            name: lamachine-python-install
+          with_items:
+              - { pip: "flask" }
+              - { pip: "lxml" }
+              - { pip: "requests" }
+              - { pip: "requests_oauthlib" }
+              - { pip: "requests_toolbelt" }
+              - { pip: "pycrypto" }
+              - { pip: "certifi" }
+              - { pip: "pyyaml" }
+              - { github_user: "proycon", github_repo: "clam", pip: "clam" }
+          loop_control:
+               loop_var: package
+
+        - name: link python package installation in opt/
+          include_role:
+            name: lamachine-python-link
+          with_items:
+            - clam
+

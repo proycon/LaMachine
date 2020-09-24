@@ -28,64 +28,20 @@
 
     - when: webserver
       block:
-        - name: "Install webserver configuration"
-          become: "{{lm_become}}"
-          become_user: root
-          template:
-            src: "nginx/tscan.conf"
-            dest: "{{lm_prefix}}/etc/nginx/conf.d/tscan.conf"
-            force: yes
-            backup: yes
-            owner: "{{unix_user}}"
-            group: "{{unix_group}}"
+        - name: Installing web service
+          include_role:
+            name: lamachine-web-install
+          vars:
+            service:
+              nginx: tscan
+              clam: tscan
+              uwsgi: tscan
 
-          when: webservertype == "nginx" and ("all" in services or "ucto"  in services or "frog" in services or "timbl" in services or "colibricore" in services)
-        - name: "Install uwsgi configuration for tscan"
-          become: "{{lm_become}}"
-          become_user: root
-          template:
-            src: "uwsgi/{{item}}.ini"
-            dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{item}}.ini"
-            force: yes
-            backup: yes
-            owner: "{{web_user}}" #permissions need to match the runner
-            group: "{{web_group}}"
-            mode: u+rw,a+r
-          when: '"all" in services or item in services'
-          with_items:
-            - tscan
-
-        - name: "Install clam configuration for tscan"
-          become: "{{lm_become}}"
-          become_user: root
-          template:
-            src: "clam/{{item}}.config.yml"
-            dest: "{{lm_prefix}}/etc/{{item}}.config.yml"
-            force: yes
-            backup: yes
-            owner: "{{unix_user}}"
-            group: "{{unix_group}}"
-            mode: u+rw,a+r
-          when: '"all" in services or item in services'
-          with_items:
-            - tscan
-
-        - name: Link tscan webservice installation in opt/
-          become: "{{lm_become}}"
-          become_user: root
-          shell: |
-            export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
-            if [ ! -e "$DIR" ]; then
-                echo "Unable to find dir"
-                exit 2
-            fi
-            if [ -e "{{lm_prefix}}/opt/{{item}}" ]; then
-              rm "{{lm_prefix}}/opt/{{item}}"
-            fi
-            ln -sf $DIR {{lm_prefix}}/opt/{{item}}
+        - name: Link Python package installation in opt/
+          include_role:
+            name: lamachine-python-link
           with_items:
             - tscanservice
-          environment: "{{lm_env}}"
 
         - name: Register tscan webservice
           include_role:

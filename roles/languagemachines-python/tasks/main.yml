@@ -154,18 +154,8 @@
                       - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/colibricore", interfaceType: "REST", specification: "{{lm_base_url}}/colibricore/info",  mediatorApplication: "#clamservices" }
 
             - name: Link Python package installation in opt/
-              become: "{{lm_become}}"
-              become_user: root
-              shell: |
-                export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
-                if [ ! -e "$DIR" ]; then
-                    echo "Unable to find dir"
-                    exit 2
-                fi
-                if [ -e "{{lm_prefix}}/opt/{{item}}" ]; then
-                  rm "{{lm_prefix}}/opt/{{item}}"
-                fi
-                ln -sf $DIR {{lm_prefix}}/opt/{{item}}
+              include_role:
+                name: lamachine-python-link
               with_items:
                 - clam
                 - clamservices
@@ -173,63 +163,27 @@
                 - flat
                 - babelente
                 - piereling
-              environment: "{{lm_env}}"
 
-            - name: "Install webserver configuration for clamservices"
-              become: "{{lm_become}}"
-              become_user: root
-              template:
-                src: "nginx/clamservices.conf"
-                dest: "{{lm_prefix}}/etc/nginx/conf.d/clamservices.conf"
-                force: yes
-                backup: yes
-                owner: "{{unix_user}}"
-                group: "{{unix_group}}"
-              when: webservertype == "nginx" and ("all" in services or "ucto"  in services or "frog" in services or "timbl" in services or "colibricore" in services)
+            - name: Installing webserver configuration for clamservices
+              include_role:
+                name: lamachine-web-install
+              vars:
+                service:
+                  nginx: clamservices
 
-            - name: "Install webserver configuration for babelente"
-              become: "{{lm_become}}"
-              become_user: root
-              template:
-                src: "nginx/babelente.conf"
-                dest: "{{lm_prefix}}/etc/nginx/conf.d/babelente.conf"
-                force: yes
-                backup: yes
-                owner: "{{unix_user}}"
-                group: "{{unix_group}}"
-              when: webservertype == "nginx" and ("all" in services or "babelente"  in services)
-
-            - name: "Install webserver configuration for piereling"
-              become: "{{lm_become}}"
-              become_user: root
-              template:
-                src: "nginx/piereling.conf"
-                dest: "{{lm_prefix}}/etc/nginx/conf.d/piereling.conf"
-                force: yes
-                backup: yes
-                owner: "{{unix_user}}"
-                group: "{{unix_group}}"
-              when: webservertype == "nginx" and ("all" in services or "piereling"  in services)
-
-            - name: "Install uwsgi configurations"
-              become: "{{lm_become}}"
-              become_user: root
-              template:
-                src: "uwsgi/{{item}}.ini"
-                dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{item}}.ini"
-                force: yes
-                backup: yes
-                owner: "{{web_user}}" #permissions need to match the runner
-                group: "{{web_group}}"
-                mode: u+rw,a+r
-              when: '"all" in services or item in services'
+            - name: Installing web services
+              include_role:
+                name: lamachine-web-install
               with_items:
-                - frog
-                - ucto
-                - timbl
-                - colibricore
-                - babelente
-                - piereling
+                - { uwsgi: frog, clam: frog }
+                - { uwsgi: ucto, clam: ucto }
+                - { uwsgi: timbl, clam: timbl }
+                - { uwsgi: colibricore, clam: colibricore }
+                - { nginx: babelente, uwsgi: babelente, clam: babelente }
+                - { nginx: piereling, uwsgi: piereling, clam: piereling }
+              loop_control:
+                   loop_var: service
+
               #note: some things like alpino,spacy are deferred to that respective role
 
             - name: "Install clam configuration"
