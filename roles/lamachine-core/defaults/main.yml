@@ -21,6 +21,7 @@ web_group: "{{web_user}}"
 maintainer_name: "{{unix_user}}" #The name of the person maintaining this LaMachine installation
 maintainer_mail: "{{unix_user}}@{{hostname}}" #Maintainer mail
 http_port: 80 #webserver port
+force_https: no #force all urls to use https (can be set when behind a reverse proxy that handles http)
 shared_www_data: no
 move_share_www_data: no #for docker, whether to actively move the www-data to the shared data volume on lamachine-start-webserver (shared_www_data is always no though)
 clam_include: "" #a base clam configuration file to include

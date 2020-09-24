@@ -1,0 +1,7 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
+port: 8822
+urlprefix: "spreek2schrijf"
+root: "{{www_data_path}}/spreek2schrijf.clam/"
+bindir: "{{lm_prefix}}/bin/"
