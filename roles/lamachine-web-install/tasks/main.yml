@@ -5,7 +5,7 @@
     - name: "Check for presence of custom nginx configuration"
       stat:
         path: "{{lm_prefix}}/etc/nginx/conf.d/{{service.nginx}}.custom.conf"
-      register: customuwsgi
+      register: customnginx
 
     - name: "Install webserver configuration"
       become: "{{lm_become}}"
