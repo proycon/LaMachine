@@ -3,6 +3,10 @@
 #
 # These are the settings for your FLAT site.
 #
+# IMPORTANT NOTE: This file is managed by LaMachine, it will be overwritten on update
+#                 Set custom_flat_settings = true in your LaMachine configuration
+#                 if you want to keep your changes!
+#
 #---------------------------------------------------------------------------
 #               PREAMBLE (don't edit this part)
 #---------------------------------------------------------------------------
@@ -484,11 +488,6 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 #    }
 #}
 
-
-
-###########################################################################################################
-# PROTECTION AGAINST LAZINESS, GENERAL SLOPPINESS, OVERCONFIDENCE, AND DOCUMENTATION READING IMPAIRMENTS
-###########################################################################################################
 
 # Now you can start FLAT as follows:
 

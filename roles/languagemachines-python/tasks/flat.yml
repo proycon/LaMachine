@@ -57,6 +57,7 @@
               backup: yes
               owner: "{{unix_user}}"
               mode: u+rw,a+r
+          when: not custom_flat_settings
 
         - name: Applying migrations
           shell: PYTHONPATH="{{lm_prefix}}/etc:{% if root and locality == 'global' %}{{lm_pythonpath}}{% endif %}" DJANGO_SETTINGS_MODULE=flat_settings django-admin migrate --run-syncdb
