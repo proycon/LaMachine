@@ -1428,6 +1428,7 @@ fi
 echo "lab_password_sha1: \"sha1:fa40baddab88:c498070b5885ee26ed851104ddef37926459b0c4\" #default password for Jupyter Lab: lamachine, change this with 'lamachine-passwd lab'" >> $STAGEDCONFIG
 echo "lab_allow_origin: \"*\" #hosts that may access the lab environment" >> $STAGEDCONFIG
 echo "flat_password: \"flat\" #initial password for the FLAT administrator (if installed; username 'flat'), updating this later than on initial installation has no effect (edit in FLAT itself)!" >> $STAGEDCONFIG
+echo "custom_flat_settings: false  #set this to true if you customized your flat settings and want to prevent LaMachine from overwriting it again on update" >> $STAGEDCONFIG
 echo "ssh_public_key: \"\" #ssh public key (the actual contents of id_rsa.pub) to allow the container/VM to connect to restricted outside services" >> $STAGEDCONFIG
 echo "ssh_private_key: \"\" #ssh private key (the actual contents of id_rsa) to allow the container/VM to connect to restricted outside services" >> $STAGEDCONFIG
 echo "ssh_key_filename: \"id_rsa\" #the prefix used to store the above ssh keys (if provided) (.pub will be automatically appended for public key)" >> $STAGEDCONFIG
@@ -1878,6 +1879,4 @@ if [ "$CONTROLLER" = "internal" ] && [ $rc -eq 0 ]; then  #only clean up if ever
     rm $STAGEDMANIFEST 2>/dev/null
 fi
 if [ $NEED_VIRTUALENV -eq 1 ]; then
-    deactivate #deactivate the controller before quitting
-fi
-exit $rc
+    deactivate #deactivate the controller before quitcustomized your flat settings and want to prevent LaMachine from overwriting it again on updateexit $rc
