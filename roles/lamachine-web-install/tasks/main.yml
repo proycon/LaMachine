@@ -1,6 +1,6 @@
 ---
 
-- when: service.nginx
+- when: 'nginx' in service and service.nginx:
   block:
     - name: "Check for presence of custom nginx configuration"
       stat:
@@ -18,7 +18,7 @@
         owner: "{{unix_user}}"
       when: webservertype == "nginx" and not customnginx.stat.exists
 
-- when: service.uwsgi
+- when: 'uwsgi' in service and service.uwsgi
   block:
     - name: "Check for presence of custom uwsgi configuration"
       stat:
@@ -38,7 +38,7 @@
         mode: u+rw,a+r
       when: '("all" in services or service.uwsgi in services) and not customuwsgi.stat.exists'
 
-- when: service.clam
+- when: 'clam' in service and service.clam
   block:
     - name: "Install clam configuration"
       become: "{{lm_become}}"
