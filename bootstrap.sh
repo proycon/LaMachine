@@ -1879,4 +1879,6 @@ if [ "$CONTROLLER" = "internal" ] && [ $rc -eq 0 ]; then  #only clean up if ever
     rm $STAGEDMANIFEST 2>/dev/null
 fi
 if [ $NEED_VIRTUALENV -eq 1 ]; then
-    deactivate #deactivate the controller before quitcustomized your flat settings and want to prevent LaMachine from overwriting it again on updateexit $rc
+    deactivate #deactivate the controller before quitting
+fi
+exit $rc
