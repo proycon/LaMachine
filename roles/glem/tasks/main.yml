@@ -37,3 +37,9 @@
         name: lamachine-python-link
       with_items:
         - glem
+
+    - name: Link Python package installation in opt/
+      include_role:
+        name: lamachine-python-link
+      with_items:
+        - webglem
