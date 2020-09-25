@@ -1,4 +1,5 @@
 ---
 dependencies:
+  - { role: "clam-minimal", when: "'fullrunonly' not in ansible_skip_tags"  }
   - { role: kaldi, when: "'fullrunonly' not in ansible_skip_tags"  }
   - { role: kaldi_nl, when: "'fullrunonly' not in ansible_skip_tags"  }

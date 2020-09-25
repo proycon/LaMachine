@@ -10,23 +10,6 @@
            metadata:
              identifier: "oersetter"
 
-    - name: Link Python package installation in opt/
-      become: "{{lm_become}}"
-      become_user: root
-      shell: |
-        export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
-        if [ ! -e "$DIR" ]; then
-            echo "Unable to find dir"
-            exit 2
-        fi
-        if [ -e "{{lm_prefix}}/opt/{{item}}" ]; then
-          rm "{{lm_prefix}}/opt/{{item}}"
-        fi
-        ln -sf $DIR {{lm_prefix}}/opt/{{item}}
-      with_items:
-        - oersetter
-      environment: "{{lm_env}}"
-
     - when: (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or  ansible_distribution|lower == "linux mint") and root
       block:
         - name: Get git-lfs installation script
@@ -56,38 +39,20 @@
         dest: "{{lm_prefix}}/opt/oersetter-models"
         update: yes
 
-    - name: "Install webserver configuration for oersetter"
-      become: "{{lm_become}}"
-      become_user: root
-      template:
-        src: "nginx/oersetter.conf"
-        dest: "{{lm_prefix}}/etc/nginx/conf.d/oersetter.conf"
-        force: yes
-        backup: yes
-        owner: "{{unix_user}}"
-      when: webservertype == "nginx" and ('"all" in services or "oersetter" in services')
+    - name: Installing web service
+      include_role:
+        name: lamachine-web-install
+      vars:
+        service:
+          nginx: oersetter
+          clam: oersetter
+          uwsgi: oersetter
 
-    - name: "Install uwsgi configuration for oersetter"
-      become: "{{lm_become}}"
-      become_user: root
-      template:
-        src: "uwsgi/oersetter.ini"
-        dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/oersetter.ini"
-        force: yes
-        backup: yes
-        owner: "{{web_user}}"
-        group: "{{web_group}}"
-      when: '"all" in services or "oersetter" in services'
-
-    - name: "Install clam configuration for oersetter"
-      become: "{{lm_become}}"
-      become_user: root
-      template:
-        src: "clam/oersetter.config.yml"
-        dest: "{{lm_prefix}}/etc/oersetter.config.yml"
-        force: yes
-        backup: yes
-        owner: "{{unix_user}}"
+    - name: Link Python package installation in opt/
+      include_role:
+        name: lamachine-python-link
+      with_items:
+        - oersetter
 
     - name: Register webservice metadata
       include_role:

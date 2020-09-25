@@ -4,22 +4,6 @@
       #    msg: "You did not set fame_user and fame_password in your configuration. This is required for forcedalignment to work! If you do not have the credentials yet, contact h.vandenheuvel@let.ru.nl to request access."
     #  when: fame_user == "undefined" or fame_password == "undefined"
 
-    - name: Install CLAM #so we don't need to rely on languagemachines-basic nor python-core
-      include_role:
-        name: lamachine-python-install
-      with_items:
-          - { pip: "flask" }
-          - { pip: "lxml" }
-          - { pip: "requests" }
-          - { pip: "requests_oauthlib" }
-          - { pip: "requests_toolbelt" }
-          - { pip: "pycrypto" }
-          - { pip: "certifi" }
-          - { pip: "pyyaml" }
-          - { github_user: "proycon", github_repo: "clam", pip: "clam" }
-      loop_control:
-           loop_var: package
-
     - name: Installing webservice
       include_role:
         name: lamachine-python-install
@@ -31,23 +15,6 @@
            metadata:
               identifier: "forcedalignment2"
 
-    - name: Link Python package installation in opt/
-      become: "{{lm_become}}"
-      become_user: root
-      shell: |
-        export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
-        if [ ! -e "$DIR" ]; then
-            echo "Unable to find dir"
-            exit 2
-        fi
-        if [ -e "{{lm_prefix}}/opt/{{item}}" ]; then
-          rm "{{lm_prefix}}/opt/{{item}}"
-        fi
-        ln -sf $DIR {{lm_prefix}}/opt/{{item}}
-      with_items:
-        - clam
-        - forcedalignment2
-      environment: "{{lm_env}}"
 
     - name: Removing old resources (if present)
       file:
@@ -85,37 +52,20 @@
       args:
           chdir: "{{lm_prefix}}/opt/forcedalignment2_resources"
 
-    - name: "Install webserver configuration for forcedalignment2"
-      become: "{{lm_become}}"
-      become_user: root
-      template:
-        src: "nginx/forcedalignment2.conf"
-        dest: "{{lm_prefix}}/etc/nginx/conf.d/forcedalignment2.conf"
-        force: yes
-        backup: yes
-        owner: "{{unix_user}}"
-      when: webservertype == "nginx"
+    - name: Installing web service
+      include_role:
+        name: lamachine-web-install
+      vars:
+        service:
+          nginx: forcedalignment2
+          clam: forcedalignment2
+          uwsgi: forcedalignment2
 
-    - name: "Install uwsgi configuration for forcedalignment2"
-      become: "{{lm_become}}"
-      become_user: root
-      template:
-        src: "uwsgi/forcedalignment2.ini"
-        dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/forcedalignment2.ini"
-        force: yes
-        backup: yes
-        owner: "{{web_user}}"
-        group: "{{web_group}}"
-
-    - name: "Install clam configuration for forcedalignment2"
-      become: "{{lm_become}}"
-      become_user: root
-      template:
-        src: "clam/forcedalignment2.config.yml"
-        dest: "{{lm_prefix}}/etc/forcedalignment2.config.yml"
-        force: yes
-        backup: yes
-        owner: "{{unix_user}}"
+    - name: Link Python package installation in opt/
+      include_role:
+        name: lamachine-python-link
+      with_items:
+        - forcedalignment2
 
     - name: Register webservice metadata
       include_role:

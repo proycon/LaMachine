@@ -26,60 +26,17 @@
               - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/asr4J", interfaceType: "WUI" }
               - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/asr4J", interfaceType: "REST", specification: "{{lm_base_url}}/asr4J/info" }
 
-    - name: "Install uwsgi configurations"
-      become: "{{lm_become}}"
-      become_user: root
-      template:
-        src: "uwsgi/{{item}}.ini"
-        dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/{{item}}.ini"
-        force: yes
-        backup: yes
-        owner: "{{web_user}}" #permissions need to match the runner
-        group: "{{web_group}}"
-        mode: u+rw,a+r
-      when: '"all" in services or item in services'
-      with_items:
-        - asr4J
-
-    - name: "Install clam configuration"
-      become: "{{lm_become}}"
-      become_user: root
-      template:
-        src: "clam/{{item}}.config.yml"
-        dest: "{{lm_prefix}}/etc/{{item}}.config.yml"
-        force: yes
-        backup: yes
-        owner: "{{unix_user}}"
-        group: "{{unix_group}}"
-        mode: u+rw,a+r
-      when: '"all" in services or item in services'
-      with_items:
-        - asr4J
-
-    - name: "Install webserver configuration for asr4J"
-      become: "{{lm_become}}"
-      become_user: root
-      template:
-        src: "nginx/asr4J.conf"
-        dest: "{{lm_prefix}}/etc/nginx/conf.d/asr4J.conf"
-        force: yes
-        backup: yes
-        owner: "{{unix_user}}"
-      when: webservertype == "nginx"
+    - name: Installing web service
+      include_role:
+        name: lamachine-web-install
+      vars:
+        service:
+          nginx: asr4J
+          clam: asr4J
+          uwsgi: asr4J
 
     - name: Link Python package installation in opt/
-      become: "{{lm_become}}"
-      become_user: root
-      shell: |
-        export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
-        if [ ! -e "$DIR" ]; then
-            echo "Unable to find dir"
-            exit 2
-        fi
-        if [ -e "{{lm_prefix}}/opt/{{item}}" ]; then
-          rm "{{lm_prefix}}/opt/{{item}}"
-        fi
-        ln -sf $DIR {{lm_prefix}}/opt/{{item}}
+      include_role:
+        name: lamachine-python-link
       with_items:
         - asr4J
-      environment: "{{lm_env}}"

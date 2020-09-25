@@ -111,34 +111,11 @@
                 - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/piccl", interfaceType: "WUI" }
                 - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/piccl", specification: "{{lm_base_url}}/piccl/info",  interfaceType: "REST" }
 
-        - name: "Install webserver configuration for PICCL"
-          become: "{{lm_become}}"
-          become_user: root
-          template:
-            src: "nginx/piccl.conf"
-            dest: "{{lm_prefix}}/etc/nginx/conf.d/piccl.conf"
-            force: yes
-            backup: yes
-            owner: "{{unix_user}}"
-          when: webservertype == "nginx"
-
-        - name: "Install uwsgi configuration for PICCL"
-          become: "{{lm_become}}"
-          become_user: root
-          template:
-            src: "uwsgi/piccl.ini"
-            dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/piccl.ini"
-            force: yes
-            backup: yes
-            owner: "{{web_user}}"
-            group: "{{web_group}}"
-
-        - name: "Install clam configuration for PICCL"
-          become: "{{lm_become}}"
-          become_user: root
-          template:
-            src: "clam/piccl.config.yml"
-            dest: "{{lm_prefix}}/etc/piccl.config.yml"
-            force: yes
-            backup: yes
-            owner: "{{unix_user}}"
+        - name: Installing web service
+          include_role:
+            name: lamachine-web-install
+          vars:
+            service:
+              nginx: piccl
+              clam: piccl
+              uwsgi: piccl

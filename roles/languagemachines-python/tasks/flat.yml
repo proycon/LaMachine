@@ -2,28 +2,13 @@
 
     - when: webserver and ("flat" in services or "all" in services)
       block:
-        - name: "Install webserver configuration"
-          become: "{{lm_become}}"
-          become_user: root
-          template:
-            src: "nginx/flat.conf"
-            dest: "{{lm_prefix}}/etc/nginx/conf.d/flat.conf"
-            force: yes
-            backup: yes
-            owner: "{{unix_user}}"
-          when: webservertype == "nginx"
-
-        - name: "Install uwsgi configuration for Flat"
-          become: "{{lm_become}}"
-          become_user: root
-          template:
-            src: "uwsgi/flat.ini"
-            dest: "{{lm_prefix}}/etc/uwsgi-emperor/vassals/flat.ini"
-            force: yes
-            backup: yes
-            owner: "{{web_user}}"
-            group: "{{web_group}}"
-            mode: u+rw,a+r
+        - name: Install FLAT webapplication
+          include_role:
+              name: lamachine-web-install
+          vars:
+            service:
+              nginx: flat
+              uwsgi: flat
 
         - name: Create server writable directories for FLAT (global)
           become: "{{lm_become}}"

@@ -1,0 +1,4 @@
+service:
+  nginx: ""
+  uwsgi: ""
+  clam: ""
