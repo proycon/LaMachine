@@ -6,11 +6,6 @@
         package:
             user: proycon
             repo: valkuil-gecco
-            metadata:
-                name: Valkuil
-                entryPoints:
-                    - { "@type": "EntryPoint", name: "Valkuil interface", urlTemplate: "{{lm_base_url}}/valkuil", interfaceType: "WUI" }
-                    - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/valkuil", specification: "{{lm_base_url}}/valkuil/info",  interfaceType: "REST" }
 
     - name: Check if models already downloaded
       stat:
@@ -71,6 +66,15 @@
         recurse: yes
       ignore_errors: yes
 
-
+    - name: Registering Valkuil webservice entrypoints
+      include_role:
+        name: lamachine-register
+      vars:
+        update: valkuil-gecco
+        metadata:
+          identifier: valkuil-gecco
+          entryPoints:
+              - { "@type": "EntryPoint", name: "Valkuil interface", urlTemplate: "{{lm_base_url}}/valkuil", interfaceType: "WUI" }
+              - { "@type": "EntryPoint", urlTemplate: "{{lm_base_url}}/valkuil", specification: "{{lm_base_url}}/valkuil/info",  interfaceType: "REST" }
 
 
