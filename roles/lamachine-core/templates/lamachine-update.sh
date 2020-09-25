@@ -37,58 +37,62 @@ else
 fi
 FIRST=1
 INTERACTIVE=1
-if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-    echo "lamachine-update updates your LaMachine installation"
-    echo "USAGE: lamachine-update [options] [variables]"
-    echo "OPTIONS:"
-    echo "--edit            Opens a text editor to edit the configuration and installation manifest prior to update."
-    echo "--editonly        Opens a text editor to edit the configuration and installation manifest, does not update."
-    echo "--noninteractive  Do not query to user to input at any point."
-    echo "--only [package]  Update only the specified package (or comma seperated list of multiple) "
-    echo "                  Note that this tries to leave most dependencies as-is (but no guarantees!)."
-    echo "--debug           Extra debug"
-    echo "VARIABLES:"
-    echo "force=1        Force recompilation of all sources"
-    echo "force=2        Delete all sources prior to update"
-    exit 0
-fi
-if [ "$1" = "--edit" ] || [ "$1" = "--editonly" ]; then
-    if [ -z "$EDITOR" ]; then
-      export EDITOR=nano
+OPTS=""
+i=0
+for arg in "$@"; do
+    i=$((i+1))
+    if [ "$arg" = "--help" ] || [ "$arg" = "-h" ]; then
+        echo "lamachine-update updates your LaMachine installation"
+        echo "USAGE: lamachine-update [options] [variables]"
+        echo "OPTIONS:"
+        echo "--edit            Opens a text editor to edit the configuration and installation manifest prior to update."
+        echo "--editonly        Opens a text editor to edit the configuration and installation manifest, does not update."
+        echo "--noninteractive  Do not query to user to input at any point."
+        echo "--only [package]  Update only the specified package (or comma seperated list of multiple) "
+        echo "                  Note that this tries to leave most dependencies as-is (but no guarantees!)."
+        echo "--debug           Extra debug"
+        echo "VARIABLES:"
+        echo "force=1        Force recompilation of all sources"
+        echo "force=2        Delete all sources prior to update"
+        exit 0
     fi
-    if [ -e "host_vars/{{hostname}}.yml" ]; then
-        #LaMachine v2.1.0+
-        $EDITOR "host_vars/{{hostname}}.yml"
-    elif [ -e "host_vars/localhost.yml" ]; then
-        #fallback
-        $EDITOR "host_vars/localhost.yml"
-    elif [ -e "host_vars/lamachine-$LM_NAME.yml" ]; then
-        #LaMachine v2.0.0
-        $EDITOR "host_vars/lamachine-$LM_NAME.yml"
+    if [ "$arg" = "--edit" ] || [ "$arg" = "--editonly" ]; then
+        if [ -z "$EDITOR" ]; then
+          export EDITOR=nano
+        fi
+        if [ -e "host_vars/{{hostname}}.yml" ]; then
+            #LaMachine v2.1.0+
+            $EDITOR "host_vars/{{hostname}}.yml"
+        elif [ -e "host_vars/localhost.yml" ]; then
+            #fallback
+            $EDITOR "host_vars/localhost.yml"
+        elif [ -e "host_vars/lamachine-$LM_NAME.yml" ]; then
+            #LaMachine v2.0.0
+            $EDITOR "host_vars/lamachine-$LM_NAME.yml"
+        fi
+        if [ -e "hosts.{{conf_name}}" ]; then
+            #LaMachine v2.0.0
+            $EDITOR "install-{{conf_name}}.yml"
+        else
+            #LaMachine v2.1.0+
+            $EDITOR "install.yml"
+        fi
+        FIRST=$((i+1))
+    elif [ "$arg" = "--noninteractive" ]; then
+        INTERACTIVE=0
+        FIRST=$((i+1))
+    elif [ "$arg" = "--only" ]; then
+        j=$((i+1))
+        ONLY="${!j}"
+        FIRST=$((i+2))
     fi
-    if [ -e "hosts.{{conf_name}}" ]; then
-        #LaMachine v2.0.0
-        $EDITOR "install-{{conf_name}}.yml"
-    else
-        #LaMachine v2.1.0+
-        $EDITOR "install.yml"
+    if [ "$arg" = "--editonly" ]; then
+        exit 0
     fi
-    FIRST=2
-elif [ "$1" = "--noninteractive" ]; then
-    INTERACTIVE=0
-    FIRST=2
-elif [ "$1" = "--only" ]; then
-    ONLY="$2"
-    FIRST=3
-fi
-if [ "$1" = "--editonly" ]; then
-    exit 0
-fi
-if [ "$1" = "--debug" ]; then
-    OPTS="-v -v"
-else
-    OPTS=""
-fi
+    if [ "$arg" = "--debug" ]; then
+        OPTS="$OPTS -v -v"
+    fi
+done
 if [[ {{root|int}} -eq 1 ]] && [[ $INTERACTIVE -eq 1 ]]; then
  OPTS="$OPTS --ask-become-pass"
 fi
