@@ -13,9 +13,9 @@ export ANSIBLE_FORCE_COLOR=true
 echo "${bold}=====================================================================${normal}"
 echo "           ,              ${bold}LaMachine v{{lamachine_version}}${normal} - ${boldblue}UPDATER${normal}"
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
-echo "           (----/         Language Machines research group"
-echo "            /| |\         Centre of Language and Speech Technology"
-echo "           / / /|	        Radboud University Nijmegen "
+echo "           (----/         "
+echo "            /| |\         CLST, Radboud University Nijmegen &"
+echo "           / / /|	        DI, Humanities Cluster, KNAW        (funded by CLARIAH)"
 echo "${bold}=====================================================================${normal}"
 
 if [ -e "{{lm_path}}" ]; then

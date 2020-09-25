@@ -1,9 +1,9 @@
 ==============================================================================
-           ,              LaMachine v{{ lamachine_version }} - Unified NLP Software distribution
+           ,              LaMachine v{{ lamachine_version }} - NLP Software distribution
           ~)    '                (https://proycon.github.io/LaMachine)
            (----)
-            /| |\         Centre for Language and Speech Technology
-           / / /|	             Radboud University Nijmegen
+            /| |\         CLST, Radboud Universit Nijmegen &
+           / / /|	      DI, Humanities Cluster, KNAW     (funded by CLARIAH)
 ==============================================================================
  Build Name: {{ conf_name }}
  Version: {{ version }}      Build time: {{ ansible_date_time.date }} {{ ansible_date_time.time }} {{ansible_date_time.tz}}
