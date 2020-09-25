@@ -1,7 +1,7 @@
 {% if clam_include %}
 include: "{{clam_include}}"
 {% endif %}
-port: 8812
+port: 8823
 urlprefix: "g2pservice"
 root: "{{www_data_path}}/g2pservice.clam/"
 bindir: "{{lm_prefix}}/bin/"
