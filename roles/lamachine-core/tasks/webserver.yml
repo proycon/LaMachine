@@ -178,8 +178,8 @@
             group: "{{web_group}}"
             mode: u+rwx,g+rwsx,a+rx
         with_items:
-           - "notebooks"
-           - lamastats"
+           - notebooks
+           - lamastats
 
       - name: Symlink webserver data directory
         become: "{{lm_become}}"
