@@ -50,6 +50,7 @@
               executable: /bin/bash
               chdir: "{{lm_prefix}}/etc"
           environment: "{{lm_env}}"
+          when: not custom_flat_settings
 
         - name: Create FLAT superuser
           shell: |
@@ -71,6 +72,7 @@
               executable: /bin/bash
               chdir: "{{lm_prefix}}/etc"
           environment: "{{lm_env}}"
+          when: not custom_flat_settings
 
         - name: Configure FLAT domain
           shell: |
@@ -90,6 +92,7 @@
               executable: /bin/bash
               chdir: "{{lm_prefix}}/etc"
           environment: "{{lm_env}}"
+          when: not custom_flat_settings
 
         - name: Ensure FLAT user database is writable
           file:
