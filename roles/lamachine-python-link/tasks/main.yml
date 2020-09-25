@@ -1,15 +1,16 @@
 ---
-    - name: Link Python package installation in opt/
-      become: "{{lm_become}}"
-      become_user: root
-      shell: |
-        export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
-        if [ ! -e "$DIR" ]; then
-            echo "Unable to find dir"
-            exit 2
-        fi
-        if [ -e "{{lm_prefix}}/opt/{{item}}" ]; then
-          rm "{{lm_prefix}}/opt/{{item}}"
-        fi
-        ln -sf $DIR {{lm_prefix}}/opt/{{item}}
-      environment: {{lm_env}}
+
+  - name: Link Python package installation in opt/
+    become: "{{lm_become}}"
+    become_user: root
+    shell: |
+      export DIR=$(python3 -c "import {{item}}; print({{item}}.__path__[0])")
+      if [ ! -e "$DIR" ]; then
+          echo "Unable to find dir"
+          exit 2
+      fi
+      if [ -e "{{lm_prefix}}/opt/{{item}}" ]; then
+        rm "{{lm_prefix}}/opt/{{item}}"
+      fi
+      ln -sf $DIR {{lm_prefix}}/opt/{{item}}
+    environment: "{{lm_env}}"
