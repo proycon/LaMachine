@@ -24,3 +24,10 @@
       args:
         chdir: "{{ lm_prefix }}/opt/kaldi_nl"
       environment: "{{lm_env}}"
+
+    - name: Ugly patch needed to get oral history working properly
+      shell: |
+          if [ ! -e "{{ lm_prefix }}/opt/kaldi_nl/models/Models" ]; then
+            ln -s "{{ lm_prefix }}/opt/kaldi_nl/models" "{{ lm_prefix }}/opt/kaldi_nl/models/Models"
+          fi
+      environment: "{{lm_env}}"
