@@ -12,7 +12,7 @@
     when: ansible_distribution|lower != 'macosx'
 
   - name: Unpacking libtorch for linux
-    shell: "unzip -f libtorch.zip"
+    shell: "unzip -o libtorch.zip"
     args:
       chdir: "{{ lm_prefix }}/opt"
     when: ansible_distribution|lower != 'macosx'
