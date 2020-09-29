@@ -1,0 +1,3 @@
+---
+dependencies:
+  - { role: rust-core, when: "'fullrunonly' not in ansible_skip_tags"  }
