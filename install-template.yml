@@ -52,6 +52,7 @@
      # - rust-core                        ## Rust, Rustup and Cargo ##
      # - julia-core                       ## Julia compiler and standard library
      # - languagemachines-rust            ## NLP tools written in Rust (sesdiff, ssam)
+     # - deepfrog                         ## Deep learning NLP tool
      # - piccl                            ## PICCL: Workflows for Post-OCR correction and normalisation and pseudo-modernisation of historical text. ##
                                              # [2.2GB! - not supported on Mac OS X]
                                              # (provides TICCL-Tools)
