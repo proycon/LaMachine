@@ -404,9 +404,8 @@
     become: "{{lm_become}}"
     become_user: root
     template:
-      src: "base.config.yml"
-      dest: "{{lm_prefix}}/etc/base.config.yml"
-      force: no
+      src: "clam_base.config.yml"
+      dest: "{{lm_prefix}}/etc/clam_base.config.yml"
 
   - name: Installing lamastats for analytics
     include_role:
