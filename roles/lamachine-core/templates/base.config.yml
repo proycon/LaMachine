@@ -1,0 +1,3 @@
+{% if webserver and ("flat" in services or "all" in services) %}
+flaturl: "http://{{hostname}}/flat"
+{% endif %}

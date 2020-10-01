@@ -400,6 +400,14 @@
       state: link
     when: root and locality == "global"
 
+  - name: Adding base configuration for CLAM
+    become: "{{lm_become}}"
+    become_user: root
+    template:
+      src: "base.config.yml"
+      dest: "{{lm_prefix}}/etc/base.config.yml"
+      force: no
+
   - name: Installing lamastats for analytics
     include_role:
       name: lamachine-python-install
