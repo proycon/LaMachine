@@ -4,5 +4,4 @@ include: "{{clam_include}}"
 port: 8813
 urlprefix: "valkuil"
 root: "{{www_data_path}}/valkuil.clam/"
-flaturl: "{% if http_port|int == 443 %}https://{% else %}http://{% endif %}{{hostname}}{% if http_port != 80 and http_port != 443 %}:{{http_port}}{% endif %}/flat"
 valkuildir: "{{lm_prefix}}/src/valkuil-gecco"
