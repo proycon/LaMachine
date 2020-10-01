@@ -4,6 +4,5 @@ include: "{{clam_include}}"
 port: 8806
 urlprefix: "piccl"
 root: "{{www_data_path}}/piccl.clam/"
-flaturl: "{% if http_port|int == 443 %}https://{% else %}http://{% endif %}{{hostname}}{% if http_port != 80 and http_port != 443 %}:{{http_port}}{% endif %}/flat"
 piccldir: "{{lm_prefix}}/opt/PICCL"
 piccldataroot: "{{lm_prefix}}/opt/PICCL"

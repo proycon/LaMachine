@@ -1417,9 +1417,12 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
     echo "force_https: no #Should be enabled when behind a reverse proxy that handles https for you, ensures all internal links are https" >> $STAGEDCONFIG
 echo "mapped_http_port: $HOSTPORT #mapped webserver port on host system (for VM/docker only)
 services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all possible services from the software categories you install will be provided. You can remove this and list specific services you want to enable. This is especially needed in case of a LaMachine installation that intends to only provide a single service.
-webservertype: nginx #If set to anything different, the internal webserver will not be enabled/provided by LaMachine (which allows you to run your own external one), do leave webserver: true set as is though.
-clam_include: \"\" #You can set this to a CLAM base configuration file that will be included from all the webservices, it allows you to do configure common traits like authentication
-" >> $STAGEDCONFIG
+webservertype: nginx #If set to anything different, the internal webserver will not be enabled/provided by LaMachine (which allows you to run your own external one), do leave webserver: true set as is though." >> $STAGEDCONFIG
+if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "singularity" ]] || [[ $FLAVOUR == "lxc" ]] || [[ $FLAVOUR == "remote" ]]; then
+    echo "clam_include: \"/usr/local/etc/base.config.yml\" #You can set this to a CLAM base configuration file that will be included from all the webservices, it allows you to do configure common traits like authentication" >> $STAGEDCONFIG
+else
+    echo "clam_include: \"$BASEDIR/$LM_NAME/etc/base.config.yml\" #You can set this to a CLAM base configuration file that will be included from all the webservices, it allows you to do configure common traits like authentication" >> $STAGEDCONFIG
+fi
 if [[ $OS == "mac" ]] || [[ "$FLAVOUR" == "remote" ]]; then
     echo "lab: false #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)" >> $STAGEDCONFIG
 else
