@@ -715,9 +715,7 @@
         - name: Compiling and installaitng docker-container-init
           become: "{{lm_become}}"
           become_user: root
-          command: "gcc -o {{lm_prefix}}/docker-container-init docker-container-init.c"
-          vars:
-            chdir: "{{source_path}}/docker-container-init"
+          command: "gcc -o {{lm_prefix}}/bin/docker-container-init {{source_path}}/docker-container-init/docker-container-init.c"
           when: locality == "global"
 
 
