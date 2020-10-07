@@ -9,7 +9,7 @@ CONFFILE = "{{source_path}}/LaMachine/host_vars/{{hostname}}.yml"
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Interactive tool to set a password for one or more components of LaMachine", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--password','-p',type=str, help="Provide password as parameter (this is considered unsafe in most environments!)", action='store', required=False)
-    parser.add_argument('targets', nargs='+', help='Targets, valid are: main (e.g. for ssh), lab (for jupyterlab)')
+    parser.add_argument('targets', nargs='+', help='Targets, valid are: main (e.g. for ssh), lab (for jupyterlab), flat')
     args = parser.parse_args()
 
     for target in args.targets:
