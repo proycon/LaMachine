@@ -14,9 +14,11 @@ if __name__ == '__main__':
 
     for target in args.targets:
         if target == "main":
+            if args.password:
+                print("Unable to use the password passed as paramter, querying interactively",file=sys.stderr)
             print("Enter a password for the current unix user:")
             r = os.system("passwd")
-            if r != 0:
+            if r == 0:
                 print("Password updated",file=sys.stderr)
             else:
                 print("Failure updating password",file=sys.stderr)
@@ -27,12 +29,22 @@ if __name__ == '__main__':
             else:
                 print("Enter a password for the JupyterLab environment:")
                 lab_passwd_hash = passwd()
-            r = os.system("sed -i.bak 's/lab_password_sha1.*/lab_password_sha1: \"" + lab_passwd_hash + "\"/' " + CONFFILE)
-            if r != 0:
-                #no lab password yet? append
-                with open(CONFFILE,'a','utf-8') as f:
-                    print('lab_password_sha1: "' + lab_passwd_hash + '"')
-            print("Password scheduled to update, please run lamachine-update now",file=sys.stderr)
+            r = os.system("lamachine-config lab_password_sha1 \""+ lab_passwd_hash + "\"")
+            if r == 0:
+                print("Password scheduled to update, please run lamachine-update now",file=sys.stderr)
+            else:
+                print("Failured to set password", sys.stderr)
+        elif target == "flat":
+            if args.password:
+                pw = args.password
+            else:
+                pw = input("Enter a password for FLAT:").strip()
+            r = os.system("lamachine-config flat_password \""+ pw + "\"")
+            if r == 0:
+                print("Password scheduled to update, please run lamachine-update now",file=sys.stderr)
+            else:
+                print("Failured to set password", sys.stderr)
+            sys.exit(r)
         else:
             print("No such target: ", target,file=sys.stderr)
 
