@@ -114,5 +114,11 @@ buildmatrix = [
         "version": 'stable',
         "minimal": True,
         "install": "tscan"
-    }
+    },
+    {
+        "name": 'core',
+        "flavour": 'docker',
+        "version": 'stable',
+        "install": "lamachine-core"
+    },
 ]
