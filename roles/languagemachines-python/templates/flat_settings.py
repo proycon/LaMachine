@@ -275,7 +275,7 @@ CONFIGURATIONS = {
 #############################################################################
 
 ADMINS = ( #Change to your contact details
-    ('Maarten van Gompel', 'proycon@anaproy.nl'),
+    ("{{maintainer_name}}", "{{maintainer_mail}}"),
 )
 
 # Make this unique, and don't share it with anybody.
@@ -302,7 +302,7 @@ MANAGERS = ADMINS
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', "PLACEHOLDERHOST", "{{hostname}}"]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', "{{lm_base_url|urlsplit('hostname')}}", "{{hostname}}"]
 
 
 # Local time zone for this installation. Choices can be found here:
