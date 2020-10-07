@@ -25,8 +25,16 @@ if [ ! -z "$1" ]; then
             exit $?
         fi
     elif [ ! -z "$2" ]; then
-        if ! sed -i.bak "s/^$1:.*$/$1: $2/g" "$CONFFILE"; then
-            echo "$1: $2" >> "$CONFFILE" || exit 2
+        if grep -e "^$1:.*$" "$CONFFILE" > /dev/null; then
+            if ! sed -i.bak -e "s|^$1:.*$|$1: $2|g" "$CONFFILE"; then
+                echo "Failed to update existing config key $1"
+                exit 2
+            fi
+        else
+            if ! echo "$1: $2" >> "$CONFFILE"; then
+                echo "Failed to add new config key $1"
+                exit 3
+            fi
         fi
     else
         cat "$CONFFILE" | grep -e "^$1:"
