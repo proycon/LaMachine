@@ -279,10 +279,14 @@ ADMINS = ( #Change to your contact details
 )
 
 # Make this unique, and don't share it with anybody.
+{% if django_secret_key is defined %}
+SECRET_KEY = '{{django_secret_key}}'
+{% else %}
 # IMPORTANT!!!! GENERATE A NEW SECRET KEY !!!! The default one here is *NOT*
-# secret as it's publicly disclosed in the FLAT sources!
+# secret as it's publicly disclosed in source!
 # (Use for instance http://www.miniwebtool.com/django-secret-key-generator/)
 SECRET_KEY = 'ki5^nfv02@1f1(+*#l_9GDi9h&cf^_lv6bs4j9^6mpr&(%o4zk'
+{% endif %}
 
 DEBUG = True #Set to False for production environments!!!!
 
@@ -298,7 +302,7 @@ MANAGERS = ADMINS
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', "{{hostname}}"]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', "PLACEHOLDERHOST", "{{hostname}}"]
 
 
 # Local time zone for this installation. Choices can be found here:

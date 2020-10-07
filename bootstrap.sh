@@ -1435,6 +1435,8 @@ echo "custom_flat_settings: false  #set this to true if you customized your flat
 echo "ssh_public_key: \"\" #ssh public key (the actual contents of id_rsa.pub) to allow the container/VM to connect to restricted outside services" >> $STAGEDCONFIG
 echo "ssh_private_key: \"\" #ssh private key (the actual contents of id_rsa) to allow the container/VM to connect to restricted outside services" >> $STAGEDCONFIG
 echo "ssh_key_filename: \"id_rsa\" #the prefix used to store the above ssh keys (if provided) (.pub will be automatically appended for public key)" >> $STAGEDCONFIG
+DJANGO_SECRET_KEY=$(LC_ALL=C tr -dc 'A-Za-z0-9_' </dev/urandom | head -c 50 ; echo)
+echo "django_secret_key: \"$DJANGO_SECRET_KEY\" #secret key for django-based applications (for internal use only)" >> $STAGEDCONFIG
 if [ $FORCE -ne 0 ]; then
     echo "force: $FORCE #Sets the default force parameter for updates, set to 1 to force updates or 2 to explicitly remove all sources and start from scratch on each update. Remove this line entirely if you don't need it or are in doubt" >> $STAGEDCONFIG
 fi

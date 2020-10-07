@@ -86,7 +86,7 @@ uwsgi --ini "{{lm_prefix}}/etc/uwsgi-emperor/emperor.ini" --die-on-term 2> "{{lm
     $NGINX -c "{{lm_prefix}}/etc/nginx/nginx.conf" -p "{{lm_prefix}}"  -g "pid {{lm_prefix}}/var/run/nginx.pid;"
  {% endif %}
 {% else %}
-    echo "${boldred}WARNNG: You are using a non-default webservertype, unable to manage webserver for you...${normal}">&2
+    echo "${boldred}WARNING: You are using a non-default webservertype, unable to manage webserver for you...${normal}">&2
 {% endif %}
 
 
@@ -97,27 +97,21 @@ echo
 {% endif %}
 
 {% if lab %}
-echo "${bold}Starting Jupyter Lab...${normal}"
-killall jupyter-lab 2> /dev/null
-cd "{{data_path}}"
-jupyter lab --no-browser --config={{lm_prefix}}/etc/jupyter_notebook_config.py >/dev/null 2>{{lm_prefix}}/var/log/jupyterlab.log &
-echo "Note:     Jupyter Lab logs can be found in {{lm_prefix}}/var/log/jupyterlab.log"
-cd -
+ echo "${bold}Starting Jupyter Lab...${normal}"
+ killall jupyter-lab 2> /dev/null
+ cd "{{data_path}}"
+ jupyter lab --no-browser --config={{lm_prefix}}/etc/jupyter_notebook_config.py >/dev/null 2>"{{lm_prefix}}/var/log/jupyterlab.log" &
+ echo "Note:     Jupyter Lab logs can be found in {{lm_prefix}}/var/log/jupyterlab.log"
+ cd -
 {% endif %}
 
 
-if [ -d {{lm_prefix}}/opt/spotlight ]; then
+if [ -d "{{lm_prefix}}/opt/spotlight" ]; then
     echo "${bold}Note:${normal} The DBPedia Spotlight service is installed but never started automatically,"
     echo " if you want to use it you will need to start it manually using"
     echo " 'spotlight \$langcode' where \$langcode corresponds to the language you want to serve."
 fi
-if [ -d {{lm_prefix}}/opt/tscan ]; then
-    echo "${bold}Note:${normal} T-Scan is installed and the webservice should be running now."
-    echo " However, it requires various background servers which are not started "
-    echo " automatically by LaMachine, if you want to use T-scan you will need "
-    echo " to start them manually. Consult the T-scan documentation at "
-    echo " https://github.com/proycon/tscan/blob/master/README.md#usage "
-fi
+
 echo "${boldyellow}Note: It is not recommended to expose this server directly to the public internet due to there not being proper authentication on all services (unless you explicitly provided it).${normal}"
 
 echo
@@ -127,7 +121,14 @@ echo "and accessible on port {{http_port}}.${normal}"
 echo "If you have LaMachine running in a Virtual Machine or container,"
 echo "you can use the mapped port ({{mapped_http_port}}) directly from your host system ( http://127.0.0.1:{{mapped_http_port}} )."
 
-if [ "$1" = "-f" ]; then
+FOREGROUND=0
+for arg in "$@"; do
+    if [ "$arg" = "-f" ]; then
+        FOREGROUND=1
+    fi
+done
+
+if [ $FOREGROUND -eq 1 ]; then
     #run in foreground/keep running (nginx error log)
     tail -F "{{lm_prefix}}/var/log/nginx/error.log"
 fi
