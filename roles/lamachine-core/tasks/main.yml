@@ -384,6 +384,15 @@
             force: yes
             mode: u+rwx,a+rx
 
+        - name: Installing lamachine-config script
+          become: "{{lm_become}}"
+          become_user: root
+          template:
+            src: lamachine-config.sh
+            dest: "{{lm_prefix}}/bin/lamachine-config"
+            force: yes
+            mode: u+rwx,a+rx
+
         - name: Installing SSH public key (if provided and none exists yet)
           become: "{{lm_become}}"
           become_user: root

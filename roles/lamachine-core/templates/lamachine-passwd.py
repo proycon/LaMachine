@@ -8,6 +8,7 @@ CONFFILE = "{{source_path}}/LaMachine/host_vars/{{hostname}}.yml"
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Interactive tool to set a password for one or more components of LaMachine", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--password','-p',type=str, help="Provide password as parameter (this is considered unsafe in most environments!)", action='store', required=False)
     parser.add_argument('targets', nargs='+', help='Targets, valid are: main (e.g. for ssh), lab (for jupyterlab)')
     args = parser.parse_args()
 
@@ -21,8 +22,11 @@ if __name__ == '__main__':
                 print("Failure updating password",file=sys.stderr)
         elif target == "lab":
             from notebook.auth import passwd
-            print("Enter a password for the JupyterLab environment:")
-            lab_passwd_hash = passwd()
+            if args.password:
+                lab_passwd_hash = passwd(args.password)
+            else:
+                print("Enter a password for the JupyterLab environment:")
+                lab_passwd_hash = passwd()
             r = os.system("sed -i.bak 's/lab_password_sha1.*/lab_password_sha1: \"" + lab_passwd_hash + "\"/' " + CONFFILE)
             if r != 0:
                 #no lab password yet? append
