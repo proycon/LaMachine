@@ -2,17 +2,47 @@
 
 # -- THIS SCRIPT IS MAINTAINED BY LAMACHINE; DO NOT EDIT IT -- it will be overwritten on update --
 
+for arg in "$@"; do
+    if [ "$arg" = "-h" ] || [ "$arg" == "--help" ]; then
+        echo "Usage: lamachine-start-webserver [options]" >&2
+        echo "Options:" >&2
+        echo " -f     Start in foreground, do not exit. In a docker context" >&2
+        echo "        this also makes this a valid process to use as the entrypoint," >&2
+        echo "        i.e. to run as PID 1">&2
+        exit 0
+    fi
+done
+
 export LC_ALL=en_US.UTF-8
 
-bold=$(tput bold)
-boldred=${bold}$(tput setaf 1) #  red
-boldgreen=${bold}$(tput setaf 2) #  green
-green=${normal}$(tput setaf 2) #  green
-yellow=${normal}$(tput setaf 3) #  yellow
-blue=${normal}$(tput setaf 4) #  blue
-boldblue=${bold}$(tput setaf 4) #  blue
-boldyellow=${bold}$(tput setaf 3) #  yellow
-normal=$(tput sgr0)
+if [ -f /.dockerenv ] || grep -q 'devices:/docker' /proc/1/cgroup >/dev/null 2>/dev/null; then
+    IS_DOCKER=1
+else
+    IS_DOCKER=0
+fi
+
+bold=$(tput bold 2>/dev/null)
+boldred=${bold}$(tput setaf 1 2>/dev/null) #  red
+boldgreen=${bold}$(tput setaf 2 2>/dev/null) #  green
+green=${normal}$(tput setaf 2 2>/dev/null) #  green
+yellow=${normal}$(tput setaf 3 2>/dev/null) #  yellow
+blue=${normal}$(tput setaf 4 2>/dev/null) #  blue
+boldblue=${bold}$(tput setaf 4 2>/dev/null) #  blue
+boldyellow=${bold}$(tput setaf 3 2>/dev/null) #  yellow
+normal=$(tput sgr0 2>/dev/null)
+
+
+if [ -z "$LM_PREFIX" ]; then
+    if [ -e /etc/profile.d/lamachine-activate.sh ]; then
+        #will work for docker and other global installations
+        source /etc/profile.d/lamachine-activate.sh
+    elif [ -e "{{lm_prefix}}/bin/activate" ]; then
+        source "{{lm_prefix}}/bin/activate"
+    else
+        echo "${boldred}ERROR: First activate your LaMachine environment before running this script! Automatic activation failed${normal}">&2
+        exit 2
+    fi
+fi
 
 {{lm_prefix}}/bin/lamachine-stop-webserver #first we stop any running instances
 
@@ -64,10 +94,6 @@ fi
 {% else %}
 #### local flavour ##############################################################################################################
 
-if [ -z "$LM_PREFIX" ]; then
-    echo "${boldred}ERROR: First activate your LaMachine environment before running this script!${normal}">&2
-    exit 2
-fi
 
 echo "${bold}Starting uwsgi applications${normal}..."
 uwsgi --ini "{{lm_prefix}}/etc/uwsgi-emperor/emperor.ini" --die-on-term 2> "{{lm_prefix}}/var/log/uwsgi/uwsgi.log" >&2 &
@@ -129,6 +155,12 @@ for arg in "$@"; do
 done
 
 if [ $FOREGROUND -eq 1 ]; then
-    #run in foreground/keep running (nginx error log)
-    tail -F "{{lm_prefix}}/var/log/nginx/error.log"
+    if [ $IS_DOCKER -eq 1 ]; then
+        #we are a docker container, replace current pid (should be 1) with the container init script that will reap children when we exit
+        tail -F "{{lm_prefix}}/var/log/nginx/error.log" & #background
+        exec $LM_PREFIX/bin/docker-container-init
+    else
+        #run in foreground/keep running (nginx error log)
+        tail -F "{{lm_prefix}}/var/log/nginx/error.log"
+    fi
 fi

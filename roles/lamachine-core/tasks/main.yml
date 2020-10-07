@@ -703,6 +703,22 @@
             append: yes
           when: "ansible_distribution|lower != 'macosx' and 'vboxsf' in getent_group"
 
+        - name: Obtaining docker-container-init
+          include_role:
+            name: lamachine-git
+          vars:
+            package:
+              user: pasztorpisti
+              repo: docker-container-init
+          when: locality == "global"
+
+        - name: Compiling and installaitng docker-container-init
+          become: "{{lm_become}}"
+          become_user: root
+          command: "gcc -o {{lm_prefix}}/docker-container-init docker-container-init.c"
+          vars:
+            chdir: {{source_path}}/docker-container-init
+          when: locality == "global"
 
 
     - set_fact: ran_lamachine_core=1
