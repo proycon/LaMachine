@@ -717,7 +717,7 @@
           become_user: root
           command: "gcc -o {{lm_prefix}}/docker-container-init docker-container-init.c"
           vars:
-            chdir: {{source_path}}/docker-container-init
+            chdir: "{{source_path}}/docker-container-init"
           when: locality == "global"
 
 
