@@ -197,15 +197,19 @@
             content: |
                 #!/bin/bash
                 if [ -z "$LM_NAME" ]; then
-                    echo "You are not in a LaMachine environment! Unable to update, activate one first!">&2
-                    exit 2
+                    if [ -e /etc/profile.d/lamachine-activate.sh ]; then
+                        #will work for docker and other global installations
+                        source /etc/profile.d/lamachine-activate.sh
+                    else
+                        echo "You are not in a LaMachine environment! Unable to update, activate one first!">&2
+                        exit 2
+                    fi
+                fi
+                if which "lamachine-$LM_NAME-update"; then
+                     "lamachine-$LM_NAME-update" $@
                 else
-                   if which "lamachine-$LM_NAME-update"; then
-                        "lamachine-$LM_NAME-update" $@
-                   else
-                        echo "Unable to find update script lamachine-$LM_NAME-update!">&2
-                        exit 3
-                   fi
+                     echo "Unable to find update script lamachine-$LM_NAME-update!">&2
+                     exit 3
                 fi
             mode: u+rwx,a+rx
 
