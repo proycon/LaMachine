@@ -197,15 +197,19 @@
             content: |
                 #!/bin/bash
                 if [ -z "$LM_NAME" ]; then
-                    echo "You are not in a LaMachine environment! Unable to update, activate one first!">&2
-                    exit 2
+                    if [ -e /etc/profile.d/lamachine-activate.sh ]; then
+                        #will work for docker and other global installations
+                        source /etc/profile.d/lamachine-activate.sh
+                    else
+                        echo "You are not in a LaMachine environment! Unable to update, activate one first!">&2
+                        exit 2
+                    fi
+                fi
+                if which "lamachine-$LM_NAME-update"; then
+                     "lamachine-$LM_NAME-update" $@
                 else
-                   if which "lamachine-$LM_NAME-update"; then
-                        "lamachine-$LM_NAME-update" $@
-                   else
-                        echo "Unable to find update script lamachine-$LM_NAME-update!">&2
-                        exit 3
-                   fi
+                     echo "Unable to find update script lamachine-$LM_NAME-update!">&2
+                     exit 3
                 fi
             mode: u+rwx,a+rx
 
@@ -381,6 +385,15 @@
           template:
             src: lamachine-passwd.py
             dest: "{{lm_prefix}}/bin/lamachine-passwd"
+            force: yes
+            mode: u+rwx,a+rx
+
+        - name: Installing lamachine-config script
+          become: "{{lm_become}}"
+          become_user: root
+          template:
+            src: lamachine-config.sh
+            dest: "{{lm_prefix}}/bin/lamachine-config"
             force: yes
             mode: u+rwx,a+rx
 
@@ -692,6 +705,20 @@
             append: yes
           when: "ansible_distribution|lower != 'macosx' and 'vboxsf' in getent_group"
 
+        - name: Obtaining docker-container-init
+          include_role:
+            name: lamachine-git
+          vars:
+            package:
+              user: pasztorpisti
+              repo: docker-container-init
+          when: locality == "global"
+
+        - name: Compiling and installaitng docker-container-init
+          become: "{{lm_become}}"
+          become_user: root
+          command: "gcc -o {{lm_prefix}}/bin/docker-container-init {{source_path}}/docker-container-init/docker-container-init.c"
+          when: locality == "global"
 
 
     - set_fact: ran_lamachine_core=1

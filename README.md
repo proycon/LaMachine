@@ -315,7 +315,8 @@ proycon/lamachine`` manually you will need to run the docker commands yourself:
     * This corresponds to: ``docker run -p 8080:80 -h hostname -t proycon/lamachine:latest lamachine-start-webserver -f ``
         * The numbers values for ``-p`` are the port numbers on the host side and on the container side respectively, the latter must always match with the ``http_port`` setting LaMachine has been built with (defaults to 80).
         * Set ``-h`` with the desired hostname, this too must match the setting LaMachine has been built with!
-        * The ``-f`` argument to ``lamachine-start-webserver`` ensures the script waits in the foreground and doesn't exit after starting.
+        * The ``-f`` argument to ``lamachine-start-webserver`` ensures the script waits in the foreground and doesn't exit after starting. In a docker context,
+          this also makes the script a valid entrypoint (PID 1).
 	* If started in this way, you can connect your webbrowser on the host system to http://127.0.0.1:8080 .
 
 The scripts will automatically share your designated data directory (your home directory by default) with the container, mounted at ``/data`` by default. To manually make persistent storage available in the container, e.g. for sharing data, use docker parameters like: ``--mount type=bind,source=/path/on/host,target=/data``

@@ -122,4 +122,9 @@ buildmatrix = [
         "minimal": True,
         "install": "fy_nl_ASR"
     }
+        "name": 'core',
+        "flavour": 'docker',
+        "version": 'stable',
+        "install": "lamachine-core"
+    },
 ]

@@ -52,7 +52,7 @@
           environment: "{{lm_env}}"
           when: not custom_flat_settings
 
-        - name: Create FLAT superuser
+        - name: Create FLAT superuser and (re)set password
           shell: |
             export PYTHONPATH="{{lm_prefix}}/etc:{% if root and locality == 'global' %}{{lm_pythonpath}}{% endif %}" DJANGO_SETTINGS_MODULE=flat_settings
             echo -ne "
@@ -60,13 +60,19 @@
 
             username = 'flat'
             password = '{{flat_password}}'
-            email = 'flat@localhost'
+            email = '{{maintainer_mail}}'
 
             if User.objects.filter(username=username).count() == 0:
             \tUser.objects.create_superuser(username, email, password)
             \tprint('Superuser created.')
             else:
-            \tprint('Superuser creation skipped.')
+            \ttry:
+            \t\tobj = User.objects.get(username=username)
+            \t\tprint('Updating existing password for superuser.')
+            \t\tobj.set_password(password)
+            \t\tobj.save()
+            \texcept:
+            \t\tprint('Superuser creation skipped.')
             " | django-admin shell -i python
           args:
               executable: /bin/bash

@@ -25,8 +25,8 @@ def clean(build, args):
     os.system("rm lamachine-"+ build['name']+ "*")
     return r2
 
-def test(build, args):
-    msg = "[LaMachine Test] Building " + buildid(build)+ " ..."
+def make_build(build, args):
+    msg = "[LaMachine Builder] Building " + buildid(build)+ " ..."
     print(msg, file=sys.stderr)
     ircprint(msg, args)
     passargs = []
@@ -36,10 +36,12 @@ def test(build, args):
                 passargs.append("--" + key)
             else:
                 passargs.append("--" + key + " " + value)
+    if args.cleanfirst:
+        clean(build, args)
     if build['flavour'] == 'vagrant' and os.path.exists('lamachine-'+ build['name'] + '-destroy'):
-        msg = "[LaMachine Test] VM " + build['name'] + " already exists..."
+        msg = "[LaMachine Builder] VM " + build['name'] + " already exists..."
         print(msg, file=sys.stderr)
-        if args.clean:
+        if args.clean or args.cleanfirst:
             clean(build, args)
         else:
             ircprint(msg, args)
@@ -49,11 +51,19 @@ def test(build, args):
         #we build local tests in a docker container (clean environment), the dockerfile invokes the bootstrap:
         cwd = os.getcwd()
         os.chdir("context/" + build['context'])
-        cmd = "docker build -t proycon/lamachine:" + build['name'] + " --build-arg NAME=" + build['name'] + " --build-arg VERSION=" + build['version'] + " --build-arg BRANCH=master --build-arg HOSTNAME=lamachine-" + build['name'] + " . 2> " + cwd + "/logs/" + buildid(build).replace(':','-') + '.log >&2'
+        cmd = "docker build -t proycon/lamachine:" + build['name'] + " --build-arg NAME=" + build['name'] + " --build-arg VERSION=" + build['version'] + " --build-arg BRANCH=develop --build-arg HOSTNAME=lamachine-" + build['name']
+        if 'install' in build:
+            cmd += " --install " + build['install']
+        cmd += " . 2> " + cwd + "/logs/" + buildid(build).replace(':','-') + '.log >&2'
+        print("[LaMachine Builder] Running: ", cmd, file=sys.stderr)
         r = os.system(cmd)
         os.chdir(cwd)
     else:
-        r = os.system("bash ../bootstrap.sh " + " ".join(passargs) + " --noninteractive --private --verbose --vmmem " + str(args.vmmem) + " 2> logs/" + buildid(build).replace(':','-') + ".log >&2")
+        cmd = "bash ../bootstrap.sh " + " ".join(passargs) + " --noninteractive --private --verbose --vmmem " + str(args.vmmem)
+        if 'install' in build:
+            cmd += " --install " + build['install']
+        cmd += " 2> logs/" + buildid(build).replace(':','-') + ".log >&2"
+        r = os.system(cmd)
     endtime = time.time()
     duration = endtime-begintime
     if args.clean:
@@ -61,21 +71,21 @@ def test(build, args):
     else:
         r2 = 0
     if r == 0:
-        msg = "[LaMachine Test] Build " + buildid(build)+ " passed! (" + str(round(duration/60)) + " mins) :-)"
+        msg = "[LaMachine Builder] Build " + buildid(build)+ " passed! (" + str(round(duration/60)) + " mins) :-)"
     else:
-        msg = "[LaMachine Test] Build " + buildid(build)+ " FAILED!  (" + str(round(duration/60)) + " mins) :-("
+        msg = "[LaMachine Builder] Build " + buildid(build)+ " FAILED!  (" + str(round(duration/60)) + " mins) :-("
     print(msg, file=sys.stderr)
     ircprint(msg, args)
     return (r, endtime - begintime, r2)
 
 def ircprint(message, args, port=6667):
-    nick = b"lmtestbot_" + os.uname()[1].encode('utf-8')
+    nick = b"lmbuilder_" + os.uname()[1].encode('utf-8')
     if args.ircchannel and args.ircserver and message:
         s = socket.socket()
         s.settimeout(60)
         s.connect((args.ircserver.strip(), port))
         s.send(b"NICK " + nick + b"\r\n")
-        s.send(b"USER " + nick + b" " + nick + b" bla :LaMachine Test Bot\r\n")
+        s.send(b"USER " + nick + b" " + nick + b" bla :LaMachine Builder Bot\r\n")
         while True:
             response = s.recv(2049)
             if b'Welcome' in  response:
@@ -86,6 +96,7 @@ def ircprint(message, args, port=6667):
 
 def main():
     parser = argparse.ArgumentParser(description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--cleanfirst',help="Clean up before starting (build will fail if it already exists in certain circumstances)", action='store_true',default=False,required=False)
     parser.add_argument('--clean',help="Clean up after tests (otherwise VMs and containers will be kept)", action='store_true',default=False,required=False)
     parser.add_argument('--vmmem', type=int,help="VM Memory", action='store',default=2690,required=False)
     parser.add_argument('--ircserver', type=str,help="IRC server for notifications", action='store',required=False)
@@ -107,13 +118,13 @@ def main():
     results = []
     if not args.selection: #just build everything
         for build in buildmatrix:
-            r, duration, r2 = test(build, args)
+            r, duration, r2 = make_build(build, args)
             results.append( (build, r, duration, r2)  )
     else:
         for build_id in args.selection:
             for build in buildmatrix:
                 if buildid(build) == build_id:
-                    r, duration, r2 = test(build, args)
+                    r, duration, r2 = make_build(build, args)
                     results.append( (build, r, duration, r2)  )
 
     for build, returncode, duration, cleanup in results:

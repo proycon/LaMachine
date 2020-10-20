@@ -1430,11 +1430,13 @@ else
 fi
 echo "lab_password_sha1: \"sha1:fa40baddab88:c498070b5885ee26ed851104ddef37926459b0c4\" #default password for Jupyter Lab: lamachine, change this with 'lamachine-passwd lab'" >> $STAGEDCONFIG
 echo "lab_allow_origin: \"*\" #hosts that may access the lab environment" >> $STAGEDCONFIG
-echo "flat_password: \"flat\" #initial password for the FLAT administrator (if installed; username 'flat'), updating this later than on initial installation has no effect (edit in FLAT itself)!" >> $STAGEDCONFIG
+echo "flat_password: \"flat\" #password for the FLAT administrator (username 'flat'). You can change this with lamachine-passwd flat" >> $STAGEDCONFIG
 echo "custom_flat_settings: false  #set this to true if you customized your flat settings and want to prevent LaMachine from overwriting it again on update" >> $STAGEDCONFIG
 echo "ssh_public_key: \"\" #ssh public key (the actual contents of id_rsa.pub) to allow the container/VM to connect to restricted outside services" >> $STAGEDCONFIG
 echo "ssh_private_key: \"\" #ssh private key (the actual contents of id_rsa) to allow the container/VM to connect to restricted outside services" >> $STAGEDCONFIG
 echo "ssh_key_filename: \"id_rsa\" #the prefix used to store the above ssh keys (if provided) (.pub will be automatically appended for public key)" >> $STAGEDCONFIG
+DJANGO_SECRET_KEY=$(LC_ALL=C tr -dc 'A-Za-z0-9_' </dev/urandom | head -c 50 ; echo)
+echo "django_secret_key: \"$DJANGO_SECRET_KEY\" #secret key for django-based applications (for internal use only)" >> $STAGEDCONFIG
 if [ $FORCE -ne 0 ]; then
     echo "force: $FORCE #Sets the default force parameter for updates, set to 1 to force updates or 2 to explicitly remove all sources and start from scratch on each update. Remove this line entirely if you don't need it or are in doubt" >> $STAGEDCONFIG
 fi
@@ -1544,7 +1546,11 @@ if [ $BUILD -eq 1 ]; then
             if [ "$VERSION" = "custom" ]; then
                 echo "  vars_files: [ customversions.yml ]" >> $STAGEDMANIFEST
             fi
-            echo "  roles: [ lamachine-core, $INSTALL ]" >> $STAGEDMANIFEST
+            if [ "$INSTALL" = "lamachine-core" ]; then
+                echo "  roles: [ $INSTALL ]" >> $STAGEDMANIFEST
+            else
+                echo "  roles: [ lamachine-core, $INSTALL ]" >> $STAGEDMANIFEST
+            fi
         else
             #use the template
             cp $SOURCEDIR/install-template.yml $STAGEDMANIFEST || fatalerror "Unable to copy $SOURCEDIR/install-template.yml"

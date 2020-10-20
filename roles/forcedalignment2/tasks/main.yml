@@ -19,7 +19,6 @@
            metadata:
               identifier: "forcedalignment2"
 
-
     - name: Removing old resources (if present)
       file:
           path: "{{lm_prefix}}/opt/forcedalignment2_resources"
@@ -36,20 +35,15 @@
           group: "{{unix_group}}"
           mode: u+rwx,g+rwsx,a+rx
 
-    - name: Downloading resources
-      get_url:
-        url: https://applejack.science.ru.nl/downloads/forcedalignment/forcedalignment2_resources.tar.gz
-        dest: "{{lm_prefix}}/opt/forcedalignment2_resources/forcedalignment2_resources.tar.gz"
-        tmp_dest: "{{lm_prefix}}/opt/forcedalignment2_resources"
+    - name: Copying resources from git source
+      become: "{{lm_become}}"
+      become_user: root
+      shell: cp -Rpd {{source_path}}/forcedalignment2/resources/* {{lm_prefix}}/opt/forcedalignment2_resources/
 
-
-    - name: Finalising resource installation
+    - name: Downloading and extracting resources
       shell: |
           #!/bin/bash
-          tar xzf forcedalignment2_resources.tar.gz
-          rm -rf forcedalignment2_resources.tar.gz
-          mv resources/* .
-          mv resources2/* .
+          ./download_resources.sh || exit 1
           chown -R {{unix_user}}:{{unix_group}} .
           find . -type d | xargs chmod u+rw,g+rw,a+rx
           find . -type f | xargs chmod u+rw,g+rw,a+r

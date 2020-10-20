@@ -2,17 +2,47 @@
 
 # -- THIS SCRIPT IS MAINTAINED BY LAMACHINE; DO NOT EDIT IT -- it will be overwritten on update --
 
+for arg in "$@"; do
+    if [ "$arg" = "-h" ] || [ "$arg" == "--help" ]; then
+        echo "Usage: lamachine-start-webserver [options]" >&2
+        echo "Options:" >&2
+        echo " -f     Start in foreground, do not exit. In a docker context" >&2
+        echo "        this also makes this a valid process to use as the entrypoint," >&2
+        echo "        i.e. to run as PID 1">&2
+        exit 0
+    fi
+done
+
 export LC_ALL=en_US.UTF-8
 
-bold=$(tput bold)
-boldred=${bold}$(tput setaf 1) #  red
-boldgreen=${bold}$(tput setaf 2) #  green
-green=${normal}$(tput setaf 2) #  green
-yellow=${normal}$(tput setaf 3) #  yellow
-blue=${normal}$(tput setaf 4) #  blue
-boldblue=${bold}$(tput setaf 4) #  blue
-boldyellow=${bold}$(tput setaf 3) #  yellow
-normal=$(tput sgr0)
+if [ -f /.dockerenv ] || grep -q 'devices:/docker' /proc/1/cgroup >/dev/null 2>/dev/null; then
+    IS_DOCKER=1
+else
+    IS_DOCKER=0
+fi
+
+bold=$(tput bold 2>/dev/null)
+boldred=${bold}$(tput setaf 1 2>/dev/null) #  red
+boldgreen=${bold}$(tput setaf 2 2>/dev/null) #  green
+green=${normal}$(tput setaf 2 2>/dev/null) #  green
+yellow=${normal}$(tput setaf 3 2>/dev/null) #  yellow
+blue=${normal}$(tput setaf 4 2>/dev/null) #  blue
+boldblue=${bold}$(tput setaf 4 2>/dev/null) #  blue
+boldyellow=${bold}$(tput setaf 3 2>/dev/null) #  yellow
+normal=$(tput sgr0 2>/dev/null)
+
+
+if [ -z "$LM_PREFIX" ]; then
+    if [ -e /etc/profile.d/lamachine-activate.sh ]; then
+        #will work for docker and other global installations
+        source /etc/profile.d/lamachine-activate.sh
+    elif [ -e "{{lm_prefix}}/bin/activate" ]; then
+        source "{{lm_prefix}}/bin/activate"
+    else
+        echo "${boldred}ERROR: First activate your LaMachine environment before running this script! Automatic activation failed${normal}">&2
+        exit 2
+    fi
+fi
 
 {{lm_prefix}}/bin/lamachine-stop-webserver #first we stop any running instances
 
@@ -64,10 +94,6 @@ fi
 {% else %}
 #### local flavour ##############################################################################################################
 
-if [ -z "$LM_PREFIX" ]; then
-    echo "${boldred}ERROR: First activate your LaMachine environment before running this script!${normal}">&2
-    exit 2
-fi
 
 echo "${bold}Starting uwsgi applications${normal}..."
 uwsgi --ini "{{lm_prefix}}/etc/uwsgi-emperor/emperor.ini" --die-on-term 2> "{{lm_prefix}}/var/log/uwsgi/uwsgi.log" >&2 &
@@ -86,7 +112,7 @@ uwsgi --ini "{{lm_prefix}}/etc/uwsgi-emperor/emperor.ini" --die-on-term 2> "{{lm
     $NGINX -c "{{lm_prefix}}/etc/nginx/nginx.conf" -p "{{lm_prefix}}"  -g "pid {{lm_prefix}}/var/run/nginx.pid;"
  {% endif %}
 {% else %}
-    echo "${boldred}WARNNG: You are using a non-default webservertype, unable to manage webserver for you...${normal}">&2
+    echo "${boldred}WARNING: You are using a non-default webservertype, unable to manage webserver for you...${normal}">&2
 {% endif %}
 
 
@@ -97,27 +123,21 @@ echo
 {% endif %}
 
 {% if lab %}
-echo "${bold}Starting Jupyter Lab...${normal}"
-killall jupyter-lab 2> /dev/null
-cd "{{data_path}}"
-jupyter lab --no-browser --config={{lm_prefix}}/etc/jupyter_notebook_config.py >/dev/null 2>{{lm_prefix}}/var/log/jupyterlab.log &
-echo "Note:     Jupyter Lab logs can be found in {{lm_prefix}}/var/log/jupyterlab.log"
-cd -
+ echo "${bold}Starting Jupyter Lab...${normal}"
+ killall jupyter-lab 2> /dev/null
+ cd "{{data_path}}"
+ jupyter lab --no-browser --config={{lm_prefix}}/etc/jupyter_notebook_config.py >/dev/null 2>"{{lm_prefix}}/var/log/jupyterlab.log" &
+ echo "Note:     Jupyter Lab logs can be found in {{lm_prefix}}/var/log/jupyterlab.log"
+ cd -
 {% endif %}
 
 
-if [ -d {{lm_prefix}}/opt/spotlight ]; then
+if [ -d "{{lm_prefix}}/opt/spotlight" ]; then
     echo "${bold}Note:${normal} The DBPedia Spotlight service is installed but never started automatically,"
     echo " if you want to use it you will need to start it manually using"
     echo " 'spotlight \$langcode' where \$langcode corresponds to the language you want to serve."
 fi
-if [ -d {{lm_prefix}}/opt/tscan ]; then
-    echo "${bold}Note:${normal} T-Scan is installed and the webservice should be running now."
-    echo " However, it requires various background servers which are not started "
-    echo " automatically by LaMachine, if you want to use T-scan you will need "
-    echo " to start them manually. Consult the T-scan documentation at "
-    echo " https://github.com/proycon/tscan/blob/master/README.md#usage "
-fi
+
 echo "${boldyellow}Note: It is not recommended to expose this server directly to the public internet due to there not being proper authentication on all services (unless you explicitly provided it).${normal}"
 
 echo
@@ -127,7 +147,20 @@ echo "and accessible on port {{http_port}}.${normal}"
 echo "If you have LaMachine running in a Virtual Machine or container,"
 echo "you can use the mapped port ({{mapped_http_port}}) directly from your host system ( http://127.0.0.1:{{mapped_http_port}} )."
 
-if [ "$1" = "-f" ]; then
-    #run in foreground/keep running (nginx error log)
-    tail -F "{{lm_prefix}}/var/log/nginx/error.log"
+FOREGROUND=0
+for arg in "$@"; do
+    if [ "$arg" = "-f" ]; then
+        FOREGROUND=1
+    fi
+done
+
+if [ $FOREGROUND -eq 1 ]; then
+    if [ $IS_DOCKER -eq 1 ]; then
+        #we are a docker container, replace current pid (should be 1) with the container init script that will reap children when we exit
+        tail -F "{{lm_prefix}}/var/log/nginx/error.log" & #background
+        exec $LM_PREFIX/bin/docker-container-init
+    else
+        #run in foreground/keep running (nginx error log)
+        tail -F "{{lm_prefix}}/var/log/nginx/error.log"
+    fi
 fi
