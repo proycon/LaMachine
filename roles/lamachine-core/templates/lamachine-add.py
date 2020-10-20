@@ -82,10 +82,13 @@ if __name__ == '__main__':
                             if packagelist:
                                 #short form
                                 print('  roles: [ ' + ", ".join(packagelist + appendpackages)+ ' ]'   ,file=f_out)
+                                break
                             else:
                                 #long form
+                                f_out.write(line)
                                 for package in appendpackages:
                                     print('      - ' + package + '       ##', file=f_out)
+                                break
                         f_out.write(line)
                 os.rename(MANIFEST +'.tmp', MANIFEST)
 
