@@ -121,7 +121,8 @@ buildmatrix = [
         "version": 'stable',
         "minimal": True,
         "install": "fy_nl_ASR"
-    }
+    },
+    {
         "name": 'core',
         "flavour": 'docker',
         "version": 'stable',
