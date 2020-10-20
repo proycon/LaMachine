@@ -31,7 +31,7 @@ if __name__ == '__main__':
                 begin = line.find('[')
                 if begin != -1:
                     end = line.find(']')
-                    packagelist = line[begin+1:end].split(",")
+                    packagelist = [ x.strip() for x in line[begin+1:end].split(",") ]
                     break
             elif roles:
                 if line.strip().startswith('-') or line.strip().startswith('# -'):
@@ -81,7 +81,7 @@ if __name__ == '__main__':
                         if i == endline:
                             if packagelist:
                                 #short form
-                                print('roles: [ ' + ", ".join(packagelist + appendpackages)+ ']'   ,file=f_out)
+                                print('- roles: [ ' + ", ".join(packagelist + appendpackages)+ ' ]'   ,file=f_out)
                             else:
                                 #long form
                                 for package in appendpackages:
