@@ -19,12 +19,20 @@ if __name__ == '__main__':
     package = None
     roles = False
     endline = None
+    lastline = None
+    packagelist = None
     returncode = 0
     #parse installation manifest and extract packages and descriptions
     with open(MANIFEST,'r',encoding='utf-8') as f:
         for i, line in enumerate(f):
+            lastline = i
             if line.strip().startswith('roles:'):
                 roles = True
+                begin = line.find('[')
+                if begin != -1:
+                    end = line.find(']')
+                    packagelist = line[begin+1:end].split(",")
+                    break
             elif roles:
                 if line.strip().startswith('-') or line.strip().startswith('# -'):
                     package = line.strip('- #\n').split('##')[0].strip()
@@ -48,7 +56,7 @@ if __name__ == '__main__':
     if args.packages:
         appendpackages = []
         for package in args.packages:
-            if package in descriptions:
+            if package in descriptions and not packagelist:
                 r = os.system("sed -i.bak 's/# - " + package + "/ - " + package +"/' " + MANIFEST)
                 if r == 0:
                     print("Added " + package + " to installation manifest; you can now run lamachine-update to install it",file=sys.stderr)
@@ -64,13 +72,20 @@ if __name__ == '__main__':
                 returncode = 1
 
         if appendpackages:
-            assert endline is not None
+            if endline is None:
+                assert lastline is not None
+                endline = lastline
             with open(MANIFEST,'r',encoding='utf-8') as f_in:
                 with open(MANIFEST + '.tmp','w',encoding='utf-8') as f_out:
                     for i, line in enumerate(f_in):
                         if i == endline:
-                            for package in appendpackages:
-                                print('      - ' + package + '       ##', file=f_out)
+                            if packagelist:
+                                #short form
+                                print('roles: [ ' + ", ".join(packagelist + appendpackages)+ ']'   ,file=f_out)
+                            else:
+                                #long form
+                                for package in appendpackages:
+                                    print('      - ' + package + '       ##', file=f_out)
                         f_out.write(line)
                 os.rename(MANIFEST +'.tmp', MANIFEST)
 
