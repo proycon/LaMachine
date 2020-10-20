@@ -42,8 +42,8 @@
 
     - name: Downloading and extracting resources
       shell: |
-          #!/bin/bash
-          ./download_resources.sh || exit 1
+        #!/bin/bash
+          ./download_resources.sh --force || exit 1
           chown -R {{unix_user}}:{{unix_group}} .
           find . -type d | xargs chmod u+rw,g+rw,a+rx
           find . -type f | xargs chmod u+rw,g+rw,a+r
