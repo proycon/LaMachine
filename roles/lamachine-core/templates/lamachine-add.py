@@ -81,7 +81,7 @@ if __name__ == '__main__':
                         if i == endline:
                             if packagelist:
                                 #short form
-                                print('- roles: [ ' + ", ".join(packagelist + appendpackages)+ ' ]'   ,file=f_out)
+                                print('  roles: [ ' + ", ".join(packagelist + appendpackages)+ ' ]'   ,file=f_out)
                             else:
                                 #long form
                                 for package in appendpackages:
