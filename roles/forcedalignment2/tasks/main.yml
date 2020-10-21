@@ -13,6 +13,7 @@
           name: lamachine-python-install
        with_items:
          - { "pip": numpy }
+         - { "pip": pandas }
        loop_control:
            loop_var: package
        when: minimal is not defined or not minimal
