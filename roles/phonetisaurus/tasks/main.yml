@@ -1,4 +1,13 @@
 ---
+    #requiring python 2.7 still is a very undesireable situation!!
+    - name: Installing python 2.7 for phonetisaurus
+      include_role:
+        name: lamachine-package-install
+      with_items:
+        - { debian: python2.7-minimal, redhat: python2, arch: python2 }
+      loop_control:
+          loop_var: package
+
     - name: "Download openfst"
       shell: |
           #!/bin/bash
