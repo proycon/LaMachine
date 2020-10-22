@@ -5,17 +5,11 @@
           include_role:
             name: lamachine-package-install
           with_items:
-            - { debian: openjdk-11-jdk, redhat: java-11-openjdk, arch: jdk11-openjdk }
-            - { debian: maven, redhat: maven, arch: maven } #not sure if this works on CentOS
+            - { debian: openjdk-11-jdk, redhat: java-11-openjdk, arch: jdk11-openjdk, homebrew: "openjdk@11" }
+            - { debian: maven, redhat: maven, arch: maven, homebrew: "maven" } #not sure if this works on CentOS
           loop_control:
              loop_var: package
           when: root and (ansible_distribution|lower != "macosx")
-
-        - name: Installing Java (Mac OS X)
-          homebrew_cask:
-            name: java11
-            state: present
-          when: ansible_distribution|lower == "macosx"
 
         #- name: Ensure correct java version is selected (Debian/Ubuntu)
           #become: "{{lm_become}}"
