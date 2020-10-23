@@ -38,7 +38,7 @@
       become: true
       become_user: root
       yum:
-        name: [psmisc, pkgconfig, git, mercurial, icu, libtool, autoconf, automake, autoconf-archive, nano, make, gcc, gcc-c++, libstdc++-devel, libxml2, libxml2-devel, libxslt, libxslt-devel, libtar, glibc-devel, glibc-headers, glibc-static, zlib, zlib-devel, bzip2, bzip2-devel, gnutls-devel, libcurl-devel, wget, curl, libexttextcat, zip, unzip, pcre, pcre-devel, poppler-utils, pandoc, hdf5]
+        name: [psmisc, pkgconfig, git, mercurial, icu, libtool, autoconf, automake, autoconf-archive, nano, make, gcc, gcc-c++, libstdc++-devel, libxml2, libxml2-devel, libxslt, libxslt-devel, libtar, glibc-devel, glibc-headers, glibc-static, zlib, zlib-devel, bzip2, bzip2-devel, gnutls-devel, libcurl-devel, wget, curl, libexttextcat, zip, unzip, pcre, pcre-devel, poppler-utils, pandoc, hdf5, gawk, sed]
         state: present
         update_cache: "{% if nosysupdate is not defined or nosysupdate == 0 %}yes{% else %}no{% endif %}"
 
