@@ -51,7 +51,7 @@
                warn: false
 
           - name: Compiling kaldi/tools
-            shell: make -j $(nproc)
+            shell: make -j $(nproc || echo 1)
             args :
               chdir: "{{lm_prefix}}/opt/kaldi/tools"
             environment:
@@ -64,7 +64,7 @@
               chdir: "{{lm_prefix}}/opt/kaldi/src"
 
           - name: Compiling kaldi/src
-            shell: make -j $(nproc)
+            shell: make -j $(nproc || echo 1)
             args:
               chdir: "{{lm_prefix}}/opt/kaldi/src"
             environment:
