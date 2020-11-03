@@ -18,8 +18,8 @@
         name: lamachine-git
       vars:
         package:
-          name: "eng_asr_decoder"
-          git_url: "git@gitlab.science.ru.nl:clst-asr/eng_asr_decoder.git"
+          repo: "eng_asr_decoder"
+          giturl: "git@gitlab.science.ru.nl:clst-asr/eng_asr_decoder.git"
 
     - name: Obtaining models
       shell: |
