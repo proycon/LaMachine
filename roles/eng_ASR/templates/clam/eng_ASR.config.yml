@@ -4,6 +4,6 @@ include: "{{clam_include}}"
 port: 8812
 urlprefix: "eng_ASR"
 root: "{{www_data_path}}/eng_ASR.clam/"
-resourcedirectory: "{{lm_prefix}}/opt/eng_ASR_resources/"
+resourcedirectory: "{{lm_prefix}}/src/eng_asr_resources/"
 scratchdirectory: "{{www_data_path}}/eng_ASR.clam/scratch/"
 bindir: "{{lm_prefix}}/bin/"
