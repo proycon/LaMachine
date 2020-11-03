@@ -30,8 +30,18 @@
           clam: spreek2schrijf
           uwsgi: spreek2schrijf
 
+
     - name: Link Python package installation in opt/
       include_role:
         name: lamachine-python-link
       with_items:
         - spreek2schrijf
+
+    - name: "Download data for spreek2schrijf"
+      shell: |
+        if [ ! -f phrase-table.gz ]; then
+          wget https://applejack.science.ru.nl/downloads/spreek2schrijf/phrase-table.gz || exit 1
+        fi
+      args:
+        chdir: "{{lm_prefix}}/opt/spreek2schrijf/model"
+
