@@ -1,8 +1,7 @@
 ---
-    - name: Failing if authorization is not properly configured
-      fail:
-        msg: "You did not set eng_ASR_user and eng_ASR_password in your configuration. This is required for eng_ASR to work! If you do not have the credentials yet, contact h.vandenheuvel@let.ru.nl to request access."
-      when: eng_ASR_user == "undefined" or eng_ASR_password == "undefined"
+    - name: Output warning
+      debug:
+        msg: "eng_ASR requires access to a private git server and will fail if you do not have access (based on ssh keypairs)"
 
     - name: Installing webservice
       include_role:
@@ -14,42 +13,20 @@
            metadata:
               identifier: "eng_ASR"
 
-    - name: Removing old resources (if present)
-      file:
-          path: "{{lm_prefix}}/opt/eng_ASR_resources"
-          state: absent
-      ignore_errors: yes #in case it isn't there in the first place
+    - name: Obtaining ASR decoder scripts
+      include_role:
+        name: lamachine-git
+      vars:
+        package:
+          repo: "eng_asr_decoder"
+          giturl: "git@gitlab.science.ru.nl:clst-asr/eng_asr_decoder.git"
 
-    - name: Creating directory for resources
-      become: "{{lm_become}}"
-      become_user: root
-      file:
-          path: "{{lm_prefix}}/opt/eng_ASR_resources"
-          state: directory
-          owner: "{{unix_user}}"
-          group: "{{unix_group}}"
-          mode: u+rwx,g+rwsx,a+rx
-
-    - name: Downloading resources
-      get_url:
-        url: https://applejack.science.ru.nl/downloads/eng_ASR/resources.tar.gz
-        url_username: "{{eng_ASR_user}}"
-        url_password: "{{eng_ASR_password}}"
-        dest: "{{lm_prefix}}/opt/eng_ASR_resources/resources.tar.gz"
-        tmp_dest: "{{lm_prefix}}/opt/eng_ASR_resources"
-
-
-    - name: Finalising resource installation
+    - name: Obtaining models
       shell: |
           #!/bin/bash
-          tar xzf resources.tar.gz
-          rm -rf resources.tar.gz
-          mv resources/* .
-          chown -R {{unix_user}}:{{unix_group}} .
-          find . -type d | xargs chmod u+rw,g+rw,a+rx
-          find . -type f | xargs chmod u+rw,g+rw,a+r
+          ./download_models.sh
       args:
-          chdir: "{{lm_prefix}}/opt/eng_ASR_resources"
+          chdir: "{{lm_prefix}}/src/eng_asr_decoder"
 
 
     - name: Installing web service

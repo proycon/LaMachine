@@ -5,6 +5,7 @@
       with_items:
         - { debian: dos2unix, redhat: dos2unix, arch: dos2unix }
         - { debian: perl, redhat: perl, arch: perl }
+        - { debian: moreutils, redhat: moreutils, arch: moreutils }
       loop_control:
           loop_var: package
 
