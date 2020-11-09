@@ -418,7 +418,7 @@
       name: lamastats
       minute: "0"
       user: "{{unix_user}}"
-      job: "cd {{lm_prefix}}/var/log/lamastats && lamastats --outputdir {{lm_prefix}}/var/www-data/lamastats --trackclam --foliadocservelog {{lm_prefix}}/var/log/foliadocserve.log nginx:{{lm_prefix}}/var/log/nginx/access.log"
+      job: "cd {{lm_prefix}}/var/log/lamastats && {{lm_prefix}}/bin/lamastats --outputdir {{lm_prefix}}/var/www-data/lamastats --trackclam --foliadocservelog {{lm_prefix}}/var/log/foliadocserve.log nginx:{{lm_prefix}}/var/log/nginx/access.log" > {{lm_prefix}}/var/log/lamastats.log 2>&1
     when: webservertype == "nginx" and locality == "global"
 
   - name: Register lamastats webservice
