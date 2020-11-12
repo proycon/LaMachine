@@ -706,6 +706,7 @@
             groups: "vboxsf"
             append: yes
           when: "ansible_distribution|lower != 'macosx' and 'vboxsf' in getent_group"
+          ignore_errors: yes
 
         - name: Obtaining docker-container-init
           include_role:
