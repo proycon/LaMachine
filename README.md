@@ -534,6 +534,10 @@ follows (do make sure you opted for extra diskspace during the bootstrap):
 
 To access the graphical desktop you will want to start LaMachine from the VirtualBox interface.
 
+#### Q: Can I run LaMachine on Kubernetes?
+
+Yes, see [docs/kubernetes/README.md](these instructions) and templates.
+
 #### Q: Docker gives an error: "flag provided but not defined: --build-arg"
 
 Your Docker is too old, upgrade to at least 1.9
