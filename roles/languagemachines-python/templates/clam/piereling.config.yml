@@ -5,4 +5,3 @@ port: 8814
 urlprefix: "piereling"
 root: "{{www_data_path}}/piereling.clam/"
 bindir: "{{lm_prefix}}/bin/"
-flaturl: "{% if http_port|int == 443 %}https://{% else %}http://{% endif %}{{hostname}}{% if http_port != 80 and http_port != 443 %}:{{http_port}}{% endif %}/flat"
