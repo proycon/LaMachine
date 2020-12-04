@@ -2,8 +2,8 @@
 #======================================
 # LaMachine v2
 #  by Maarten van Gompel
-#  Centre for Language Studies
-#  Radboud University Nijmegen
+#  Centre for Language and Speech Technology, Radboud University Nijmegen
+#  & KNAW Humanities Cluster
 #
 # https://proycon.github.io/LaMachine
 # Licensed under GPLv3
@@ -30,7 +30,7 @@ echo "           ,              ${bold}LaMachine $LM_VERSION${normal} - NLP Soft
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í"
 echo "            /| |\         CLST, Radboud University Nijmegen &"
-echo "           / / /|	        DI, Humanities Cluster, KNAW        (funded by CLARIAH)"
+echo "           / / /|	        KNAW Humanities Cluster            (funded by CLARIAH)"
 echo "${bold}=========================================================================${normal}"
 echo
 

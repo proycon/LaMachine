@@ -15,7 +15,7 @@ echo "           ,              ${bold}LaMachine v{{lamachine_version}}${normal}
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
 echo "           (----í         "
 echo "            /| |\         CLST, Radboud University Nijmegen &"
-echo "           / / /|	        DI, Humanities Cluster, KNAW        (funded by CLARIAH)"
+echo "           / / /|	        KNAW Humanities Cluster           (funded by CLARIAH)"
 echo "${bold}=====================================================================${normal}"
 
 if [ -e "{{lm_path}}" ]; then
