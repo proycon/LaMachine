@@ -2,8 +2,8 @@
            ,              LaMachine v{{ lamachine_version }} - NLP Software distribution
           ~)    '                (https://proycon.github.io/LaMachine)
            (----)
-            /| |\         CLST, Radboud Universit Nijmegen &
-           / / /|	      DI, Humanities Cluster, KNAW     (funded by CLARIAH)
+            /| |\         CLST, Radboud University Nijmegen &
+           / / /|	      KNAW Humanities Cluster          (funded by CLARIAH)
 ==============================================================================
  Build Name: {{ conf_name }}
  Version: {{ version }}      Build time: {{ ansible_date_time.date }} {{ ansible_date_time.time }} {{ansible_date_time.tz}}
