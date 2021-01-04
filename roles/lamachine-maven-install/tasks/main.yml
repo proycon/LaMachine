@@ -36,6 +36,7 @@
           classifier: "{% if 'classifier' in package %}{{package.classifier}}{% endif %}"
           dest: "{{lm_prefix}}/lib/java"
           timeout: 30
+          repository_url: https://repo1.maven.org/maven2
       environment: "{{lm_env}}"
       retries: 5 #the upstream repository notoriously fails some connections
       delay: 3
@@ -51,6 +52,7 @@
           classifier: "{% if 'classifier' in package %}{{package.classifier}}{% endif %}"
           dest: "{{lm_prefix}}/lib/java"
           timeout: 30
+          repository_url: https://repo1.maven.org/maven2
       environment: "{{lm_env}}"
       retries: 5 #the upstream repository notoriously fails some connections
       delay: 3
