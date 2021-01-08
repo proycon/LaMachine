@@ -546,7 +546,7 @@
 
           #fairly nasty patch to solve issue #192
         - name: Installing python-apt into virtual environment
-          shell:
+          shell: |
               #!/bin/sh
               if [ ! -d python3-apt ]; then
                   apt-get download python3-apt || exit 1
