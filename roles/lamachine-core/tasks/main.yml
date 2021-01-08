@@ -552,8 +552,9 @@
                   apt-get download python3-apt || exit 1
                   dpkg -x python3-apt*.deb python3-apt || exit 1
                   cp -r python3-apt/usr/lib/python3/dist-packages/* {{local_prefix}}/lib/python{{ python_version.stdout }}/site-packages/ || exit 1
-                  cp python3-apt/apt_pkg.cpython*.so {{local_prefix}}/lib/python{{ python_version.stdout }}/site-packages/apt_pkg.so || exit 1
-                  cp python3-apt/apt_inst.cpython*.so {{local_prefix}}/lib/python{{ python_version.stdout }}/site-packages/apt_inst.so || exit 1
+                  cd {{local_prefix}}/lib/python{{ python_version.stdout }}/site-packages/ || exit 1
+                  mv apt_pkg.*.so apt_pkg.so || exit 1
+                  mv apt_inst.*.so apt_inst.so || exit 1
               fi
           environment: "{{lm_env}}"
           args:
