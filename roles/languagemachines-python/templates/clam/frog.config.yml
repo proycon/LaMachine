@@ -5,3 +5,4 @@ port: 8801
 urlprefix: "frog"
 root: "{{www_data_path}}/frog.clam/"
 bindir: "{{lm_prefix}}/bin/"
+switchboard_forward_url: "https://switchboard.clarin.eu/#/frog/$BACKLINK/$MIMETYPE/nld"

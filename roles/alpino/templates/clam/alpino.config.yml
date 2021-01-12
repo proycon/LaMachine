@@ -5,3 +5,4 @@ port: 8805
 urlprefix: "alpino"
 root: "{{www_data_path}}/alpino.clam/"
 bindir: "{{lm_prefix}}/bin/"
+switchboard_forward_url: "https://switchboard.clarin.eu/#/alpino/$BACKLINK/$MIMETYPE/nld"
