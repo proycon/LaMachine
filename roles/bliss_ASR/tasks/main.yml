@@ -1,0 +1,61 @@
+---
+    - name: Output warning
+      debug:
+        msg: "bliss_ASR requires access to a private github repository and will fail if you do not have access (based on ssh keypairs)"
+
+    - name: Installing webservice
+      include_role:
+        name: lamachine-python-install
+      vars:
+        package:
+           github_user: "sirifarif"
+           github_repo: "bliss_ASR"
+           metadata:
+              identifier: "bliss_ASR"
+
+    - name: Obtaining ASR decoder scripts
+      include_role:
+        name: lamachine-git
+      vars:
+        package:
+           repo: "bliss_asr_decoder"
+           giturl: "git@github.com:sirifarif/bliss_asr_decoder.git" #private repo
+
+    - name: Obtaining models
+      shell: |
+          #!/bin/bash
+          ./download_models.sh
+      args:
+          chdir: "{{lm_prefix}}/src/bliss_asr_decoder"
+
+
+    - name: Installing web service
+      include_role:
+        name: lamachine-web-install
+      vars:
+        service:
+          nginx: bliss_ASR
+          clam: bliss_ASR
+          uwsgi: bliss_ASR
+
+    - name: Link Python package installation in opt/
+      include_role:
+        name: lamachine-python-link
+      with_items:
+        - bliss_ASR
+
+    - name: Register webservice metadata
+      include_role:
+          name: lamachine-register
+      vars:
+          update: "{{item}}"
+          metadata: #add entrypoint metadata to registry
+              identifier: "{{item}}"
+              entryPoints:
+                - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "WUI", mediatorApplication: "#bliss_ASR" }
+                - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "REST", specification: "{{lm_base_url}}/{{item}}/info",  mediatorApplication: "#bliss_ASR" }
+      when: '"all" in services or item in services'
+      with_items:
+        - bliss_ASR
+
+
