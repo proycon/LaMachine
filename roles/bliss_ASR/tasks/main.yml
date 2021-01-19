@@ -18,8 +18,8 @@
         name: lamachine-git
       vars:
         package:
-           github_user: "sirifarif"
-           github_repo: "bliss_asr_decoder" #this is a private repository
+           repo: "bliss_asr_decoder"
+           giturl: "git@github.com:sirifarif/bliss_asr_decoder.git" #private repo
 
     - name: Obtaining models
       shell: |
