@@ -1,0 +1,9 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
+port: 8824
+urlprefix: "bliss_ASR"
+root: "{{www_data_path}}/bliss_ASR.clam/"
+resourcedirectory: "{{lm_prefix}}/src/bliss_asr_decoder/"
+scratchdirectory: "{{www_data_path}}/bliss_ASR.clam/scratch/"
+bindir: "{{lm_prefix}}/bin/"
