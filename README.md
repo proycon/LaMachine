@@ -344,6 +344,14 @@ certain packages, you can specify these packages (as a comma separated list) to 
 ``lamachine-update --only python-core,java-core``. Do be aware that this could result in your LaMachine ending up in an
 unusable state (in which case a normal update should remedy the problem again).
 
+#### Configuring LaMachine
+
+If you want to view the LaMachine configuration, simply issue a ``lamachine-config`` from within. If you want to edit it
+interactively, add the ``--edit`` flag. Always run ``lamachine-update`` afterwards to apply the new configuration.
+
+The ``lamachine-config`` tool can also be used to quickly edit a configuration setting through the command line, see
+``lamachine-config --help`` for details.
+
 ### Webservices and web applications
 
 LaMachine comes with several webservices and web applications out of the box.
