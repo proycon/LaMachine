@@ -23,12 +23,12 @@ if [ -n "$1" ]; then
             exit 2
         fi
         if grep -qe "^    $2:" "$CONFFILE"; then
-            if ! sed -i.bak -e "s|^    $2:.*$|    $2: $3|g" "$CONFFILE"; then
+            if ! sed -i.bak -e "s|^    $2:.*$|    $2: \"$3\"|g" "$CONFFILE"; then
                 echo "Failed to update existing remote service $2" >&2
                 exit 2
             fi
         else
-            if ! sed -i.bak -e "/^remote_services:/a \ \ \ \ $2: $3" "$CONFFILE"; then
+            if ! sed -i.bak -e "/^remote_services:/a \ \ \ \ $2: \"$3\"" "$CONFFILE"; then
                 echo "Failed to add a new remote service $2" >&2
                 exit 2
             fi
@@ -42,8 +42,18 @@ if [ -n "$1" ]; then
             exit $?
         fi
     elif [ -n "$2" ]; then
+        if echo "$2" | grep -qe "^[\[\{]"; then
+            #literal array/dictionary
+            VALUE=$2
+        elif echo "$2" | grep -qe "[ /\?;'\!']"; then
+            #string that needs to be escaped
+            VALUE="\"$2\""
+        else
+            #scalar value
+            VALUE=$2
+        fi
         if grep -qe "^$1:.*$" "$CONFFILE"; then
-            if ! sed -i.bak -e "s|^$1:.*$|$1: $2|g" "$CONFFILE"; then
+            if ! sed -i.bak -e "s|^$1:.*$|$1: $VALUE|g" "$CONFFILE"; then
                 echo "Failed to update existing config key $1" >&2
                 exit 2
             fi
