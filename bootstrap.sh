@@ -1418,9 +1418,9 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
 echo "mapped_http_port: $HOSTPORT #mapped webserver port on host system (for VM/docker only)
 webservertype: nginx #If set to anything different, the internal webserver will not be enabled/provided by LaMachine (which allows you to run your own external one), do leave webserver: true set as is though.
 services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all possible services from the software categories you install will be provided. You can remove this and list specific services you want to enable. This is especially needed in case of a LaMachine installation that intends to only provide a single service.
-remote_services: #Remote services you would like to tie to this LaMachine installation, remote services take precendence over local ones
-  switchboard: \"https://switchboard.clarin.eu\"
-  autosearch: \"https://portal.clarin.inl.nl/autocorp\"" >> $STAGEDCONFIG
+remote_services: #Remote services you would like to tie to this LaMachine installation, remote services take precendence over local ones (please use exactly 4 spaces as indentation here)
+    switchboard: \"https://switchboard.clarin.eu\"
+    autosearch: \"https://portal.clarin.inl.nl/autocorp\"" >> $STAGEDCONFIG
 if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "singularity" ]] || [[ $FLAVOUR == "lxc" ]] || [[ $FLAVOUR == "remote" ]]; then
     echo "clam_include: \"/usr/local/etc/clam_base.config.yml\" #You can set this to a CLAM base configuration file that will be included from all the webservices, it allows you to do configure common traits like authentication" >> $STAGEDCONFIG
 else
