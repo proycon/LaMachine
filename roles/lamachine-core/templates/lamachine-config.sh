@@ -8,7 +8,7 @@ elif [ -e "{{lm_path}}/host_vars/localhost.yml" ]; then
     CONFFILE="{{lm_path}}/host_vars/localhost.yml"
 fi
 
-if [ ! -z "$1" ]; then
+if [ -n "$1" ]; then
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Usage: ">&2
         echo "   lamachine-config key value                - Set a config value">&2
@@ -34,14 +34,14 @@ if [ ! -z "$1" ]; then
             fi
         fi
     elif [ "$1" = "-e" ] || [ "$1" = "--edit" ]; then
-        if [ ! -z "$EDITOR" ]; then
+        if [ -n "$EDITOR" ]; then
             $EDITOR "$CONFFILE"
             exit $?
         else
             nano "$CONFFILE"
             exit $?
         fi
-    elif [ ! -z "$2" ]; then
+    elif [ -n "$2" ]; then
         if grep -qe "^$1:.*$" "$CONFFILE"; then
             if ! sed -i.bak -e "s|^$1:.*$|$1: $2|g" "$CONFFILE"; then
                 echo "Failed to update existing config key $1" >&2
@@ -54,8 +54,7 @@ if [ ! -z "$1" ]; then
             fi
         fi
     else
-        cat "$CONFFILE" | grep -e "^$1:"
-        exit $?
+        grep -e "^$1:" "$CONFFILE" || exit 1
     fi
 else
     cat "$CONFFILE" || exit 1
