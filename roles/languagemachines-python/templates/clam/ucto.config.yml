@@ -5,4 +5,6 @@ port: 8802
 urlprefix: "ucto"
 root: "{{www_data_path}}/ucto.clam/"
 bindir: "{{lm_prefix}}/bin/"
-switchboard_forward_url: "https://switchboard.clarin.eu/#/ucto/$BACKLINK/$MIMETYPE/$LANGUAGE"
+{% if "switchboard" in remote_services and remote_services.switchboard %}
+switchboard_forward_url: "{{remote_services.switchboard}}/#/ucto/$BACKLINK/$MIMETYPE/$LANGUAGE"
+{% endif %}

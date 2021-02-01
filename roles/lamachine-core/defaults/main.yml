@@ -9,7 +9,7 @@ local_prefix: "{{homedir}}/lamachine-{{conf_name}}" #where local packages are in
 global_prefix: "/usr/local" #where global packages are installed
 data_path: "/data"
 locality: "global" #Install everything globally
-localenv_type: "virtualenv" #Local environment type, can be conda or virtualenv
+localenv_type: "virtualenv" #Local environment type, can only be virtualenv
 python_bin: "python3" #path to the global python3 interpreter, may be an absolute path
 pip_bin: "pip3" #must correspond to the one belonging to the above python interpreter
 webserver: false
@@ -28,6 +28,7 @@ clam_include: "" #a base clam configuration file to include
 ignore_tests: false
 services:
   - all
+remote_services: {} #services that are remote (keys are names, values are URLs) (bootstrap sets a few)
 lab: true #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)
 lab_password_sha1: "sha1:fa40baddab88:c498070b5885ee26ed851104ddef37926459b0c4" #default password: lamachine
 lab_allow_origin: "*" #hosts that may access the lab environment
