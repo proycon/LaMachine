@@ -1427,6 +1427,14 @@ if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "
 else
     echo "clam_include: \"$BASEDIR/$LM_NAME/etc/clam_base.config.yml\" #You can set this to a CLAM base configuration file that will be included from all the webservices, it allows you to do configure common traits like authentication" >> $STAGEDCONFIG
 fi
+echo "clam_base_config: {} #extra clam base configuration keys" >>$STAGEDCONFIG
+echo "oauth_client_id: \"\" #shared oauth client ID
+oauth_client_secret: \"\" #shared oauth client secret
+oauth_auth_url: \"\" #something like https://your-identity-provider/oauth/authenticate
+oauth_token_url: \"\" #something like https://your-identity-provider/oauth/token
+oauth_userinfo_url: \"\" #something like https://your-identity-provider/oauth/userinfo
+oauth_revoke_url: \"\" #(optional) something like https://your-identity-provider/oauth/revoke
+oauth_scope: [] #Set this to [ \"openid\", \"email\" ] if you want to use OpenID Connect" >> $STAGEDCONFIG
 if [[ $OS == "mac" ]] || [[ "$FLAVOUR" == "remote" ]]; then
     echo "lab: false #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)" >> $STAGEDCONFIG
 else

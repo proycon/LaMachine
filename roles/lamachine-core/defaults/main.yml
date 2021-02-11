@@ -25,6 +25,7 @@ force_https: no #force all urls to use https (can be set when behind a reverse p
 shared_www_data: no
 move_share_www_data: no #for docker, whether to actively move the www-data to the shared data volume on lamachine-start-webserver (shared_www_data is always no though)
 clam_include: "" #a base clam configuration file to include
+clam_base_config: {} #extra clam base configuration keys
 ignore_tests: false
 services:
   - all
@@ -34,6 +35,13 @@ lab_password_sha1: "sha1:fa40baddab88:c498070b5885ee26ed851104ddef37926459b0c4" 
 lab_allow_origin: "*" #hosts that may access the lab environment
 flat_password: "flat" #admin password for flat
 custom_flat_settings: false  #set this to true if you customized your flat settings and want to prevent LaMachine from overwriting it again on update
+oauth_client_id: "" #shared oauth2 client ID
+oauth_client_secret: "" #shared oauth2 client secret
+oauth_auth_url: "" #something like https://your-identity-provider/oauth/authenticate
+oauth_token_url: "" #something like https://your-identity-provider/oauth/token
+oauth_userinfo_url: "" #something like https://your-identity-provider/oauth/userinfo
+oauth_revoke_url: "" #(optional) something like https://your-identity-provider/oauth/revoke
+oauth_scope: [] #Set this to [ "openid", "email" ] if you want to use OpenID Connect
 ssh_key_filename: "id_rsa"
 ssh_public_key: "" #ssh public key
 ssh_private_key: "" #ssh private key
