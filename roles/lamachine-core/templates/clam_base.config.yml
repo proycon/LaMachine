@@ -4,7 +4,6 @@ flaturl: "{{ remote_services.flat }}"
 {% elif webserver and ("flat" in services or "all" in services) %}
 flaturl: "{{ lm_base_url }}/flat"
 {% endif %}
-{% if oauth_client_id %}
 oauth: true
 oauth_client_id: "{{ oauth_client_id }}"
 oauth_client_secret: "{{ oauth_client_secret }}"
@@ -14,7 +13,6 @@ oauth_userinfo_url: "{{ oauth_userinfo_url }}"
 oauth_scope: {{ oauth_scope | to_json }}
 {% if oauth_revoke_url %}
 oauth_revoke_url: "{{ oauth_revoke_url }}"
-{% endif %}
 {% endif %}
 {% if clam_base_config %}
 {{ clam_base_config | to_yaml }}
