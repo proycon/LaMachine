@@ -17,5 +17,5 @@ oauth_revoke_url: "{{ oauth_revoke_url }}"
 {% endif %}
 {% endif %}
 {% if clam_base_config %}
-{{ clam_base_config | to_yaml }}
+{{ clam_base_config | to_nice_yaml }}
 {% endif %}
