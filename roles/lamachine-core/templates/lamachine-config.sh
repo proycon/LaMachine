@@ -35,11 +35,11 @@ if [ -n "$1" ]; then
         fi
     elif [ "$1" = "-e" ] || [ "$1" = "--edit" ]; then
         if [ -n "$EDITOR" ]; then
-            $EDITOR "$CONFFILE"
-            exit $?
+            $EDITOR "$CONFFILE" || exit $?
+            cp -f "$CONFFILE" "{{lm_path}}/host_vars/localhost.yml"
         else
-            nano "$CONFFILE"
-            exit $?
+            nano "$CONFFILE" || exit $?
+            cp -f "$CONFFILE" "{{lm_path}}/host_vars/localhost.yml"
         fi
     elif [ -n "$2" ]; then
         if echo "$2" | grep -qe "^[\[\{]"; then
@@ -63,8 +63,10 @@ if [ -n "$1" ]; then
                 exit 3
             fi
         fi
+        cp -f "$CONFFILE" "{{lm_path}}/host_vars/localhost.yml"
     else
         grep -e "^$1:" "$CONFFILE" || exit 1
+        cp -f "$CONFFILE" "{{lm_path}}/host_vars/localhost.yml"
     fi
 else
     cat "$CONFFILE" || exit 1

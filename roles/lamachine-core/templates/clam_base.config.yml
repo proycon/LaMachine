@@ -7,7 +7,7 @@ flaturl: "{{ lm_base_url }}/flat"
 {% if force_https %}
 forcehttps: true
 {% endif %}
-{% if oauth_client_id and oauth_client_secret and oauth_auth_url and oauth_token_url and oauth_userinfo_url %}
+{% if oauth_client_id %}
 oauth: true
 oauth_client_id: "{{ oauth_client_id }}"
 oauth_client_secret: "{{ oauth_client_secret }}"
@@ -20,5 +20,5 @@ oauth_revoke_url: "{{ oauth_revoke_url }}"
 {% endif %}
 {% endif %}
 {% if clam_base_config %}
-{{ clam_base_config | to_yaml }}
+{{ clam_base_config | to_nice_yaml }}
 {% endif %}
