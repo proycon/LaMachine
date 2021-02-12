@@ -3,8 +3,19 @@
 import sys
 import os
 import argparse
+import hashlib
+import random
 
 CONFFILE = "{{source_path}}/LaMachine/host_vars/{{hostname}}.yml"
+
+
+#copied from jupyter source because we don't want a dependency at this tsage
+def jupyter_passwd(passphrase):
+    salt_len = 12
+    h = hashlib.new('sha1')
+    salt = ('%0' + str(salt_len) + 'x') % random.getrandbits(4 * salt_len)
+    h.update(bytes(passphrase, 'utf-8') + bytes(salt, 'ascii'))
+    return ':'.join(('sha1', salt, h.hexdigest()))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Interactive tool to set a password for one or more components of LaMachine", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -23,12 +34,12 @@ if __name__ == '__main__':
             else:
                 print("Failure updating password",file=sys.stderr)
         elif target == "lab":
-            from notebook.auth import passwd
             if args.password:
-                lab_passwd_hash = passwd(args.password)
+                lab_passwd_hash = jupyter_passwd(args.password)
             else:
                 print("Enter a password for the JupyterLab environment:")
-                lab_passwd_hash = passwd()
+                pw = input("Enter a password for Jupyter Lab:").strip()
+                lab_passwd_hash = jupyter_passwd(pw)
             r = os.system("lamachine-config lab_password_sha1 \""+ lab_passwd_hash + "\"")
             if r == 0:
                 print("Password scheduled to update, please run lamachine-update now",file=sys.stderr)
