@@ -26,7 +26,7 @@ if __name__ == '__main__':
     for target in args.targets:
         if target == "main":
             if args.password:
-                print("Unable to use the password passed as paramter, querying interactively",file=sys.stderr)
+                print("Unable to use the password passed as parameter, querying interactively",file=sys.stderr)
             print("Enter a password for the current unix user:")
             r = os.system("passwd")
             if r == 0:
