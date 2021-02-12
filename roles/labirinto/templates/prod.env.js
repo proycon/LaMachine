@@ -12,5 +12,6 @@ module.exports = {
   LOGO_LEFT: "true",
   ORGANIZATIONS: '{{portal_organizations|to_json}}',
   REWRITE_HOST: '"{{hostname}}"',
+  FORCE_HTTPS: "{{force_https|bool}}",
   DOMAINS: '{{portal_domains|to_json}}'
 }

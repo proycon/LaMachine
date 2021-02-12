@@ -121,4 +121,10 @@ buildmatrix = [
         "version": 'stable',
         "install": "lamachine-core"
     },
+    {
+        "name": 'devcore',
+        "flavour": 'docker',
+        "version": 'development',
+        "install": "lamachine-core"
+    },
 ]
