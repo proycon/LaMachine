@@ -26,6 +26,9 @@
               - homedir
               - prefer_distro
               - minimal
+              - force_https
+              - lm_base_url
+              - oauth_client_id
 
         - name: "Outputting custom versions"
           debug:
