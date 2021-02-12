@@ -5,3 +5,4 @@ port: 8803
 urlprefix: "colibricore"
 root: "{{ www_data_path }}/colibricore.clam/"
 bindir: "{{lm_prefix}}/bin/"
+oauth_client_url: "{{lm_base_url}}/colibricore"

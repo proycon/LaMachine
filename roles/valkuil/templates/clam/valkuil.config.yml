@@ -5,3 +5,4 @@ port: 8813
 urlprefix: "valkuil"
 root: "{{www_data_path}}/valkuil.clam/"
 valkuildir: "{{lm_prefix}}/src/valkuil-gecco"
+oauth_client_url: "{{lm_base_url}}/valkuil"

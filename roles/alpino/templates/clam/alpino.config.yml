@@ -5,6 +5,7 @@ port: 8805
 urlprefix: "alpino"
 root: "{{www_data_path}}/alpino.clam/"
 bindir: "{{lm_prefix}}/bin/"
+oauth_client_url: "{{lm_base_url}}/alpino"
 {% if "switchboard" in remote_services and remote_services.switchboard %}
 switchboard_forward_url: "{{remote_services.switchboard}}/#/alpino/$BACKLINK/$MIMETYPE/nld"
 {% endif %}

@@ -5,3 +5,4 @@ port: 8821
 urlprefix: "asr4J"
 root: "{{www_data_path}}/asr4J.clam/"
 bindir: "{{lm_prefix}}/bin/"
+oauth_client_url: "{{lm_base_url}}/asr4J"

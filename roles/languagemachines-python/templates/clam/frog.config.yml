@@ -4,6 +4,7 @@ include: "{{clam_include}}"
 port: 8801
 urlprefix: "frog"
 root: "{{www_data_path}}/frog.clam/"
+oauth_client_url: "{{lm_base_url}}/frog"
 bindir: "{{lm_prefix}}/bin/"
 {% if "switchboard" in remote_services and remote_services.switchboard %}
 switchboard_forward_url: "{{remote_services.switchboard}}/#/frog/$BACKLINK/$MIMETYPE/nld"
