@@ -4,6 +4,9 @@ flaturl: "{{ remote_services.flat }}"
 {% elif webserver and ("flat" in services or "all" in services) %}
 flaturl: "{{ lm_base_url }}/flat"
 {% endif %}
+{% if force_https %}
+forcehttps: true
+{% endif %}
 {% if oauth_client_id and oauth_client_secret and oauth_auth_url and oauth_token_url and oauth_userinfo_url %}
 oauth: true
 oauth_client_id: "{{ oauth_client_id }}"
