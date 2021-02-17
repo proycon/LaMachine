@@ -291,6 +291,27 @@ SECRET_KEY = 'ki5^nfv02@1f1(+*#l_9GDi9h&cf^_lv6bs4j9^6mpr&(%o4zk'
 DEBUG = True #Set to False for production environments!!!!
 
 
+##############################################################################
+# DJANGO SETTINGS FOR OPENID CONNECT AUTHENTICATION
+#############################################################################
+
+{% if oauth_client_id %}
+OIDC = True
+
+#note: The redirect url you register with your authorization provider should end in /oidc/callback/
+
+AUTHENTICATION_BACKENDS = ( 'mozilla_django_oidc.auth.OIDCAuthenticationBackend',)
+
+OIDC_RP_CLIENT_ID = "{{ oauth_client_id }}" #As provided by your authorization provider, do not check this into public version control!!!
+OIDC_RP_CLIENT_SECRET = "{{ oauth_client_secret }}"#As provider by your authorization provider, Do not check this into public version control!!!
+
+OIDC_OP_AUTHORIZATION_ENDPOINT = "{{ oauth_auth_url }}"
+OIDC_OP_TOKEN_ENDPOINT = "{{ oauth_token_url }}"
+OIDC_OP_USER_ENDPOINT = "{{ oauth_userinfo_url }}"
+{% else %}
+OIDC = False
+{% endif %}
+
 
 ##############################################################################
 # DJANGO SETTINGS THAT NEED NOT BE CHANGED (but you may if you want to, do scroll through at least)
@@ -453,6 +474,7 @@ INSTALLED_APPS = [
     # 'django.contrib.admindocs',
     'flat.users'
 ]
+if OIDC: INSTALLED_APPS.insert(1, 'mozilla_django_oidc')
 for mode,_ in MODES:
     INSTALLED_APPS.append('flat.modes.' + mode)
 INSTALLED_APPS = tuple(INSTALLED_APPS)
