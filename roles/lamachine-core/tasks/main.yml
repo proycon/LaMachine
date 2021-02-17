@@ -736,7 +736,7 @@
               repo: docker-container-init
           when: locality == "global"
 
-        - name: Compiling and installaitng docker-container-init
+        - name: Compiling and installing docker-container-init
           become: "{{lm_become}}"
           become_user: root
           command: "gcc -o {{lm_prefix}}/bin/docker-container-init {{source_path}}/docker-container-init/docker-container-init.c"
