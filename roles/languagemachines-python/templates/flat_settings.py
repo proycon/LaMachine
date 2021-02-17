@@ -479,6 +479,8 @@ for mode,_ in MODES:
     INSTALLED_APPS.append('flat.modes.' + mode)
 INSTALLED_APPS = tuple(INSTALLED_APPS)
 
+LOGIN_REDIRECT_URL = BASE_PREFIX + "/"
+LOGOUT_REDIRECT_URL = BASE_PREFIX + "/"
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
