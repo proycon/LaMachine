@@ -1434,7 +1434,10 @@ oauth_auth_url: \"\" #something like https://your-identity-provider/oauth/authen
 oauth_token_url: \"\" #something like https://your-identity-provider/oauth/token
 oauth_userinfo_url: \"\" #something like https://your-identity-provider/oauth/userinfo
 oauth_revoke_url: \"\" #(optional) something like https://your-identity-provider/oauth/revoke
-oauth_scope: [] #Set this to [ \"openid\", \"email\" ] if you want to use OpenID Connect" >> $STAGEDCONFIG
+oauth_scope: [] #Set this to [ \"openid\", \"email\" ] if you want to use OpenID Connect
+oauth_sign_algo: \"\" #(optional) You can set this to RS256 or HS256, for OpenID Connect
+oauth_jwks_url: \"\" #(optional) something like https://your-identity-provider/oauth/jwks , may be needed for OpenID Connect
+" >> $STAGEDCONFIG
 if [[ $OS == "mac" ]] || [[ "$FLAVOUR" == "remote" ]]; then
     echo "lab: false #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)" >> $STAGEDCONFIG
 else

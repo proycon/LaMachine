@@ -312,6 +312,14 @@ OIDC_RP_CLIENT_SECRET = "{{ oauth_client_secret }}" #As provided by your authori
 OIDC_OP_AUTHORIZATION_ENDPOINT = "{{ oauth_auth_url }}"
 OIDC_OP_TOKEN_ENDPOINT = "{{ oauth_token_url }}"
 OIDC_OP_USER_ENDPOINT = "{{ oauth_userinfo_url }}"
+
+{% if oauth_sign_algo %}
+OIDC_RP_SIGN_ALGO = "{{ oauth_sign_algo }}" #should be HS256 or RS256
+{% endif %}
+{% if oauth_jwks_url %}
+OIDC_OP_JWKS_ENDPOINT = "{{ oauth_jwks_url }}"
+{% endif %}
+
 {% else %}
 OIDC = False
 {% endif %}
