@@ -307,7 +307,7 @@ OIDC = True
 AUTHENTICATION_BACKENDS = ( 'mozilla_django_oidc.auth.OIDCAuthenticationBackend',)
 
 OIDC_RP_CLIENT_ID = "{{ oauth_client_id }}" #As provided by your authorization provider, do not check this into public version control!!!
-OIDC_RP_CLIENT_SECRET = "{{ oauth_client_secret }}"#As provider by your authorization provider, Do not check this into public version control!!!
+OIDC_RP_CLIENT_SECRET = "{{ oauth_client_secret }}" #As provided by your authorization provider, Do not check this into public version control!!!
 
 OIDC_OP_AUTHORIZATION_ENDPOINT = "{{ oauth_auth_url }}"
 OIDC_OP_TOKEN_ENDPOINT = "{{ oauth_token_url }}"
