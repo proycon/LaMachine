@@ -322,6 +322,8 @@ OIDC_OP_JWKS_ENDPOINT = "{{ oauth_jwks_url }}"
 {% endif %}
 {% if oauth_sign_key %}
 OIDC_RD_IDP_SIGN_KEY = {{ oauth_sign_key | to_json }}
+{% endif %}
+
 {% else %}
 OIDC = False
 {% endif %}
