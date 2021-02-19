@@ -776,10 +776,10 @@ else
             if which python3; then
                 #if we don't have python3 then we already flagged that
                 # and pip and virtualenv will be included in its installation
-                if ! python3 -m pip > /dev/null; then
+                if ! python3 -m pip --version > /dev/null; then
                     NEED+=("pip")
                 fi
-                if ! python3 -m virtualenv > /dev/null; then
+                if ! python3 -m virtualenv --version > /dev/null; then
                     NEED+=("virtualenv")
                 fi
             fi
