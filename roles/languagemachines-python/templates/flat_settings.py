@@ -313,6 +313,7 @@ OIDC_OP_AUTHORIZATION_ENDPOINT = "{{ oauth_auth_url }}"
 OIDC_OP_TOKEN_ENDPOINT = "{{ oauth_token_url }}"
 OIDC_OP_USER_ENDPOINT = "{{ oauth_userinfo_url }}"
 
+OIDC_TOKEN_USE_BASIC_AUTH = True #Use client_secret_basic, if not enabled, client_secret_post will be default
 {% if oauth_sign_algo %}
 OIDC_RP_SIGN_ALGO = "{{ oauth_sign_algo }}" #should be HS256 or RS256
 {% endif %}
