@@ -42,8 +42,10 @@ oauth_token_url: "" #something like https://your-identity-provider/oauth/token
 oauth_userinfo_url: "" #something like https://your-identity-provider/oauth/userinfo
 oauth_revoke_url: "" #(optional) something like https://your-identity-provider/oauth/revoke
 oauth_sign_algo: "" #(optional) You can set this to RS256 or HS256, for OpenID Connect
-oauth_jwks_url: "" #(optional) something like https://your-identity-provider/oauth/jwks , may be needed for OpenID Connect
+oauth_jwks_url: "" #(optional) something like https://your-identity-provider/oauth/jwks , used by OpenID Connect to obtain a signing key autoamtically (usually in combination with RS256 algorithm)
+oauth_sign_key: {} #(optional) provide a sign key manually (should be a dict that has fields like kty, use,alg,n and e), used by OpenID Connect (usually in combination with RS256 algorithm)
 oauth_scope: [] #Set this to [ "openid", "email" ] if you want to use OpenID Connect
+
 ssh_key_filename: "id_rsa"
 ssh_public_key: "" #ssh public key
 ssh_private_key: "" #ssh private key

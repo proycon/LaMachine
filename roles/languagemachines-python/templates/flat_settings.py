@@ -319,7 +319,8 @@ OIDC_RP_SIGN_ALGO = "{{ oauth_sign_algo }}" #should be HS256 or RS256
 {% if oauth_jwks_url %}
 OIDC_OP_JWKS_ENDPOINT = "{{ oauth_jwks_url }}"
 {% endif %}
-
+{% if oauth_sign_key %}
+OIDC_RD_IDP_SIGN_KEY = {{ oauth_sign_key | to_json }}
 {% else %}
 OIDC = False
 {% endif %}
