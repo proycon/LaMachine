@@ -304,7 +304,7 @@ OIDC = True
 
 #note: The redirect url you register with your authorization provider should end in /oidc/callback/
 
-AUTHENTICATION_BACKENDS = ( 'mozilla_django_oidc.auth.OIDCAuthenticationBackend',)
+AUTHENTICATION_BACKENDS = ( 'django.contrib.auth.backends.ModelBackend','mozilla_django_oidc.auth.OIDCAuthenticationBackend',)
 
 OIDC_RP_CLIENT_ID = "{{ oauth_client_id }}" #As provided by your authorization provider, do not check this into public version control!!!
 OIDC_RP_CLIENT_SECRET = "{{ oauth_client_secret }}" #As provided by your authorization provider, Do not check this into public version control!!!
