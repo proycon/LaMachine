@@ -49,15 +49,15 @@
           github_repo: colibri-core #always installed from source, will reuse same sourcedir as C++ lib
           git_branch: "{{ current_coco_branch_or_tag.stdout }}"
 
-      - name: Testing Python bindings (1)
-        include_role:
-            name: lamachine-run
-        vars:
-            command: "python3 -c 'import {{ item }}'"
-            allow_failure: "{{ignore_tests|bool}}"
-        with_items:
-            - colibricore
-        ignore_errors: "{{ignore_tests|bool}}"
+    - name: Testing Python bindings (1)
+      include_role:
+          name: lamachine-run
+      vars:
+          command: "python3 -c 'import {{ item }}'"
+          allow_failure: "{{ignore_tests|bool}}"
+      with_items:
+          - colibricore
+      ignore_errors: "{{ignore_tests|bool}}"
 
     - block:
       - name: Testing Python bindings (2)
