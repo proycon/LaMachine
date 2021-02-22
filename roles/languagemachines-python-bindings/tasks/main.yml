@@ -49,19 +49,57 @@
           github_repo: colibri-core #always installed from source, will reuse same sourcedir as C++ lib
           git_branch: "{{ current_coco_branch_or_tag.stdout }}"
 
-    - name: Testing Python bindings
-      include_role:
-          name: lamachine-run
-      vars:
-          command: "python3 -c 'import {{ item }}'"
-          allow_failure: "{{ignore_tests|bool}}"
-      with_items:
-          - ucto
-          - frog
-          - colibricore
-      ignore_errors: "{{ignore_tests|bool}}"
+      - name: Testing Python bindings (1)
+        include_role:
+            name: lamachine-run
+        vars:
+            command: "python3 -c 'import {{ item }}'"
+            allow_failure: "{{ignore_tests|bool}}"
+        with_items:
+            - colibricore
+        ignore_errors: "{{ignore_tests|bool}}"
 
-    - name: Testing Python bindings (2)
+    - block:
+      - name: Testing Python bindings (2)
+        include_role:
+            name: lamachine-run
+        vars:
+            command: "python3 -c 'import {{ item }}'"
+            allow_failure: "{{ignore_tests|bool}}"
+        with_items:
+            - ucto
+            - frog
+            - colibricore
+        ignore_errors: "{{ignore_tests|bool}}"
+      rescue:
+      - name: "Python binding test failed. Removing old artefacts and retrying"
+        shell: |
+          #!/bin/sh
+          #remove .so artefacts:
+          rm "{{lm_prefix}}/lib/python{{python_version.stdout}}/site-packages/ucto.cpython"*
+          rm "{{lm_prefix}}/lib/python{{python_version.stdout}}/site-packages/frog.cpython"*
+          #remove sources
+          rm -Rf {{source_path}}/python-ucto
+          rm -Rf {{source_path}}/python-frog
+      - name: Installing Python bindings (second attempt)
+        include_role:
+          name: lamachine-python-install
+        with_items:
+            - { github_user: "proycon", github_repo: "python-ucto", pip: "python-ucto", conda: "" }
+            - { github_user: "proycon", github_repo: "python-frog", pip: "python-frog", conda: "" }
+        loop_control:
+            loop_var: package
+      - name: Testing Python bindings (2) - second attempt
+        include_role:
+            name: lamachine-run
+        vars:
+            command: "python3 -c 'import {{ item }}'"
+            allow_failure: "{{ignore_tests|bool}}"
+        with_items:
+            - ucto
+            - frog
+
+    - name: Testing Python bindings (3)
       include_role:
           name: lamachine-run
       vars:
