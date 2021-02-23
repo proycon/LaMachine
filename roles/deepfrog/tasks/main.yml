@@ -1,4 +1,12 @@
 ---
+  - name: Installing global dependencies for Deepfrog
+    include_role:
+      name: lamachine-package-install
+    with_items:
+      - { debian: libssl-dev, redhat: openssl-dev, arch: openssl } #should already be installed earlier but no harm in making it explicit here anyway
+    loop_control:
+      loop_var: package
+
   - name: Installing libtorch on macOS
     homebrew:
       name: [ libtorch ]
