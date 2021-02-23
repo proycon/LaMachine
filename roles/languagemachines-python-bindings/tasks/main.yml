@@ -73,6 +73,8 @@
         ignore_errors: "{{ignore_tests|bool}}"
       rescue:
       - name: "Python binding test failed. Removing old artefacts and retrying"
+        become: "{{lm_become}}"
+        become_user: root
         shell: |
           #!/bin/sh
           #remove .so artefacts:
