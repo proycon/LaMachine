@@ -40,4 +40,15 @@
               export CARGO_HOME="{{lm_prefix}}/opt/cargo"
               export CARGO_INSTALL_ROOT="{{lm_prefix}}"
             mode: u+rwx,a+rx
+
+        - name: "Adding activation script for Rust"
+          become: "{{lm_become}}"
+          become_user: root
+          shell: |
+             touch {{lm_prefix}}/.crates.toml
+             touch {{lm_prefix}}/.crates2.json
+             chown {{unix_user}} {{lm_prefix}}/.crates.toml {{lm_prefix}}/.crates2.json
+             chgrp {{unix_user}} {{lm_prefix}}/.crates.toml {{lm_prefix}}/.crates2.json
+          when: locality == "global"
+
     - set_fact: ran_rust=1
