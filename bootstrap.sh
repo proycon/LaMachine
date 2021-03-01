@@ -1869,27 +1869,30 @@ elif [[ "$FLAVOUR" == "lxc" ]]; then
 elif [[ "$FLAVOUR" == "singularity" ]]; then
     if [ $BUILD -eq 1 ]; then
         echo "Building singularity image (requires sudo).."
-        sed -i.bak "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install.yml || fatalerror "Unable to run sed"
-        cp $SOURCEDIR/Singularity $SOURCEDIR/Singularity.def
-        sed -i.bak "s/\$HOSTNAME/$HOSTNAME/g" $SOURCEDIR/Singularity.def || fatalerror "Unable to run sed"
-        sed -i.bak "s/\$ANSIBLE_OPTIONS/$ANSIBLE_OPTIONS/g" $SOURCEDIR/Singularity.def || fatalerror "Unable to run sed"
-        sed -i.bak "s/\$LM_VERSION/$LM_VERSION/g" $SOURCEDIR/Singularity.def || fatalerror "Unable to run sed"
-        #echo "$HOSTNAME ansible_connection=local" > $SOURCEDIR/hosts.ini #not needed
-        sudo singularity build $LM_NAME.sif $SOURCEDIR/Singularity.def 2>&1 | tee lamachine-$LM_NAME.log
-        rc=${PIPESTATUS[0]}
+        echo "${boldyellow}(sorry, this is not implemented yet! Use the download a pre-built container option instead!)${normal}"
+        #sed -i.bak "s/hosts: all/hosts: localhost/g" $SOURCEDIR/install.yml || fatalerror "Unable to run sed"
+        #cp $SOURCEDIR/Singularity $SOURCEDIR/Singularity.def
+        #sed -i.bak "s/\$HOSTNAME/$HOSTNAME/g" $SOURCEDIR/Singularity.def || fatalerror "Unable to run sed"
+        #sed -i.bak "s/\$ANSIBLE_OPTIONS/$ANSIBLE_OPTIONS/g" $SOURCEDIR/Singularity.def || fatalerror "Unable to run sed"
+        #sed -i.bak "s/\$LM_VERSION/$LM_VERSION/g" $SOURCEDIR/Singularity.def || fatalerror "Unable to run sed"
+        ##echo "$HOSTNAME ansible_connection=local" > $SOURCEDIR/hosts.ini #not needed
+        #sudo singularity build $LM_NAME.sif $SOURCEDIR/Singularity.def 2>&1 | tee lamachine-$LM_NAME.log
+        #rc=${PIPESTATUS[0]}
+        rc=1
     else
-        echo "Pulling pre-built singularity image.."
-        singularity pull LaMachine #TODO
+        echo "Pulling pre-built docker image.."
+        singularity pull docker://proycon/lamachine
         rc=$?
+        ls lamachine_latest.sif
     fi
     if [ $rc -eq 0 ]; then
         echo "======================================================================================"
         if [ $BUILD -eq 1 ]; then
             echo "${boldgreen}All done, a singularity image has been built!${normal}"
-            echo "- to create and run a *new* interactive container using this image, run: singularity run -p 8080:80 -h $HOSTNAME -t -i $singularityREPO:$LM_NAME"
+            echo "- to create and run a *new* interactive container using this image, run: singularity run -u lamachine_latest.sif"
         else
             echo "${boldgreen}All done, a singularity image has been downloaded!${normal}"
-            echo "- to create and run a *new* interactive container using this image, run: singularity run -p 8080:80 -h latest -t -i $singularityREPO"
+            echo "- to create and run a *new* interactive container using this image, run: singularity run -u lamachine_latest.sif"
         fi
     else
         echo "======================================================================================"
