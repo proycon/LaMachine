@@ -105,6 +105,6 @@
           keywords: ["lab","IDE","python","notebook","scripting environment"]
           entryPoints:
             - "@type": "EntryPoint"
-              urlTemplate: "{{lm_base_url}}/hub"
+              urlTemplate: "{{lm_base_url}}/jupyter"
               interfaceType: "WUI"
 
