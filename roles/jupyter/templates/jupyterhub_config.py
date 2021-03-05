@@ -5,6 +5,7 @@ c.Spawner.default_url = '/lab'
 c.Spawner.notebook_dir = '{{www_data_path}}/notebooks/{username}' #(username will be replaced by hub, not ansible)
 c.NotebookApp.terminado_settings = { 'shell_command': ['/bin/bash','-l'] }
 c.JupyterHub.authenticator_class = 'jupyterhub.auth.PAMAuthenticator'
+c.ConfigurableHTTPProxy.command = '{{lm_prefix}}/node_modules/configurable-http-proxy/bin/configurable-http-proxy'
 
 #------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration

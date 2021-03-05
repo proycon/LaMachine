@@ -28,6 +28,24 @@
        loop_var: package
     when: root
 
+  - name: Create node_modules directory
+    become: "{{lm_become}}"
+    become_user: root
+    file:
+        path: "{{ lm_prefix }}/node_modules"
+        state: directory
+        owner: "{{unix_user}}"
+        group: "{{unix_group}}"
+        mode: u+rwx,g+rwsx,a+rx
+
+  - name: "Creating dummy package lock file"
+    become: "{{lm_become}}"
+    become_user: root
+    copy:
+      dest: "{{lm_prefix}}/package-lock.json"
+      content: "{}"
+      mode: u+rw,g+rw,a+r
+
   - when: locality == "local" and not root
     block:
       - name: Obtaining NVM

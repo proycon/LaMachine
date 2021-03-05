@@ -20,6 +20,12 @@
       package:
         pip: ipywidgets
 
+  - name: Installing configurable-http-proxy
+    include_role:
+      name: lamachine-run
+    vars:
+      command: npm install --prefix {{lm_prefix}} configurable-http-proxy
+
  #- name: "Installing JupyterLab Git Extension"
  #  include_role:
  #      name: lamachine-python-install

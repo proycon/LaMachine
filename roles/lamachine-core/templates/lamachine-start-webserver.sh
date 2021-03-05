@@ -125,7 +125,7 @@ echo
 {% if lab %}
  echo "${bold}Starting Jupyter Hub...${normal}"
  killall jupyterhub 2> /dev/null
- cd "{{data_path}}"
+ cd "{{www_data_path}}"
  jupyterhub -f {{lm_prefix}}/etc/jupyterhub_config.py >/dev/null 2>"{{lm_prefix}}/var/log/jupyterhub.log" &
  echo "Note:     Jupyter Hub logs can be found in {{lm_prefix}}/var/log/jupyterhub.log"
  cd -
