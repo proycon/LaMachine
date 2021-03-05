@@ -41,6 +41,16 @@
       owner: "{{unix_user}}"
       group: "{{unix_group}}"
 
+  - name: Create configuration directory for notebooks
+    become: "{{lm_become}}"
+    become_user: root
+    file:
+        path: "{{ lm_prefix }}/etc/jupyter"
+        state: directory
+        owner: "{{unix_user}}"
+        group: "{{unix_group}}"
+        mode: u+rwx,g+rwsx,a+rx
+
   - name: "Link to shared data directory from notebook path"
     file:
       src: "{{data_path}}"
@@ -67,6 +77,27 @@
       force: yes
       owner: "{{unix_user}}"
       group: "{{unix_group}}"
+
+  - name: Install Jupyter Notebook configuration
+    become: "{{lm_become}}"
+    become_user: root
+    template:
+      src: "jupyter_notebook_config.py"
+      dest: "{{lm_prefix}}/etc/jupyter/jupyter_notebook_config.py"
+      force: yes
+      owner: "{{unix_user}}"
+      group: "{{unix_group}}"
+
+
+  - name: Link to Jupyter Notebook configuration
+    become: "{{lm_become}}"
+    become_user: root
+    file:
+      src: "{{lm_prefix}}/jupyter"
+      dest: "/etc/jupyter"
+      state: link
+    when: locality == "global" and root
+    ignore_errors: yes
 
   #- name: Install JupyterLab configuration
   #  become: "{{lm_become}}"

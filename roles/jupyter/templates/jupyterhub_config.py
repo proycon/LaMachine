@@ -1,10 +1,21 @@
 # Configuration file for jupyterhub.
+from subprocess import check_call
+import os
 
-c.JupyterHub.bind_url = 'http://:9888/jupyter/'
+def create_user_dir(spawner):
+    username = spawner.user.name
+    userdir = "{{www_data_path}}/notebooks/" + username
+    if not os.path.exists(userdir):
+        os.mkdir(userdir, 0o775)
+
+c.JupyterHub.bind_url = 'http://127.0.0.1:9888/jupyter/'
 c.Spawner.default_url = '/lab'
 c.Spawner.notebook_dir = '{{www_data_path}}/notebooks/{username}' #(username will be replaced by hub, not ansible)
-c.NotebookApp.terminado_settings = { 'shell_command': ['/bin/bash','-l'] }
+c.Spawner.args = ['--NotebookApp.allow_origin={{lab_allow_origin}}']
+c.Spawner.environment = { "LM_PREFIX": "{{lm_prefix}}", "LM_DATA_PATH": "{{data_path}}", "LM_WWW_DATA_PATH": "{{www_data_path}}", "LM_SOURCEPATH": "{{source_path}}" }
+c.Spawner.pre_spawn_hook = create_user_dir
 c.JupyterHub.authenticator_class = 'jupyterhub.auth.PAMAuthenticator'
+c.JupyterHub.trusted_downstream_ips = ['127.0.0.1', '{{reverse_proxy_ip}}']
 c.ConfigurableHTTPProxy.command = '{{lm_prefix}}/node_modules/configurable-http-proxy/bin/configurable-http-proxy'
 
 #------------------------------------------------------------------------------
