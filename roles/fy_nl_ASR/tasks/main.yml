@@ -9,7 +9,7 @@
         name: lamachine-python-install
       vars:
         package:
-           github_user: "schemreier"
+           github_user: "opensource-spraakherkenning-nl"
            github_repo: "fy-nl_ASR" #github repo is named differently than the python module (hyphen vs underscore)
            metadata:
               identifier: "fy_nl_ASR"
