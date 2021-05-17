@@ -26,6 +26,7 @@ shared_www_data: no
 move_share_www_data: no #for docker, whether to actively move the www-data to the shared data volume on lamachine-start-webserver (shared_www_data is always no though)
 clam_include: "" #a base clam configuration file to include
 ignore_tests: false
+ignore_npm_errors: false
 services:
   - all
 lab: true #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)
