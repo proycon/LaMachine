@@ -28,6 +28,7 @@ move_share_www_data: no #for docker, whether to actively move the www-data to th
 clam_include: "" #a base clam configuration file to include
 clam_base_config: {} #extra clam base configuration keys
 ignore_tests: false
+ignore_npm_errors: false
 services:
   - all
 remote_services: {} #services that are remote (keys are names, values are URLs) (bootstrap sets a few)

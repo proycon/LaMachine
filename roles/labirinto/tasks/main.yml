@@ -25,12 +25,27 @@
             license: "AGPL-3.0-or-later"
             keywords: ["portal","codemeta","metadata"]
 
-      - name: Installing Labirinto dependencies
-        include_role:
-          name: lamachine-run
-        vars:
-          command: npm install
-          chdir: "{{ source_path }}/labirinto"
+      - block:
+          - name: Installing Labirinto dependencies
+            include_role:
+              name: lamachine-run
+            vars:
+              command: npm install
+              chdir: "{{ source_path }}/labirinto"
+        rescue:
+          - name: Cleaning npm cache
+            include_role:
+              name: lamachine-run
+            vars:
+              command: npm cache clean --force
+              chdir: "{{ source_path }}/labirinto"
+          - name: Installing Labirinto dependencies (2nd attempt)
+            include_role:
+              name: lamachine-run
+            vars:
+              command: npm install
+              chdir: "{{ source_path }}/labirinto"
+            ignore_errors: "{{ignore_npm_errors|bool}}"
 
       - name: Install webserver configuration
         become: "{{lm_become}}"
@@ -54,12 +69,27 @@
           - "prod.env.js"
           - "index.js"
 
-      - name: Building Labirinto
-        include_role:
-          name: lamachine-run
-        vars:
-          command: npm run build
-          chdir: "{{ source_path }}/labirinto"
+      - block:
+          - name: Building Labirinto
+            include_role:
+              name: lamachine-run
+            vars:
+              command: npm run build
+              chdir: "{{ source_path }}/labirinto"
+        rescue:
+          - name: Cleaning npm cache
+            include_role:
+              name: lamachine-run
+            vars:
+              command: npm cache clean --force
+              chdir: "{{ source_path }}/labirinto"
+          - name: Building labirinto (2nd attempt)
+            include_role:
+              name: lamachine-run
+            vars:
+              command: npm run build
+              chdir: "{{ source_path }}/labirinto"
+            ignore_errors: "{{ignore_npm_errors|bool}}"
 
       - name: Deploying to document root
         become: "{{lm_become}}"
