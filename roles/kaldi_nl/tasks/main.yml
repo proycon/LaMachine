@@ -9,13 +9,27 @@
       loop_control:
           loop_var: package
 
+
+    - name: Moving old Kaldi_NL installation out of the way if needed
+      shell: |
+          if [ -d {{lm_prefix}}/opt/kaldi_nl ] && [ ! -e {{lm_prefix}}/opt/kaldi_nl_old}} ; then
+            mv "{{lm_prefix}}/opt/kaldi_nl" "{{lm_prefix}}/opt/kaldi_nl_old"
+          fi
+
     - name: Obtaining kaldi_nl
-      git:
-        repo: "https://github.com/opensource-spraakherkenning-nl/Kaldi_NL/"
-        dest: "{{ lm_prefix }}/opt/kaldi_nl"
-        update: yes
-        recursive: yes
-        accept_hostkey: yes
+      include_role:
+        name: lamachine-git
+      vars:
+        package:
+          user: opensource-spraakherkenning-nl
+          repo: Kaldi_NL
+        do_registration: true
+
+    - name: "Symlink kaldi_nl in {{lm_prefix}}/opt"
+      file:
+        src: "{{source_path}}/Kaldi_NL"
+        dest: "{{lm_prefix}}/opt/kaldi_nl"
+        state: link
 
     - name: Setting up kaldi_nl
       shell: |
