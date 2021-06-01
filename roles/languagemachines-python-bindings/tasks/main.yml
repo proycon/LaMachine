@@ -70,7 +70,7 @@
             - ucto
         ignore_errors: "{{ignore_tests|bool}}"
       rescue:
-      - name: "Python binding test failed. Removing old artefacts and retrying"
+      - name: "Python Ucto binding test failed. Removing old artefacts and retrying"
         become: "{{lm_become}}"
         become_user: root
         shell: |
@@ -107,7 +107,7 @@
             - frog
         ignore_errors: "{{ignore_tests|bool}}"
       rescue:
-      - name: "Python binding test failed. Removing old artefacts and retrying"
+      - name: "Python Frog binding test failed. Removing old artefacts and retrying"
         become: "{{lm_become}}"
         become_user: root
         shell: |
