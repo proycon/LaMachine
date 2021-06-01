@@ -15,7 +15,7 @@
           git:
             repo: "https://github.com/{{package.github_user}}/{{package.github_repo}}"
             dest: "{{ source_path }}/{{ package.github_repo }}"
-            version: "{% if 'version' in package and package.version %}{{ version }}{% elif version == 'custom' and 'pip' in package and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'development' and customversion[package.pip.lower()] != 'stable' %}{{ customversion[package.pip.lower()]|version_v }}{% elif version == 'custom' and 'pip' not in package and package.github_repo.lower() in customversion and customversion[package.github_repo.lower()] != 'development' and customversion[package.github_repo.lower()] != 'stable' %}{{ customversion[package.github_repo.lower()]|version_v }}{% elif 'git_branch' in package and package.git_branch %}{{ package.git_branch }}{% else %}master{% endif %}"
+            version: "{% if 'version' in package and package.version %}{{ package.version }}{% elif version == 'custom' and 'pip' in package and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'development' and customversion[package.pip.lower()] != 'stable' %}{{ customversion[package.pip.lower()]|version_v }}{% elif version == 'custom' and 'pip' not in package and package.github_repo.lower() in customversion and customversion[package.github_repo.lower()] != 'development' and customversion[package.github_repo.lower()] != 'stable' %}{{ customversion[package.github_repo.lower()]|version_v }}{% elif 'git_branch' in package and package.git_branch %}{{ package.git_branch }}{% else %}master{% endif %}"
             recursive: yes
             update: yes
             accept_hostkey: yes
@@ -28,7 +28,7 @@
           git:
             repo: "{{package.git_url}}"
             dest: "{{ source_path }}/{{ package.name }}"
-            version: "{% if 'version' in package and package.version %}{{ version }}{% elif version == 'custom' and 'pip' in package and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'development' and customversion[package.pip.lower()] != 'stable' %}{{ customversion[package.pip.lower()]|version_v }}{% elif version == 'custom' and 'pip' not in package and package.github_repo.lower() in customversion and customversion[package.github_repo.lower()] != 'development' and customversion[package.github_repo.lower()] != 'stable' %}{{ customversion[package.github_repo.lower()]|version_v }}{% elif 'git_branch' in package and package.git_branch %}{{ package.git_branch }}{% else %}master{% endif %}"
+            version: "{% if 'version' in package and package.version %}{{ package.version }}{% elif version == 'custom' and 'pip' in package and package.pip.lower() in customversion and customversion[package.pip.lower()] != 'development' and customversion[package.pip.lower()] != 'stable' %}{{ customversion[package.pip.lower()]|version_v }}{% elif version == 'custom' and 'pip' not in package and package.github_repo.lower() in customversion and customversion[package.github_repo.lower()] != 'development' and customversion[package.github_repo.lower()] != 'stable' %}{{ customversion[package.github_repo.lower()]|version_v }}{% elif 'git_branch' in package and package.git_branch %}{{ package.git_branch }}{% else %}master{% endif %}"
             recursive: yes
             update: yes
             accept_hostkey: yes
