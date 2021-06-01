@@ -89,8 +89,8 @@
         include_role:
           name: lamachine-python-install
         with_items:
-            - { github_user: "proycon", github_repo: "python-ucto" }
-            - { github_user: "proycon", github_repo: "python-frog" }
+            - { github_user: "proycon", github_repo: "python-ucto", pip: "python-ucto" }
+            - { github_user: "proycon", github_repo: "python-frog", pip: "python-frog" }
         loop_control:
             loop_var: package
       - name: Testing Python bindings (2) - second attempt
