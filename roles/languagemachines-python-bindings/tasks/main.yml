@@ -80,7 +80,6 @@
           rm "{{lm_prefix}}/lib/python{{python_version.stdout}}/dist-packages/ucto.cpython"*
           #remove sources
           rm -Rf {{source_path}}/python-ucto
-          rm -Rf {{source_path}}/python-frog
       - name: Installing Ucto Python bindings (second attempt)
         include_role:
           name: lamachine-python-install
@@ -117,7 +116,6 @@
           rm "{{lm_prefix}}/lib/python{{python_version.stdout}}/site-packages/frog.cpython"*
           rm "{{lm_prefix}}/lib/python{{python_version.stdout}}/dist-packages/frog.cpython"*
           #remove sources
-          rm -Rf {{source_path}}/python-ucto
           rm -Rf {{source_path}}/python-frog
       - name: Installing Frog Python bindings (second attempt)
         include_role:
