@@ -2,7 +2,7 @@
 
   - when: ran_python_bindings is not defined
     block:
-    - name: Installing Python bindings
+    - name: Installing Python bindings for ucto and frog
       include_role:
         name: lamachine-python-install
       with_items:
@@ -10,54 +10,6 @@
           - { github_user: "proycon", github_repo: "python-frog", pip: "python-frog", conda: "" }
       loop_control:
           loop_var: package
-
-
-    - block:
-      - name: Installing Python bindings (2)
-        include_role:
-          name: lamachine-python-install
-        with_items:
-            - { github_user: "proycon", github_repo: "python-timbl", pip: "python3-timbl", conda: "" }
-        loop_control:
-            loop_var: package
-      rescue:
-      - name: "python-timbl failure?"
-        fail:
-          msg: "Python-timbl installation failed!"
-        when: ansible_distribution|lower != "macosx"
-
-
-    - name: Triggering manual mode for Colibri Core #otherwise setup.py will attempt to recompile c++ sources (and fail on a permission issue)
-      file:
-        path: "{{source_path}}/colibri-core/manual"
-        state: touch
-      changed_when: False
-
-    - name: Detect current colibri-core branch or tag
-      shell: "git describe --tags || git rev-parse HEAD"
-      register: current_coco_branch_or_tag
-      args:
-        chdir: "{{source_path}}/colibri-core"
-
-    - name: Installing Colibri Core Python Binding
-      include_role:
-        name: lamachine-python-install
-      vars:
-        do_registration: false #main software was already registered
-        package:
-          github_user: proycon
-          github_repo: colibri-core #always installed from source, will reuse same sourcedir as C++ lib
-          git_branch: "{{ current_coco_branch_or_tag.stdout }}"
-
-    - name: Testing Python bindings (1)
-      include_role:
-          name: lamachine-run
-      vars:
-          command: "python3 -c 'import {{ item }}'"
-          allow_failure: "{{ignore_tests|bool}}"
-      with_items:
-          - colibricore
-      ignore_errors: "{{ignore_tests|bool}}"
 
     - block:
       - name: Testing Ucto Python binding
@@ -157,4 +109,51 @@
       with_items:
         - python-frog
         - python-ucto
+
+    - block:
+      - name: Installing Python bindings for Timbl
+        include_role:
+          name: lamachine-python-install
+        with_items:
+            - { github_user: "proycon", github_repo: "python-timbl", pip: "python3-timbl", conda: "" }
+        loop_control:
+            loop_var: package
+      rescue:
+      - name: "python-timbl failure?"
+        fail:
+          msg: "Python-timbl installation failed!"
+        when: ansible_distribution|lower != "macosx"
+
+    - name: Triggering manual mode for Colibri Core #otherwise setup.py will attempt to recompile c++ sources (and fail on a permission issue)
+      file:
+        path: "{{source_path}}/colibri-core/manual"
+        state: touch
+      changed_when: False
+
+    - name: Detect current colibri-core branch or tag
+      shell: "git describe --tags || git rev-parse HEAD"
+      register: current_coco_branch_or_tag
+      args:
+        chdir: "{{source_path}}/colibri-core"
+
+    - name: Installing Colibri Core Python Binding
+      include_role:
+        name: lamachine-python-install
+      vars:
+        do_registration: false #main software was already registered
+        package:
+          github_user: proycon
+          github_repo: colibri-core #always installed from source, will reuse same sourcedir as C++ lib
+          git_branch: "{{ current_coco_branch_or_tag.stdout }}"
+
+    - name: Testing Python bindings for Colibri Core
+      include_role:
+          name: lamachine-run
+      vars:
+          command: "python3 -c 'import {{ item }}'"
+          allow_failure: "{{ignore_tests|bool}}"
+      with_items:
+          - colibricore
+      ignore_errors: "{{ignore_tests|bool}}"
+
   - set_fact: ran_python_bindings=1
