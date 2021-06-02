@@ -12,7 +12,7 @@
 
     - name: Moving old Kaldi_NL installation out of the way if needed
       shell: |
-          if [ -d {{lm_prefix}}/opt/kaldi_nl ] && [ ! -e {{lm_prefix}}/opt/kaldi_nl_old}} ; then
+          if [ -d "{{lm_prefix}}/opt/kaldi_nl" ] && [ ! -e "{{lm_prefix}}/opt/kaldi_nl_old" ]; then
             mv "{{lm_prefix}}/opt/kaldi_nl" "{{lm_prefix}}/opt/kaldi_nl_old"
           fi
 
