@@ -85,15 +85,6 @@
         with_items:
             - frog
 
-    - name: Testing Timbl Python binding
-      include_role:
-          name: lamachine-run
-      vars:
-          command: "python3 -c 'import {{ item }}'"
-          allow_failure: "{% if ignore_tests|bool or ansible_distribution|lower == 'macosx' %}True{%else%}False{% endif %}"
-      with_items:
-          - timbl
-      ignore_errors: "{% if ignore_tests|bool or ansible_distribution|lower == 'macosx' %}True{%else%}False{% endif %}"
 
     - name: Updating metadata for CLARIAH software
       include_role:
@@ -123,6 +114,16 @@
         fail:
           msg: "Python-timbl installation failed!"
         when: ansible_distribution|lower != "macosx"
+
+    - name: Testing Timbl Python binding
+      include_role:
+          name: lamachine-run
+      vars:
+          command: "python3 -c 'import {{ item }}'"
+          allow_failure: "{% if ignore_tests|bool or ansible_distribution|lower == 'macosx' %}True{%else%}False{% endif %}"
+      with_items:
+          - timbl
+      ignore_errors: "{% if ignore_tests|bool or ansible_distribution|lower == 'macosx' %}True{%else%}False{% endif %}"
 
     - name: Triggering manual mode for Colibri Core #otherwise setup.py will attempt to recompile c++ sources (and fail on a permission issue)
       file:
