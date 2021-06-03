@@ -549,7 +549,7 @@
           shell: |
               #!/bin/sh
               if [ ! -d python3-apt ]; then
-                  apt-get download python3-apt || exit 1
+                  apt-get download python3-apt #we continue if this fails because it may fail with an unrelated permission error and still deliver the expected result
                   dpkg -x python3-apt*.deb python3-apt || exit 1
                   cp -r python3-apt/usr/lib/python3/dist-packages/* {{local_prefix}}/lib/python{{ python_version.stdout }}/site-packages/ || exit 1
                   cd {{local_prefix}}/lib/python{{ python_version.stdout }}/site-packages/ || exit 1
