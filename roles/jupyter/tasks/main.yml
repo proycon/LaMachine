@@ -20,6 +20,7 @@
         name: lamachine-python-install
     vars:
       package:
+        pip: oauthenticator
 
   - name: "Installing Ipywidgets"
     include_role:
