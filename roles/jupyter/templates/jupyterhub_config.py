@@ -24,7 +24,7 @@ c.ConfigurableHTTPProxy.command = '{{lm_prefix}}/node_modules/configurable-http-
 {% if oauth_client_id %}
 c.JupyterHub.authenticator_class = GenericOAuthenticator
 c.GenericOAuthenticator.oauth_callback_url = "{{ oauth_auth_url }}"
-c.GenericOAuthenticator.client_id = "{{ oauth_client_ id }}"
+c.GenericOAuthenticator.client_id = "{{ oauth_client_id }}"
 c.GenericOAuthenticator.client_secret = "{{ oauth_client_secret }}"
 c.GenericOAuthenticator.token_url = "{{ oauth_token_url }}"
 c.GenericOAuthenticator.userinfo_url = "{{ oauth_userinfo_url }}"
