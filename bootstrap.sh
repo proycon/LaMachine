@@ -1449,7 +1449,7 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
     else
         echo "http_port: 8080 #webserver port" >> $STAGEDCONFIG
     fi
-    echo "force_https: no #Should be enabled when behind a reverse proxy that handles https for you, ensures all internal links are https" >> $STAGEDCONFIG
+    echo "force_https: no #Should be enabled when behind a reverse proxy that handles https for you, ensures all internal links are https and uses X-Forwarded-Host" >> $STAGEDCONFIG
     echo "reverse_proxy_ip: \"172.17.0.1\" #IP address of the reverse proxy, as seen from LaMachine. The default here works for certain docker setups. This setting is currently needed only for Jupyter Hub" >> $STAGEDCONFIG
 echo "mapped_http_port: $HOSTPORT #mapped webserver port on host system (for VM/docker only)
 webservertype: nginx #If set to anything different, the internal webserver will not be enabled/provided by LaMachine (which allows you to run your own external one), do leave webserver: true set as is though.

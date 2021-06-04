@@ -6,6 +6,7 @@ flaturl: "{{ lm_base_url }}/flat"
 {% endif %}
 {% if force_https %}
 forcehttps: true
+use_forwarded_host: true
 {% endif %}
 {% if oauth_client_id %}
 oauth: true

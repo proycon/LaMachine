@@ -14,7 +14,7 @@ described in this document.
 LaMachine serves traffic over HTTP by default, this is not secure for
 production environments. In production scenarios, you need your own
 reverse proxy server that handles HTTPS and forwards the traffic to the HTTP
-server in LaMachine.
+server in LaMachine. Handling HTTPS within LaMachine itself is not supported.
 
 HTTPS is a prerequisite for authentication. We also assume you have a dedicated
 domain/subdomain for your LaMachine installation.
@@ -28,7 +28,9 @@ hostname: your.domain
 force_https: yes
 ```
 
-The ``force_https`` setting is crucial to ensure LaMachine knows the reverse proxy handles the encryption.
+The ``force_https`` setting is crucial to ensure LaMachine knows it is behind a reverse proxy that handles the
+encryption, it is also used to indicate to underlying software that they can read the ``X-Forwarded-Host`` header to
+find the original requested host.
 
 ## OpenID Connect
 
