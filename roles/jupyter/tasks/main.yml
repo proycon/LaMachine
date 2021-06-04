@@ -6,12 +6,20 @@
       package:
         pip: jupyterhub
 
+
   - name: "Installing JupyterLab"
     include_role:
         name: lamachine-python-install
     vars:
       package:
         pip: jupyterlab
+
+    #https://github.com/jupyterhub/oauthenticator/
+  - name: "Installing OAuthenticator"
+    include_role:
+        name: lamachine-python-install
+    vars:
+      package:
 
   - name: "Installing Ipywidgets"
     include_role:
