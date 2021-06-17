@@ -1,3 +1,9 @@
+---
+title: LaMachine
+author: Maarten van Gompel, KNAW HuC / CLST
+date: June 24th, 2021
+---
+
 # LaMachine
 
 ## Context
@@ -18,8 +24,8 @@
 A **meta-distribution**:
 
 * A solution for the distribution and deployment of software and software services
-* Installation and configuration recipes: *Infrastructure as code*
-* For a limited set of (often interconnected) NLP software
+* Installation and configuration recipes
+* ..for a limited set of (often interconnected) NLP software
 * WP3 software stack from Radboud University / KNAW HuC
 * No new repository; relies on established software repositories
 * Builds on existing technologies
@@ -29,8 +35,8 @@ A **meta-distribution**:
 
 Offer a similar environment in different flavours:
 
-- A local user environment (*virtualenv*)
-- Globally on dedicated system (local or remote):
+- Native, in a local user environment
+- Native, globally on dedicated system *(local or remote)*:
     - Linux
     - Windows Subsystem for Linux (limited)
     - macOS (limited)
@@ -65,7 +71,7 @@ Offer a similar environment in different flavours:
 - Web-based IDE and Notebooks (Jupyter Lab)
     - Direct access to isntalled modules
 
-## Target platforms
+## Target platforms and support levels
 
 * Gold support
     - Debian 10 (buster, stable) *(Docker default)*
@@ -125,7 +131,7 @@ Two *channels*:
 
 * kaldi-nl (Stichting Openspraaktechnologie): Dutch Speech Recognition
 * Colibri Core (Radboud University): pattern detection
-* T-Scan (Universiteit Utrecht): Analytics for dutch texts
+* T-Scan (Utrecht University): Analytics for dutch texts
 * Gecco & Valkuil (Radboud University): Dutch context-sensitive spelling correction
 
 ## Third party software
@@ -231,6 +237,7 @@ During installation/bootstrapping/updating, LaMachine:
 - LaMachine can be configured to connect to **external** OAuth2/OpenID Connect for authentication.
 - Provide the configuration once for all of LaMachine and LaMachine propagates
   it to participating software.
+- LaMachine also works fine at the single-user level (or shared)
 
 ## Limitations
 
@@ -238,7 +245,7 @@ For service providers, these are explicitly out-of-scope:
 
 - **Scalability**: A single LaMachine installation does not scale for long, you can spin up multiple instances
   in the docker/VM flavour but have to handle the load balancing yourself.
-- **Orchestration:** LaMachine does not do any container orchestration itself
+- **Container Orchestration:** LaMachine does not cover multiple containers and does no container orchestration
 - **Encryption:** LaMachine does not handle SSL certificates, you need to handle that in your own reverse proxy
 
 -------------------------
@@ -249,6 +256,7 @@ For participating software providers:
     and channels
 - Software is limited to NLP/Data-science
 - LaMachine is **not** a substitute for not providing source repositories or ecosystem packages
+- Dependencies may not cause major conflicts between participating software (shared environment)
 - No nested containers!
 
 -------------------------
@@ -266,6 +274,8 @@ For all:
 
 * Highly **flexible** solution (many flavours, serves many different audiences)
 * Does not focus exclusively on a service oriented architecture nor *Software as a Service*
+* The software provider needs to know only a subset of Ansible and no specific knowledge of Docker, LXC, Vagrant is
+  required.
 * Really brings software to the users
 * Proven track record; real users
 * Builds on standard solutions, propagates software freedom
@@ -274,8 +284,7 @@ For all:
 
 **Weaknesses:**
 
-- **Maintainability**: supporting many target distributions, flavours and channels, in continuously moving
-  ecosystems is hard to maintain.
-- **Fat containers** may be at odds with the Docker paradigm, the LaMachine-internal 'orchestration' is not easy to port
-  to an external solution.
+- **Complexity & Maintainability**: supporting many target distributions, flavours and channels, in continuously moving
+  ecosystems is not easy.
+- **Fat containers** may be at odds with the Docker paradigm
 
