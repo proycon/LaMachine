@@ -1,10 +1,10 @@
 ---
-title: LaMachine
+title: "LaMachine: Distributing and deploying NLP tools and services for multiple audiences"
 author: Maarten van Gompel, KNAW HuC / CLST
 date: June 24th, 2021
 ---
 
-# LaMachine
+# LaMachine: Distributing and deploying NLP tools and service for multiple audiences
 
 ## Context
 
@@ -13,11 +13,11 @@ date: June 24th, 2021
 * Mostly developed in CLARIN/CLARIAH WP3
 * C++ code with dependencies that was non-trivial to compile for most people
 * and a stack of Python-based software
-* Multiple interfaces and users on each level:
+* Multiple interfaces, for different audiences:
     * command-line interface
-    * C++ library / Python bindings
-    * RESTful webservice (via [CLAM](https://proycon.github.io/clam))
-    * web-application (via CLAM)
+    * API (software library)
+    * Web-API (REST)
+    * Web UI (web applications)
 
 ## What is LaMachine
 
@@ -25,18 +25,18 @@ A **meta-distribution**:
 
 * A solution for the distribution and deployment of software and software services
 * Installation and configuration recipes
-* ..for a limited set of (often interconnected) NLP software
+* ..for a limited set of (sometimes interconnected) NLP software
 * WP3 software stack from Radboud University / KNAW HuC
-* No new repository; relies on established software repositories
+* No new package repository; relies on established packaged repositories
 * Builds on existing technologies
 * A fairly standalone infrastructure in the absence of a larger CLARIAH-wide one
 
 ## Different "flavours"
 
-Offer a similar environment in different flavours:
+Offer a similar environment in different *flavours*:
 
-- Native, in a local user environment
-- Native, globally on dedicated system *(local or remote)*:
+- Native installation, in a local user environment
+- Native installation, globally on dedicated system *(local or remote)*:
     - Linux
     - Windows Subsystem for Linux (limited)
     - macOS (limited)
@@ -45,8 +45,8 @@ Offer a similar environment in different flavours:
 
 ## Technologies
 
-- **Provisioning**  (Installation and configuration recipes):** [Ansible](https://ansible.com)
-    - used for all flavours
+- **Installation and configuration automation:** [Ansible](https://ansible.com)
+    - used for **all** flavours
 - **Virtualisation:** Vagrant and Virtualbox
 - **Containerisation:**
     1. [Docker](https://docker.com)
@@ -56,6 +56,8 @@ Offer a similar environment in different flavours:
     3. Singularity
 
 ## Target audience
+
+Multiple audiences:
 
 - data scientists / researchers
 - developers
@@ -69,7 +71,9 @@ Offer a similar environment in different flavours:
 - Web applications (through the browser)
 - Web services (REST)
 - Web-based IDE and Notebooks (Jupyter Lab)
-    - Direct access to isntalled modules
+    - Direct access to installed modules
+
+Software-as-a-service is not the exclusive focus.
 
 ## Target platforms and support levels
 
@@ -88,14 +92,14 @@ Offer a similar environment in different flavours:
     - Linux Mint
     - Fedora Linux
 
-## Bootstrap
+## Bootstrap: installing LaMachine
 
-* Start from a single executable (shell script) and build a LaMachine environment from scratch (any flavour):
+* Start from a **single executable** (shell script) and build a LaMachine environment from scratch (any flavour):
    ``bash <(curl -s https://raw.githubusercontent.com/proycon/LaMachine/master/bootstrap.sh)``
 * Start from the latest Docker base image (``Dockerfile``)
 * Start from the latest VM image (``Vagrantfile``)
 
-![Bootstrap screenshot](screenshot_bootstrap.jpg){ height=60% }\
+![Bootstrap screenshot](screenshot_bootstrap.jpg)\
 
 ## Development vs Production
 
@@ -106,9 +110,9 @@ Two *channels*:
 
 ## Modularity and Configurability
 
-* LaMachine defines a limited number of *software meta-packages* of participating software
-    * (these 'packages' are implemented as ansible *roles*)
-* The user decides which to install, packages can be also be added later at will (but not removed)
+* LaMachine defines a limited number of *installation recipes* of participating software
+    * (these are implemented as ansible *roles*)
+* The user decides which to install, new ones can be also be added later at will (but not removed)
 
 ## Architecture Overview
 
@@ -157,7 +161,7 @@ Two *channels*:
 * Running ``lamachine-update`` inside a Lamachine environment will update an
   existing installation and and all software in it
     * (simply invokes ansible again)
-* Or pull fresh new image from your image repository (Docker/Vagrant)
+* Or pull a fresh new image from your image repository (Docker/Vagrant)
 
 ## Portal
 
@@ -224,7 +228,7 @@ During installation/bootstrapping/updating, LaMachine:
 ## What is LaMachine *NOT*?
 
 - **NOT** an NLP pipeline/workflow system; rather it may install such systems or components required by such systems.
-  - *e.g PICCL (powered by Nextflow), Frog
+  - e.g PICCL (powered by Nextflow), Frog
 - **NOT** a system for archiving/preserving legacy software
   - software **MUST** be maintained
 - **NOT** only for Nijmegen software
@@ -234,10 +238,10 @@ During installation/bootstrapping/updating, LaMachine:
 
 ## Authentication
 
-- LaMachine can be configured to connect to **external** OAuth2/OpenID Connect for authentication.
+- LaMachine can be configured to connect to **external** authentication providers using OAuth2/OpenID Connect.
 - Provide the configuration once for all of LaMachine and LaMachine propagates
-  it to participating software.
-- LaMachine also works fine at the single-user level (or shared)
+  it to participating services that support it.
+- LaMachine also works fine at the single-user level (or shared), with no further authentication.
 
 ## Limitations
 
@@ -273,6 +277,7 @@ For all:
 **Strengths:**
 
 * Highly **flexible** solution (many flavours, serves many different audiences)
+* Same unified approach to install and configure software (ansible), irregardless of flavour.
 * Does not focus exclusively on a service oriented architecture nor *Software as a Service*
 * The software provider needs to know only a subset of Ansible and no specific knowledge of Docker, LXC, Vagrant is
   required.
@@ -287,4 +292,15 @@ For all:
 - **Complexity & Maintainability**: supporting many target distributions, flavours and channels, in continuously moving
   ecosystems is not easy.
 - **Fat containers** may be at odds with the Docker paradigm
+- **Limited scalabibility**
+
+## Recommendations for CLARIAH
+
+* Include software metadata with the source code (as codemeta or language-specific)
+* Consider solutions like LaMachine if you really need to bring the tools to the data (e.g. in highly sensitive
+  non-networked environments)
+* Do not forget the audience of technically skilled users (the 20%?)
+* Neither LaMachine nor orchestration of containers in a service architecture can bring about interoperability
+  if the underlying tools do not share some common standards (data exchange etc).
+* Be clear in preferred technologies, so solutions don't LaMachine don't have to target them all.
 
