@@ -51,14 +51,6 @@ oauth_scope: [] #Set this to [ "openid", "email" ] if you want to use OpenID Con
 ssh_key_filename: "id_rsa"
 ssh_public_key: "" #ssh public key
 ssh_private_key: "" #ssh private key
-# defaults file for miniconda (not used now)
-miniconda_mirror : https://repo.continuum.io/miniconda
-miniconda_python_ver : 3
-miniconda_ver: "latest"
-miniconda_platform : '{% if ansible_system == "Darwin" %}MacOSX{% else %}{{ansible_system}}{% endif %}-{{ansible_machine}}'
-miniconda_name : 'Miniconda{{miniconda_python_ver}}-{{miniconda_ver}}-{{miniconda_platform}}'
-miniconda_installer_sh : '{{miniconda_name}}.sh'
-miniconda_installer_url : '{{miniconda_mirror}}/{{miniconda_installer_sh}}'
 # defaults for producer metadata:
 github_clst_users:
   - LanguageMachines

@@ -267,10 +267,6 @@
           when: (ansible_distribution|lower == 'macosx')
           tags: fullrunonly
 
-        - import_tasks: conda.yml
-          when: localenv_type == 'conda' and locality == "local"
-          tags: fullrunonly
-
         - import_tasks: virtualenv.yml
           when: localenv_type == 'virtualenv' and locality == "local"
           tags: fullrunonly
