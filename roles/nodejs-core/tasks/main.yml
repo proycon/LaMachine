@@ -5,7 +5,7 @@
       - name: Add NodeSource repository (Debian/Ubuntu)
         become: yes
         become_user: root
-        shell: bash <(curl -sL https://deb.nodesource.com/setup_10.x)
+        shell: bash <(curl -sL https://deb.nodesource.com/setup_lts.x)
         args:
             executable: /bin/bash
         when: ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "debian" or ansible_distribution|lower == "linux mint"
@@ -13,7 +13,7 @@
       - name: Add NodeSource repository (RedHat EL/CentOS/Fedora)
         become: yes
         become_user: root
-        shell: bash <(curl -sL https://rpm.nodesource.com/setup_10.x)
+        shell: bash <(curl -sL https://rpm.nodesource.com/setup_lts.x)
         args:
             executable: /bin/bash
         when: ansible_distribution|lower == "rhel" or ansible_distribution|lower == "centos" or ansible_distribution|lower == "redhat" or ansible_distribution|lower == "fedora"
