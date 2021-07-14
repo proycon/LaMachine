@@ -48,7 +48,7 @@
               args:
                 chdir: "{{ source_path }}/{{package.repo}}"
               environment: "{{lm_env}}"
-              when: '("untracked working tree files" in gitcheckout.stdout or "would be overwritten" in gitcheckout.stderr) and allow_stash'
+              when: '("untracked working tree files" in gitcheckout.stdout or "would be overwritten by merge" in gitcheckout.stderr or "commit or stash them" in gitcheckout.stderr) and allow_stash'
             - name: "{{package.repo}} - Checkout latest stable version {% if latest_tag is defined %}{{latest_tag.stdout}}{% endif %} (2nd attempt after stash)"
               shell: "git checkout {{latest_tag.stdout}}"
               args:
@@ -98,7 +98,7 @@
               args:
                 chdir: "{{ source_path }}/{{package.repo}}"
               environment: "{{lm_env}}"
-              when: '("untracked working tree files" in gitcheckout.stdout or "would be overwritten by merge" in gitcheckout.stderr) and allow_stash'
+              when: '("untracked working tree files" in gitcheckout.stdout or "would be overwritten by merge" in gitcheckout.stderr or "commit or stash them" in gitcheckout.stderr) and allow_stash'
             - name: "{{package.repo}} - Checkout latest {% if 'git_branch' in package %}{{ package.git_branch }}{% else %}master{% endif %} version of (development, second attempt after stash)"
               shell: "git checkout {% if 'git_branch' in package %}{{ package.git_branch }}{% else %}master{% endif %}&& git pull"
               args:
