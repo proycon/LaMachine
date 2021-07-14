@@ -115,15 +115,42 @@
           msg: "Python-timbl installation failed!"
         when: ansible_distribution|lower != "macosx"
 
-    - name: Testing Timbl Python binding
-      include_role:
-          name: lamachine-run
-      vars:
-          command: "python3 -c 'import {{ item }}'"
-          allow_failure: "{% if ignore_tests|bool or ansible_distribution|lower == 'macosx' %}True{%else%}False{% endif %}"
-      with_items:
-          - timbl
-      ignore_errors: "{% if ignore_tests|bool or ansible_distribution|lower == 'macosx' %}True{%else%}False{% endif %}"
+    - block:
+      - name: Testing Timbl Python binding
+        include_role:
+            name: lamachine-run
+        vars:
+            command: "python3 -c 'import {{ item }}'"
+            allow_failure: "{% if ignore_tests|bool or ansible_distribution|lower == 'macosx' %}True{%else%}False{% endif %}"
+        with_items:
+            - timbl
+        ignore_errors: "{% if ignore_tests|bool or ansible_distribution|lower == 'macosx' %}True{%else%}False{% endif %}"
+      rescue:
+      - name: "Python Timbl binding test failed. Removing old artefacts and retrying"
+        become: "{{lm_become}}"
+        become_user: root
+        shell: |
+          #!/bin/sh
+          #remove .so artefacts:
+          rm "{{lm_prefix}}/lib/python{{python_version.stdout}}/site-packages/timblapi.cpython"*
+          rm "{{lm_prefix}}/lib/python{{python_version.stdout}}/dist-packages/timblapi.cpython"*
+          #remove sources
+          rm -Rf {{source_path}}/python-timbl
+      - name: Installing Timbl Python binding (second attempt)
+        include_role:
+          name: lamachine-python-install
+        with_items:
+          - { github_user: "proycon", github_repo: "python-timbl", pip: "python3-timbl", force: true }
+        loop_control:
+            loop_var: package
+      - name: Testing Timbl Python binding (second attempt)
+        include_role:
+            name: lamachine-run
+        vars:
+            command: "python3 -c 'import {{ item }}'"
+            allow_failure: "{{ignore_tests|bool}}"
+        with_items:
+            - timbl
 
     - name: Triggering manual mode for Colibri Core #otherwise setup.py will attempt to recompile c++ sources (and fail on a permission issue)
       file:
