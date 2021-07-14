@@ -1,5 +1,5 @@
 ---
-lamachine_version: "2.24" #also change in bootstrap.sh and codemeta.json
+lamachine_version: "2.25" #also change in bootstrap.sh and codemeta.json
 conf_name: "default"
 version: "stable" #stable, development or custom
 controller: internal
@@ -9,7 +9,7 @@ local_prefix: "{{homedir}}/lamachine-{{conf_name}}" #where local packages are in
 global_prefix: "/usr/local" #where global packages are installed
 data_path: "/data"
 locality: "global" #Install everything globally
-localenv_type: "virtualenv" #Local environment type, can be conda or virtualenv
+localenv_type: "virtualenv" #Local environment type, can only be virtualenv
 python_bin: "python3" #path to the global python3 interpreter, may be an absolute path
 pip_bin: "pip3" #must correspond to the one belonging to the above python interpreter
 webserver: false
@@ -22,29 +22,35 @@ maintainer_name: "{{unix_user}}" #The name of the person maintaining this LaMach
 maintainer_mail: "{{unix_user}}@{{hostname}}" #Maintainer mail
 http_port: 80 #webserver port
 force_https: no #force all urls to use https (can be set when behind a reverse proxy that handles http)
+reverse_proxy_ip: "172.17.0.1" #IP address of the reverse proxy, as seen from LaMachine. The default here works for certain docker setups. This setting is currently needed only for Jupyter Hub
 shared_www_data: no
 move_share_www_data: no #for docker, whether to actively move the www-data to the shared data volume on lamachine-start-webserver (shared_www_data is always no though)
 clam_include: "" #a base clam configuration file to include
+clam_base_config: {} #extra clam base configuration keys
 ignore_tests: false
 ignore_npm_errors: false
 services:
   - all
+remote_services: {} #services that are remote (keys are names, values are URLs) (bootstrap sets a few)
 lab: true #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)
 lab_password_sha1: "sha1:fa40baddab88:c498070b5885ee26ed851104ddef37926459b0c4" #default password: lamachine
 lab_allow_origin: "*" #hosts that may access the lab environment
 flat_password: "flat" #admin password for flat
 custom_flat_settings: false  #set this to true if you customized your flat settings and want to prevent LaMachine from overwriting it again on update
+oauth_client_id: "" #shared oauth2 client ID
+oauth_client_secret: "" #shared oauth2 client secret
+oauth_auth_url: "" #something like https://your-identity-provider/oauth/authenticate
+oauth_token_url: "" #something like https://your-identity-provider/oauth/token
+oauth_userinfo_url: "" #something like https://your-identity-provider/oauth/userinfo
+oauth_revoke_url: "" #(optional) something like https://your-identity-provider/oauth/revoke
+oauth_sign_algo: "" #(optional) You can set this to RS256 or HS256, for OpenID Connect
+oauth_jwks_url: "" #(optional) something like https://your-identity-provider/oauth/jwks , used by OpenID Connect to obtain a signing key autoamtically (usually in combination with RS256 algorithm)
+oauth_sign_key: {} #(optional) provide a sign key manually (should be a dict that has fields like kty, use,alg,n and e), used by OpenID Connect (usually in combination with RS256 algorithm)
+oauth_scope: [] #Set this to [ "openid", "email" ] if you want to use OpenID Connect
+
 ssh_key_filename: "id_rsa"
 ssh_public_key: "" #ssh public key
 ssh_private_key: "" #ssh private key
-# defaults file for miniconda (not used now)
-miniconda_mirror : https://repo.continuum.io/miniconda
-miniconda_python_ver : 3
-miniconda_ver: "latest"
-miniconda_platform : '{% if ansible_system == "Darwin" %}MacOSX{% else %}{{ansible_system}}{% endif %}-{{ansible_machine}}'
-miniconda_name : 'Miniconda{{miniconda_python_ver}}-{{miniconda_ver}}-{{miniconda_platform}}'
-miniconda_installer_sh : '{{miniconda_name}}.sh'
-miniconda_installer_url : '{{miniconda_mirror}}/{{miniconda_installer_sh}}'
 # defaults for producer metadata:
 github_clst_users:
   - LanguageMachines

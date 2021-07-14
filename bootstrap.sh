@@ -24,7 +24,7 @@ boldblue=${bold}$(tput setaf 4) #  blue
 boldyellow=${bold}$(tput setaf 3) #  yellow
 normal=$(tput sgr0)
 
-export LM_VERSION="v2.24" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
+export LM_VERSION="v2.25" #NOTE FOR DEVELOPER: also change version number in codemeta.json *AND* roles/lamachine-core/defaults/main.yml -> lamachine_version!
 echo "${bold}=========================================================================${normal}"
 echo "           ,              ${bold}LaMachine $LM_VERSION${normal} - NLP Software distribution"
 echo "          ~)                     (http://proycon.github.io/LaMachine)"
@@ -81,6 +81,7 @@ usage () {
     echo " ${bold}--targetdir${normal} - Set a target directory for local environment creation, this should be an existing path and the local environment will be created under it. Defaults to current working directory."
     echo " ${bold}--services${normal} - Preset enabled services (comma seperated list). Default: all"
     echo " ${bold}--force${normal} - Preset a default force parameter (set to 1 or 2). Note that this will take effect on ANY subsequent update!"
+    echo " ${bold}--globalansible${normal} - Install ansible globally or reuse the version that is already present on the system"
     echo " ${bold}--disksize${normal} - Sets extra disksize for VMs; you'll want to use  this if you plan to include particularly large software and exceed the default 8GB"
     echo " ${bold}--datapath${normal} - The data path on the host machine that will be shared with the container/VM"
     echo " ${bold}--port${normal} - The port for HTTP traffic to forward from the host machine to the container/VM"
@@ -192,6 +193,7 @@ PRIVATE=0
 ANSIBLE_OPTIONS="-v"
 MINIMAL=0
 FORCE=0
+GLOBAL_ANSIBLE=0
 PREFER_DISTRO=0
 NOSYSUPDATE=0
 VMMEM=4096
@@ -204,18 +206,6 @@ LXCPROFILE="default"
 BUILD=1
 SHARED_WWW_DATA="no"
 
-if which python; then
-    echo "Checking sanity of your Python installation..."
-    python -c "from __future__ import print_function; import sys; print(sys.version)" | grep -i anaconda
-    if [ $? -eq 0 ]; then
-        fatalerror "Conflict error: The default Python on this system is managed by Anaconda, this is incompatible with LaMachine. Ensure the Python found in your \$PATH corresponds to a regular version as supplied with your OS, editing the order of your \$PATH in ~/.bashrc or ~/.bash_profile should be sufficient to solve this without completely uninstalling anaconda. See also https://stackoverflow.com/a/37377981/3311445"
-    fi
-else
-    if [ "$OS" != "debian" ] && [ "$OS" != "redhat" ]; then #newest ubuntu/debian/centos doesn't always install python2.7 but apt will handle the dependency later
-        fatalerror "No Python found! However, python should be available by default on all supported platforms; please install it yourself through your package manager (and ensure it is in your \$PATH)"
-    fi
-fi
-echo ""
 
 echo "Detected OS: $OS"
 echo "Detected distribution ID: $DISTRIB_ID"
@@ -439,6 +429,10 @@ while [[ $# -gt 0 ]]; do
         shift
         shift
         ;;
+        --globalansible)
+        GLOBAL_ANSIBLE=1
+        shift
+        ;;
         --quiet)
         ANSIBLE_OPTIONS=""
         shift
@@ -647,20 +641,6 @@ fi
 if [[ "$LOCALITY" == "local" ]]; then
     if [ -z "$LOCALENV_TYPE" ]; then
         LOCALENV_TYPE="virtualenv"
-        #echo "${boldblue}We support two forms of local user environments:${normal}"
-        #echo "  1) Using virtualenv"
-        #echo "       (originally for Python but extended by us)"
-        #echo "  2) Using conda"
-        #echo "       provided by the Anaconda Distribution, a powerful data science platform (mostly for Python and R)"
-        #while true; do
-        #    echo -n "${bold}What form of local user environment do you want?${normal} [12] "
-        #    read choice
-        #    case $choice in
-        #        [1]* ) LOCALENV_TYPE=virtualenv; break;;
-        #        [2]* ) LOCALENV_TYPE=conda; break;;
-        #        * ) echo "Please answer with the corresponding number of your preference..";;
-        #    esac
-        #done
     fi
 
     if [ $INTERACTIVE -ne 0 ]; then
@@ -745,6 +725,10 @@ if [ -z "$SUDO" ]; then
     fi
 fi
 
+if [ $SUDO -eq 1 ]; then
+    which sudo || fatalerror "Sudo is not installed on this system, install it manually first..."
+fi
+
 echo "Looking for dependencies..."
 if [[ "$OS" == "mac" ]]; then
     if ! which brew; then
@@ -752,6 +736,24 @@ if [[ "$OS" == "mac" ]]; then
     fi
     #NEED+=("brew-cask")
 fi
+if [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
+    yum list installed | grep -q epel-release
+    if [ $? -ne 0 ]; then
+        NEED+=("epel")
+    fi
+fi
+
+if which python3; then
+    echo "Checking sanity of your Python 3 installation..."
+    python3 -c "from __future__ import print_function; import sys; print(sys.version)" | grep -i anaconda
+    if [ $? -eq 0 ]; then
+        fatalerror "Conflict error: The default Python on this system is managed by Anaconda, this is incompatible with LaMachine. Ensure the Python found in your \$PATH corresponds to a regular version as supplied with your OS, editing the order of your \$PATH in ~/.bashrc or ~/.bash_profile should be sufficient to solve this without completely uninstalling anaconda. See also https://stackoverflow.com/a/37377981/3311445"
+    fi
+else
+    NEED+=("python3")
+fi
+echo ""
+
 if [ $BUILD -eq 0 ]; then
     NEED_VIRTUALENV=0 #Do we need a virtualenv with ansible for the controller? Never needed if we are not building ourselves
 else
@@ -762,28 +764,30 @@ else
         NEED_VIRTUALENV=0 #Do we need a virtualenv with ansible for the controller? Never for containers, all ansible magic happens inside the container
     else
         NEED_VIRTUALENV=1 #Do we need a virtualenv with ansible for the controller? (this is a default we will attempt to falsify)
-        if which ansible-playbook; then
-            NEED_VIRTUALENV=0
-        elif [ $SUDO -eq 1 ]; then #we can only install ansible globally if we have root
-            if [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
-                NEED+=("epel") #ansible is in  EPEL
+        if [ $GLOBAL_ANSIBLE -eq 1 ]; then
+            if which ansible-playbook; then
+                NEED_VIRTUALENV=0
+            elif [ $SUDO -eq 1 ]; then #we can only install ansible globally if we have root
+                NEED+=("ansible")
+                NEED_VIRTUALENV=0
             fi
-            NEED+=("ansible")
-            NEED_VIRTUALENV=0
         fi
         if [ $NEED_VIRTUALENV -eq 1 ]; then
-            if ! which pip; then
-                if [ "$DISTRIB_ID" = "centos" ] || [ "$DISTRIB_ID" = "rhel" ]; then
-                    NEED+=("epel") #python-pip is in  EPEL
+            if which python3; then
+                #if we don't have python3 then we already flagged that
+                # and pip and virtualenv will be included in its installation
+                if ! python3 -m pip --version > /dev/null; then
+                    NEED+=("pip")
                 fi
-                NEED+=("pip")
-            fi
-            if ! which virtualenv; then
-                NEED+=("virtualenv")
+                if ! python3 -m virtualenv --version > /dev/null; then
+                    NEED+=("virtualenv")
+                fi
             fi
         fi
     fi
 fi
+
+
 if [ -z "$EDITOR" ]; then
     if which nano; then
         EDITOR=nano
@@ -1081,7 +1085,38 @@ for package in ${NEED[@]}; do
         else
             echo "No automated installation possible on your OS."
             if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
-            echo "Please install pip manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
+            echo "Please install epel manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
+        fi
+    elif [ "$package" = "python3" ]; then
+        if [ "$OS" = "debian" ]; then
+            cmd="sudo apt-get $NONINTERACTIVEFLAGS install python3 python3-pip python3-virtualenv"
+        elif [ "$OS" = "redhat" ]; then
+            cmd="sudo yum $NONINTERACTIVEFLAGS install python3 python3-pip python3-virtualenv"
+        elif [ "$OS" = "arch" ]; then
+            cmd="sudo pacman $NONINTERACTIVEFLAGS -Sy python python-pip python-virtualenv"
+        elif [ "$OS" = "mac" ]; then
+            cmd="brew update; brew install python && sudo pip3 install virtualenv"
+        else
+            cmd=""
+        fi
+        if [ ! -z "$cmd" ]; then
+            while true; do
+                echo -n "${bold}Run:${normal} $cmd ? [yn] "
+                if [ "$INTERACTIVE" -eq 1 ]; then
+                    read yn
+                else
+                    yn="y"
+                fi
+                case $yn in
+                    [Yy]* ) eval $cmd; break;;
+                    [Nn]* ) echo "Please install python 3 manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
+                    * ) echo "Please answer yes or no.";;
+                esac
+            done
+        else
+            echo "No automated installation possible on your OS."
+            if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
+            echo "Please install python 3 manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
         fi
     elif [ "$package" = "ansible" ]; then
         if [ "$OS" = "debian" ]; then
@@ -1125,13 +1160,13 @@ for package in ${NEED[@]}; do
         fi
     elif [ "$package" = "pip" ]; then
         if [ "$OS" = "debian" ]; then
-            cmd="sudo apt-get  $NONINTERACTIVEFLAGS install python-pip"
+            cmd="sudo apt-get  $NONINTERACTIVEFLAGS install python3-pip"
         elif [ "$OS" = "redhat" ]; then
-            cmd="sudo yum  $NONINTERACTIVEFLAGS install python-pip"
+            cmd="sudo yum  $NONINTERACTIVEFLAGS install python3-pip"
         elif [ "$OS" = "arch" ]; then
             cmd="sudo pacman  $NONINTERACTIVEFLAGS -Sy python-pip"
         elif [ "$OS" = "mac" ]; then
-            cmd="sudo easy_install pip"
+            fatalerror "no pip was found? This should not happen, it should have been installed through brew install python"
         fi
         echo "Pip is required for LaMachine but not installed yet. ${bold}Install now?${normal}"
         if [ ! -z "$cmd" ]; then
@@ -1155,13 +1190,13 @@ for package in ${NEED[@]}; do
         fi
     elif [ "$package" = "virtualenv" ]; then
         if [ "$OS" = "debian" ]; then
-            cmd="sudo apt-get $NONINTERACTIVEFLAGS install virtualenv"
+            cmd="sudo apt-get $NONINTERACTIVEFLAGS install python3-virtualenv"
         elif [ "$OS" = "redhat" ]; then
-            cmd="sudo yum  $NONINTERACTIVEFLAGS install python-virtualenv"
+            cmd="sudo yum  $NONINTERACTIVEFLAGS install python3-virtualenv"
         elif [ "$OS" = "arch" ]; then
             cmd="sudo pacman  $NONINTERACTIVEFLAGS -Sy python-virtualenv"
         elif [ "$OS" = "mac" ]; then
-            cmd="sudo pip install virtualenv"
+            cmd="sudo pip3 install virtualenv"
         else
             cmd=""
         fi
@@ -1414,15 +1449,32 @@ maintainer_mail: \"$USERNAME@$HOSTNAME\" #Enter your e-mail address here
     else
         echo "http_port: 8080 #webserver port" >> $STAGEDCONFIG
     fi
-    echo "force_https: no #Should be enabled when behind a reverse proxy that handles https for you, ensures all internal links are https" >> $STAGEDCONFIG
+    echo "force_https: no #Should be enabled when behind a reverse proxy that handles https for you, ensures all internal links are https and uses X-Forwarded-Host" >> $STAGEDCONFIG
+    echo "reverse_proxy_ip: \"172.17.0.1\" #IP address of the reverse proxy, as seen from LaMachine. The default here works for certain docker setups. This setting is currently needed only for Jupyter Hub" >> $STAGEDCONFIG
 echo "mapped_http_port: $HOSTPORT #mapped webserver port on host system (for VM/docker only)
+webservertype: nginx #If set to anything different, the internal webserver will not be enabled/provided by LaMachine (which allows you to run your own external one), do leave webserver: true set as is though.
 services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all possible services from the software categories you install will be provided. You can remove this and list specific services you want to enable. This is especially needed in case of a LaMachine installation that intends to only provide a single service.
-webservertype: nginx #If set to anything different, the internal webserver will not be enabled/provided by LaMachine (which allows you to run your own external one), do leave webserver: true set as is though." >> $STAGEDCONFIG
+remote_services: #Remote services you would like to tie to this LaMachine installation, remote services take precendence over local ones (please use exactly 4 spaces as indentation here)
+    switchboard: \"https://switchboard.clarin.eu\"
+    autosearch: \"https://portal.clarin.inl.nl/autocorp\"" >> $STAGEDCONFIG
+"portal_remote_registries: [] #Remote LaMachine instances that should be incorported into the portal" >> $STAGEDCONFIG
 if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "singularity" ]] || [[ $FLAVOUR == "lxc" ]] || [[ $FLAVOUR == "remote" ]]; then
     echo "clam_include: \"/usr/local/etc/clam_base.config.yml\" #You can set this to a CLAM base configuration file that will be included from all the webservices, it allows you to do configure common traits like authentication" >> $STAGEDCONFIG
 else
     echo "clam_include: \"$BASEDIR/$LM_NAME/etc/clam_base.config.yml\" #You can set this to a CLAM base configuration file that will be included from all the webservices, it allows you to do configure common traits like authentication" >> $STAGEDCONFIG
 fi
+echo "clam_base_config: {} #extra clam base configuration keys" >>$STAGEDCONFIG
+echo "oauth_client_id: \"\" #shared oauth client ID
+oauth_client_secret: \"\" #shared oauth client secret
+oauth_auth_url: \"\" #something like https://your-identity-provider/oauth/authenticate
+oauth_token_url: \"\" #something like https://your-identity-provider/oauth/token
+oauth_userinfo_url: \"\" #something like https://your-identity-provider/oauth/userinfo
+oauth_revoke_url: \"\" #(optional) something like https://your-identity-provider/oauth/revoke
+oauth_scope: [] #Set this to [ \"openid\", \"email\" ] if you want to use OpenID Connect
+oauth_sign_algo: \"\" #(optional) You can set this to RS256 or HS256, for OpenID Connect
+oauth_jwks_url: \"\" #(optional) something like https://your-identity-provider/oauth/jwks , used by OpenID Connect to obtain a signing key autoamtically (usually in combination with RS256 algorithm)
+oauth_sign_key: {} #(optional) provide a sign key manually (should be a dict that has fields like kty, use,alg,n and e), used by OpenID Connect (usually in combination with RS256 algorithm)
+" >> $STAGEDCONFIG
 if [[ $OS == "mac" ]] || [[ "$FLAVOUR" == "remote" ]]; then
     echo "lab: false #Enable Jupyter Lab environment, note that this opens the system to arbitrary code execution and file system access! (provided the below password is known)" >> $STAGEDCONFIG
 else
@@ -1484,20 +1536,20 @@ fi
 fi #build
 
 if [ ! -d lamachine-controller ]; then
-    mkdir lamachine-controller || fatalerror "Unable to create directory for LaMachine control environment"
+    mkdir lamachine-controller || fatalerror "Unable to create directory for LaMachine bootstrap control environment"
 fi
 
 if [ ! -d lamachine-controller/$LM_NAME ]; then
-    echo "Setting up control environment..."
+    echo "Setting up bootstrap control environment..."
     if [ $NEED_VIRTUALENV -eq 1 ]; then
         echo " (with virtualenv and ansible inside)"
-        virtualenv lamachine-controller/$LM_NAME
+        python3 -m virtualenv lamachine-controller/$LM_NAME
         if [ $? -ne 0 ]; then
             echo "${boldred}ERROR: Virtualenv creation failed!${normal} Trying a fallback method:" >&2
-            python3 -m virtualenv lamachine-controller/$LM_NAME || fatalerror "Unable to create LaMachine control environment"
+            virtualenv lamachine-controller/$LM_NAME || fatalerror "Unable to create LaMachine bootstrap control environment"
         fi
         cd lamachine-controller/$LM_NAME
-        source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
+        source ./bin/activate || fatalerror "Unable to activate LaMachine bootstrap controller environment"
         pip install -U setuptools
         pip install ansible || fatalerror "Unable to install Ansible"
         #pip install docker==2.7.0 docker-compose ansible-container[docker]
@@ -1506,10 +1558,10 @@ if [ ! -d lamachine-controller/$LM_NAME ]; then
         mkdir lamachine-controller/$LM_NAME && cd lamachine-controller/$LM_NAME #no need for a virtualenv
     fi
 else
-    echo "Reusing existing control environment..."
+    echo "Reusing existing bootstrap control environment..."
     cd lamachine-controller/$LM_NAME
     if [ $NEED_VIRTUALENV -eq 1 ]; then
-        source ./bin/activate || fatalerror "Unable to activate LaMachine controller environment"
+        source ./bin/activate || fatalerror "Unable to activate LaMachine bootstrap controller environment"
     fi
 fi
 

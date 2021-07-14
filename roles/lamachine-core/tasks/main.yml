@@ -26,6 +26,9 @@
               - homedir
               - prefer_distro
               - minimal
+              - force_https
+              - lm_base_url
+              - oauth_client_id
 
         - name: "Outputting custom versions"
           debug:
@@ -262,10 +265,6 @@
 
         - import_tasks: macosx.yml
           when: (ansible_distribution|lower == 'macosx')
-          tags: fullrunonly
-
-        - import_tasks: conda.yml
-          when: localenv_type == 'conda' and locality == "local"
           tags: fullrunonly
 
         - import_tasks: virtualenv.yml
@@ -555,11 +554,15 @@
                   cd {{local_prefix}}/lib/python{{ python_version.stdout }}/site-packages/ || exit 1
                   mv apt_pkg.*.so apt_pkg.so || exit 1
                   mv apt_inst.*.so apt_inst.so || exit 1
+                  exit 2 #we use this as an extra success code to indicate changes have been made
               fi
           environment: "{{lm_env}}"
           args:
               chdir: "{{source_path}}"
           when: locality == "local" and localenv_type == "virtualenv" and (ansible_distribution|lower == 'debian' or ansible_distribution|lower == 'ubuntu' or ansible_distribution|lower == "linux mint")
+          register: python3apt3
+          changed_when: python3apt.rc == 2
+          failed_when: python3apt.rc > 0 and python3apt.rc != 2
           tags: fullrunonly
 
         - name: Installing ansible locally (virtualenv linux)
@@ -733,7 +736,7 @@
               repo: docker-container-init
           when: locality == "global"
 
-        - name: Compiling and installaitng docker-container-init
+        - name: Compiling and installing docker-container-init
           become: "{{lm_become}}"
           become_user: root
           command: "gcc -o {{lm_prefix}}/bin/docker-container-init {{source_path}}/docker-container-init/docker-container-init.c"

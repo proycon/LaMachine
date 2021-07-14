@@ -5,3 +5,4 @@ port: 8823
 urlprefix: "g2pservice"
 root: "{{www_data_path}}/g2pservice.clam/"
 bindir: "{{lm_prefix}}/bin/"
+oauth_client_url: "{{lm_base_url}}/g2pservice"

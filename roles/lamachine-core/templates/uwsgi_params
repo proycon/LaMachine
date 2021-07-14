@@ -11,6 +11,10 @@ uwsgi_param  SERVER_PROTOCOL    $server_protocol;
 uwsgi_param  REQUEST_SCHEME     $scheme;
 uwsgi_param  HTTPS              $https if_not_empty;
 
+{% if force_https %}
+uwsgi_param HTTP_X_FORWARDED_PROTO   https;
+{% endif %}
+
 uwsgi_param  REMOTE_ADDR        $remote_addr;
 uwsgi_param  REMOTE_PORT        $remote_port;
 uwsgi_param  SERVER_PORT        $server_port;

@@ -6,4 +6,7 @@ urlprefix: "tscan"
 root: "{{www_data_path}}/tscan.clam/"
 bindir: "{{lm_prefix}}/bin/"
 tscandir: "{{lm_prefix}}/src/tscan"
-switchboard_forward_url: "https://switchboard.clarin.eu/#/tscan/$BACKLINK/$MIMETYPE/nld"
+oauth_client_url: "{{lm_base_url}}/tscan"
+{% if "switchboard" in remote_services and remote_services.switchboard %}
+switchboard_forward_url: "{{remote_services.switchboard}}/#/tscan/$BACKLINK/$MIMETYPE/nld"
+{% endif %}

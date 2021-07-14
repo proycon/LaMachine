@@ -1,6 +1,6 @@
 ---
 
-    - when: webserver and ("flat" in services or "all" in services)
+    - when: webserver and ("flat" in services or "all" in services) and ('flat' not in remote_services or not remote_services.flat)
       block:
         - name: Install FLAT webapplication
           include_role:

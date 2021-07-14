@@ -10,6 +10,7 @@
         package:
            github_user: "sirifarif"
            github_repo: "bliss_ASR"
+           git_branch: main
            metadata:
               identifier: "bliss_ASR"
 

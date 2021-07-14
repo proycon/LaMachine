@@ -345,6 +345,14 @@ certain packages, you can specify these packages (as a comma separated list) to 
 ``lamachine-update --only python-core,java-core``. Do be aware that this could result in your LaMachine ending up in an
 unusable state (in which case a normal update should remedy the problem again).
 
+#### Configuring LaMachine
+
+If you want to view the LaMachine configuration, simply issue a ``lamachine-config`` from within. If you want to edit it
+interactively, add the ``--edit`` flag. Always run ``lamachine-update`` afterwards to apply the new configuration.
+
+The ``lamachine-config`` tool can also be used to quickly edit a configuration setting through the command line, see
+``lamachine-config --help`` for details.
+
 ### Webservices and web applications
 
 LaMachine comes with several webservices and web applications out of the box.
@@ -408,10 +416,10 @@ For a secure experience using LaMachine, take all of the following into account:
   as a convenience but carries some inherent risks and is generally not a secure practice. It implies a trust relation
   between you and us, as well as the hoster (github). Prudent users are encouraged to download the script,
   inspect it, and only then execute it. We may provide PGP-signed releases in the future.
-* The bootstrap script asks for and requires root privileges for certain installation steps, this will always be asked and the user may confirm. The Ansible provisioning scripts also generally required a sudo, this will only be asked once, but the privileges will only be used when needed.
+* The bootstrap script asks for and requires root privileges for certain installation steps, this will always be asked and the user may confirm. The Ansible provisioning scripts also generally requires sudo, this will only be asked once per run, and the privileges will only be used when needed.
 * Running either the bootstrap procedure or the subsequent ansible provisioning entirely as root is forbidden for
   security reasons.
-* The current webserver configuration does not yet enable authentication for any of the webservices, so do *NOT* expose it directly to the internet without setting up authentication yourself.
+* The current webserver configuration does not yet enable authentication for any of the webservices, so do *NOT* expose it directly to the internet without setting up authentication yourself. If you want authentication, consult the OpenID Connect section below.
 * If you are sure you don't need a webserver/webservices, disable it in the configuration upon first build.
 * The virtual machines tend to come with a preset username and password ``(vagrant:vagrant)``, the lamachine user in Docker containers has
   the password ``lamachine``, you will need to change this.
@@ -420,6 +428,14 @@ For a secure experience using LaMachine, take all of the following into account:
   potential vulnerabilities may have been patched in the meantime.
 * Only if your setup is otherwise secure (i.e. authentication on webservices), then make sure to always open only the necessary ports (80/443) to the internet, do not expose any of the UWSGI services to the world (this would allow arbitrary code execution).
 * As per the GNU General Public Licence, we do not offer any warranty despite doing our best.
+
+### OpenID Connect Authentication
+
+LaMachine supports OpenID Connect, which is an extension on top of OAuth2, as a means to authenticate against an
+*external* single-sign-on authentication provider. You can configure OpenID Connect in the LaMachine configuration and LaMachine will
+attempt to propagate these parameters to all underlying software that supports OpenID Connect.
+
+Please consult the [LaMachine as a service documentation](docs/service/README.md) for further instructions.
 
 ## Versioning
 

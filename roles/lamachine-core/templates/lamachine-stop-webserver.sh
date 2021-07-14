@@ -41,7 +41,7 @@ killall -w nginx 2>/dev/null
 {% endif %}
 
 {% if lab %}
-killall jupyter-lab 2> /dev/null
+killall jupyterhub 2> /dev/null
 {% endif %}
 
 

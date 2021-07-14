@@ -290,6 +290,43 @@ SECRET_KEY = 'ki5^nfv02@1f1(+*#l_9GDi9h&cf^_lv6bs4j9^6mpr&(%o4zk'
 
 DEBUG = True #Set to False for production environments!!!!
 
+{% if force_https %}
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+{% endif %}
+
+
+##############################################################################
+# DJANGO SETTINGS FOR OPENID CONNECT AUTHENTICATION
+#############################################################################
+
+{% if oauth_client_id %}
+OIDC = True
+
+#note: The redirect url you register with your authorization provider should end in /oidc/callback/
+
+AUTHENTICATION_BACKENDS = ( 'django.contrib.auth.backends.ModelBackend','mozilla_django_oidc.auth.OIDCAuthenticationBackend',)
+
+OIDC_RP_CLIENT_ID = "{{ oauth_client_id }}" #As provided by your authorization provider, do not check this into public version control!!!
+OIDC_RP_CLIENT_SECRET = "{{ oauth_client_secret }}" #As provided by your authorization provider, Do not check this into public version control!!!
+
+OIDC_OP_AUTHORIZATION_ENDPOINT = "{{ oauth_auth_url }}"
+OIDC_OP_TOKEN_ENDPOINT = "{{ oauth_token_url }}"
+OIDC_OP_USER_ENDPOINT = "{{ oauth_userinfo_url }}"
+
+OIDC_TOKEN_USE_BASIC_AUTH = True #Use client_secret_basic, if not enabled, client_secret_post will be default
+{% if oauth_sign_algo %}
+OIDC_RP_SIGN_ALGO = "{{ oauth_sign_algo }}" #should be HS256 or RS256
+{% endif %}
+{% if oauth_jwks_url %}
+OIDC_OP_JWKS_ENDPOINT = "{{ oauth_jwks_url }}"
+{% endif %}
+{% if oauth_sign_key %}
+OIDC_RD_IDP_SIGN_KEY = {{ oauth_sign_key | to_json }}
+{% endif %}
+
+{% else %}
+OIDC = False
+{% endif %}
 
 
 ##############################################################################
@@ -453,10 +490,13 @@ INSTALLED_APPS = [
     # 'django.contrib.admindocs',
     'flat.users'
 ]
+if OIDC: INSTALLED_APPS.insert(1, 'mozilla_django_oidc')
 for mode,_ in MODES:
     INSTALLED_APPS.append('flat.modes.' + mode)
 INSTALLED_APPS = tuple(INSTALLED_APPS)
 
+LOGIN_REDIRECT_URL = BASE_PREFIX + "/"
+LOGOUT_REDIRECT_URL = BASE_PREFIX + "/"
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 

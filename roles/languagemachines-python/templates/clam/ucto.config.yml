@@ -5,4 +5,12 @@ port: 8802
 urlprefix: "ucto"
 root: "{{www_data_path}}/ucto.clam/"
 bindir: "{{lm_prefix}}/bin/"
-switchboard_forward_url: "https://switchboard.clarin.eu/#/ucto/$BACKLINK/$MIMETYPE/$LANGUAGE"
+oauth_client_url: "{{lm_base_url}}/ucto"
+{% if "switchboard" in remote_services and remote_services.switchboard %}
+switchboard_forward_url: "{{remote_services.switchboard}}/#/ucto/$BACKLINK/$MIMETYPE/$LANGUAGE"
+{% endif %}
+{% if "frog" in remote_services and remote_services.frog %}
+frog_forward_url: "{{remote_services.frog}}/?project=new&foliainput_url=$BACKLINK&skip=t"
+{% elif webserver and ("all" in services or "frog" in services)  %}
+frog_forward_url: "{{lm_base_url}}/frog/?project=new&foliainput_url=$BACKLINK&skip=t"
+{% endif %}

@@ -51,8 +51,7 @@
 
     - name: "{{package.repo}} - Obtaining version number for registration"
       shell: |
-        git describe --tags > .installed-version.lamachine
-        if [ $? -eq 0 ]; then
+        if git describe --tags > .installed-version.lamachine; then
           cat .installed-version.lamachine
         else
           cat .installed-commit.lamachine

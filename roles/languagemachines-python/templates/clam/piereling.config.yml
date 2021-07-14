@@ -5,3 +5,7 @@ port: 8814
 urlprefix: "piereling"
 root: "{{www_data_path}}/piereling.clam/"
 bindir: "{{lm_prefix}}/bin/"
+oauth_client_url: "{{lm_base_url}}/piereling"
+{% if "switchboard" in remote_services and remote_services.switchboard %}
+switchboard_forward_url: "{{remote_services.switchboard}}/#/piereling/$BACKLINK/$MIMETYPE"
+{% endif %}

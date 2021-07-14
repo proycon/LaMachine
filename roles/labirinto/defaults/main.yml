@@ -7,5 +7,8 @@ portal_domains:
   - "{{hostname}}"
 portal_registry_url: "/metadata.json" #this is a relative URL, labirinto can resolve it automatically
 portal_base: "/" #the base url where the portal will run
+portal_remote_registries: [] #remote codemeta registries to include
+portal_remote_include: [] #tool identifiers to include
+portal_remote_exclude: [] #tool identifiers to exclude
 
 

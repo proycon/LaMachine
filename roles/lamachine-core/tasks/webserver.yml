@@ -407,6 +407,10 @@
     template:
       src: "clam_base.config.yml"
       dest: "{{lm_prefix}}/etc/clam_base.config.yml"
+      force: yes
+      owner: "{{unix_user}}"
+      group: "{{unix_group}}"
+      mode: u+rw,g+rw,o+r
 
   - name: Installing lamastats for analytics
     include_role:

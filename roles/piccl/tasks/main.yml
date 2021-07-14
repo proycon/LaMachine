@@ -81,7 +81,7 @@
         chdir: "{{lm_prefix}}/opt/PICCL"
       environment: "{{lm_env}}"
 
-    - when: webserver and ("piccl" in services or "all" in services)
+    - when: webserver and ("piccl" in services or "all" in services) and ('piccl' not in remote_services or not remote_services.piccl)
       block:
         - name: Detect current PICCL branch or tag
           shell: "git describe --tags || git rev-parse HEAD"

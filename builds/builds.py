@@ -134,4 +134,10 @@ buildmatrix = [
         "version": 'stable',
         "install": "kaldi_nl"
     },
+    {
+        "name": 'devcore',
+        "flavour": 'docker',
+        "version": 'development',
+        "install": "lamachine-core"
+    },
 ]

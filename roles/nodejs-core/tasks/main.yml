@@ -5,7 +5,7 @@
       - name: Add NodeSource repository (Debian/Ubuntu)
         become: yes
         become_user: root
-        shell: bash <(curl -sL https://deb.nodesource.com/setup_10.x)
+        shell: bash <(curl -sL https://deb.nodesource.com/setup_lts.x)
         args:
             executable: /bin/bash
         when: ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "debian" or ansible_distribution|lower == "linux mint"
@@ -13,7 +13,7 @@
       - name: Add NodeSource repository (RedHat EL/CentOS/Fedora)
         become: yes
         become_user: root
-        shell: bash <(curl -sL https://rpm.nodesource.com/setup_10.x)
+        shell: bash <(curl -sL https://rpm.nodesource.com/setup_lts.x)
         args:
             executable: /bin/bash
         when: ansible_distribution|lower == "rhel" or ansible_distribution|lower == "centos" or ansible_distribution|lower == "redhat" or ansible_distribution|lower == "fedora"
@@ -27,6 +27,24 @@
     loop_control:
        loop_var: package
     when: root
+
+  - name: Create node_modules directory
+    become: "{{lm_become}}"
+    become_user: root
+    file:
+        path: "{{ lm_prefix }}/node_modules"
+        state: directory
+        owner: "{{unix_user}}"
+        group: "{{unix_group}}"
+        mode: u+rwx,g+rwsx,a+rx
+
+  - name: "Creating dummy package lock file"
+    become: "{{lm_become}}"
+    become_user: root
+    copy:
+      dest: "{{lm_prefix}}/package-lock.json"
+      content: "{}"
+      mode: u+rw,g+rw,a+r
 
   - when: locality == "local" and not root
     block:

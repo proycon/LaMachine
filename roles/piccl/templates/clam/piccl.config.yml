@@ -6,5 +6,10 @@ urlprefix: "piccl"
 root: "{{www_data_path}}/piccl.clam/"
 piccldir: "{{lm_prefix}}/opt/PICCL"
 piccldataroot: "{{lm_prefix}}/opt/PICCL"
-autosearch_forward_url: "https://portal.clarin.inl.nl/autocorp/upload/?format=piccl&file=$BACKLINK"
-switchboard_forward_url: "https://switchboard.clarin.eu/#/piccl/$BACKLINK/$MIMETYPE"
+oauth_client_url: "{{lm_base_url}}/piccl"
+{% if "autosearch" in remote_services and remote_services.autosearch %}
+autosearch_forward_url: "{{ remote_services.autosearch}}/upload/?format=piccl&file=$BACKLINK"
+{% endif %}
+{% if "switchboard" in remote_services and remote_services.switchboard %}
+switchboard_forward_url: "{{ remote_services.switchboard }}/#/piccl/$BACKLINK/$MIMETYPE"
+{% endif %}

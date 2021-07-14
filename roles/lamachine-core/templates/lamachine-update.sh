@@ -63,6 +63,7 @@ for arg in "$@"; do
         if [ -e "host_vars/{{hostname}}.yml" ]; then
             #LaMachine v2.1.0+
             $EDITOR "host_vars/{{hostname}}.yml"
+            cp -f "host_vars/{{hostname}}.yml" "host_vars/localhost.yml"
         elif [ -e "host_vars/localhost.yml" ]; then
             #fallback
             $EDITOR "host_vars/localhost.yml"
