@@ -120,7 +120,7 @@
                state: "{% if force is defined and force %}forcereinstall{% elif 'state' in package and package.state %}{{package.state}}{% else %}latest{% endif %}"
                executable: "{% if locality == 'local' %}{{omit}}{% else %}{{pip.stdout}}{% endif %}"
                virtualenv: "{% if locality == 'local' %}{{ local_prefix }}{% else %}{{ omit }}{% endif %}"
-               extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %}{% if ('force' in package and package.force) or (force is defined and force) %} --force-reinstall --no-cache{% endif %}
+               extra_args: "--upgrade-strategy only-if-needed {% if locality == 'global' %}--prefix {{lm_prefix}}{% endif %}{% if ('force' in package and package.force) or (force is defined and force) %} --force-reinstall --no-cache{% endif %}"
           environment: "{{lm_env}}"
           register: pipinstallstable
           when: ("pip" in package and package.pip != "" and ('version' not in package or not package.version) and (version == "stable" or (version == "development" and ("github_user" not in package or package.github_user == "")) or (version == "custom" and package.pip.lower() in customversion and customversion[package.pip.lower()] == "stable")))
