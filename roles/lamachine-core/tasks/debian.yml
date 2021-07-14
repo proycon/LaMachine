@@ -49,23 +49,6 @@
         cache_valid_time: 900
       #dirmngr is needed for gpg apt-get key
 
-    - name: installing linux headers for debian (apt)
-      become: true
-      become_user: root
-      apt:
-        name: [ linux-headers-amd64 ]
-        state: present
-      when: flavour == "vagrant" and ansible_distribution|lower == 'debian'
-      #we need this to properly build the vm guest additions
-
-    - name: installing linux headers for ubuntu (apt)
-      become: true
-      become_user: root
-      apt:
-        name: [ linux-headers ]
-        state: present
-      when: flavour == "vagrant" and ansible_distribution|lower == 'ubuntu'
-
     - name: Installing python-virtualenv
       become: true
       become_user: root
