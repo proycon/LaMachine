@@ -560,7 +560,7 @@
           args:
               chdir: "{{source_path}}"
           when: locality == "local" and localenv_type == "virtualenv" and (ansible_distribution|lower == 'debian' or ansible_distribution|lower == 'ubuntu' or ansible_distribution|lower == "linux mint")
-          register: python3apt3
+          register: python3apt
           changed_when: python3apt.rc == 2
           failed_when: python3apt.rc > 0 and python3apt.rc != 2
           tags: fullrunonly
