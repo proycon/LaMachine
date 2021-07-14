@@ -103,7 +103,7 @@
           become: true
           become_user: root
           apt_repository:
-            repo: deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main #should work on jessie/stretch as well
+            repo: deb http://ppa.launchpad.net/ansible/ansible/ubuntu focal main
             state: present
           when: have_ansible.rc != 0
           ignore_errors: "yes" #if this fails we fall back to the distribution Ansible
