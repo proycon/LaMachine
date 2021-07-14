@@ -15,7 +15,7 @@
 
   - name: Downloading libtorch for linux
     get_url:
-        url: https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.6.0%2Bcpu.zip
+        url: https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.8.1%2Bcpu.zip
         dest: "{{ lm_prefix }}/opt/libtorch.zip"
     when: ansible_distribution|lower != 'macosx'
 
