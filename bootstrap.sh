@@ -1457,7 +1457,7 @@ services: [ $SERVICES ]  #List of services to provide, if set to [ all ], all po
 remote_services: #Remote services you would like to tie to this LaMachine installation, remote services take precendence over local ones (please use exactly 4 spaces as indentation here)
     switchboard: \"https://switchboard.clarin.eu\"
     autosearch: \"https://portal.clarin.inl.nl/autocorp\"" >> $STAGEDCONFIG
-"portal_remote_registries: [] #Remote LaMachine instances that should be incorported into the portal" >> $STAGEDCONFIG
+echo "portal_remote_registries: [] #Remote LaMachine instances that should be incorported into the portal" >> $STAGEDCONFIG
 if [[ $FLAVOUR == "vagrant" ]] || [[ $FLAVOUR == "docker" ]] || [[ $FLAVOUR == "singularity" ]] || [[ $FLAVOUR == "lxc" ]] || [[ $FLAVOUR == "remote" ]]; then
     echo "clam_include: \"/usr/local/etc/clam_base.config.yml\" #You can set this to a CLAM base configuration file that will be included from all the webservices, it allows you to do configure common traits like authentication" >> $STAGEDCONFIG
 else
