@@ -51,7 +51,7 @@ def make_build(build, args):
         #we build local tests in a docker container (clean environment), the dockerfile invokes the bootstrap:
         cwd = os.getcwd()
         os.chdir("context/" + build['context'])
-        cmd = "docker build -t proycon/lamachine:" + build['name'] + " --build-arg NAME=" + build['name'] + " --build-arg VERSION=" + build['version'] + " --build-arg BRANCH=develop --build-arg HOSTNAME=lamachine-" + build['name']
+        cmd = "docker build -t proycon/lamachine:" + build['name'] + " --build-arg NAME=" + build['name'] + " --build-arg VERSION=" + build['version'] + " --build-arg BRANCH=master --build-arg HOSTNAME=lamachine-" + build['name']
         if 'install' in build:
             cmd += " --install " + build['install']
         cmd += " . 2> " + cwd + "/logs/" + buildid(build).replace(':','-') + '.log >&2'
