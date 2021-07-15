@@ -17,7 +17,7 @@ VOLUME $DATA_PATH
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
 RUN apt-get update && apt-get install -m -y python3 python3-pip sudo apt-utils locales software-properties-common
-RUN apt-add-repository "deb http://ppa.launchpad.net/ansible/ansible/ubuntu focal main"
+RUN apt-add-repository --yes --update ppa:ansible/ansible
 RUN apt-get update && apt-get install -m -y ansible
 RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen
 RUN useradd -ms /bin/bash $UNIX_USER
