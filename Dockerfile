@@ -14,9 +14,11 @@ USER root
 MAINTAINER Maarten van Gompel <proycon@anaproy.nl>
 LABEL description="A unified distribution of NLP software. Developed by the Centre of Language and Speech Technology (Radboud University Nijmegen), the KNAW Humanities Cluster. Funded by CLARIAH" value="$LM_VERSION"
 VOLUME $DATA_PATH
-RUN apt add-repository http://ppa.launchpad.net/ansible/ansible/ubuntu focal main
 RUN apt-get update
-RUN apt-get install -m -y python3 python3-pip sudo apt-utils locales ansible
+RUN apt-get install -m -y python3 python3-pip sudo apt-utils locales
+RUN apt-add-repository http://ppa.launchpad.net/ansible/ansible/ubuntu focal main
+RUN apt-get update
+RUN apt-get install -m -y ansible
 RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen
 RUN useradd -ms /bin/bash $UNIX_USER
 RUN echo "$UNIX_USER:lamachine" | chpasswd
