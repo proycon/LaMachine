@@ -694,9 +694,9 @@ fi
 
 if [ -z "$BRANCH" ]; then
     if [[ "$VERSION" == "development" ]]; then
-        BRANCH="master"
+        BRANCH="develop"
     else
-        BRANCH="master"
+        BRANCH="develop"
     fi
 fi
 if [ -z "$GITREPO" ]; then
