@@ -1,4 +1,4 @@
-FROM debian:stable
+FROM ubuntu:focal
 ARG UNIX_USER=lamachine
 ARG LAMACHINE_PATH=/lamachine
 ARG DATA_PATH=/data
@@ -12,13 +12,12 @@ EXPOSE 8888
 EXPOSE 9999
 USER root
 MAINTAINER Maarten van Gompel <proycon@anaproy.nl>
-LABEL description="A unified distribution of NLP software. Developed by the Centre of Language and Speech Technology (Radboud University Nijmegen) and partners" value="$LM_VERSION"
+LABEL description="A unified distribution of NLP software. Developed by the Centre of Language and Speech Technology (Radboud University Nijmegen), the KNAW Humanities Cluster. Funded by CLARIAH" value="$LM_VERSION"
 VOLUME $DATA_PATH
+RUN apt add-repository http://ppa.launchpad.net/ansible/ansible/ubuntu focal main
 RUN apt-get update
-RUN apt-get install -m -y python python-pip sudo apt-utils locales
+RUN apt-get install -m -y python3 python3-pip sudo apt-utils locales ansible
 RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen
-RUN locale-gen
-RUN pip install ansible
 RUN useradd -ms /bin/bash $UNIX_USER
 RUN echo "$UNIX_USER:lamachine" | chpasswd
 RUN adduser $UNIX_USER sudo
