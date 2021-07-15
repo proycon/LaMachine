@@ -15,7 +15,7 @@ MAINTAINER Maarten van Gompel <proycon@anaproy.nl>
 LABEL description="A unified distribution of NLP software. Developed by the Centre of Language and Speech Technology (Radboud University Nijmegen), the KNAW Humanities Cluster. Funded by CLARIAH" value="$LM_VERSION"
 VOLUME $DATA_PATH
 RUN apt-get update
-RUN apt-get install -m -y python3 python3-pip sudo apt-utils locales
+RUN apt-get install -m -y python3 python3-pip sudo apt-utils locales software-properties-common
 RUN apt-add-repository http://ppa.launchpad.net/ansible/ansible/ubuntu focal main
 RUN apt-get update
 RUN apt-get install -m -y ansible
