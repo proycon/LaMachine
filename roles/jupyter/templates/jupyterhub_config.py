@@ -1,7 +1,7 @@
 # Configuration file for jupyterhub.
 from subprocess import check_call
 {% if oauth_client_id %}
-from oauthenticator.generic import GenericOAuthenticator
+from oauthenticator.generic import LocalGenericOAuthenticator
 {% endif %}
 import os
 
@@ -10,29 +10,40 @@ def create_user_dir(spawner):
     userdir = "{{www_data_path}}/notebooks/" + username
     if not os.path.exists(userdir):
         os.mkdir(userdir, 0o775)
+{% if oauth_client_id and locality == "global" and root %}
+    #notebooks are owned by the newly created user
+    os.system("sudo chown \"" + username.replace('"','').replace("\n","") + "\" \"" + userdir + "\"")
+{% endif %}
 
 #--The public facing URL of the whole JupyterHub application.
 #--This is the address on which the proxy will bind. Sets protocol, ip, base_url
 c.JupyterHub.bind_url = 'http://127.0.0.1:9888/jupyter/'
+c.JupyterHub.trusted_downstream_ips = ['127.0.0.1', '{{reverse_proxy_ip}}']
+c.ConfigurableHTTPProxy.command = '{{lm_prefix}}/node_modules/configurable-http-proxy/bin/configurable-http-proxy'
+{% if oauth_client_id %}
+c.JupyterHub.authenticator_class = LocalGenericOAuthenticator
+c.LocalGenericOAuthenticator.oauth_callback_url = "{{ lm_base_url }}/jupyter/oauth_callback"
+c.LocalGenericOAuthenticator.authorize_url = "{{ oauth_auth_url }}"
+c.LocalGenericOAuthenticator.client_id = "{{ oauth_client_id }}"
+c.LocalGenericOAuthenticator.client_secret = "{{ oauth_client_secret }}"
+c.LocalGenericOAuthenticator.token_url = "{{ oauth_token_url }}"
+c.LocalGenericOAuthenticator.userdata_url = "{{ oauth_userinfo_url }}"
+c.LocalGenericOAuthenticator.scope = {{ oauth_scope | to_json }}
+c.LocalGenericOAuthenticator.username_key = "email"
+#Note: Jupyter Hub requires the unix user jupyter hub running to be able to access the sudospawner as root and add users to the system!
+#This should go well in the global variants of LaMachine (docker/vagrant), but not the local env variants
+c.LocalGenericOAuthenticator.create_system_users = True
+c.LocalGenericOAuthenticator.add_user_cmd = ['sudo','adduser', '-q', '--gecos', '""', '--disabled-password','--force-badname']
+c.JupyterHub.spawner_class='sudospawner.SudoSpawner'
+c.Spawner.cmd = '{{lm_prefix}}/bin/sudospawner'
+{% else %}
+c.JupyterHub.authenticator_class = 'jupyterhub.auth.PAMAuthenticator'
+{% endif %}
+c.Spawner.pre_spawn_hook = create_user_dir
 c.Spawner.default_url = '/lab'
 c.Spawner.notebook_dir = '{{www_data_path}}/notebooks/{username}' #(username will be replaced by hub, not ansible)
 c.Spawner.args = ['--NotebookApp.allow_origin={{lab_allow_origin}}']
 c.Spawner.environment = { "LM_PREFIX": "{{lm_prefix}}", "LM_DATA_PATH": "{{data_path}}", "LM_WWW_DATA_PATH": "{{www_data_path}}", "LM_SOURCEPATH": "{{source_path}}" }
-c.Spawner.pre_spawn_hook = create_user_dir
-c.JupyterHub.trusted_downstream_ips = ['127.0.0.1', '{{reverse_proxy_ip}}']
-c.ConfigurableHTTPProxy.command = '{{lm_prefix}}/node_modules/configurable-http-proxy/bin/configurable-http-proxy'
-{% if oauth_client_id %}
-c.JupyterHub.authenticator_class = GenericOAuthenticator
-c.GenericOAuthenticator.oauth_callback_url = "{{ lm_base_url }}/jupyter/oauth_callback"
-c.GenericOAuthenticator.authorize_url = "{{ oauth_auth_url }}"
-c.GenericOAuthenticator.client_id = "{{ oauth_client_id }}"
-c.GenericOAuthenticator.client_secret = "{{ oauth_client_secret }}"
-c.GenericOAuthenticator.token_url = "{{ oauth_token_url }}"
-c.GenericOAuthenticator.userdata_url = "{{ oauth_userinfo_url }}"
-c.GenericOAuthenticator.scope = {{ oauth_scope | to_json }}
-{% else %}
-c.JupyterHub.authenticator_class = 'jupyterhub.auth.PAMAuthenticator'
-{% endif %}
 
 
 #------------------------------------------------------------------------------

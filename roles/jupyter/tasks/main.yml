@@ -35,6 +35,13 @@
     vars:
       command: npm install --prefix {{lm_prefix}} configurable-http-proxy
 
+  - name: "Installing Sudospawner"
+    include_role:
+        name: lamachine-python-install
+    vars:
+      package:
+        pip: sudospawner
+
  #- name: "Installing JupyterLab Git Extension"
  #  include_role:
  #      name: lamachine-python-install
