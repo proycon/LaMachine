@@ -193,10 +193,9 @@ LaMachine uses [Debian](https://www.debian.org) as primary Linux distribution (f
 we support the distributions/platforms listed below for a native installation of LaMachine (i.e. compiled against the libraries
 of that distribution). We distinguish three categories of support (and for all we only support the x86-64 architecture):
 
-* **Gold support** - All participating software should work on these platforms and things are tested frequently. The
-    pre-built LaMachine containers and VMs we offer always use one of these.
-  * Debian 10 (buster)  (next: Debian 11)
-  * Ubuntu 20.04 LTS (next: Ubuntu 22.04 LTS)
+* **Gold support** - All participating software should work on these platforms and things are tested frequently.
+  * Ubuntu 20.04 LTS (next: Ubuntu 22.04 LTS), this is the default option for all pre-built containers and VMs since LaMachine v2.25
+  * Debian 10 (buster)  (next: Debian 11), this was the default for docker containers and VMs before LaMachine v2.25
 
 * **Silver support** - Most software should work.
   * Debian 9 (stretch) - The previous stable release
