@@ -6,4 +6,5 @@
       with_items:
           - sesdiff
           - ssam
+          - lexmatch
           - analiticcl
