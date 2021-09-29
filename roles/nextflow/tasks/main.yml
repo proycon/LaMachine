@@ -51,6 +51,12 @@
           mode: u+rwx,g+rwsx,a+rx
           state: directory
 
+    - name: Create nextflow plugins directory
+      file:
+          path: "{{lm_prefix}}/opt/nextflow/plugins"
+          mode: u+rwx,g+rx,a+rx
+          state: directory
+
     - name: Ensure nextflow script permissions are sane
       shell: |
         chmod a+rx {{lm_prefix}}/bin/nextflow
