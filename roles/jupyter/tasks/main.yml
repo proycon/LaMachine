@@ -29,6 +29,15 @@
       package:
         pip: ipywidgets
 
+  - name: Ensure npm package-lock is writable if it exists
+    file:
+      path: "{{lm_prefix}}/package-lock.json"
+      mode: u+rwx,a+rx
+      state: file
+      owner: "{{unix_user}}"
+      group: "{{unix_group}}"
+    allow_failure: "yes"
+
   - name: Installing configurable-http-proxy
     include_role:
       name: lamachine-run
