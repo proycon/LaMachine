@@ -16,7 +16,7 @@
           metadata: #TODO: this is temporary until codemetapy can parse npm metadata itself!!!!
             identifier: labirinto
             name: Labirinto
-            version: 0.1.2
+            version: 0.2.6
             description: "Labirinto is a virtual laboratory portal, it makes a collection of software browseable and searchable for the end-user. Labirinto presents the software's metadata following the CodeMeta (https://codemeta.github.io) specification in an intuitive way and allows the user to filter and perform a limited search.  The portal gives access to software if it offers web-based interfaces."
             author: "Maarten van Gompel"
             url: "https://github.com/proycon/labirinto"
