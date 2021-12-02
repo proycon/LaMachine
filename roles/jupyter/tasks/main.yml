@@ -30,6 +30,8 @@
         pip: ipywidgets
 
   - name: Ensure npm package-lock is writable if it exists
+    become: "{{lm_become}}"
+    become_user: root
     file:
       path: "{{lm_prefix}}/package-lock.json"
       mode: u+rwx,a+rx
