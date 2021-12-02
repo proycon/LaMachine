@@ -29,11 +29,22 @@
       package:
         pip: ipywidgets
 
-  - name: Ensure npm package-lock is writable if it exists
+  - name: Ensure npm package-lock.json is writable if it exists
     become: "{{lm_become}}"
     become_user: root
     file:
       path: "{{lm_prefix}}/package-lock.json"
+      mode: u+rwx,a+rx
+      state: file
+      owner: "{{unix_user}}"
+      group: "{{unix_group}}"
+    ignore_errors: "yes"
+
+  - name: Ensure npm package.json is writable if it exists
+    become: "{{lm_become}}"
+    become_user: root
+    file:
+      path: "{{lm_prefix}}/package.json"
       mode: u+rwx,a+rx
       state: file
       owner: "{{unix_user}}"
