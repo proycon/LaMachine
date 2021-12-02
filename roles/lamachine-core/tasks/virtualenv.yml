@@ -9,7 +9,7 @@
     - when: virtualenv.stat.isdir is not defined or not virtualenv.stat.isdir
       block:
            - name: Creating bare virtualenv environment for LaMachine
-             shell: "{{python_bin}} -m venv --copies --upgrade-deps {{ local_prefix }}"
+             shell: "{{python_bin}} -m venv --copies {{ local_prefix }}"
 
     - name: Adapting activation script for virtualenv (1/2)
       blockinfile:
