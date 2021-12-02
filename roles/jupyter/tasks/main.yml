@@ -55,7 +55,7 @@
     include_role:
       name: lamachine-run
     vars:
-      command: npm install --prefix {{lm_prefix}} configurable-http-proxy
+      command: npm install -g --prefix {{lm_prefix}} configurable-http-proxy
 
   - name: "Installing Sudospawner"
     include_role:
