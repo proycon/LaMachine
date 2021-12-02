@@ -1539,7 +1539,7 @@ if [ ! -d lamachine-controller/$LM_NAME ]; then
     echo "Setting up bootstrap control environment..."
     if [ $NEED_VIRTUALENV -eq 1 ]; then
         echo " (with virtualenv and ansible inside)"
-        python3 -m venv --upgrade-deps lamachine-controller/$LM_NAME || fatalerror "Unable to create LaMachine bootstrap control environment"
+        python3 -m venv lamachine-controller/$LM_NAME || fatalerror "Unable to create LaMachine bootstrap control environment"
         cd lamachine-controller/$LM_NAME
         source ./bin/activate || fatalerror "Unable to activate LaMachine bootstrap controller environment"
         pip install -U pip wheel setuptools || fatalerror "Failed to update pip"
