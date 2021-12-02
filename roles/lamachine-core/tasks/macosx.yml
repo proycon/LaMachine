@@ -29,10 +29,3 @@
     - name: Homebrew, enabling cask versions
       homebrew_tap:
           name: homebrew/cask-versions
-
-    - name: (Re)install virtualenv
-      become: yes
-      become_user: root
-      command: pip3 install virtualenv
-      when: localenv_type == "virtualenv"
-      ignore_errors: yes

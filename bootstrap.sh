@@ -779,9 +779,10 @@ else
                 if ! python3 -m pip --version > /dev/null; then
                     NEED+=("pip")
                 fi
-                if ! python3 -m virtualenv --version > /dev/null; then
+                if ! python3 -m venv .venvtest > /dev/null; then
                     NEED+=("virtualenv")
                 fi
+                rm -Rf .venvtest
             fi
         fi
     fi
@@ -1089,13 +1090,13 @@ for package in ${NEED[@]}; do
         fi
     elif [ "$package" = "python3" ]; then
         if [ "$OS" = "debian" ]; then
-            cmd="sudo apt-get $NONINTERACTIVEFLAGS install python3 python3-pip python3-virtualenv"
+            cmd="sudo apt-get $NONINTERACTIVEFLAGS install python3 python3-pip python3-venv"
         elif [ "$OS" = "redhat" ]; then
-            cmd="sudo yum $NONINTERACTIVEFLAGS install python3 python3-pip python3-virtualenv"
+            cmd="sudo yum $NONINTERACTIVEFLAGS install python3 python3-pip"
         elif [ "$OS" = "arch" ]; then
-            cmd="sudo pacman $NONINTERACTIVEFLAGS -Sy python python-pip python-virtualenv"
+            cmd="sudo pacman $NONINTERACTIVEFLAGS -Sy python python-pip"
         elif [ "$OS" = "mac" ]; then
-            cmd="brew update; brew install python && sudo pip3 install virtualenv"
+            cmd="brew update; brew install python"
         else
             cmd=""
         fi
@@ -1189,18 +1190,13 @@ for package in ${NEED[@]}; do
             echo "Please install pip manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
         fi
     elif [ "$package" = "virtualenv" ]; then
+        #this doesn't really do much anymore for most distros as most already include this by default
         if [ "$OS" = "debian" ]; then
-            cmd="sudo apt-get $NONINTERACTIVEFLAGS install python3-virtualenv"
-        elif [ "$OS" = "redhat" ]; then
-            cmd="sudo yum  $NONINTERACTIVEFLAGS install python3-virtualenv"
-        elif [ "$OS" = "arch" ]; then
-            cmd="sudo pacman  $NONINTERACTIVEFLAGS -Sy python-virtualenv"
-        elif [ "$OS" = "mac" ]; then
-            cmd="sudo pip3 install virtualenv"
+            cmd="sudo apt-get $NONINTERACTIVEFLAGS install python3-venv"
         else
             cmd=""
         fi
-        echo "Virtualenv is required for LaMachine but not installed yet. ${bold}Install now?${normal}"
+        echo "python3 -m venv is required for LaMachine but not installed yet. ${bold}Install now?${normal}"
         if [ ! -z "$cmd" ]; then
             while true; do
                 echo -n "${bold}Run:${normal} $cmd ? [yn] "
@@ -1210,15 +1206,15 @@ for package in ${NEED[@]}; do
                     yn="y"
                 fi
                 case $yn in
-                    [Yy]* ) $cmd || fatalerror "Virtualenv installation failed"; break;;
-                    [Nn]* ) echo "Please install virtualenv manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
+                    [Yy]* ) $cmd || fatalerror "Venv installation failed"; break;;
+                    [Nn]* ) echo "Please install venv manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read; break;;
                     * ) echo "Please answer yes or no.";;
                 esac
             done
         else
-            echo "No automated installation possible on your OS."
+            echo "No automated installation of venv possible on your OS."
             if [ "$INTERACTIVE" -eq 0 ]; then exit 5; fi
-            echo "Please install virtualenv manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
+            echo "Please install venv manually" && echo " .. press ENTER when done or CTRL-C to abort..." && read
         fi
     fi
 done
@@ -1543,14 +1539,10 @@ if [ ! -d lamachine-controller/$LM_NAME ]; then
     echo "Setting up bootstrap control environment..."
     if [ $NEED_VIRTUALENV -eq 1 ]; then
         echo " (with virtualenv and ansible inside)"
-        python3 -m virtualenv lamachine-controller/$LM_NAME
-        if [ $? -ne 0 ]; then
-            echo "${boldred}ERROR: Virtualenv creation failed!${normal} Trying a fallback method:" >&2
-            virtualenv lamachine-controller/$LM_NAME || fatalerror "Unable to create LaMachine bootstrap control environment"
-        fi
+        python3 -m venv --upgrade-deps lamachine-controller/$LM_NAME || fatalerror "Unable to create LaMachine bootstrap control environment"
         cd lamachine-controller/$LM_NAME
         source ./bin/activate || fatalerror "Unable to activate LaMachine bootstrap controller environment"
-        pip install -U setuptools
+        pip install -U pip wheel setuptools || fatalerror "Failed to update pip"
         pip install ansible || fatalerror "Unable to install Ansible"
         #pip install docker==2.7.0 docker-compose ansible-container[docker]
     else
