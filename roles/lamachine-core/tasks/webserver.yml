@@ -188,6 +188,7 @@
           src: "{{www_data_path}}"
           dest: "{{lm_prefix}}/var/www-data"
           state: link
+          force: yes
         when: shared_www_data|bool
 
 
