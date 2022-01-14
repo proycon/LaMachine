@@ -190,6 +190,7 @@
           state: link
           force: yes
         when: shared_www_data|bool
+        ignore_errors: yes
 
 
       - name: Link nginx from global prefix
