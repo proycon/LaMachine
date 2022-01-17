@@ -49,14 +49,14 @@ fi
 {% if locality == "global" and root %}
 #### global flavour ##############################################################################################################
 
+{% if move_share_www_data|bool %}
+{{lm_prefix}}/bin/lamachine-move-www-data
+{% endif %}
+
 if [ ! -d "{{www_data_path}}" ]; then
     echo "${boldred}ERROR: www-data path {{www_data_path}} was not found, did you perhaps forget to mount an external data volume at {{data_path}}?${normal}" >&2
     exit 3
 fi
-
-{% if move_share_www_data|bool %}
-{{lm_prefix}}/bin/lamachine-move-www-data
-{% endif %}
 
 if systemctl is-system-running >/dev/null 2>/dev/null; then
     echo "(systemd is available and running)">&2
