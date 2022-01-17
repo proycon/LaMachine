@@ -415,6 +415,7 @@
       src: "{{www_data_path}}/docroot"
       dest: "/var/www"
       state: link
+      force: yes
     when: root and locality == "global"
 
   - name: Adding base configuration for CLAM
