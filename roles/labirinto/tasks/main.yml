@@ -94,4 +94,7 @@
       - name: Deploying to document root
         become: "{{lm_become}}"
         become_user: root
-        shell: "mkdir -p {{www_data_path}}/docroot/portal && cp -r {{ source_path }}/labirinto/dist/* {{www_data_path}}/docroot/portal/"
+        shell: "mkdir -p {{www_data_staging_path}}/docroot/portal && cp -r {{ source_path }}/labirinto/dist/* {{www_data_staging_path}}/docroot/portal/"
+        args:
+          warn: false
+

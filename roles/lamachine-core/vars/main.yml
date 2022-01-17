@@ -41,4 +41,5 @@ globalenv:
      LANG: "en_US.UTF-8"
      LM_QUIET: 1
 lm_env: "{% if locality == 'global'  %}{{globalenv}}{% else %}{{localenv}}{% endif %}"
+www_data_staging_path: "{% if shared_www_data|bool and data_path and flavour == "vagrant" %}{{ data_path }}/www-data{% else %}{{ lm_prefix }}/var/www-data{% endif %}" #the internal path used while bootstrapping, might later symlink to www_data_path
 www_data_path: "{% if shared_www_data|bool and data_path %}{{ data_path }}/www-data{% else %}{{ lm_prefix }}/var/www-data{% endif %}"

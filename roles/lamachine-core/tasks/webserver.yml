@@ -158,21 +158,27 @@
             - "var/tmp"
         ignore_errors: yes
 
+      - name: Check if webserver data directory is a symlink
+        stat:
+          path: "{{www_data_staging_path}}"
+        register: staging_path
+
       - name: Create webserver data directory (writable)
         become: "{{lm_become}}"
         become_user: root
         file:
-            path: "{{ www_data_path }}"
+            path: "{{ www_data_staging_path }}"
             state: directory
             owner: "{{unix_user}}"
             group: "{{web_group}}"
             mode: u+rwx,g+rwsx,a+rx
+        when: not staging_path.stat.islnk
 
       - name: Create webserver data subdirectories (writable)
         become: "{{lm_become}}"
         become_user: root
         file:
-            path: "{{ www_data_path }}/{{item}}"
+            path: "{{ www_data_staging_path }}/{{item}}"
             state: directory
             owner: "{{unix_user}}"
             group: "{{web_group}}"
@@ -181,6 +187,14 @@
            - notebooks
            - lamastats
 
+      - name: Check if internal webserver data directory exists
+        stat:
+          path: "{{lm_prefix}}/var/www-data"
+          #this is often equal to the the www_data_staging path, but this isn't necessarily so
+          #in some situation (Vagrant), the www_data_staging path equals the final www_data_path instead
+          #which may be on an external volume already available during build (unlike docker where it's not available yet)
+        register: internal_www_data
+
       - name: Symlink webserver data directory
         become: "{{lm_become}}"
         become_user: root
@@ -188,9 +202,18 @@
           src: "{{www_data_path}}"
           dest: "{{lm_prefix}}/var/www-data"
           state: link
-        when: shared_www_data|bool
-        ignore_errors: yes
+        when: shared_www_data|bool and not internal_www_data.stat.exists
+        #for docker, we can't do this at this time and the data will be moved by lamachine-start-webserver when the external mount is available
+        #this is handled by the script installed next:
 
+      - name: Add lamachine-move-www-data script
+        template:
+          src: "lamachine-move-www-data.sh"
+          dest: "{{lm_prefix}}/bin/lamachine-move-www-data"
+          force: yes
+          owner: "{{unix_user}}"
+          group: "{{unix_group}}"
+          mode: u+rwx,a+rx
 
       - name: Link nginx from global prefix
         file:
@@ -227,14 +250,6 @@
             - "etc/uwsgi-emperor/vassals"
         when: not (ansible_distribution|lower == "debian" or ansible_distribution|lower == "ubuntu" or ansible_distribution|lower == "linux mint")
 
-      - name: Add lamachine-move-www-data script
-        template:
-          src: "lamachine-move-www-data.sh"
-          dest: "{{lm_prefix}}/bin/lamachine-move-www-data"
-          force: yes
-          owner: "{{unix_user}}"
-          group: "{{unix_group}}"
-          mode: u+rwx,a+rx
 
   - when: locality=="local"
     block:
@@ -370,7 +385,7 @@
     become: "{{lm_become}}"
     become_user: root
     file:
-        path: "{{www_data_path}}/docroot"
+        path: "{{www_data_staging_path}}/docroot"
         state: directory
         owner: "{{unix_user}}"
         mode: u+rwx,a+rx
@@ -380,7 +395,7 @@
     become_user: root
     copy:
       src: "{{item}}"
-      dest: "{{www_data_path}}/docroot"
+      dest: "{{www_data_staging_path}}/docroot"
     with_fileglob:
       - "{{lm_path}}/webserver/docroot/*"
 
@@ -424,7 +439,7 @@
       name: lamastats
       minute: "0"
       user: "{{unix_user}}"
-      job: "cd {{lm_prefix}}/var/log/lamastats && {{lm_prefix}}/bin/lamastats --outputdir {{lm_prefix}}/var/www-data/lamastats --trackclam --foliadocservelog {{lm_prefix}}/var/log/foliadocserve.log nginx:{{lm_prefix}}/var/log/nginx/access.log > {{lm_prefix}}/var/log/lamastats.log 2>&1"
+      job: "cd {{lm_prefix}}/var/log/lamastats && {{lm_prefix}}/bin/lamastats --outputdir {{www_data_staging_path}}/lamastats --trackclam --foliadocservelog {{lm_prefix}}/var/log/foliadocserve.log nginx:{{lm_prefix}}/var/log/nginx/access.log > {{lm_prefix}}/var/log/lamastats.log 2>&1"
     when: webservertype == "nginx" and locality == "global"
 
   - name: Register lamastats webservice
