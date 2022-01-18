@@ -172,7 +172,7 @@
             owner: "{{unix_user}}"
             group: "{{web_group}}"
             mode: u+rwx,g+rwsx,a+rx
-        when: not staging_path.stat.islnk
+        when: staging_path.stat.islnk is not defined or not staging_path.stat.islnk
 
       - name: Create webserver data subdirectories (writable)
         become: "{{lm_become}}"
