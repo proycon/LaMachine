@@ -6,24 +6,24 @@
       vars:
         package:
            github_user: "opensource-spraakherkenning-nl"
-           github_repo: "oralhistory"
+           github_repo: "asr_nl"
            metadata:
-              identifier: "oralhistory"
+              identifier: "asr_nl"
 
     - name: Installing web service
       include_role:
         name: lamachine-web-install
       vars:
         service:
-          nginx: oralhistory
-          clam: oralhistory
-          uwsgi: oralhistory
+          nginx: asr_nl
+          clam: asr_nl
+          uwsgi: asr_nl
 
     - name: link python package installation in opt/
       include_role:
         name: lamachine-python-link
       with_items:
-        - oralhistory
+        - asr_nl
 
     - name: Register webservice metadata
       include_role:
@@ -37,6 +37,6 @@
                 - { "@type": "EntryPoint",  urlTemplate: "{{lm_base_url}}/{{item}}", interfaceType: "REST", specification: "{{lm_base_url}}/{{item}}/info",  mediatorApplication: "#clam" }
       when: '"all" in services or item in services'
       with_items:
-        - oralhistory
+        - asr_nl
 
 

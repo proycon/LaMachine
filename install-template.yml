@@ -99,7 +99,7 @@
                                              #contact l.tenbosch@let.ru.nl to request access)
      # - kaldi_nl                         ## Dutch models for Kaldi
                                              #(will download several big models, multiple GB)
-     # - oralhistory                      ## Dutch ASR webservice (relies on kaldi_nl)
+     # - asr_nl                           ## Automatic Speech Recognition for Dutch - webservice (relies on kaldi_nl)
      # - fy_nl_ASR                        ## Frisian-Dutch Speech Recognition system with webservice
                                              #(>9GB !!!! - Not supported on Mac OS X)
                                              #Relies on kaldi, another 7GB!!
@@ -107,12 +107,6 @@
                                              #set fame_user and fame_password in your LaMachine configuration
                                              #contact h.vandenheuvel@let.ru.nl to request access
      # - fame_align                       ## Frisian-Dutch Forced Alignment system with webservice
-                                             #(>2GB !!!! - Not supported on Mac OS X)
-                                             #Relies on kaldi, another 7GB!!
-                                             #Authorization is required for this; ensure to
-                                             #set fame_user and fame_password in your LaMachine configuration
-                                             #contact h.vandenheuvel@let.ru.nl to request access
-     # - forcedalignment                  ## Dutch Forced Alignment system with webservice
                                              #(>2GB !!!! - Not supported on Mac OS X)
                                              #Relies on kaldi, another 7GB!!
                                              #Authorization is required for this; ensure to

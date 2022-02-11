@@ -1,0 +1,10 @@
+{% if clam_include %}
+include: "{{clam_include}}"
+{% endif %}
+port: 8816
+urlprefix: "asr_nl"
+root: "{{www_data_path}}/asr_nl.clam/"
+resourcedirectory: "{{lm_prefix}}/opt/kaldi_nl/"
+scratchdirectory: "{{www_data_path}}/asr_nl.clam/scratch/"
+bindir: "{{lm_prefix}}/bin/"
+oauth_client_url: "{{lm_base_url}}/asr_nl"
