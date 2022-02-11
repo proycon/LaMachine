@@ -11,7 +11,7 @@ EXPOSE 8080
 EXPOSE 8888
 EXPOSE 9999
 USER root
-MAINTAINER Maarten van Gompel <proycon@anaproy.nl>
+LABEL org.opencontainers.image.authors="Maarten van Gompel <proycon@anaproy.nl>"
 LABEL description="A unified distribution of NLP software. Developed by the Centre of Language and Speech Technology (Radboud University Nijmegen), the KNAW Humanities Cluster. Funded by CLARIAH" value="$LM_VERSION"
 VOLUME $DATA_PATH
 ENV DEBIAN_FRONTEND=noninteractive
