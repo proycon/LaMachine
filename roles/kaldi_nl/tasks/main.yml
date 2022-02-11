@@ -34,7 +34,7 @@
     - name: Setting up kaldi_nl
       shell: |
           export modelpack="{{ lm_prefix }}/opt/kaldi_nl/models"
-          ./configure.sh oralhistory
+          ./configure.sh asr_nl
       args:
         chdir: "{{ lm_prefix }}/opt/kaldi_nl"
       environment: "{{lm_env}}"
