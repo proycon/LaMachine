@@ -43,7 +43,7 @@
             include_role:
               name: lamachine-run
             vars:
-              command: npm install
+              command: "npm config set fetch-retries 5 && npm install"
               chdir: "{{ source_path }}/labirinto"
             ignore_errors: "{{ignore_npm_errors|bool}}"
 
