@@ -34,7 +34,7 @@
     - name: Setting up kaldi_nl
       shell: |
           export modelpack="{{ lm_prefix }}/opt/kaldi_nl/models"
-          ./configure.sh asr_nl
+          ./configure.sh utwente radboud_OH radboud_PR radboud_GN
       args:
         chdir: "{{ lm_prefix }}/opt/kaldi_nl"
       environment: "{{lm_env}}"
