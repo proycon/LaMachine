@@ -681,7 +681,7 @@
           include_role:
             name: lamachine-python-install
           vars:
-            package: { github_user: "proycon", github_repo: "codemetapy", pip: "codemetapy", git_branch: "v0.3.5" }
+            package: { github_user: "proycon", github_repo: "codemetapy", pip: "codemetapy", version: "v0.3.5", git_branch: "v0.3.5" }
 
         - name: Registering extra metadata
           include_role:
