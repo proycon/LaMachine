@@ -470,7 +470,7 @@ echo "                Please see https://github.com/proycon/LaMachine/issues/214
 echo "                for reasons and alternative solutions"
 echo "-----------------------------------------------------------------------------"
 echo "Starting a new installation is no longer recommended at this point in time." 
-if [ $INTERACTIVE -ne 1 ]; then
+if [ $INTERACTIVE -eq 1 ]; then
     echo -n "${bold}Do you want to continue anyway?${normal} [yN] "
     read yn
     case $yn in
