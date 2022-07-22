@@ -34,6 +34,7 @@ echo "           / / /|	        KNAW Humanities Cluster            (funded by CL
 echo "${bold}=========================================================================${normal}"
 echo
 
+
 usage () {
     echo "bootstrap.sh [options]"
     echo " ${bold}--flavour${normal} [vagrant|docker|local|global|remote] - Determines the type of LaMachine installation"
@@ -229,6 +230,7 @@ fi
 if [[ "$USERNAME" == "root" ]]; then
     fatalerror "Do not run the LaMachine bootstrap process as root!" #we can't do this message earlier because people coming from LaMachine v1 do run as root sometimes
 fi
+
 
 
 OUTDATED=0
@@ -460,6 +462,23 @@ if [ $INTERACTIVE -eq 1 ]; then
     echo "of any software that is needed to complete this installation."
     echo
 fi
+
+echo
+echo "-----------------------------------------------------------------------------"
+echo "IMPORTANT NOTE: LaMachine is end-of-life and is slowly being deprecated! "
+echo "                Please see https://github.com/proycon/LaMachine/issues/214"
+echo "                for reasons and alternative solutions"
+echo "-----------------------------------------------------------------------------"
+echo "Starting a new installation is no longer recommended at this point in time." 
+if [ $INTERACTIVE -ne 1 ]; then
+    echo -n "${bold}Do you want to continue anyway?${normal} [yN] "
+    read yn
+    case $yn in
+        [Nn]*) exit 0;;
+        *) ;;
+    esac
+fi
+
 
 SUPPORT=unknown
 

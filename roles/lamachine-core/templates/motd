@@ -5,6 +5,13 @@
             /| |\         CLST, Radboud University Nijmegen &
            / / /|	      KNAW Humanities Cluster          (funded by CLARIAH)
 ==============================================================================
+
+-----------------------------------------------------------------------------
+IMPORTANT NOTE: LaMachine is end-of-life and is slowly being deprecated! 
+                Please see https://github.com/proycon/LaMachine/issues/214
+                for reasons and alternative solutions
+-----------------------------------------------------------------------------
+
  Build Name: {{ conf_name }}
  Version: {{ version }}      Build time: {{ ansible_date_time.date }} {{ ansible_date_time.time }} {{ansible_date_time.tz}}
  Maintainer: {{ maintainer_mail }}
