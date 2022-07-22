@@ -10,6 +10,8 @@ extracredit: Machine photo by Japhen Simpson, Llama photo by S1ghtly
 What is LaMachine?
 =====================
 
+**IMPORTANT NOTE: LaMachine is end-of-life and being deprecated. See this post for reasons and alternative solutions**
+
 LaMachine is a software distribution of NLP software developed by the Language
 Machines research group and CLST (Radboud University Nijmegen), as well as TiCC
 (Tilburg University).
