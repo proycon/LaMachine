@@ -33,7 +33,8 @@ sed -i "s/md5sums=.*/md5sums=(${MD5SUM})/g" PKGBUILD
 sed -i "s/pkgver=.*/pkgver=${NEWVERSION}/g" PKGBUILD
 sed -i "s/pkgrel=.*/pkgrel=1/g" PKGBUILD
 
-mksrcinfo
+#mksrcinfo
+makepkg --printsrcinfo > .SRCINFO
 git add PKGBUILD .SRCINFO
 
 
